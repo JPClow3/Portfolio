@@ -5,11 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>João Paulo</title>
-     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;600;800&display=swap"
       rel="stylesheet"
     />
     <link
@@ -29,22 +29,26 @@
     />
   </head>
   <body>
-      <header>
-          <img src="Logo.png" alt="Logo">
-      </header>
+    <header>
+      <div class="logo">
+        <img src="Logo.png" alt="Logo" />
+      </div>
+      <div class="buttons Roboto">
+        <a href="#">Enviar Mensagem</a>
+        <a href="#">Baixar CV</a>
+      </div>
+    </header>
     <section class="banner">
       <div class="center-x">
         <div class="center-y">
-          <p>
-            <span class="typed-text"></span>
-            <span class="cursor">&nbsp;</span>
-          </p>
-        </div>
-        <div class="center-y">
-          <div class="buttons">
-            <a href="#">Enviar Mensagem</a>
-            <a href="#">Baixar CV</a>
+          <div class="box">
+            <p>
+              <span class="typed-text Roboto"></span>
+              <span class="cursor">&nbsp;</span>
+            </p>
           </div>
+        </div>
+        <div class="center-x">
           <div class="icons">
             <a href="#"><i class="fab fa-linkedin"></i></a>
             <a href="#"><i class="fab fa-github"></i></a>
@@ -56,63 +60,63 @@
     </section>
 
     <section class="descricao">
-      <div class="box profile">
-        <h1>Ola, meu nomé João Paulo</h1>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus
-          vulputate urna eu venenatis aliquam. Quisque ornare orci id tortor
-          accumsan scelerisque.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus
-          vulputate urna eu venenatis aliquam.
-        </p>
-        <p>
-          Nulla malesuada, dui eget convallis luctus, nibh orci condimentum
-          tortor, cursus fermentum nibh sem non nisi.
-        </p>
-        <p>
-          Nulla malesuada, dui eget convallis luctus, nibh orci condimentum
-          tortor, cursus fermentum nibh sem non nisi.
-        </p>
-      </div>
-      <div class="box image">
-        <img src="profile.jpg" alt="Foto de um garoto sensual" />
+      <div class="center">
+        <div class="box profile Roboto">
+          <h1>Ola, meu nomé João Paulo</h1>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus
+            vulputate urna eu venenatis aliquam. Quisque ornare orci id tortor
+            accumsan scelerisque.
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus
+            vulputate urna eu venenatis aliquam.
+          </p>
+          <p>
+            Nulla malesuada, dui eget convallis luctus, nibh orci condimentum
+            tortor, cursus fermentum nibh sem non nisi.
+          </p>
+          <p>
+            Nulla malesuada, dui eget convallis luctus, nibh orci condimentum
+            tortor, cursus fermentum nibh sem non nisi.
+          </p>
+        </div>
+        <div class="box image">
+          <img src="profile.jpg" alt="Foto de um garoto sensual" />
+        </div>
       </div>
     </section>
 
     <section class="tech">
-      <div class="tech image">
-        <img
-          src="https://mrmelem.github.io/site-portfolio/src/assets/html.svg"
-          alt="html5"
-        />
-      </div>
-      <div class="tech image">
-        <img
-          src="https://mrmelem.github.io/site-portfolio/src/assets/css.svg"
-          alt="css3"
-        />
+      <div class="center">
+        <div class="tech-image">
+          <img
+            src="https://mrmelem.github.io/site-portfolio/src/assets/html.svg"
+            alt="html5"
+          />
+        </div>
+        <div class="tech-image">
+          <img
+            src="https://mrmelem.github.io/site-portfolio/src/assets/css.svg"
+            alt="css3"
+          />
+        </div>
       </div>
     </section>
-    
 
     <footer>
-        <div class="center-x">
-            <h1>
-                Entre em contato
-
-            </h1>
-            <a href="#">Enviar Mensagem</a>
-            <h2>
-                Site desenvolvido por <b>João Paulo</b>
-
-            </h2>
-            
+      <div class="center-x Roboto">
+        <div>
+          <h1>Site desenvolvido por <b>João Paulo</b></h1>
         </div>
-
-    
-        
+        <div class="icons">
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+          <a href="#"><i class="fab fa-github"></i></a>
+          <a href="#"><i class="fab fa-whatsapp"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+        </div>
+      </div>
     </footer>
+    <script src="tw.js"></script>
   </body>
 </html>

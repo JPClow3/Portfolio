@@ -27,7 +27,7 @@ header .buttons a {
   animation-timing-function: ease-in;
 }
 header .buttons{
-  width: auto ;   
+  width: 20% ;   
 }
 header {
   width: 100%;

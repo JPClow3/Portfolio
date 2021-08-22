@@ -26,9 +26,6 @@ header .buttons a {
   animation-fill-mode: forwards;
   animation-timing-function: ease-in;
 }
-header .buttons{
-  width: 20% ;   
-}
 header {
   width: 100%;
   background: #0e0e0f;

@@ -13,6 +13,7 @@ a {
   text-decoration: none;
 }
 header .buttons a {
+  outline: #471b8a;
   color: white;
   margin-left: 20px;
   margin-right: 10px;
@@ -20,6 +21,10 @@ header .buttons a {
   padding: 8px 14px;
   border-radius: 5px;
   box-shadow: 0px 1px 0 0 rgba(200, 200, 200, 0.8);
+  animation-name: appear;
+  animation-duration: 3s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in;
 }
 header {
   width: 100%;
@@ -31,10 +36,19 @@ header {
   align-items: center;
   z-index: 1;
   box-shadow: 1px 1px 1px #471b8a;
+  animation-name: drop;
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease;
 }
 header img {
  max-width: 120px;
  width: 100%;
+ filter: drop-shadow(1px 2px 0px #471b8a);
+ animation-name: appear;
+ animation-duration: 3s;
+ animation-fill-mode: forwards;
+ animation-timing-function: ease-in;
 }
 .banner {
   padding: 75px;
@@ -59,6 +73,9 @@ header img {
   background-color: #0d1418;
   margin: 100px 0;
   border-radius: 50%;
+  animation-name: appear;
+  animation-duration: 4s;
+  animation-fill-mode: forwards;
   filter: drop-shadow(0px -2px 0px #471b8a);
 }
 .descricao,
@@ -68,6 +85,7 @@ header img {
 }
 .descricao .image img{
   width: 100%;
+  filter: drop-shadow(1px 1px 0px white);
 }
 .descricao .center,
 .tech .center {
@@ -142,3 +160,5 @@ footer .center-x h1 {
   }
   
 }
+@keyframes appear{from{left:-300px;opacity:0} to{left:0;opacity:1}}
+@keyframes drop{from{top:-300px;opacity:0} to{top:0;opacity:1}}

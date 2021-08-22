@@ -26,6 +26,16 @@ header .buttons a {
   animation-fill-mode: forwards;
   animation-timing-function: ease-in;
 }
+header .buttons a .cv{
+  max-width: 97.16px;
+  width: 100%;
+  display: flex;
+}
+header.buttons a .msg{
+  max-width: 155.35;
+  width: 100%;
+  display: flex;
+}
 header {
   width: 100%;
   background: #0e0e0f;

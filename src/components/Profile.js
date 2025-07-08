@@ -1,13 +1,15 @@
 import React from 'react';
-import { useLanguage } from '../context/AppContext';
-import { portfolioData } from '../data';
-import { Section, FadeInOnScroll, ProfileCard } from './VisualComponents';
+import {useLanguage} from '../context/AppContext';
+import {portfolioData} from '../data';
+import {FadeInOnScroll, ProfileCard, Section} from './VisualComponents';
 import avatarImage from '../assets/avatar.svg'; // Importando a sua imagem
 
 const Profile = () => {
-    const { language } = useLanguage();
-    const { profile, hero } = portfolioData[language];
-    const handleContactClick = () => { window.open("https://www.linkedin.com/in/joaopaulosantosgo/", "_blank", "noopener,noreferrer"); };
+    const {language} = useLanguage();
+    const {profile, hero} = portfolioData[language];
+    const handleContactClick = () => {
+        window.open("https://www.linkedin.com/in/joaopaulosantosgo/", "_blank", "noopener,noreferrer");
+    };
 
     return (
         <Section id="profile" title={profile.title}>

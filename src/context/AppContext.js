@@ -1,6 +1,6 @@
-import { createContext, useContext } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import {createContext, useContext} from 'react';
+import {gsap} from 'gsap';
+import {ScrollTrigger} from 'gsap/ScrollTrigger';
 
 // Registra o plugin do GSAP uma única vez
 gsap.registerPlugin(ScrollTrigger);
@@ -8,7 +8,7 @@ gsap.registerPlugin(ScrollTrigger);
 // --- CONTEXTOS ---
 export const ThemeContext = createContext();
 export const LanguageContext = createContext();
-export const LibsContext = createContext({ gsap }); // Passa o GSAP diretamente
+export const LibsContext = createContext({gsap}); // Passa o GSAP diretamente
 
 // --- HOOKS DE ACESSO ---
 export const useTheme = () => useContext(ThemeContext);

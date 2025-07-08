@@ -1,12 +1,12 @@
-import React, { useEffect, useRef } from 'react';
-import { useLanguage, useLibs } from '../context/AppContext';
-import { portfolioData } from '../data';
-import { Section, SpotlightCard } from './VisualComponents';
+import React, {useEffect, useRef} from 'react';
+import {useLanguage, useLibs} from '../context/AppContext';
+import {portfolioData} from '../data';
+import {Section, SpotlightCard} from './VisualComponents';
 
 const Experience = () => {
-    const { language } = useLanguage();
-    const { experience } = portfolioData[language];
-    const { gsap } = useLibs(); // Usando o GSAP do contexto
+    const {language} = useLanguage();
+    const {experience} = portfolioData[language];
+    const {gsap} = useLibs(); // Usando o GSAP do contexto
     const timelineRef = useRef(null);
 
     useEffect(() => {
@@ -16,7 +16,7 @@ const Experience = () => {
         const line = timeline.querySelector('.timeline-line');
         const items = timeline.querySelectorAll('.timeline-item');
 
-        gsap.set(line, { scaleY: 0, transformOrigin: 'top center' });
+        gsap.set(line, {scaleY: 0, transformOrigin: 'top center'});
         gsap.to(line, {
             scaleY: 1,
             scrollTrigger: {
@@ -43,10 +43,12 @@ const Experience = () => {
     return (
         <Section id="experience" title={experience.title}>
             <div ref={timelineRef} className="relative max-w-3xl mx-auto">
-                <div className="timeline-line absolute left-4 sm:left-1/2 top-0 h-full w-0.5 bg-slate-200 dark:bg-slate-700"></div>
+                <div
+                    className="timeline-line absolute left-4 sm:left-1/2 top-0 h-full w-0.5 bg-slate-200 dark:bg-slate-700"></div>
                 {experience.jobs.map((job, index) => (
                     <div key={index} className="timeline-item relative mb-12">
-                        <div className="absolute left-4 sm:left-1/2 -translate-x-1/2 mt-1.5 w-4 h-4 bg-blue-600 rounded-full border-4 border-white dark:border-slate-900"></div>
+                        <div
+                            className="absolute left-4 sm:left-1/2 -translate-x-1/2 mt-1.5 w-4 h-4 bg-blue-600 rounded-full border-4 border-white dark:border-slate-900"></div>
                         <div className={`sm:flex items-center ${index % 2 === 0 ? 'sm:flex-row-reverse' : ''}`}>
                             <div className="sm:w-1/2 p-4">
                                 <div className={`text-left ${index % 2 === 0 ? 'sm:text-left' : 'sm:text-right'}`}>

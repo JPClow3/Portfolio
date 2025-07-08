@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { ThemeContext, LanguageContext, LibsContext, useLibs } from './context/AppContext';
-import { useKonamiCode } from './hooks/useKonamiCode';
+import React, {useCallback, useEffect, useState} from 'react';
+import {LanguageContext, LibsContext, ThemeContext, useLibs} from './context/AppContext';
+import {useKonamiCode} from './hooks/useKonamiCode';
 import './index.css'; // Importando nosso CSS consolidado
-
 // Importando os componentes de seção
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -15,7 +14,7 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 
 // Importando componentes visuais que o App usa diretamente
-import { DotGrid, CustomCursor, Confetti, SectionSeparator } from './components/VisualComponents';
+import {Confetti, CustomCursor, DotGrid, SectionSeparator} from './components/VisualComponents';
 
 
 function App() {
@@ -51,30 +50,31 @@ function App() {
 
     return (
         <LibsContext.Provider value={libs}>
-            <ThemeContext.Provider value={{ theme, toggleTheme }}>
-                <LanguageContext.Provider value={{ language, setLanguage }}>
-                    <div className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans transition-colors duration-300">
-                        <DotGrid />
-                        <CustomCursor />
-                        {showConfetti && <Confetti />}
+            <ThemeContext.Provider value={{theme, toggleTheme}}>
+                <LanguageContext.Provider value={{language, setLanguage}}>
+                    <div
+                        className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans transition-colors duration-300">
+                        <DotGrid/>
+                        <CustomCursor/>
+                        {showConfetti && <Confetti/>}
 
-                        <Header />
+                        <Header/>
                         <main>
-                            <Hero />
-                            <SectionSeparator />
-                            <About />
-                            <SectionSeparator />
-                            <Profile />
-                            <SectionSeparator />
-                            <Experience />
-                            <SectionSeparator />
-                            <Projects />
-                            <SectionSeparator />
-                            <Skills />
-                            <SectionSeparator />
-                            <Contact />
+                            <Hero/>
+                            <SectionSeparator/>
+                            <About/>
+                            <SectionSeparator/>
+                            <Profile/>
+                            <SectionSeparator/>
+                            <Experience/>
+                            <SectionSeparator/>
+                            <Projects/>
+                            <SectionSeparator/>
+                            <Skills/>
+                            <SectionSeparator/>
+                            <Contact/>
                         </main>
-                        <Footer />
+                        <Footer/>
                     </div>
                 </LanguageContext.Provider>
             </ThemeContext.Provider>

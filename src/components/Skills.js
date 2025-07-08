@@ -1,7 +1,6 @@
 import React from 'react';
 import { useLanguage } from '../context/AppContext';
 import { portfolioData } from '../data';
-// Importando Card e CardSwap separadamente
 import { Section, FadeInOnScroll, CardSwap, Card } from './VisualComponents';
 import { SkillIcons } from './Icons';
 
@@ -12,12 +11,11 @@ const Skills = () => {
     return (
         <Section id="skills" title={skills.title}>
             <div className="flex flex-col items-center">
-                <div className="h-[400px] w-full max-w-xl flex justify-center items-center relative mb-16" style={{ maskImage: 'linear-gradient(to bottom, black 0%, black 75%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 75%, transparent 100%)' }}>
+                <div className="h-[400px] w-full max-w-xl flex justify-center relative mb-16" style={{ maskImage: 'linear-gradient(to bottom, black 0%, black 75%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 75%, transparent 100%)' }}>
                     <CardSwap width={350} height={280}>
                         {skills.categories.map((category, index) => {
                             const Icon = SkillIcons[category.icon];
                             return (
-                                // Usando o componente Card diretamente
                                 <Card key={index} customClass="skill-swap-card">
                                     <div className="text-blue-500 dark:text-blue-400 mb-4">{Icon && <Icon />}</div>
                                     <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4 text-center">{category.name}</h3>

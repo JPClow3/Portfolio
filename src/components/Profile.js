@@ -2,7 +2,7 @@ import React from 'react';
 import { useLanguage } from '../context/AppContext';
 import { portfolioData } from '../data';
 import { Section, FadeInOnScroll, ProfileCard } from './VisualComponents';
-import avatarImage from '../assets/avatar.png'; // Importando a sua imagem
+import avatarImage from '../assets/avatar.svg'; // Importando a sua imagem
 
 const Profile = () => {
     const { language } = useLanguage();

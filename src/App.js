@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ThemeContext, LanguageContext, LibsContext, useLibs } from './context/AppContext';
 import { useKonamiCode } from './hooks/useKonamiCode';
-import './App.css'; // Importando nosso CSS consolidado
+import './index.css'; // Importando nosso CSS consolidado
 
 // Importando os componentes de seção
 import Header from './components/Header';

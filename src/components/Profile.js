@@ -1,15 +1,14 @@
 import React from 'react';
-import {useLanguage} from '../context/AppContext';
-import {portfolioData} from '../data';
-import {FadeInOnScroll, ProfileCard, Section} from './VisualComponents';
-import avatarImage from '../assets/avatar.svg'; // Importando a sua imagem
+import { useLanguage } from '../context/AppContext';
+import { portfolioData } from '../data';
+import { Section, FadeInOnScroll, ProfileCard } from './VisualComponents';
+// Lembre-se de ter sua imagem em src/assets/avatar.png ou .svg
+import avatarImage from '../assets/avatar.png';
 
 const Profile = () => {
-    const {language} = useLanguage();
-    const {profile, hero} = portfolioData[language];
-    const handleContactClick = () => {
-        window.open("https://www.linkedin.com/in/joaopaulosantosgo/", "_blank", "noopener,noreferrer");
-    };
+    const { language } = useLanguage();
+    const { profile, hero } = portfolioData[language];
+    const handleContactClick = () => { window.open("https://www.linkedin.com/in/joaopaulosantosgo/", "_blank", "noopener,noreferrer"); };
 
     return (
         <Section id="profile" title={profile.title}>
@@ -21,7 +20,7 @@ const Profile = () => {
                         status={profile.card.status}
                         contactText={profile.card.contactText}
                         onContactClick={handleContactClick}
-                        avatarUrl={avatarImage} // Usando a imagem importada
+                        avatarUrl={avatarImage}
                     />
                 </FadeInOnScroll>
             </div>

@@ -432,27 +432,3 @@ h1 > .animated-gradient-text {
     opacity: 0;
     animation: confetti-fall 4s linear infinite;
 }
-
-/* Correção do ProfileCard para Light/Dark Mode */
-.pc-card-bg {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: inherit;
-    transform: translateZ(-1px);
-    background: radial-gradient(farthest-side circle at var(--pointer-x) var(--pointer-y), hsla(220, 100%, 90%, 0.5) 4%, hsla(220, 50%, 80%, 0.25) 10%, hsla(220, 25%, 70%, 0.1) 50%, transparent 100%);
-}
-
-.dark .pc-card-bg {
-    background: radial-gradient(farthest-side circle at var(--pointer-x) var(--pointer-y), hsla(240, 100%, 95%, 0.1) 4%, hsla(240, 50%, 80%, 0.075) 10%, hsla(240, 25%, 70%, 0.05) 50%, transparent 100%);
-}
-
-.pc-inside {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.6) 0%, rgba(225, 235, 255, 0.4) 100%);
-}
-
-.dark .pc-inside {
-    background: linear-gradient(145deg, rgba(56, 66, 94, 0.55) 0%, rgba(59, 130, 246, 0.1) 100%);
-}

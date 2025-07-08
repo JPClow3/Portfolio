@@ -1,7 +1,8 @@
 import React from 'react';
 import { useLanguage } from '../context/AppContext';
 import { portfolioData } from '../data';
-import { Section, FadeInOnScroll, CardSwap } from './VisualComponents';
+// Importando Card e CardSwap separadamente
+import { Section, FadeInOnScroll, CardSwap, Card } from './VisualComponents';
 import { SkillIcons } from './Icons';
 
 const Skills = () => {
@@ -16,7 +17,8 @@ const Skills = () => {
                         {skills.categories.map((category, index) => {
                             const Icon = SkillIcons[category.icon];
                             return (
-                                <CardSwap.Card key={index} customClass="skill-swap-card">
+                                // Usando o componente Card diretamente
+                                <Card key={index} customClass="skill-swap-card">
                                     <div className="text-blue-500 dark:text-blue-400 mb-4">{Icon && <Icon />}</div>
                                     <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4 text-center">{category.name}</h3>
                                     <ul className="space-y-3 text-left">
@@ -27,7 +29,7 @@ const Skills = () => {
                                             </li>
                                         ))}
                                     </ul>
-                                </CardSwap.Card>
+                                </Card>
                             );
                         })}
                     </CardSwap>

@@ -3,7 +3,7 @@ import { useLanguage } from '../context/AppContext';
 import { portfolioData } from '../data';
 import { Section, FadeInOnScroll, ProfileCard } from './VisualComponents';
 // Lembre-se de ter sua imagem em src/assets/avatar.png ou .svg
-import avatarImage from '../assets/avatar.png';
+import avatarImage from '../assets/avatar.svg';
 
 const Profile = () => {
     const { language } = useLanguage();

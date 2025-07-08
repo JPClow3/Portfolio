@@ -1,7 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* --- ESTILOS GLOBAIS --- */
 html { scroll-behavior: smooth; }
 body:not(.touch-device) { cursor: none; }
-body:not(.touch-device) a, body:not(.touch-device) button { cursor: none; }
+body:not(.touch-device) a,
+body:not(.touch-device) button { cursor: none; }
 
 /* --- ANIMAÇÕES GLOBAIS --- */
 .fade-in-section { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }

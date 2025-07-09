@@ -432,3 +432,28 @@ h1 > .animated-gradient-text {
     opacity: 0;
     animation: confetti-fall 4s linear infinite;
 }
+
+
+/* 💡 NOVO CÓDIGO PARA ANIMAÇÃO DOS LINKS DE NAVEGAÇÃO */
+.animated-nav-link {
+    position: relative;
+    padding-bottom: 4px;
+}
+
+.animated-nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #3b82f6; /* Cor azul do tema */
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.3s ease-out;
+}
+
+.animated-nav-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}

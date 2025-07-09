@@ -1,12 +1,12 @@
-import React, {useMemo} from 'react';
-import {useLanguage, useTheme} from '../context/AppContext';
-import {portfolioData} from '../data';
-import {FadeInOnScroll, GradientText, TypingAnimation} from './VisualComponents';
+import React, { useMemo } from 'react';
+import { useLanguage, useTheme } from '../context/AppContext';
+import { portfolioData } from '../data';
+import { FadeInOnScroll, GradientText, TypingAnimation } from './VisualComponents';
 
 const Hero = () => {
-    const {language} = useLanguage();
-    const {hero} = portfolioData[language];
-    const {theme} = useTheme();
+    const { language } = useLanguage();
+    const { hero } = portfolioData[language];
+    const { theme } = useTheme();
     const gradientColors = useMemo(() => theme === 'dark'
             ? ["#38bdf8", "#818cf8", "#c084fc", "#f472b6", "#fb923c", "#a3e635", "#38bdf8"]
             : ["#2563eb", "#4f46e5", "#7c3aed", "#db2777", "#ea580c", "#65a30d", "#2563eb"],
@@ -48,4 +48,4 @@ const Hero = () => {
     );
 };
 
-export default Hero;
+export default React.memo(Hero);

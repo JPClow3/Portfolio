@@ -11,7 +11,6 @@ const Skills = () => {
     return (
         <Section id="skills" title={skills.title}>
             <div className="flex flex-col items-center">
-                {/* A classe items-center foi adicionada de volta aqui para centralizar verticalmente */}
                 <div className="h-[400px] w-full max-w-xl flex justify-center items-center relative mb-16" style={{ maskImage: 'linear-gradient(to bottom, black 0%, black 75%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 75%, transparent 100%)' }}>
                     <CardSwap width={350} height={280}>
                         {skills.categories.map((category, index) => {
@@ -48,4 +47,4 @@ const Skills = () => {
     );
 };
 
-export default Skills;
+export default React.memo(Skills);

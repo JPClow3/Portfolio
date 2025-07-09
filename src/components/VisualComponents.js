@@ -327,7 +327,6 @@ export const CardSwap = ({ width = 350, height = 280, cardDistance = 40, vertica
                 }
             });
 
-            // Animação original, mais simples
             tl.to(elFront, {
                 y: "+=300",
                 duration: 0.8,
@@ -451,7 +450,8 @@ export const SectionSeparator = () => {
 };
 
 export const Section = ({ id, title, children }) => (
-    <section id={id} className="py-16 sm:py-20">
+    // 💡 ESPAÇAMENTO VERTICAL AUMENTADO AQUI
+    <section id={id} className="py-20 sm:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <FadeInOnScroll><h2 className="text-3xl sm:text-4xl font-bold text-center text-slate-800 dark:text-white mb-12 sm:mb-16">{title}</h2></FadeInOnScroll>
             {children}

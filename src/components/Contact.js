@@ -1,18 +1,18 @@
 import React from 'react';
-import {useLanguage} from '../context/AppContext';
-import {portfolioData} from '../data';
-import {FadeInOnScroll, Section} from './VisualComponents';
-import {GithubIcon, LinkedInIcon, MailIcon, PhoneIcon} from './Icons';
+import { useLanguage } from '../context/AppContext';
+import { portfolioData } from '../data';
+import { FadeInOnScroll, Section } from './VisualComponents';
+import { GithubIcon, LinkedInIcon, MailIcon, PhoneIcon } from './Icons';
 
 const Contact = () => {
-    const {language} = useLanguage();
-    const {contact} = portfolioData[language];
+    const { language } = useLanguage();
+    const { contact } = portfolioData[language];
     const contactItems = [
-        {icon: <MailIcon/>, text: contact.email, href: `mailto:${contact.email}`},
-        {icon: <PhoneIcon/>, text: contact.phone, href: `tel:${contact.phone.replace(/\s/g, '')}`},
-        {icon: <GithubIcon/>, text: "github.com/JPClow3", href: "https://github.com/JPClow3", target: "_blank"},
+        { icon: <MailIcon />, text: contact.email, href: `mailto:${contact.email}` },
+        { icon: <PhoneIcon />, text: contact.phone, href: `tel:${contact.phone.replace(/\s/g, '')}` },
+        { icon: <GithubIcon />, text: "github.com/JPClow3", href: "https://github.com/JPClow3", target: "_blank" },
         {
-            icon: <LinkedInIcon/>,
+            icon: <LinkedInIcon />,
             text: contact.linkedin,
             href: "https://www.linkedin.com/in/joaopaulosantosgo/",
             target: "_blank"
@@ -44,4 +44,4 @@ const Contact = () => {
     );
 };
 
-export default Contact;
+export default React.memo(Contact);

@@ -1,15 +1,16 @@
 import React from 'react';
-import {useLanguage} from '../context/AppContext';
-import {portfolioData} from '../data';
-import {FadeInOnScroll, Section} from './VisualComponents';
+import { useLanguage } from '../context/AppContext';
+import { portfolioData } from '../data';
+import { FadeInOnScroll, Section } from './VisualComponents';
 
 const About = () => {
-    const {language} = useLanguage();
-    const {summary, education} = portfolioData[language];
+    const { language } = useLanguage();
+    const { summary, education } = portfolioData[language];
     return (
         <Section id="about" title={summary.title}>
             <div className="max-w-4xl mx-auto text-center">
                 <FadeInOnScroll>
+                    {/* 💡 CLASSE ADICIONADA AQUI */}
                     <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed mb-12">{summary.text}</p>
                 </FadeInOnScroll>
                 <FadeInOnScroll delay={200}>
@@ -26,4 +27,4 @@ const About = () => {
     );
 };
 
-export default About;
+export default React.memo(About);

@@ -5,7 +5,7 @@
   "homepage": "https://jpclow3.github.io/Portfolio",
   "dependencies": {
     "react": "^19.1.1",
-    "react-dom": "^18.3.1",
+    "react-dom": "^19.1.1",
     "react-scripts": "5.0.1",
     "web-vitals": "^5.1.0",
     "gsap": "^3.12.5"

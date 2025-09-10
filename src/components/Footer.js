@@ -8,4 +8,4 @@ const Footer = () => (
     </footer>
 );
 
-export default React.memo(Footer);
+export default Footer;

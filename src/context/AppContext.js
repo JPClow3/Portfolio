@@ -8,7 +8,7 @@ gsap.registerPlugin(ScrollTrigger);
 // --- CONTEXTOS ---
 export const ThemeContext = createContext();
 export const LanguageContext = createContext();
-export const LibsContext = createContext({gsap}); // Passa o GSAP diretamente
+export const LibsContext = createContext(); // Passa o GSAP diretamente
 
 // --- HOOKS DE ACESSO ---
 export const useTheme = () => useContext(ThemeContext);

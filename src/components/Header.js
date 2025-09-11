@@ -1,22 +1,16 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import {useLanguage, useTheme} from '../context/AppContext';
-import {portfolioData} from '../data';
-import {GradientText, StarBorder} from './VisualComponents';
-import {MoonIcon, SunIcon} from './Icons';
+import React, { useMemo } from 'react';
+import { useLanguage, useTheme } from '../context/AppContext';
+import { GradientText, StarBorder } from './VisualComponents';
+import { MoonIcon, SunIcon } from './Icons';
+import { useScrollDetection } from '../hooks/useScrollDetection';
+import { useNavigation } from '../hooks/useNavigation';
 
 const Header = () => {
-    const {theme, toggleTheme} = useTheme();
-    const {language, setLanguage} = useLanguage();
-    const {nav} = portfolioData[language];
-    const [isScrolled, setIsScrolled] = useState(false);
+    const { theme, toggleTheme } = useTheme();
+    const { language, setLanguage } = useLanguage();
+    const isScrolled = useScrollDetection();
+    const navLinks = useNavigation();
 
-    useEffect(() => {
-        const handleScroll = () => setIsScrolled(window.scrollY > 20);
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    const navLinks = Object.keys(nav).map(key => ({href: `#${key}`, text: nav[key]}));
     const gradientColors = useMemo(() => theme === 'dark'
             ? ["#38bdf8", "#818cf8", "#c084fc", "#f472b6", "#fb923c", "#a3e635", "#38bdf8"]
             : ["#2563eb", "#4f46e5", "#7c3aed", "#db2777", "#ea580c", "#65a30d", "#2563eb"],
@@ -36,8 +30,12 @@ const Header = () => {
                             </GradientText>
                         </a>
                         <nav className="hidden md:flex items-center space-x-6">
-                            {navLinks.map(link => (<a key={link.href} href={link.href}
-                                                      className="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors duration-300">{link.text}</a>))}
+                            {navLinks.map(link => (
+                                <a key={link.href} href={link.href}
+                                   className="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors duration-300">
+                                    {link.text}
+                                </a>
+                            ))}
                         </nav>
                         <div className="flex items-center space-x-4">
                             <button
@@ -49,11 +47,13 @@ const Header = () => {
                             </button>
                             <div className="flex items-center space-x-2 text-sm font-medium">
                                 <button onClick={() => setLanguage('en')}
-                                        className={`px-2 py-1 rounded-md transition-colors ${language === 'en' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'}`}>EN
+                                        className={`px-2 py-1 rounded-md transition-colors ${language === 'en' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                                    EN
                                 </button>
                                 <span className="text-slate-300 dark:text-slate-600">|</span>
                                 <button onClick={() => setLanguage('pt')}
-                                        className={`px-2 py-1 rounded-md transition-colors ${language === 'pt' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'}`}>PT
+                                        className={`px-2 py-1 rounded-md transition-colors ${language === 'pt' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                                    PT
                                 </button>
                             </div>
                         </div>

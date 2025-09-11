@@ -2,7 +2,7 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 
 export const useKonamiCode = (callback) => {
     const konamiCode = useMemo(() => ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'], []);
-    const [keys, setKeys] = useState([]);
+    const [, setKeys] = useState([]);
 
     const onKeyDown = useCallback((e) => {
         setKeys(prevKeys => {

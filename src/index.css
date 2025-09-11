@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 /* --- ESTILOS GLOBAIS --- */
 html {
     scroll-behavior: smooth;
@@ -10,6 +11,22 @@ html {
 body:not(.touch-device) {
     cursor: none;
 }
+:root {
+    /* Spotlight Card variables */
+    --mouse-x: 50%;
+    --mouse-y: 50%;
+    --spotlight-color: rgba(59, 130, 246, 0.15);
+
+    /* Profile Card variables */
+    --behind-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --inner-gradient: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    --pointer-x: 50%;
+    --pointer-y: 50%;
+    --pointer-from-center: 0;
+    --background-x: 50%;
+    --background-y: 50%;
+}
+
 
 body:not(.touch-device) a,
 body:not(.touch-device) button {

@@ -3,7 +3,7 @@ name: Build and Deploy Portfolio
 on:
   push:
     branches:
-      - master  # <-- ALTERE AQUI DE 'main' PARA 'master'
+      - master
 
 permissions:
   contents: read
@@ -25,6 +25,10 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      # ADICIONE ESTE NOVO PASSO AQUI
+      - name: Install Tailwind PostCSS plugin
+        run: npm install @tailwindcss/postcss
 
       - name: Build project
         env:

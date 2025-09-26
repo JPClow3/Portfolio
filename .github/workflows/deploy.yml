@@ -3,7 +3,7 @@ name: Build and Deploy Portfolio
 on:
   push:
     branches:
-      - main
+      - master  # <-- ALTERE AQUI DE 'main' PARA 'master'
 
 permissions:
   contents: read
@@ -28,7 +28,7 @@ jobs:
 
       - name: Build project
         env:
-          PUBLIC_URL: /${{ github.event.repository.name }}
+          PUBLIC_URL: /Portfolio
         run: npm run build
 
       - name: Upload build artifact

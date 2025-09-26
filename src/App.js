@@ -1,6 +1,7 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {LanguageContext, LibsContext, ThemeContext, useLibs} from './context/AppContext';
-import {useKonamiCode} from './hooks/useKonamiCode';
+import React, { useCallback, useEffect } from 'react';
+// 1. Importe os hooks de contexto que serão usados
+import { useTheme, useLanguage } from './context/AppContext';
+import { useKonamiCode } from './hooks/useKonamiCode';
 import './index.css'; // Importando nosso CSS consolidado
 // Importando os componentes de seção
 import Header from './components/Header';
@@ -14,14 +15,15 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 
 // Importando componentes visuais que o App usa diretamente
-import {Confetti, CustomCursor, DotGrid, SectionSeparator} from './components/VisualComponents';
+import { Confetti, CustomCursor, DotGrid, SectionSeparator } from './components/VisualComponents';
+import { useState } from 'react';
 
 
 function App() {
-    const [theme, setTheme] = useState('light');
-    const [language, setLanguage] = useState('en');
+    // 2. Obtenha o tema e o idioma diretamente do contexto
+    const { theme, toggleTheme } = useTheme();
+    const { setLanguage } = useLanguage();
     const [showConfetti, setShowConfetti] = useState(false);
-    const libs = useLibs(); // Pega o valor do GSAP do nosso contexto
 
     // Hook do Konami Code
     useKonamiCode(useCallback(() => {
@@ -29,11 +31,13 @@ function App() {
         setTimeout(() => setShowConfetti(false), 5000);
     }, []));
 
-    // Efeito para carregar o tema salvo e aplicar a classe 'dark'
+    // 3. Efeitos para gerenciar o tema e o idioma
     useEffect(() => {
         const savedTheme = localStorage.getItem('theme') || 'light';
-        setTheme(savedTheme);
-    }, []);
+        if (savedTheme !== theme) {
+            toggleTheme(); // Usa a função do contexto para sincronizar o estado
+        }
+    }, []); // Executa apenas uma vez na montagem
 
     useEffect(() => {
         if (theme === 'dark') {
@@ -44,41 +48,33 @@ function App() {
         localStorage.setItem('theme', theme);
     }, [theme]);
 
-    const toggleTheme = () => {
-        setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
-    };
 
+    // 4. Remova os Providers, pois eles agora estão em index.js
     return (
-        <LibsContext.Provider value={libs}>
-            <ThemeContext.Provider value={{theme, toggleTheme}}>
-                <LanguageContext.Provider value={{language, setLanguage}}>
-                    <div
-                        className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans transition-colors duration-300">
-                        <DotGrid/>
-                        <CustomCursor/>
-                        {showConfetti && <Confetti/>}
+        <div
+            className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans transition-colors duration-300">
+            <DotGrid/>
+            <CustomCursor/>
+            {showConfetti && <Confetti/>}
 
-                        <Header/>
-                        <main>
-                            <Hero/>
-                            <SectionSeparator/>
-                            <About/>
-                            <SectionSeparator/>
-                            <Profile/>
-                            <SectionSeparator/>
-                            <Experience/>
-                            <SectionSeparator/>
-                            <Projects/>
-                            <SectionSeparator/>
-                            <Skills/>
-                            <SectionSeparator/>
-                            <Contact/>
-                        </main>
-                        <Footer/>
-                    </div>
-                </LanguageContext.Provider>
-            </ThemeContext.Provider>
-        </LibsContext.Provider>
+            <Header/>
+            <main>
+                <Hero/>
+                <SectionSeparator/>
+                <About/>
+                <SectionSeparator/>
+                <Profile/>
+                <SectionSeparator/>
+                <Experience/>
+                <SectionSeparator/>
+                <Projects/>
+                <SectionSeparator/>
+                <Skills/>
+                <SectionSeparator/>
+                <Contact/>
+            </main>
+            <Footer/>
+        </div>
     );
 }
 

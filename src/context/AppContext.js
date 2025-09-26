@@ -4,19 +4,14 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 export const AppContext = createContext();
 export const LibsContext = createContext();
 export const ThemeContext = createContext();
-export const LanguageContext = createContext(); // Add this export
+export const LanguageContext = createContext();
 
 export function AppProvider({ children }) {
   const [libs, setLibs] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [theme, setTheme] = useState('light');
-  const [language, setLanguage] = useState('en'); // Add language state
-
-  // Export this function for direct use
-  const updateLibs = (newLibs) => {
-    setLibs(newLibs);
-  };
+  const [language, setLanguage] = useState('en');
 
   useEffect(() => {
     // dummy async init example; replace with your real init
@@ -24,10 +19,10 @@ export function AppProvider({ children }) {
       try {
         // load initial data if needed
         setLoading(false);
-      } catch (err) { // <-- Chaves adicionadas aqui
+      } catch (err) {
         console.error(err);
         setLoading(false);
-      } // <-- Chaves adicionadas aqui
+      }
     }
     init();
   }, []);

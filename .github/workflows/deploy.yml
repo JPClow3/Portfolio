@@ -1,21 +1,16 @@
-# Nome do seu workflow
 name: Build and Deploy Portfolio
 
-# Define o gatilho: rodar toda vez que houver um push na branch 'main'
 on:
   push:
     branches:
       - main
 
-# Permissões necessárias para o workflow poder publicar no GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Define os "jobs" ou tarefas que serão executadas
 jobs:
-  # Primeira tarefa: construir o projeto
   build:
     runs-on: ubuntu-latest
     steps:
@@ -25,24 +20,24 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18' # Pode usar a versão do Node que preferir
+          node-version: '18'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm install
 
       - name: Build project
-        # O comando de build usa a variável PUBLIC_URL para garantir que os caminhos dos arquivos fiquem corretos
-        run: PUBLIC_URL=/${{ github.event.repository.name }} npm run build
+        env:
+          PUBLIC_URL: /${{ github.event.repository.name }}
+        run: npm run build
 
       - name: Upload build artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './build'
 
-  # Segunda tarefa: fazer o deploy do que foi construído
   deploy:
-    needs: build # Esta tarefa só roda depois que a 'build' for concluída
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages

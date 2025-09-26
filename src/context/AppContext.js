@@ -2,14 +2,16 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Create the contexts
 export const AppContext = createContext();
-export const LibsContext = createContext(); // Add this export
-export const ThemeContext = createContext(); // Add this export
+export const LibsContext = createContext();
+export const ThemeContext = createContext();
+export const LanguageContext = createContext(); // Add this export
 
 export function AppProvider({ children }) {
   const [libs, setLibs] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [theme, setTheme] = useState('light'); // Add theme state
+  const [theme, setTheme] = useState('light');
+  const [language, setLanguage] = useState('en'); // Add language state
 
   // Export this function for direct use
   const updateLibs = (newLibs) => {
@@ -22,7 +24,7 @@ export function AppProvider({ children }) {
       try {
         // load initial data if needed
         setLoading(false);
-      } catch (err) {
+      } catch (err)
         console.error(err);
         setLoading(false);
       }
@@ -46,11 +48,18 @@ export function AppProvider({ children }) {
     setTheme,
   };
 
+  const languageValue = {
+    language,
+    setLanguage,
+  };
+
   return (
     <AppContext.Provider value={appValue}>
       <LibsContext.Provider value={libsValue}>
         <ThemeContext.Provider value={themeValue}>
-          {children}
+          <LanguageContext.Provider value={languageValue}>
+            {children}
+          </LanguageContext.Provider>
         </ThemeContext.Provider>
       </LibsContext.Provider>
     </AppContext.Provider>
@@ -73,6 +82,12 @@ export function useLibs() {
 export function useTheme() {
   const ctx = useContext(ThemeContext);
   if (!ctx) throw new Error('useTheme must be used within AppProvider');
+  return ctx;
+}
+
+export function useLanguage() {
+  const ctx = useContext(LanguageContext);
+  if (!ctx) throw new Error('useLanguage must be used within AppProvider');
   return ctx;
 }
 

@@ -24,10 +24,10 @@ export function AppProvider({ children }) {
       try {
         // load initial data if needed
         setLoading(false);
-      } catch (err)
+      } catch (err) { // <-- Chaves adicionadas aqui
         console.error(err);
         setLoading(false);
-      }
+      } // <-- Chaves adicionadas aqui
     }
     init();
   }, []);

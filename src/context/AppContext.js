@@ -1,21 +1,18 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+// Create the context and export it as LibsContext (for components that import it directly)
 const AppContext = createContext();
-
-// Define useLibs outside the AppProvider component so it can be exported
-export function useLibs(newLibs, setLibs) {
-  setLibs(newLibs);
-}
+export const LibsContext = AppContext; // Add this export for components expecting LibsContext
 
 export function AppProvider({ children }) {
   const [libs, setLibs] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Create a wrapper function that uses the component's state
-  const updateLibs = (newLibs) => {
-    useLibs(newLibs, setLibs);
-  };
+  // Define the useLibs function inside the component to have access to setLibs
+  function useLibs(newLibs) {
+    setLibs(newLibs);
+  }
 
   useEffect(() => {
     // dummy async init example; replace with your real init
@@ -34,7 +31,7 @@ export function AppProvider({ children }) {
   const value = {
     libs,
     setLibs,
-    useLibs: updateLibs, // provide the wrapper function in the context
+    useLibs, // Provide the function in the context
     user,
     setUser,
     loading,
@@ -43,10 +40,17 @@ export function AppProvider({ children }) {
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
 
+// Export the hook for using the context
 export function useAppContext() {
   const ctx = useContext(AppContext);
   if (!ctx) throw new Error('useAppContext must be used within AppProvider');
   return ctx;
+}
+
+// Export useLibs as a standalone function that consumers can import directly
+export function useLibs(newLibs) {
+  const { setLibs } = useAppContext();
+  setLibs(newLibs);
 }
 
 export default AppContext;

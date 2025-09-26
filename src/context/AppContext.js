@@ -2,15 +2,20 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AppContext = createContext();
 
+// Define useLibs outside the AppProvider component so it can be exported
+export function useLibs(newLibs, setLibs) {
+  setLibs(newLibs);
+}
+
 export function AppProvider({ children }) {
   const [libs, setLibs] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // example single definition of useLibs (function to update libs)
-  function useLibs(newLibs) {
-    setLibs(newLibs);
-  }
+  // Create a wrapper function that uses the component's state
+  const updateLibs = (newLibs) => {
+    useLibs(newLibs, setLibs);
+  };
 
   useEffect(() => {
     // dummy async init example; replace with your real init
@@ -29,7 +34,7 @@ export function AppProvider({ children }) {
   const value = {
     libs,
     setLibs,
-    useLibs, // expose the single function
+    useLibs: updateLibs, // provide the wrapper function in the context
     user,
     setUser,
     loading,

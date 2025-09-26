@@ -1,18 +1,20 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// Create the context and export it as LibsContext (for components that import it directly)
-const AppContext = createContext();
-export const LibsContext = AppContext; // Add this export for components expecting LibsContext
+// Create the contexts
+export const AppContext = createContext();
+export const LibsContext = createContext(); // Add this export
+export const ThemeContext = createContext(); // Add this export
 
 export function AppProvider({ children }) {
   const [libs, setLibs] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [theme, setTheme] = useState('light'); // Add theme state
 
-  // Define the useLibs function inside the component to have access to setLibs
-  function useLibs(newLibs) {
+  // Export this function for direct use
+  const updateLibs = (newLibs) => {
     setLibs(newLibs);
-  }
+  };
 
   useEffect(() => {
     // dummy async init example; replace with your real init
@@ -28,29 +30,50 @@ export function AppProvider({ children }) {
     init();
   }, []);
 
-  const value = {
-    libs,
-    setLibs,
-    useLibs, // Provide the function in the context
+  const appValue = {
     user,
     setUser,
     loading,
   };
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  const libsValue = {
+    libs,
+    setLibs,
+  };
+
+  const themeValue = {
+    theme,
+    setTheme,
+  };
+
+  return (
+    <AppContext.Provider value={appValue}>
+      <LibsContext.Provider value={libsValue}>
+        <ThemeContext.Provider value={themeValue}>
+          {children}
+        </ThemeContext.Provider>
+      </LibsContext.Provider>
+    </AppContext.Provider>
+  );
 }
 
-// Export the hook for using the context
+// Custom hooks to use each context
 export function useAppContext() {
   const ctx = useContext(AppContext);
   if (!ctx) throw new Error('useAppContext must be used within AppProvider');
   return ctx;
 }
 
-// Export useLibs as a standalone function that consumers can import directly
-export function useLibs(newLibs) {
-  const { setLibs } = useAppContext();
-  setLibs(newLibs);
+export function useLibs() {
+  const ctx = useContext(LibsContext);
+  if (!ctx) throw new Error('useLibs must be used within AppProvider');
+  return ctx;
+}
+
+export function useTheme() {
+  const ctx = useContext(ThemeContext);
+  if (!ctx) throw new Error('useTheme must be used within AppProvider');
+  return ctx;
 }
 
 export default AppContext;

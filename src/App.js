@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-// 1. Importe apenas os hooks necessários
-import { useTheme, useLanguage } from './context/AppContext';
+import { useTheme } from './context/AppContext';
 import { useKonamiCode } from './hooks/useKonamiCode';
 import './index.css'; // Importando nosso CSS consolidado
 
@@ -21,8 +20,7 @@ import { Confetti, CustomCursor, DotGrid, SectionSeparator } from './components/
 
 function App() {
     const { theme, toggleTheme } = useTheme();
-    // 2. Remova 'setLanguage' pois não é usado aqui
-    const { language } = useLanguage();
+    // A variável 'language' foi removida pois não é usada aqui
     const [showConfetti, setShowConfetti] = useState(false);
 
     // Hook do Konami Code
@@ -35,12 +33,9 @@ function App() {
     useEffect(() => {
         const savedTheme = localStorage.getItem('theme') || 'light';
         if (savedTheme !== theme) {
-            // Como toggleTheme não recebe argumentos, a chamada é segura.
-            // A lógica aqui assume que toggleTheme inverterá o estado inicial para corresponder ao salvo.
-            // Para uma lógica mais robusta, o AppProvider poderia expor um setTheme.
-            // Mas para este caso, vamos ajustar as dependências.
+            // A lógica aqui pode ser aprimorada se um setTheme estivesse disponível,
+            // mas para o escopo atual, manter as dependências corretas é o principal.
         }
-    // 3. Adicione as dependências que o hook utiliza
     }, [theme, toggleTheme]);
 
     // Efeito para aplicar a classe 'dark'

@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "https://jpclow3.github.io/Portfolio",
   "dependencies": {
-    "gsap": "^3.12.5",
+    "gsap": "^3.13.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-scripts": "5.0.1",
@@ -12,7 +12,6 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",
-    "gh-pages": "^6.1.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.13"
   },
@@ -20,9 +19,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

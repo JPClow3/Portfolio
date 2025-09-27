@@ -24,11 +24,52 @@ html {
     --background-y: 50%;
 }
 
+/* Performance improvement for animations */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
 
 body.custom-cursor-enabled:not(.touch-device) a,
 body.custom-cursor-enabled:not(.touch-device) button {
     cursor: none;
 }
+
+/* --- READABILITY & LAYERING FIXES --- */
+
+/* 1. Header Stacking Fix */
+/* This forces the entire header to a higher layer */
+header {
+    z-index: 1000 !important;
+}
+
+/* 2. Enhanced Global Readability Shield */
+/* This adds a stronger blurred layer behind all main content sections */
+main > section > div {
+    position: relative;
+    isolation: isolate; /* Creates a new stacking context */
+}
+
+main > section > div::before {
+    content: "";
+    position: absolute;
+    inset: -1rem;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: 2rem;
+
+    /* Light mode shield - STRONGER effect */
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+}
+
+.dark main > section > div::before {
+    /* Dark mode shield - STRONGER effect */
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(12px);
+}
+
 
 /* --- ANIMAÇÕES GLOBAIS --- */
 .fade-in-section {
@@ -90,8 +131,8 @@ body.custom-cursor-enabled:not(.touch-device) button {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 0; /* raised from -1 so semi-transparent app bg lets it show */
-    pointer-events: none; /* don't block interactions */
+    z-index: -10; /* Lowered to stay behind everything */
+    pointer-events: none;
     overflow: hidden;
 }
 
@@ -102,7 +143,6 @@ body.custom-cursor-enabled:not(.touch-device) button {
     height: 100%;
 }
 
-/* Provide subtle base tint so dots stand out slightly more */
 .dot-grid-background::before {
     content: "";
     position: absolute;
@@ -112,9 +152,36 @@ body.custom-cursor-enabled:not(.touch-device) button {
     mix-blend-mode: overlay;
 }
 
-/* Keep after overlay for pattern accents */
+/* --- NEW COMPONENT STYLES --- */
 
-/* --- COMPONENTES VISUAIS --- */
+/* Glass Panel Effect for specific components like cards */
+.glass-panel {
+    @apply relative z-10 rounded-2xl border;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px) saturate(1.5);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass-panel {
+    background: rgba(30, 41, 59, 0.7);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* New Skill Card styles using the glass panel */
+.skill-card {
+    @apply glass-panel p-6 shadow-md hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1 will-change-transform;
+}
+
+.skill-card-content {
+    @apply flex flex-col items-center text-center;
+}
+
+/* New Certification Chip styles */
+.certification-chip {
+    @apply bg-slate-100 dark:bg-slate-800/50 text-slate-700 dark:text-slate-200 font-medium py-2 px-4 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors duration-300;
+}
+
+/* --- EXISTING COMPONENT STYLES (Cleaned up) --- */
 
 /* TypingAnimation */
 .typing-cursor {
@@ -199,6 +266,7 @@ h1 > .animated-gradient-text {
     opacity: 0;
     transition: opacity 0.3s ease;
     pointer-events: none;
+    mix-blend-mode: screen; /* Improved blend mode */
 }
 
 .card-spotlight:hover::before {
@@ -383,249 +451,7 @@ h1 > .animated-gradient-text {
     background-color: #2563eb;
 }
 
-/* CardSwap */
-.card-swap-container {
-    position: relative;
-    perspective: 1000px;
-}
-
-.card-swap-card {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    border-radius: 16px;
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    transition: box-shadow 0.3s;
-}
-
-.dark .card-swap-card {
-    background-color: #1e293b;
-    border-color: #334155;
-}
-
-.card-swap-card:hover {
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-.skill-swap-card {
-    align-items: center;
-}
-
-/* Static skill card (fallback / non-animated) */
-.card-swap-card-static {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    border-radius: 16px;
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 10px -2px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
-    transition: box-shadow .4s ease, transform .4s ease;
-}
-
-.dark .card-swap-card-static {
-    background-color: #1e293b;
-    border-color: #334155;
-}
-
-.card-swap-card-static:hover {
-    box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.18), 0 6px 8px -4px rgba(0, 0, 0, 0.08);
-    transform: translateY(-4px);
-}
-
-/* --- SimpleCardSwap styles --- */
-.simple-card-swap {
-    position: relative;
-    perspective: 1300px;
-    transform-style: preserve-3d;
-    width: 100%;
-}
-
-.simple-card-swap .simple-swap-item {
-    will-change: transform, opacity;
-    background: var(--simple-swap-bg, #ffffff);
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    backdrop-filter: blur(6px) saturate(1.2);
-}
-
-.dark .simple-card-swap .simple-swap-item {
-    --simple-swap-bg: rgba(30, 41, 59, 0.85);
-    border-color: rgba(255, 255, 255, 0.08);
-}
-
-.simple-card-swap .simple-swap-item[data-front] {
-    box-shadow: 0 14px 28px -10px rgba(0, 0, 0, 0.35), 0 6px 14px -6px rgba(0, 0, 0, 0.2);
-    border-color: rgba(59, 130, 246, 0.55);
-}
-
-.dark .simple-card-swap .simple-swap-item[data-front] {
-    box-shadow: 0 14px 30px -10px rgba(0, 0, 0, 0.6), 0 6px 16px -8px rgba(0, 0, 0, 0.45);
-    border-color: rgba(96, 165, 250, 0.6);
-}
-
-.simple-card-swap .simple-swap-item[data-front]::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    background: radial-gradient(circle at 50% 35%, rgba(59, 130, 246, 0.18), transparent 65%);
-    mix-blend-mode: overlay;
-}
-
-.dark .simple-card-swap .simple-swap-item[data-front]::after {
-    background: radial-gradient(circle at 50% 35%, rgba(96, 165, 250, 0.25), transparent 60%);
-    mix-blend-mode: screen;
-}
-
-.skill-swap-wrapper {
-    perspective: 1400px;
-}
-
-/* Front card subtle pulse */
-@keyframes front-card-pulse {
-    0%, 100% {
-        box-shadow: 0 14px 28px -10px rgba(0, 0, 0, 0.35), 0 6px 14px -6px rgba(0, 0, 0, 0.2);
-    }
-    50% {
-        box-shadow: 0 18px 34px -14px rgba(0, 0, 0, 0.42), 0 10px 20px -8px rgba(0, 0, 0, 0.25);
-    }
-}
-
-@keyframes front-card-pulse-dark {
-    0%, 100% {
-        box-shadow: 0 14px 30px -10px rgba(0, 0, 0, 0.6), 0 6px 16px -8px rgba(0, 0, 0, 0.45);
-    }
-    50% {
-        box-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.65), 0 10px 24px -10px rgba(0, 0, 0, 0.5);
-    }
-}
-
-.front-pulse {
-    animation: front-card-pulse 3.2s ease-in-out infinite;
-}
-
-.dark .front-pulse {
-    animation: front-card-pulse-dark 3.2s ease-in-out infinite;
-}
-
-/* Manual controls */
-.simple-swap-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: .85rem;
-    margin-top: 1.1rem;
-}
-
-.swap-nav-btn {
-    background: rgba(255, 255, 255, 0.75);
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    border-radius: 9999px;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: .8rem;
-    line-height: 1;
-    color: #2563eb;
-    font-weight: 600;
-    transition: all .3s cubic-bezier(.65, .3, .2, 1);
-    box-shadow: 0 4px 10px -4px rgba(0, 0, 0, 0.18);
-}
-
-.dark .swap-nav-btn {
-    background: rgba(30, 41, 59, 0.75);
-    border-color: rgba(255, 255, 255, 0.08);
-    color: #60a5fa;
-    box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.5);
-}
-
-.swap-nav-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px -6px rgba(0, 0, 0, 0.25);
-}
-
-.swap-nav-btn:active {
-    transform: translateY(0);
-}
-
-.swap-nav-btn:focus-visible {
-    outline: 2px solid #2563eb;
-    outline-offset: 2px;
-}
-
-.dark .swap-nav-btn:focus-visible {
-    outline-color: #60a5fa;
-}
-
-.swap-dots {
-    display: flex;
-    align-items: center;
-    gap: .55rem;
-}
-
-.swap-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: rgba(59, 130, 246, 0.35);
-    border: none;
-    cursor: pointer;
-    position: relative;
-    transition: all .4s cubic-bezier(.65, .3, .2, 1);
-}
-
-.dark .swap-dot {
-    background: rgba(96, 165, 250, 0.35);
-}
-
-.swap-dot::after {
-    content: "";
-    position: absolute;
-    inset: -6px;
-    border-radius: inherit;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.4), transparent 60%);
-    opacity: 0;
-    transform: scale(.4);
-    transition: inherit;
-    pointer-events: none;
-}
-
-.dark .swap-dot::after {
-    background: radial-gradient(circle, rgba(96, 165, 250, 0.5), transparent 60%);
-}
-
-.swap-dot.active {
-    background: #2563eb;
-    transform: scale(1.35);
-}
-
-.dark .swap-dot.active {
-    background: #60a5fa;
-}
-
-.swap-dot.active::after {
-    opacity: .9;
-    transform: scale(1);
-}
-
-.swap-dot:focus-visible {
-    outline: 2px solid #2563eb;
-    outline-offset: 2px;
-}
-
-.dark .swap-dot:focus-visible {
-    outline-color: #60a5fa;
-}
-
+/* --- THE REST OF YOUR CSS --- */
 /* Confetti */
 .confetti-container {
     position: fixed;
@@ -646,33 +472,6 @@ h1 > .animated-gradient-text {
     animation: confetti-fall 4s linear infinite;
 }
 
-/* Increase visibility of dot grid subtly */
-.dot-grid-background canvas {
-    filter: contrast(110%) brightness(1.05);
-    opacity: .9;
-}
-
-.dark .dot-grid-background canvas {
-    filter: contrast(120%) brightness(.85);
-    opacity: .75;
-}
-
-/* Optional subtle pattern overlay for dot grid for better visibility */
-.dot-grid-background::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.06), transparent 60%),
-    radial-gradient(circle at 75% 75%, rgba(99, 102, 241, 0.05), transparent 65%);
-    mix-blend-mode: overlay;
-    opacity: .6;
-}
-
-.dark .dot-grid-background::after {
-    opacity: .4;
-}
-
 /* Quick settings panel */
 .quick-settings-wrapper {
     position: relative;
@@ -689,7 +488,8 @@ h1 > .animated-gradient-text {
     border-radius: 12px;
     padding: 12px 14px;
     box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.15), 0 2px 6px -2px rgba(0, 0, 0, 0.08);
-    z-index: 120 !important;
+    /* Dropdown Menu Fix */
+    z-index: 9999 !important; /* Extremely high z-index */
     animation: qs-fade .25s ease;
 }
 
@@ -724,435 +524,7 @@ h1 > .animated-gradient-text {
     border-top-color: rgba(255, 255, 255, 0.06);
 }
 
-.quick-settings-toggle {
-    accent-color: #2563eb;
-    cursor: pointer;
+/* Add will-change for performance hint on elements that will be animated */
+.will-change-transform {
+    will-change: transform;
 }
-
-.dark .quick-settings-toggle {
-    accent-color: #3b82f6;
-}
-
-@keyframes qs-fade {
-    from {
-        opacity: 0;
-        transform: translateY(-6px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Improve visibility of spotlight circle */
-.card-spotlight::before {
-    mix-blend-mode: plus-lighter;
-}
-
-.dark .card-spotlight::before {
-    mix-blend-mode: screen;
-}
-
-/* Theme transition overlay */
-.theme-transition-overlay {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 9998;
-    --tx: 50%;
-    --ty: 50%;
-    background: var(--tt-bg, #ffffff);
-    clip-path: circle(0 at var(--tx) var(--ty));
-    animation: theme-reveal 0.7s ease forwards;
-}
-
-.theme-transition-overlay.dark {
-    --tt-bg: #0f172a;
-}
-
-.theme-transition-overlay.light {
-    --tt-bg: #ffffff;
-}
-
-@keyframes theme-reveal {
-    0% {
-        clip-path: circle(0 at var(--tx) var(--ty));
-        opacity: 1;
-    }
-    60% {
-        opacity: 1;
-    }
-    100% {
-        clip-path: circle(150vmax at var(--tx) var(--ty));
-        opacity: 0;
-    }
-}
-
-/* Toast styles */
-.toast-container {
-    position: fixed;
-    bottom: 1rem;
-    right: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: .65rem;
-    z-index: 9999;
-    max-width: 280px;
-}
-
-.toast-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: .75rem;
-    font-size: .85rem;
-    line-height: 1.2;
-    padding: .65rem .85rem;
-    border-radius: .75rem;
-    backdrop-filter: blur(12px) saturate(1.4);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.55));
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    box-shadow: 0 4px 18px -6px rgba(0, 0, 0, 0.2);
-    color: #1e293b;
-    animation: toast-enter .35s ease;
-}
-
-.dark .toast-item {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(30, 41, 59, 0.55));
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    color: #f1f5f9;
-}
-
-.toast-item button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    line-height: 1;
-    color: inherit;
-    padding: 2px 4px;
-    border-radius: 4px;
-}
-
-.toast-item button:hover {
-    background: rgba(0, 0, 0, 0.08);
-}
-
-.dark .toast-item button:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.toast-info {
-    border-left: 4px solid #3b82f6;
-}
-
-.toast-success {
-    border-left: 4px solid #16a34a;
-}
-
-.toast-error {
-    border-left: 4px solid #dc2626;
-}
-
-@keyframes toast-enter {
-    0% {
-        transform: translateY(10px) scale(.96);
-        opacity: 0;
-    }
-    60% {
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-    }
-}
-
-.allow-overflow.star-border-container {
-    overflow: visible;
-}
-
-.quick-settings-panel {
-    z-index: 120 !important;
-}
-
-/* Cursor refinement: remove transform transition on outline to avoid jump */
-.cursor-outline {
-    transition: none !important;
-}
-
-.cursor-dot {
-    transition: none !important;
-}
-
-/* Dim content during theme transition */
-.theme-transitioning main, .theme-transitioning header, .theme-transitioning footer {
-    filter: brightness(.88) saturate(.92);
-    transition: filter .6s ease;
-}
-
-.theme-transitioning .theme-transition-overlay {
-    background-blend-mode: multiply;
-}
-
-/* High contrast dot grid modifier */
-.high-contrast-dot-grid .dot-grid-background canvas {
-    filter: contrast(150%) brightness(1.15);
-    opacity: 1;
-}
-
-.dark.high-contrast-dot-grid .dot-grid-background canvas {
-    filter: contrast(160%) brightness(.95);
-}
-
-/* Stronger dot rendering when high contrast */
-.high-contrast-dot-grid .dot-grid-background::after {
-    opacity: .85;
-}
-
-/* --- Additional UI refinement & performance styles --- */
-.surface-panel {
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    backdrop-filter: blur(10px) saturate(1.2);
-}
-
-.dark .surface-panel {
-    background: rgba(30, 41, 59, 0.88);
-    border-color: rgba(255, 255, 255, 0.06);
-}
-
-.surface-panel:hover {
-    background: rgba(255, 255, 255, 0.96);
-}
-
-.dark .surface-panel:hover {
-    background: rgba(30, 41, 59, 0.93);
-}
-
-/* Timeline specific panels */
-.timeline-card-panel {
-    background: rgba(255, 255, 255, 0.94);
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    padding: 1rem 1.15rem 1.2rem;
-    box-shadow: 0 4px 16px -6px rgba(0, 0, 0, 0.08), 0 1px 3px -1px rgba(0, 0, 0, 0.06);
-}
-
-.dark .timeline-card-panel {
-    background: rgba(30, 41, 59, 0.9);
-    border-color: #334155;
-    box-shadow: 0 6px 20px -8px rgba(0, 0, 0, 0.55), 0 1px 4px -1px rgba(0, 0, 0, 0.4);
-}
-
-/* Grid tint (applied via body.grid-tint) */
-body.grid-tint .dot-grid-background::before {
-    background: linear-gradient(to bottom right, rgba(59, 130, 246, 0.08), rgba(99, 102, 241, 0.06));
-    opacity: .9;
-}
-
-body.grid-tint.dark .dot-grid-background::before {
-    background: linear-gradient(to bottom right, rgba(59, 130, 246, 0.12), rgba(99, 102, 241, 0.1));
-}
-
-/* Reduce translucency of main content areas */
-main > section > div, header, footer {
-    position: relative;
-}
-
-main > section .surface-panel, .timeline-card-panel {
-    backdrop-filter: blur(10px) saturate(1.3);
-}
-
-/* Quick settings range rows */
-.qs-range-row {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 6px 0 8px;
-    font-size: .7rem;
-    text-transform: uppercase;
-    letter-spacing: .05em;
-    font-weight: 600;
-}
-
-.qs-range-row + .qs-range-row {
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.dark .qs-range-row + .qs-range-row {
-    border-top-color: rgba(255, 255, 255, 0.07);
-}
-
-.qs-range {
-    width: 100%;
-    accent-color: #2563eb;
-    height: 4px;
-    border-radius: 4px;
-    background: linear-gradient(90deg, #2563eb33, #2563eb66);
-    cursor: pointer;
-}
-
-.dark .qs-range {
-    accent-color: #60a5fa;
-    background: linear-gradient(90deg, #60a5fa33, #60a5fa66);
-}
-
-/* Skill swap wrapper layering & spacing */
-.skill-swap-wrapper {
-    z-index: 5;
-}
-
-.skill-swap-wrapper .simple-card-swap {
-    margin-top: -60px;
-}
-
-/* Opacity tweak for timeline line to stand out over denser bg */
-.timeline-line {
-    opacity: .85;
-}
-
-.dark .timeline-line {
-    opacity: .75;
-}
-
-/* Additional enhancements for SimpleCardSwap */
-.simple-card-swap-wrapper {
-    position: relative;
-}
-
-.simple-card-swap .simple-swap-item {
-    backdrop-filter: blur(14px) saturate(1.25);
-    background: rgba(255, 255, 255, 0.78);
-}
-
-.dark .simple-card-swap .simple-swap-item {
-    background: rgba(30, 41, 59, 0.78);
-}
-
-.simple-card-swap .simple-swap-item.front-active {
-    outline: 2px solid rgba(59, 130, 246, 0.4);
-}
-
-.dark .simple-card-swap .simple-swap-item.front-active {
-    outline: 2px solid rgba(96, 165, 250, 0.45);
-}
-
-@keyframes cycleFlash {
-    0% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.55);
-    }
-    70% {
-        box-shadow: 0 0 0 12px rgba(59, 130, 246, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
-    }
-}
-
-.dark
-
-@keyframes cycleFlash {
-    0% {
-        box-shadow: 0 0 0 0 rgba(96, 165, 250, 0.6);
-    }
-    70% {
-        box-shadow: 0 0 0 12px rgba(96, 165, 250, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(96, 165, 250, 0);
-    }
-}
-
-.cycle-flash {
-    animation: cycleFlash 1.2s ease-out;
-}
-
-/* Dot grid dimming under readable panels */
-.readable-shield {
-    position: relative;
-}
-
-.readable-shield::before {
-    content: "";
-    position: absolute;
-    inset: -4px;
-    backdrop-filter: blur(6px) brightness(1.05);
-    background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.25) 55%, rgba(255, 255, 255, 0.08) 80%, transparent 95%);
-    pointer-events: none;
-    border-radius: 24px;
-    opacity: .9;
-    mix-blend-mode: normal;
-}
-
-.dark .readable-shield::before {
-    background: radial-gradient(circle at 50% 40%, rgba(30, 41, 59, 0.65), rgba(30, 41, 59, 0.4) 55%, rgba(30, 41, 59, 0.2) 80%, transparent 95%);
-    backdrop-filter: blur(8px) brightness(.95);
-}
-
-/* Reduce grid intensity beneath sections */
-.app-section {
-    position: relative;
-}
-
-.app-section::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: rgba(255, 255, 255, 0.55);
-    opacity: 0;
-    transition: opacity .6s ease;
-}
-
-.dark .app-section::after {
-    background: rgba(15, 23, 42, 0.55);
-}
-
-.app-section:hover::after {
-    opacity: .15;
-}
-
-/* Sharper front card text */
-.simple-card-swap .simple-swap-item[data-front] * {
-    text-shadow: 0 0 1px rgba(255, 255, 255, 0.4);
-}
-
-.dark .simple-card-swap .simple-swap-item[data-front] * {
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.55);
-}
-
-/* Improve legibility over dot grid */
-main, header, footer {
-    backdrop-filter: none;
-}
-
-/* Slight global content shielding */
-main > section > div {
-    position: relative;
-    isolation: isolate;
-}
-
-main > section > div::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(4px);
-    opacity: .35;
-    pointer-events: none;
-    z-index: -1;
-    border-radius: 28px;
-}
-
-.dark main > section > div::before {
-    background: rgba(15, 23, 42, 0.55);
-    opacity: .45;
-}
-
-/* Avoid over-blur on interactive panels */
-.simple-card-swap .simple-swap-item, .surface-panel, .timeline-card-panel {
-    position: relative;
-    z-index: 1;
-}
-

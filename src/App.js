@@ -1,6 +1,13 @@
+<<<<<<< HEAD
 import React, {useCallback, useEffect, useState} from 'react';
 import {useTheme} from './context/AppContext';
 import {useKonamiCode} from './hooks/useKonamiCode';
+=======
+import React, { useCallback, useEffect, useState } from 'react';
+// 1. Importe apenas os hooks necessários
+import { useTheme, useLanguage } from './context/AppContext';
+import { useKonamiCode } from './hooks/useKonamiCode';
+>>>>>>> parent of 8309978 (Refactor App component to remove unused code)
 import './index.css'; // Importando nosso CSS consolidado
 // Importando os componentes de seção
 import Header from './components/Header';
@@ -19,7 +26,13 @@ import {useToast} from './components/Toaster';
 
 
 function App() {
+<<<<<<< HEAD
     const {theme, toggleThemeWithOrigin, themeTransition} = useTheme();
+=======
+    const { theme, toggleTheme } = useTheme();
+    // 2. Remova 'setLanguage' pois não é usado aqui
+    const { language } = useLanguage();
+>>>>>>> parent of 8309978 (Refactor App component to remove unused code)
     const [showConfetti, setShowConfetti] = useState(false);
     const [overlayVisible, setOverlayVisible] = useState(false);
     const [waitingSW, setWaitingSW] = useState(null);
@@ -33,12 +46,24 @@ function App() {
 
     // Gerenciar o ciclo de vida da sobreposição de transição de tema
     useEffect(() => {
+<<<<<<< HEAD
         if (themeTransition) {
             setOverlayVisible(true);
             const t = setTimeout(() => setOverlayVisible(false), 700);
             return () => clearTimeout(t);
         }
     }, [themeTransition]);
+=======
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme !== theme) {
+            // Como toggleTheme não recebe argumentos, a chamada é segura.
+            // A lógica aqui assume que toggleTheme inverterá o estado inicial para corresponder ao salvo.
+            // Para uma lógica mais robusta, o AppProvider poderia expor um setTheme.
+            // Mas para este caso, vamos ajustar as dependências.
+        }
+    // 3. Adicione as dependências que o hook utiliza
+    }, [theme, toggleTheme]);
+>>>>>>> parent of 8309978 (Refactor App component to remove unused code)
 
     // Efeito para aplicar a classe 'dark'
     useEffect(() => {

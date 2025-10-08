@@ -2,6 +2,7 @@ import React, {createContext, useContext, useEffect, useState} from 'react';
 import {gsap} from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 
+// Register ScrollTrigger plugin immediately on import
 gsap.registerPlugin(ScrollTrigger);
 
 export const AppContext = createContext();
@@ -20,8 +21,7 @@ export function AppProvider({ children }) {
         if (typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
         return 'light';
     });
-  const [language, setLanguage] = useState('en');
-    const [enableDotGrid, setEnableDotGrid] = useState(() => localStorage.getItem('enableDotGrid') !== 'false');
+    const [language, setLanguage] = useState('en');
     const [enableCardAnimations, setEnableCardAnimations] = useState(() => localStorage.getItem('enableCardAnimations') !== 'false');
     const [enableCustomCursor, setEnableCustomCursor] = useState(() => localStorage.getItem('enableCustomCursor') !== 'false');
     const [enableHighContrastGrid, setEnableHighContrastGrid] = useState(() => localStorage.getItem('enableHighContrastGrid') === 'true');
@@ -59,9 +59,6 @@ export function AppProvider({ children }) {
     };
 
     // Persist effects toggles
-    useEffect(() => {
-        localStorage.setItem('enableDotGrid', String(enableDotGrid));
-    }, [enableDotGrid]);
     useEffect(() => {
         localStorage.setItem('enableCardAnimations', String(enableCardAnimations));
     }, [enableCardAnimations]);
@@ -114,16 +111,16 @@ export function AppProvider({ children }) {
         }
     }, [theme]);
 
-  useEffect(() => {
-      const isCoarse = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-      const hasTouch = typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0;
-      const allowCustom = !isCoarse || !hasTouch; // allow on desktops / precision pointers
-      if (enableCustomCursor && allowCustom) {
-          document.body.classList.add('custom-cursor-enabled');
-      } else {
-          document.body.classList.remove('custom-cursor-enabled');
-      }
-  }, [enableCustomCursor]);
+    useEffect(() => {
+        const isCoarse = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+        const hasTouch = typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0;
+        const allowCustom = !isCoarse && !hasTouch; // allow on desktops / precision pointers
+        if (enableCustomCursor && allowCustom) {
+            document.body.classList.add('custom-cursor-enabled');
+        } else {
+            document.body.classList.remove('custom-cursor-enabled');
+        }
+    }, [enableCustomCursor]);
 
     useEffect(() => {
         if (enableHighContrastGrid) document.body.classList.add('high-contrast-dot-grid');
@@ -142,14 +139,14 @@ export function AppProvider({ children }) {
     }, [performanceMode]);
 
     useEffect(() => {
-    async function init() {
-        setLoading(false);
-    }
-    init();
-  }, []);
+        async function init() {
+            setLoading(false);
+        }
+
+        init();
+    }, []);
 
     const resetEffects = () => {
-        setEnableDotGrid(true);
         setEnableCardAnimations(true);
         setEnableCustomCursor(true);
         setEnableHighContrastGrid(false);
@@ -165,15 +162,13 @@ export function AppProvider({ children }) {
         setGridAnimate(true);
         setGridTint(false);
         setPerformanceMode(false);
-  };
+    };
 
     const appValue = {user, setUser, loading};
     const libsValue = {libs, setLibs, gsap, ScrollTrigger};
     const themeValue = {theme, setTheme, toggleTheme, toggleThemeWithOrigin, themeTransition};
     const languageValue = {language, setLanguage};
     const effectsValue = {
-        enableDotGrid,
-        setEnableDotGrid,
         enableCardAnimations,
         setEnableCardAnimations,
         enableCustomCursor,
@@ -207,19 +202,19 @@ export function AppProvider({ children }) {
         resetEffects
     };
 
-  return (
-    <AppContext.Provider value={appValue}>
-      <LibsContext.Provider value={libsValue}>
-        <ThemeContext.Provider value={themeValue}>
-          <LanguageContext.Provider value={languageValue}>
-              <EffectsContext.Provider value={effectsValue}>
-                  {children}
-              </EffectsContext.Provider>
-          </LanguageContext.Provider>
-        </ThemeContext.Provider>
-      </LibsContext.Provider>
-    </AppContext.Provider>
-  );
+    return (
+        <AppContext.Provider value={appValue}>
+            <LibsContext.Provider value={libsValue}>
+                <ThemeContext.Provider value={themeValue}>
+                    <LanguageContext.Provider value={languageValue}>
+                        <EffectsContext.Provider value={effectsValue}>
+                            {children}
+                        </EffectsContext.Provider>
+                    </LanguageContext.Provider>
+                </ThemeContext.Provider>
+            </LibsContext.Provider>
+        </AppContext.Provider>
+    );
 }
 
 export function useAppContext() {

@@ -52,6 +52,16 @@ export const ExternalLinkIcon = () => (
         <line x1="10" y1="14" x2="21" y2="3"></line>
     </svg>);
 
+export const ThemeToggleButton = ({onClick, theme}) => (
+    <button
+        onClick={onClick}
+        className="p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-100 dark:focus:ring-offset-slate-900 focus:ring-blue-500"
+        aria-label="Toggle theme"
+    >
+        {theme === 'dark' ? <SunIcon/> : <MoonIcon/>}
+    </button>
+);
+
 export const SkillIcons = {
     qa: () => <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -1,14 +1,8 @@
-<<<<<<< HEAD
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {Suspense, useCallback, useEffect, useState} from 'react';
 import {useTheme} from './context/AppContext';
 import {useKonamiCode} from './hooks/useKonamiCode';
-=======
-import React, { useCallback, useEffect, useState } from 'react';
-// 1. Importe apenas os hooks necessários
-import { useTheme, useLanguage } from './context/AppContext';
-import { useKonamiCode } from './hooks/useKonamiCode';
->>>>>>> parent of 8309978 (Refactor App component to remove unused code)
 import './index.css'; // Importando nosso CSS consolidado
+import ErrorBoundary from './components/ErrorBoundary';
 // Importando os componentes de seção
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -21,18 +15,18 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 
 // Importando componentes visuais que o App usa diretamente
-import {Confetti, CustomCursor, DotGrid, SectionSeparator} from './components/VisualComponents';
+import {Confetti, CustomCursor, SectionSeparator} from './components/VisualComponents';
 import {useToast} from './components/Toaster';
 
+// Loading fallback component
+const SectionLoader = () => (
+    <div className="flex items-center justify-center py-24">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+    </div>
+);
 
 function App() {
-<<<<<<< HEAD
     const {theme, toggleThemeWithOrigin, themeTransition} = useTheme();
-=======
-    const { theme, toggleTheme } = useTheme();
-    // 2. Remova 'setLanguage' pois não é usado aqui
-    const { language } = useLanguage();
->>>>>>> parent of 8309978 (Refactor App component to remove unused code)
     const [showConfetti, setShowConfetti] = useState(false);
     const [overlayVisible, setOverlayVisible] = useState(false);
     const [waitingSW, setWaitingSW] = useState(null);
@@ -46,24 +40,12 @@ function App() {
 
     // Gerenciar o ciclo de vida da sobreposição de transição de tema
     useEffect(() => {
-<<<<<<< HEAD
         if (themeTransition) {
             setOverlayVisible(true);
             const t = setTimeout(() => setOverlayVisible(false), 700);
             return () => clearTimeout(t);
         }
     }, [themeTransition]);
-=======
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        if (savedTheme !== theme) {
-            // Como toggleTheme não recebe argumentos, a chamada é segura.
-            // A lógica aqui assume que toggleTheme inverterá o estado inicial para corresponder ao salvo.
-            // Para uma lógica mais robusta, o AppProvider poderia expor um setTheme.
-            // Mas para este caso, vamos ajustar as dependências.
-        }
-    // 3. Adicione as dependências que o hook utiliza
-    }, [theme, toggleTheme]);
->>>>>>> parent of 8309978 (Refactor App component to remove unused code)
 
     // Efeito para aplicar a classe 'dark'
     useEffect(() => {
@@ -109,39 +91,82 @@ function App() {
     }, [push, waitingSW]);
 
     return (
-        <div
-            className="relative z-0 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-200 font-sans transition-colors duration-300 overflow-x-hidden">
-            <DotGrid/>
-            <CustomCursor/>
-            {showConfetti && <Confetti/>}
-            {overlayVisible && themeTransition && (
-                <div
-                    className={`theme-transition-overlay ${themeTransition.to}`}
-                    style={{
-                        '--tx': `${themeTransition.x}px`,
-                        '--ty': `${themeTransition.y}px`
-                    }}
-                    aria-hidden="true"
-                />
-            )}
-            <Header onThemeOriginClick={(e) => toggleThemeWithOrigin({x: e.clientX, y: e.clientY})}/>
-            <main className="relative z-10">
-                <Hero/>
-                <SectionSeparator/>
-                <About/>
-                <SectionSeparator/>
-                <Profile/>
-                <SectionSeparator/>
-                <Experience/>
-                <SectionSeparator/>
-                <Projects/>
-                <SectionSeparator/>
-                <Skills/>
-                <SectionSeparator/>
-                <Contact/>
-            </main>
-            <Footer/>
-        </div>
+        <ErrorBoundary fallbackMessage="We're sorry, but something went wrong loading the portfolio.">
+            <div
+                className="relative z-0 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-200 font-sans transition-colors duration-300 overflow-x-hidden">
+                <CustomCursor/>
+                {showConfetti && <Confetti/>}
+                {overlayVisible && themeTransition && (
+                    <div
+                        className={`theme-transition-overlay ${themeTransition.to}`}
+                        style={{
+                            '--tx': `${themeTransition.x}px`,
+                            '--ty': `${themeTransition.y}px`
+                        }}
+                        aria-hidden="true"
+                    />
+                )}
+                <Suspense fallback={<div className="h-16"/>}>
+                    <Header onThemeOriginClick={(e) => toggleThemeWithOrigin({x: e.clientX, y: e.clientY})}/>
+                </Suspense>
+                <main className="relative z-10">
+                    <ErrorBoundary fallbackMessage="Unable to load the Hero section.">
+                        <Suspense fallback={<SectionLoader/>}>
+                            <Hero/>
+                        </Suspense>
+                    </ErrorBoundary>
+
+                    <ErrorBoundary fallbackMessage="Unable to load the About section.">
+                        <Suspense fallback={<SectionLoader/>}>
+                            <About/>
+                        </Suspense>
+                    </ErrorBoundary>
+
+                    <SectionSeparator/>
+
+                    <ErrorBoundary fallbackMessage="Unable to load the Profile section.">
+                        <Suspense fallback={<SectionLoader/>}>
+                            <Profile/>
+                        </Suspense>
+                    </ErrorBoundary>
+
+                    <SectionSeparator/>
+
+                    <ErrorBoundary fallbackMessage="Unable to load the Experience section.">
+                        <Suspense fallback={<SectionLoader/>}>
+                            <Experience/>
+                        </Suspense>
+                    </ErrorBoundary>
+
+                    <SectionSeparator/>
+
+                    <ErrorBoundary fallbackMessage="Unable to load the Projects section.">
+                        <Suspense fallback={<SectionLoader/>}>
+                            <Projects/>
+                        </Suspense>
+                    </ErrorBoundary>
+
+                    <SectionSeparator/>
+
+                    <ErrorBoundary fallbackMessage="Unable to load the Skills section.">
+                        <Suspense fallback={<SectionLoader/>}>
+                            <Skills/>
+                        </Suspense>
+                    </ErrorBoundary>
+
+                    <SectionSeparator/>
+
+                    <ErrorBoundary fallbackMessage="Unable to load the Contact section.">
+                        <Suspense fallback={<SectionLoader/>}>
+                            <Contact/>
+                        </Suspense>
+                    </ErrorBoundary>
+                </main>
+                <Suspense fallback={null}>
+                    <Footer/>
+                </Suspense>
+            </div>
+        </ErrorBoundary>
     );
 }
 

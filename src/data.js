@@ -79,9 +79,17 @@ export const portfolioData = {
                 icon: "lowcode"
             }, {
                 name: "Front-End",
-                items: ["HTML", "CSS", "JavaScript", "TypeScript"],
+                items: ["HTML", "CSS", "JavaScript", "TypeScript", "React"],
                 icon: "frontend"
-            }, {name: "Tools & Methodologies", items: ["Git", "GitHub", "Agile"], icon: "tools"}, {
+            }, {
+                name: "Back-End & Databases",
+                items: ["Python", "Node.js", "SQL", "REST APIs"],
+                icon: "tools"
+            }, {
+                name: "Tools & Methodologies",
+                items: ["Git", "GitHub", "Agile", "SAP"],
+                icon: "tools"
+            }, {
                 name: "Languages",
                 items: ["Advanced English", "Native Portuguese"],
                 icon: "languages"
@@ -177,11 +185,15 @@ export const portfolioData = {
                 icon: "lowcode"
             }, {
                 name: "Front-End",
-                items: ["HTML", "CSS", "JavaScript", "TypeScript"],
+                items: ["HTML", "CSS", "JavaScript", "TypeScript", "React"],
                 icon: "frontend"
             }, {
+                name: "Back-End & Databases",
+                items: ["Python", "Node.js", "SQL", "REST APIs"],
+                icon: "tools"
+            }, {
                 name: "Tools & Methodologies",
-                items: ["Ferramentas e Metodologias", "GitHub", "Ágil"],
+                items: ["Ferramentas e Metodologias", "GitHub", "Ágil", "SAP"],
                 icon: "tools"
             }, {name: "Idiomas", items: ["Inglês Avançado", "Português Nativo"], icon: "languages"}],
             certifications_title: "Certificações",

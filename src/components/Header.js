@@ -1,259 +1,161 @@
-import React, {useMemo} from 'react';
-import {useEffects, useLanguage, useTheme} from '../context/AppContext';
-import {GradientText, StarBorder} from './VisualComponents';
-import {MoonIcon, SunIcon} from './Icons';
-import {useScrollDetection} from '../hooks/useScrollDetection';
+import React, {useEffect, useState} from 'react';
+import {useLanguage, useTheme} from '../context/AppContext';
+import {portfolioData} from '../data';
 import {useNavigation} from '../hooks/useNavigation';
-import {useToast} from './Toaster';
+import {useScrollDetection} from '../hooks/useScrollDetection';
+import {ThemeToggleButton} from './Icons';
 
 const Header = ({onThemeOriginClick}) => {
-    const { theme, toggleTheme } = useTheme();
-    const { language, setLanguage } = useLanguage();
-    const {
-        enableDotGrid,
-        setEnableDotGrid,
-        enableCardAnimations,
-        setEnableCardAnimations,
-        enableCustomCursor,
-        setEnableCustomCursor,
-        enableHighContrastGrid,
-        setEnableHighContrastGrid,
-        skillSwapFast,
-        setSkillSwapFast,
-        skillSwapRandomOrder,
-        setSkillSwapRandomOrder,
-        skillSwapControls,
-        setSkillSwapControls,
-        skillSwapPulse,
-        setSkillSwapPulse,
-        skillSwapRandomEasing,
-        setSkillSwapRandomEasing,
-        skillSwapBaseOffset,
-        setSkillSwapBaseOffset,
-        skillSwapVerticalOffset,
-        setSkillSwapVerticalOffset,
-        skillSwapMaxVisible,
-        setSkillSwapMaxVisible,
-        skillSwapPauseOnHover,
-        setSkillSwapPauseOnHover,
-        gridAnimate,
-        setGridAnimate,
-        gridTint,
-        setGridTint,
-        performanceMode,
-        setPerformanceMode,
-        resetEffects
-    } = useEffects();
-    const {push} = useToast();
-    const isScrolled = useScrollDetection();
-    const navLinks = useNavigation();
-    const [open, setOpen] = React.useState(false);
+    const {language, setLanguage} = useLanguage();
+    const {theme} = useTheme();
+    const {nav: navData} = portfolioData[language];
+    const activeId = useNavigation(Object.keys(navData));
+    const isScrolled = useScrollDetection(80);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const handleThemeClick = (e) => {
-        if (onThemeOriginClick) onThemeOriginClick(e); else toggleTheme();
-    };
+    const navLinks = Object.entries(navData).map(([key, name]) => ({id: key, name}));
 
-    const gradientColors = useMemo(() => theme === 'dark'
-            ? ["#38bdf8", "#818cf8", "#c084fc", "#f472b6", "#fb923c", "#a3e635", "#38bdf8"]
-            : ["#2563eb", "#4f46e5", "#7c3aed", "#db2777", "#ea580c", "#65a30d", "#2563eb"],
-        [theme]);
+    // Close menu on escape key
+    useEffect(() => {
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && isMenuOpen) {
+                setIsMenuOpen(false);
+            }
+        };
+        window.addEventListener('keydown', handleEscape);
+        return () => window.removeEventListener('keydown', handleEscape);
+    }, [isMenuOpen]);
+
+    // Prevent body scroll when menu is open
+    useEffect(() => {
+        if (isMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isMenuOpen]);
 
     return (
-        <header
-            className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm' : 'bg-transparent'}`}>
-            <StarBorder as="div" className="w-full allow-overflow" thickness={isScrolled ? 1 : 0} speed="8s"
-                        data-scrolled={isScrolled}>
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-20">
-                        <a href="#hero" className="text-xl font-bold text-slate-800 dark:text-white">
-                            <GradientText colors={gradientColors} animationSpeed={5}>
-                                <span className="hidden sm:inline">João Paulo G. Santos</span>
-                                <span className="sm:hidden">JP</span>
-                            </GradientText>
-                        </a>
-                        <nav className="hidden md:flex items-center space-x-6">
-                            {navLinks.map(link => (
-                                <a key={link.href} href={link.href}
-                                   className="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors duration-300">
-                                    {link.text}
-                                </a>
-                            ))}
-                        </nav>
-                        <div className="flex items-center space-x-3 sm:space-x-4">
-                            <div className="quick-settings-wrapper hidden sm:block">
-                                <button
-                                    onClick={() => setOpen(o => !o)}
-                                    className="p-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                                    aria-haspopup="dialog"
-                                    aria-expanded={open}
-                                    aria-label="Interface settings"
-                                >⚙️
-                                </button>
-                                {open && (
-                                    <div className="quick-settings-panel" role="dialog" aria-label="Interface settings">
-                                        <h4 className="text-slate-700 dark:text-slate-300">Interface</h4>
-                                        <label className="text-slate-600 dark:text-slate-300">Cursor
-                                            <input type="checkbox" className="quick-settings-toggle"
-                                                   checked={enableCustomCursor}
-                                                   onChange={e => {
-                                                       setEnableCustomCursor(e.target.checked);
-                                                       push(e.target.checked ? 'Custom cursor enabled' : 'Custom cursor disabled', {type: 'info'});
-                                                   }}/>
-                                        </label>
-                                        <label className="text-slate-600 dark:text-slate-300">Dot Grid
-                                            <input type="checkbox" className="quick-settings-toggle"
-                                                   checked={enableDotGrid}
-                                                   onChange={e => {
-                                                       setEnableDotGrid(e.target.checked);
-                                                       push(`Dot grid ${e.target.checked ? 'on' : 'off'}`, {type: 'info'});
-                                                   }}/>
-                                        </label>
-                                        <label className="text-slate-600 dark:text-slate-300">Card Anim.
-                                            <input type="checkbox" className="quick-settings-toggle"
-                                                   checked={enableCardAnimations}
-                                                   onChange={e => {
-                                                       setEnableCardAnimations(e.target.checked);
-                                                       push(`Card animations ${e.target.checked ? 'on' : 'off'}`, {type: 'info'});
-                                                   }}/>
-                                        </label>
-                                        <label className="text-slate-600 dark:text-slate-300">High Contrast Grid
-                                            <input type="checkbox" className="quick-settings-toggle"
-                                                   checked={enableHighContrastGrid}
-                                                   onChange={e => {
-                                                       setEnableHighContrastGrid(e.target.checked);
-                                                       push(`Grid contrast ${e.target.checked ? 'high' : 'normal'}`, {type: 'info'});
-                                                   }}/>
-                                        </label>
-                                        <label className="text-slate-600 dark:text-slate-300">Performance
-                                            <input type="checkbox" className="quick-settings-toggle"
-                                                   checked={performanceMode}
-                                                   onChange={e => {
-                                                       setPerformanceMode(e.target.checked);
-                                                       push(`Performance mode ${e.target.checked ? 'enabled' : 'disabled'}`, {type: 'info'});
-                                                   }}/>
-                                        </label>
-                                        <h4 className="text-slate-700 dark:text-slate-300 mt-3">Skill Deck</h4>
-                                        <label className="text-slate-600 dark:text-slate-300">Fast Cycle
-                                            <input type="checkbox" className="quick-settings-toggle"
-                                                   checked={skillSwapFast}
-                                                   onChange={e => {
-                                                       setSkillSwapFast(e.target.checked);
-                                                       push(`Skill cycle speed: ${e.target.checked ? 'fast' : 'normal'}`, {type: 'info'});
-                                                   }}/>
-                                        </label>
-                                        <label className="text-slate-600 dark:text-slate-300">Random Order
-                                            <input type="checkbox" className="quick-settings-toggle"
-                                                   checked={skillSwapRandomOrder}
-                                                   onChange={e => {
-                                                       setSkillSwapRandomOrder(e.target.checked);
-                                                       push(`Skill order ${e.target.checked ? 'random' : 'sequential'}`, {type: 'info'});
-                                                   }}/>
-                                        </label>
-                                        <label className="text-slate-600 dark:text-slate-300">Controls
-                                            <input type="checkbox" className="quick-settings-toggle"
-                                                   checked={skillSwapControls}
-                                                   onChange={e => {
-                                                       setSkillSwapControls(e.target.checked);
-                                                       push(`Skill controls ${e.target.checked ? 'visible' : 'hidden'}`, {type: 'info'});
-                                                   }}/>
-                                        </label>
-                                        <label className="text-slate-600 dark:text-slate-300">Pause Hover
-                                            <input type="checkbox" className="quick-settings-toggle"
-                                                   checked={skillSwapPauseOnHover}
-                                                   onChange={e => {
-                                                       setSkillSwapPauseOnHover(e.target.checked);
-                                                       push(`Hover pause ${e.target.checked ? 'on' : 'off'}`, {type: 'info'});
-                                                   }}/>
-                                        </label>
-                                        <label className="text-slate-600 dark:text-slate-300">Pulse
-                                            <input type="checkbox" className="quick-settings-toggle"
-                                                   checked={skillSwapPulse}
-                                                   onChange={e => {
-                                                       setSkillSwapPulse(e.target.checked);
-                                                       push(`Front card pulse ${e.target.checked ? 'on' : 'off'}`, {type: 'info'});
-                                                   }}/>
-                                        </label>
-                                        <label className="text-slate-600 dark:text-slate-300">Random Easing
-                                            <input type="checkbox" className="quick-settings-toggle"
-                                                   checked={skillSwapRandomEasing}
-                                                   onChange={e => {
-                                                       setSkillSwapRandomEasing(e.target.checked);
-                                                       push(`Easing ${e.target.checked ? 'random' : 'uniform'}`, {type: 'info'});
-                                                   }}/>
-                                        </label>
-                                        <div
-                                            className="mt-2 mb-1 text-[11px] uppercase tracking-wide font-semibold opacity-70 text-slate-500 dark:text-slate-400">Deck
-                                            Layout
-                                        </div>
-                                        <label className="qs-range-row">Base Offset<span
-                                            className="ml-auto tabular-nums text-xs">{skillSwapBaseOffset}</span>
-                                            <input type="range" min="-140" max="40" step="5" value={skillSwapBaseOffset}
-                                                   onChange={e => setSkillSwapBaseOffset(parseInt(e.target.value))}
-                                                   className="qs-range"/>
-                                        </label>
-                                        <label className="qs-range-row">Vertical Gap<span
-                                            className="ml-auto tabular-nums text-xs">{skillSwapVerticalOffset}</span>
-                                            <input type="range" min="20" max="70" step="2"
-                                                   value={skillSwapVerticalOffset}
-                                                   onChange={e => setSkillSwapVerticalOffset(parseInt(e.target.value))}
-                                                   className="qs-range"/>
-                                        </label>
-                                        <label className="qs-range-row">Max Visible<span
-                                            className="ml-auto tabular-nums text-xs">{skillSwapMaxVisible}</span>
-                                            <input type="range" min="2" max="6" step="1" value={skillSwapMaxVisible}
-                                                   onChange={e => setSkillSwapMaxVisible(parseInt(e.target.value))}
-                                                   className="qs-range"/>
-                                        </label>
-                                        <h4 className="text-slate-700 dark:text-slate-300 mt-3">Grid</h4>
-                                        <label className="text-slate-600 dark:text-slate-300">Animate
-                                            <input type="checkbox" className="quick-settings-toggle"
-                                                   checked={gridAnimate}
-                                                   onChange={e => {
-                                                       setGridAnimate(e.target.checked);
-                                                       push(`Grid animation ${e.target.checked ? 'on' : 'off'}`, {type: 'info'});
-                                                   }}/>
-                                        </label>
-                                        <label className="text-slate-600 dark:text-slate-300">Tint
-                                            <input type="checkbox" className="quick-settings-toggle" checked={gridTint}
-                                                   onChange={e => {
-                                                       setGridTint(e.target.checked);
-                                                       push(`Grid tint ${e.target.checked ? 'on' : 'off'}`, {type: 'info'});
-                                                   }}/>
-                                        </label>
-                                        <div className="mt-3">
-                                            <button type="button" onClick={() => {
-                                                resetEffects();
-                                                push('Effects reset', {type: 'info'});
-                                            }}
-                                                    className="w-full text-xs font-semibold py-2 rounded-md bg-blue-600 text-white hover:bg-blue-500 dark:bg-blue-500 dark:hover:bg-blue-400 transition-colors">Reset
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                            <button
-                                onClick={handleThemeClick}
-                                className="p-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors duration-300"
-                                aria-label={theme === 'dark' ? 'Activate Light Mode' : 'Activate Dark Mode'}
+        <>
+            {/* Skip to main content link for accessibility */}
+            <a
+                href="#about"
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[60] focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md focus:shadow-lg"
+            >
+                Skip to main content
+            </a>
+
+            <header
+                className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled || isMenuOpen ? 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-md' : 'bg-transparent'}`}>
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-between h-16">
+                        <div className="flex-shrink-0">
+                            <a
+                                href="#hero"
+                                className="text-2xl font-bold text-slate-800 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-transparent rounded-md px-2 py-1"
                             >
-                                {theme === 'dark' ? <SunIcon/> : <MoonIcon/>}
-                            </button>
-                            <div className="flex items-center space-x-2 text-sm font-medium">
-                                <button onClick={() => setLanguage('en')}
-                                        className={`px-2 py-1 rounded-md transition-colors ${language === 'en' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'}`}>
-                                    EN
-                                </button>
-                                <span className="text-slate-300 dark:text-slate-600">|</span>
-                                <button onClick={() => setLanguage('pt')}
-                                        className={`px-2 py-1 rounded-md transition-colors ${language === 'pt' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'}`}>
-                                    PT
+                                JP
+                            </a>
+                        </div>
+                        {/* Desktop Menu */}
+                        <nav className="hidden md:block" aria-label="Main navigation">
+                            <div className="ml-10 flex items-baseline space-x-4">
+                                {navLinks.map(item => (
+                                    <a
+                                        key={item.name}
+                                        href={`#${item.id}`}
+                                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-transparent ${activeId === item.id ? 'text-white bg-blue-500' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800'}`}
+                                    >
+                                        {item.name}
+                                    </a>
+                                ))}
+                            </div>
+                        </nav>
+                        <div className="flex items-center gap-2">
+                            <ThemeToggleButton onClick={onThemeOriginClick} theme={theme}/>
+                            <div className="relative ml-2 hidden sm:block">
+                                <select
+                                    value={language}
+                                    onChange={(e) => setLanguage(e.target.value)}
+                                    className="bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-white rounded-md py-1 px-2 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    aria-label="Select language"
+                                >
+                                    <option value="en">EN</option>
+                                    <option value="pt">PT</option>
+                                </select>
+                            </div>
+                            {/* Mobile Menu Button */}
+                            <div className="ml-2 md:hidden">
+                                <button
+                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                    className="p-2 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                                    aria-expanded={isMenuOpen}
+                                >
+                                    <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                        {isMenuOpen ? (
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                                  d="M6 18L18 6M6 6l12 12"/>
+                                        ) : (
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                                  d="M4 6h16M4 12h16M4 18h16"/>
+                                        )}
+                                    </svg>
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </StarBorder>
-        </header>
+            </header>
+
+            {/* Mobile Menu Panel - Improved UX */}
+            {isMenuOpen && (
+                <>
+                    {/* Backdrop */}
+                    <div
+                        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden animate-fade-in"
+                        onClick={() => setIsMenuOpen(false)}
+                        aria-hidden="true"
+                    />
+                    {/* Menu Panel */}
+                    <nav
+                        className="fixed top-16 left-0 right-0 bottom-0 z-50 bg-white dark:bg-slate-900 md:hidden animate-slide-in-top overflow-y-auto"
+                        aria-label="Mobile navigation"
+                    >
+                        <div className="flex flex-col p-6 space-y-4">
+                            {navLinks.map(item => (
+                                <a
+                                    key={item.name}
+                                    href={`#${item.id}`}
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className={`block px-4 py-3 rounded-lg text-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${activeId === item.id ? 'text-white bg-blue-500' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                                >
+                                    {item.name}
+                                </a>
+                            ))}
+                            <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                                <label htmlFor="mobile-language-select"
+                                       className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                    Language
+                                </label>
+                                <select
+                                    id="mobile-language-select"
+                                    value={language}
+                                    onChange={(e) => setLanguage(e.target.value)}
+                                    className="w-full bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white rounded-lg py-3 px-4 text-base border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="en">English</option>
+                                    <option value="pt">Português</option>
+                                </select>
+                            </div>
+                        </div>
+                    </nav>
+                </>
+            )}
+        </>
     );
 };
 

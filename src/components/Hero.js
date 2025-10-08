@@ -1,48 +1,33 @@
-import React, {useMemo} from 'react';
-import {useLanguage, useTheme} from '../context/AppContext';
+import React from 'react';
+import {useLanguage} from '../context/AppContext';
 import {portfolioData} from '../data';
-import {FadeInOnScroll, GradientText, TypingAnimation} from './VisualComponents';
+import {TypingAnimation} from './VisualComponents';
+import LaserFlow from './LaserFlow';
 
 const Hero = () => {
     const {language} = useLanguage();
     const {hero} = portfolioData[language];
-    const {theme} = useTheme();
-    const gradientColors = useMemo(() => theme === 'dark'
-            ? ["#38bdf8", "#818cf8", "#c084fc", "#f472b6", "#fb923c", "#a3e635", "#38bdf8"]
-            : ["#2563eb", "#4f46e5", "#7c3aed", "#db2777", "#ea580c", "#65a30d", "#2563eb"],
-        [theme]);
 
     return (
-        <section id="hero"
-                 className="min-h-screen flex items-center justify-center text-center relative overflow-hidden">
-            <div className="container mx-auto px-4 z-10">
-                <FadeInOnScroll>
-                    <h2 className="text-xl md:text-2xl text-blue-600 dark:text-blue-400 font-medium mb-4">{hero.greeting}</h2>
-                </FadeInOnScroll>
-                <TypingAnimation
-                    text={hero.name}
-                    className="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-4 tracking-tight"
-                    gradientColors={gradientColors}
-                    animationSpeed={6}
-                />
-                <FadeInOnScroll delay={400}>
-                    <GradientText colors={gradientColors} animationSpeed={6}
-                                  className="text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-                        {hero.title}
-                    </GradientText>
-                </FadeInOnScroll>
-                <FadeInOnScroll delay={600}>
-                    <div className="mt-12 flex justify-center gap-4">
-                        <a href="#contact"
-                           className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105">
-                            {language === 'en' ? 'Contact Me' : 'Entre em Contato'}
-                        </a>
-                        <a href="https://github.com/JPClow3" target="_blank" rel="noopener noreferrer"
-                           className="px-8 py-3 bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200 font-semibold rounded-lg shadow-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-all duration-300 transform hover:scale-105">
-                            GitHub
-                        </a>
-                    </div>
-                </FadeInOnScroll>
+        <section id="hero" className="relative h-screen flex items-center justify-center text-center overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-full z-[-1]">
+                <LaserFlow/>
+            </div>
+            <div className="absolute top-0 left-0 w-full h-full bg-black/30 z-0"></div>
+
+
+            <div className="relative z-10 p-4 max-w-4xl mx-auto">
+                <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">
+                    {hero.name}
+                </h1>
+                <div className="h-16 sm:h-20 flex items-center justify-center px-4">
+                    <TypingAnimation
+                        text={hero.title}
+                        className="text-xl sm:text-2xl md:text-4xl text-slate-200 drop-shadow-md"
+                        gradientColors={['#a7f3d0', '#bfdbfe', '#a7f3d0']}
+                        animationSpeed={8}
+                    />
+                </div>
             </div>
         </section>
     );

@@ -49,13 +49,13 @@ const Header = ({onThemeOriginClick}) => {
             </a>
 
             <header
-                className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled || isMenuOpen ? 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-md' : 'bg-transparent'}`}>
+                className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled || isMenuOpen ? 'bg-gradient-to-r from-indigo-50/95 via-blue-50/95 to-purple-50/95 dark:from-dark-surface/95 dark:via-dark-bg/95 dark:to-indigo-950/95 backdrop-blur-md shadow-lg shadow-blue-500/10 dark:shadow-purple-500/10' : 'bg-transparent'}`}>
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         <div className="flex-shrink-0">
                             <a
                                 href="#hero"
-                                className="text-2xl font-bold text-slate-800 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-transparent rounded-md px-2 py-1"
+                                className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-cyan-400 dark:to-purple-400 bg-clip-text text-transparent hover:from-purple-600 hover:to-blue-600 dark:hover:from-purple-400 dark:hover:to-cyan-400 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent rounded-md px-2 py-1"
                             >
                                 JP
                             </a>
@@ -67,7 +67,7 @@ const Header = ({onThemeOriginClick}) => {
                                     <a
                                         key={item.name}
                                         href={`#${item.id}`}
-                                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-transparent ${activeId === item.id ? 'text-white bg-blue-500' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800'}`}
+                                        className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent ${activeId === item.id ? 'text-white bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg shadow-purple-500/30' : 'text-slate-700 dark:text-slate-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-indigo-900/50 dark:hover:to-purple-900/50'}`}
                                     >
                                         {item.name}
                                     </a>
@@ -80,7 +80,7 @@ const Header = ({onThemeOriginClick}) => {
                                 <select
                                     value={language}
                                     onChange={(e) => setLanguage(e.target.value)}
-                                    className="bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-white rounded-md py-1 px-2 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/50 dark:to-purple-900/50 text-slate-800 dark:text-white rounded-md py-1 px-2 border-2 border-indigo-200 dark:border-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
                                     aria-label="Select language"
                                 >
                                     <option value="en">EN</option>
@@ -91,7 +91,7 @@ const Header = ({onThemeOriginClick}) => {
                             <div className="ml-2 md:hidden">
                                 <button
                                     onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                    className="p-2 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="p-2 rounded-md text-slate-700 dark:text-slate-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-indigo-900/50 dark:hover:to-purple-900/50 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300"
                                     aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                                     aria-expanded={isMenuOpen}
                                 >
@@ -116,13 +116,13 @@ const Header = ({onThemeOriginClick}) => {
                 <>
                     {/* Backdrop */}
                     <div
-                        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden animate-fade-in"
+                        className="fixed inset-0 z-40 bg-gradient-to-br from-blue-900/50 via-purple-900/50 to-indigo-900/50 backdrop-blur-sm md:hidden animate-fade-in"
                         onClick={() => setIsMenuOpen(false)}
                         aria-hidden="true"
                     />
                     {/* Menu Panel */}
                     <nav
-                        className="fixed top-16 left-0 right-0 bottom-0 z-50 bg-white dark:bg-slate-900 md:hidden animate-slide-in-top overflow-y-auto"
+                        className="fixed top-16 left-0 right-0 bottom-0 z-50 bg-gradient-to-br from-white via-indigo-50/50 to-purple-50/50 dark:from-dark-surface dark:via-dark-bg dark:to-indigo-950 md:hidden animate-slide-in-top overflow-y-auto"
                         aria-label="Mobile navigation"
                     >
                         <div className="flex flex-col p-6 space-y-4">
@@ -131,12 +131,13 @@ const Header = ({onThemeOriginClick}) => {
                                     key={item.name}
                                     href={`#${item.id}`}
                                     onClick={() => setIsMenuOpen(false)}
-                                    className={`block px-4 py-3 rounded-lg text-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${activeId === item.id ? 'text-white bg-blue-500' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                                    className={`block px-4 py-3 rounded-lg text-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 ${activeId === item.id ? 'text-white bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg shadow-purple-500/30' : 'text-slate-700 dark:text-slate-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-indigo-900/50 dark:hover:to-purple-900/50'}`}
                                 >
                                     {item.name}
                                 </a>
                             ))}
-                            <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                            <div
+                                className="pt-4 border-t-2 border-gradient-to-r from-blue-200 to-purple-200 dark:from-indigo-700 dark:to-purple-700">
                                 <label htmlFor="mobile-language-select"
                                        className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                                     Language
@@ -145,7 +146,7 @@ const Header = ({onThemeOriginClick}) => {
                                     id="mobile-language-select"
                                     value={language}
                                     onChange={(e) => setLanguage(e.target.value)}
-                                    className="w-full bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white rounded-lg py-3 px-4 text-base border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/50 dark:to-purple-900/50 text-slate-800 dark:text-white rounded-lg py-3 px-4 text-base border-2 border-indigo-200 dark:border-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
                                 >
                                     <option value="en">English</option>
                                     <option value="pt">Português</option>
@@ -160,3 +161,4 @@ const Header = ({onThemeOriginClick}) => {
 };
 
 export default Header;
+

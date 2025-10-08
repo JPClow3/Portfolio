@@ -13,18 +13,21 @@ const Hero = () => {
             <div className="absolute top-0 left-0 w-full h-full z-[-1]">
                 <LaserFlow/>
             </div>
-            <div className="absolute top-0 left-0 w-full h-full bg-black/30 z-0"></div>
+            {/* Enhanced overlay with gradient for better text visibility */}
+            <div
+                className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-900/40 via-blue-900/50 to-indigo-900/40 dark:from-black/50 dark:via-blue-950/60 dark:to-purple-950/50 z-0"></div>
 
 
             <div className="relative z-10 p-4 max-w-4xl mx-auto">
-                <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">
+                {/* Enhanced name with gradient text and better shadow */}
+                <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-cyan-300 via-blue-200 to-purple-300 dark:from-cyan-400 dark:via-blue-300 dark:to-purple-400 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] filter brightness-125">
                     {hero.name}
                 </h1>
                 <div className="h-16 sm:h-20 flex items-center justify-center px-4">
                     <TypingAnimation
                         text={hero.title}
-                        className="text-xl sm:text-2xl md:text-4xl text-slate-200 drop-shadow-md"
-                        gradientColors={['#a7f3d0', '#bfdbfe', '#a7f3d0']}
+                        className="text-xl sm:text-2xl md:text-4xl text-blue-100 dark:text-slate-200 drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]"
+                        gradientColors={['#67e8f9', '#a78bfa', '#67e8f9']}
                         animationSpeed={8}
                     />
                 </div>

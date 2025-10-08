@@ -93,7 +93,7 @@ function App() {
     return (
         <ErrorBoundary fallbackMessage="We're sorry, but something went wrong loading the portfolio.">
             <div
-                className="relative z-0 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-200 font-sans transition-colors duration-300 overflow-x-hidden">
+                className="relative z-0 bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 dark:from-dark-bg dark:via-dark-surface dark:to-indigo-950 text-slate-800 dark:text-slate-200 font-sans transition-colors duration-300 overflow-x-hidden">
                 <CustomCursor/>
                 {showConfetti && <Confetti/>}
                 {overlayVisible && themeTransition && (
@@ -171,3 +171,4 @@ function App() {
 }
 
 export default App;
+

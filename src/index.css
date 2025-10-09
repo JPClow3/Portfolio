@@ -52,8 +52,8 @@ main > section > div::before {
 /* --- ANIMAÇÕES GLOBAIS --- */
 .fade-in-section {
     opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    transform: translateY(12px);
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
 }
 
 .fade-in-section.is-visible {
@@ -84,6 +84,15 @@ h1, h2, h3, h4, h5, h6, p, span, div {
 @keyframes gradient-text-flow {
     to {
         background-position: 200% center;
+    }
+}
+
+@keyframes shine {
+    0% {
+        background-position: 100%;
+    }
+    100% {
+        background-position: -100%;
     }
 }
 

@@ -48,6 +48,15 @@ module.exports = {
               'gradient-hero-light': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               'gradient-hero-dark': 'linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%)',
           },
+          keyframes: {
+              shine: {
+                  '0%': {'background-position': '100%'},
+                  '100%': {'background-position': '-100%'},
+              },
+          },
+          animation: {
+              shine: 'shine 5s linear infinite',
+          },
       },
   },
   plugins: [],

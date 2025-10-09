@@ -1,18 +1,22 @@
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef} from 'react';
 
 export const useKonamiCode = (callback) => {
     const konamiCode = useMemo(() => ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'], []);
-    const [, setKeys] = useState([]);
+    const currentIndex = useRef(0);
 
     const onKeyDown = useCallback((e) => {
-        setKeys(prevKeys => {
-            const newKeys = [...prevKeys, e.key].slice(-konamiCode.length);
-            if (JSON.stringify(newKeys) === JSON.stringify(konamiCode)) {
+        const expectedKey = konamiCode[currentIndex.current];
+
+        if (e.key === expectedKey) {
+            currentIndex.current += 1;
+
+            if (currentIndex.current === konamiCode.length) {
                 callback();
-                return [];
+                currentIndex.current = 0;
             }
-            return newKeys;
-        });
+        } else {
+            currentIndex.current = 0;
+        }
     }, [callback, konamiCode]);
 
     useEffect(() => {

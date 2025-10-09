@@ -112,7 +112,7 @@ uniform float uFade;
         return powr*min(1.0,r);
     }
     float tri01(float x){float f=fract(x);return 1.0-abs(f*2.0-1.0);}
-    float tauWf(float t,float tmin,float tmax){float a=smoothstep(tmin,tmin+EDGE_SOFT,t),b=1.0-smoothstep(tmax-EDGE_SOFT,tmax,t);return max(0.0,a*b);}
+    float tauWf(float t,float tmin,float tmax){float a=smoothstep(tmin,tmin+EDGE_SOFT,t),b=1.0-smoothstep(tmax-EDGE_SOFT,tmax,t);return max(0.0,a*b);} 
     float h21(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+34.123);return fract(p.x*p.y);}
     float vnoise(vec2 p){
         vec2 i=floor(p),f=fract(p);
@@ -563,4 +563,3 @@ export const LaserFlow = ({
 };
 
 export default LaserFlow;
-

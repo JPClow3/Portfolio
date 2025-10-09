@@ -26,6 +26,17 @@ const Header = ({onThemeOriginClick}) => {
         return () => window.removeEventListener('keydown', handleEscape);
     }, [isMenuOpen]);
 
+    // Handle resize - close mobile menu if screen becomes desktop size
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth >= 768 && isMenuOpen) {
+                setIsMenuOpen(false);
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [isMenuOpen]);
+
     // Prevent body scroll when menu is open
     useEffect(() => {
         if (isMenuOpen) {
@@ -122,6 +133,7 @@ const Header = ({onThemeOriginClick}) => {
                     />
                     {/* Menu Panel */}
                     <nav
+                        id="mobile-menu"
                         className="fixed top-16 left-0 right-0 bottom-0 z-50 bg-gradient-to-br from-white via-indigo-50/50 to-purple-50/50 dark:from-dark-surface dark:via-dark-bg dark:to-indigo-950 md:hidden animate-slide-in-top overflow-y-auto"
                         aria-label="Mobile navigation"
                     >

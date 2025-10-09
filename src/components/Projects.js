@@ -3,43 +3,38 @@ import {useLanguage} from '../context/AppContext';
 import {portfolioData} from '../data';
 import {FadeInOnScroll, Section} from './VisualComponents';
 import {ExternalLinkIcon} from './Icons';
-import StarBorder from './StarBorder';
 
 const Projects = () => {
     const {language} = useLanguage();
     const {projects} = portfolioData[language];
     return (
         <Section id="projects" title={projects.title}>
-            <div className="grid sm:grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 max-w-6xl mx-auto">
+            <div className="grid sm:grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 max-w-6xl mx-auto auto-rows-fr">
                 {projects.items.map((project, index) => (
-                    <FadeInOnScroll key={index} delay={index * 150}>
-                        <StarBorder
-                            as="a"
-                            href={project.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block group h-full hover:scale-[1.02] transition-transform duration-300"
-                            color="rgba(59, 130, 246, 0.6)"
-                            speed="8s"
-                        >
-                            <div className="p-6 md:p-8 flex flex-col h-full">
-                                {/* Project Title - Fixed height */}
-                                <div className="min-h-[4rem] mb-4">
+                    <FadeInOnScroll key={index} delay={index * 100}>
+                        <div
+                            className="relative overflow-hidden rounded-2xl backdrop-blur-lg bg-gradient-to-br from-white/5 to-white/10 dark:from-white/5 dark:to-white/10 border border-white/10 hover:border-white/20 transition-all duration-300 flex flex-col h-full group hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-500/20">
+                            {/* Gradient overlay on hover */}
+                            <div
+                                className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-blue-500/0 group-hover:from-purple-500/10 group-hover:to-blue-500/10 transition-all duration-300 pointer-events-none"/>
+
+                            <div className="p-6 md:p-8 flex flex-col h-full relative z-10">
+                                {/* Project Title */}
+                                <div className="mb-4">
                                     <h3 className="text-xl md:text-2xl font-bold text-white flex items-start gap-2 leading-tight">
                                         <span className="break-words flex-1">{project.name}</span>
-                                        <ExternalLinkIcon/>
                                     </h3>
                                 </div>
 
-                                {/* Project Description - Fixed height with line clamp */}
-                                <div className="flex-grow mb-6 min-h-[8rem]">
-                                    <p className="text-slate-300 text-sm md:text-base leading-relaxed line-clamp-6">
+                                {/* Project Description - Flexible height */}
+                                <div className="flex-grow mb-6">
+                                    <p className="text-slate-300 text-sm md:text-base leading-relaxed">
                                         {project.description}
                                     </p>
                                 </div>
 
                                 {/* Tech Stack - Fixed at bottom */}
-                                <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-slate-700/50">
+                                <div className="flex flex-wrap gap-2 pt-4 border-t border-slate-700/50">
                                     {project.tech.map((tech, i) => (
                                         <span
                                             key={i}
@@ -49,8 +44,23 @@ const Projects = () => {
                                         </span>
                                     ))}
                                 </div>
+
+                                {/* External link with new tab indicator */}
+                                <a
+                                    href={project.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="absolute top-6 right-6 md:top-8 md:right-8 inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors group/link z-20"
+                                    aria-label={`${project.name} - Opens in new tab`}
+                                >
+                                    <ExternalLinkIcon className="w-5 h-5"/>
+                                    <span
+                                        className="text-xs opacity-0 group-hover/link:opacity-100 transition-opacity whitespace-nowrap bg-slate-900/90 px-2 py-1 rounded">
+                                        New tab
+                                    </span>
+                                </a>
                             </div>
-                        </StarBorder>
+                        </div>
                     </FadeInOnScroll>
                 ))}
             </div>

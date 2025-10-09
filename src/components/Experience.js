@@ -44,12 +44,12 @@ const Experience = () => {
 
     return (
         <Section id="experience" title={experience.title}>
-            <div ref={timelineRef} className="relative max-w-4xl mx-auto py-8">
+            <div ref={timelineRef} className="relative max-w-4xl mx-auto py-6 sm:py-8 px-4 sm:px-0">
                 {/* Timeline line - simplified for mobile */}
                 <div
                     className="timeline-line absolute top-0 h-full w-0.5 bg-gradient-to-b from-purple-500 via-blue-500 to-purple-500 dark:from-cyan-400 dark:via-purple-400 dark:to-cyan-400 left-4 md:left-1/2 md:-translate-x-1/2 opacity-40 shadow-lg shadow-blue-500/50"></div>
 
-                <div className="space-y-8 md:space-y-12">
+                <div className="space-y-10 sm:space-y-12 md:space-y-12">
                     {experience.jobs.map((job, index) => (
                         <div key={index} className="timeline-item relative">
                             {/* Timeline dot */}
@@ -63,9 +63,9 @@ const Experience = () => {
                             <div className="ml-12 md:ml-0 md:grid md:grid-cols-2 md:gap-8 md:items-start">
                                 {/* Period on the left for desktop, top for mobile */}
                                 <div
-                                    className={`mb-2 md:mb-0 ${index % 2 === 0 ? 'md:order-1 md:text-right' : 'md:order-2 md:text-left'}`}>
+                                    className={`mb-3 sm:mb-2 md:mb-0 ${index % 2 === 0 ? 'md:order-1 md:text-right' : 'md:order-2 md:text-left'}`}>
                                     <span
-                                        className="inline-block px-3 py-1 text-xs md:text-sm font-semibold text-purple-700 dark:text-purple-300 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/40 dark:to-purple-900/40 rounded-full border-2 border-purple-300 dark:border-purple-700 shadow-md">
+                                        className="inline-block px-3 py-1.5 sm:py-1 text-xs md:text-sm font-semibold text-purple-700 dark:text-purple-300 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/40 dark:to-purple-900/40 rounded-full border-2 border-purple-300 dark:border-purple-700 shadow-md">
                                         {job.period}
                                     </span>
                                 </div>
@@ -73,9 +73,9 @@ const Experience = () => {
                                 {/* Job details */}
                                 <div className={index % 2 === 0 ? 'md:order-2' : 'md:order-1'}>
                                     <SpotlightCard className="w-full">
-                                        <h3 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-cyan-400 dark:to-purple-400 bg-clip-text text-transparent mb-2">{job.role}</h3>
-                                        <p className="text-base md:text-lg font-semibold text-purple-600 dark:text-purple-300 mb-4">{job.company}</p>
-                                        <ul className="space-y-2 text-sm md:text-base text-slate-700 dark:text-slate-300">
+                                        <h3 className="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-cyan-400 dark:to-purple-400 bg-clip-text text-transparent mb-2">{job.role}</h3>
+                                        <p className="text-sm sm:text-base md:text-lg font-semibold text-purple-600 dark:text-purple-300 mb-3 sm:mb-4">{job.company}</p>
+                                        <ul className="space-y-2 sm:space-y-2.5 text-sm md:text-base text-slate-700 dark:text-slate-300">
                                             {job.tasks.map((task, i) => (
                                                 <li key={i} className="flex items-start">
                                                     <span

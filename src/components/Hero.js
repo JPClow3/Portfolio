@@ -11,7 +11,22 @@ const Hero = () => {
     return (
         <section id="hero" className="relative h-screen flex items-center justify-center text-center overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-full z-[-1]">
-                <LaserFlow/>
+                <LaserFlow
+                    wispDensity={1.8}
+                    fogIntensity={0.75}
+                    flowSpeed={0.45}
+                    wispSpeed={20}
+                    wispIntensity={7.0}
+                    flowStrength={0.5}
+                    fogScale={0.22}
+                    color="#a855f7"
+                    decay={1.4}
+                    verticalSizing={2.8}
+                    horizontalSizing={0.75}
+                    falloffStart={1.4}
+                    fogFallSpeed={0.7}
+                    mouseTiltStrength={0.02}
+                />
             </div>
             {/* Enhanced overlay with gradient for better text visibility */}
             <div

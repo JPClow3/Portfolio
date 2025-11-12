@@ -30,7 +30,10 @@ const calculateSpotlightValues = radius => ({
     fadeDistance: radius * 0.75
 });
 
+// Batch DOM reads/writes to avoid forced reflows
+// This function is now only used as a fallback - main logic moved to GlobalSpotlight
 const updateCardGlowProperties = (card, mouseX, mouseY, glow, radius) => {
+    // Direct update (used in batched context)
     const rect = card.getBoundingClientRect();
     const relativeX = ((mouseX - rect.left) / rect.width) * 100;
     const relativeY = ((mouseY - rect.top) / rect.height) * 100;
@@ -352,39 +355,55 @@ const GlobalSpotlight = ({
         document.body.appendChild(spotlight);
         spotlightRef.current = spotlight;
 
-        const handleMouseMoveRaw = e => {
+        // Batch DOM reads to avoid forced reflows
+        let pendingUpdate = null;
+        const processMouseMove = (e) => {
             if (!spotlightRef.current || !gridRef.current) return;
 
             const section = gridRef.current.closest('.bento-section');
+            
+            // Batch all DOM reads first
             const rect = section?.getBoundingClientRect();
             const mouseInside =
                 rect && e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
 
             isInsideSection.current = mouseInside || false;
-            const cards = gridRef.current.querySelectorAll('.card');
+            const cards = Array.from(gridRef.current.querySelectorAll('.card'));
 
             if (!mouseInside) {
-                gsap.to(spotlightRef.current, {
-                    opacity: 0,
-                    duration: 0.3,
-                    ease: 'power2.out'
-                });
-                cards.forEach(card => {
-                    card.style.setProperty('--glow-intensity', '0');
+                // Batch style writes
+                requestAnimationFrame(() => {
+                    gsap.to(spotlightRef.current, {
+                        opacity: 0,
+                        duration: 0.3,
+                        ease: 'power2.out'
+                    });
+                    cards.forEach(card => {
+                        card.style.setProperty('--glow-intensity', '0');
+                    });
                 });
                 return;
             }
 
+            // Read all geometric properties first (batch reads in one frame)
+            const cardData = cards.map(card => {
+                const rect = card.getBoundingClientRect();
+                return {
+                    element: card,
+                    rect: rect,
+                    centerX: rect.left + rect.width / 2,
+                    centerY: rect.top + rect.height / 2,
+                    maxSize: Math.max(rect.width, rect.height) / 2
+                };
+            });
+
+            // Then do all calculations (no DOM reads here)
             const {proximity, fadeDistance} = calculateSpotlightValues(spotlightRadius);
             let minDistance = Infinity;
+            const glowUpdates = [];
 
-            cards.forEach(card => {
-                const cardElement = card;
-                const cardRect = cardElement.getBoundingClientRect();
-                const centerX = cardRect.left + cardRect.width / 2;
-                const centerY = cardRect.top + cardRect.height / 2;
-                const distance =
-                    Math.hypot(e.clientX - centerX, e.clientY - centerY) - Math.max(cardRect.width, cardRect.height) / 2;
+            cardData.forEach(({element, centerX, centerY, maxSize}) => {
+                const distance = Math.hypot(e.clientX - centerX, e.clientY - centerY) - maxSize;
                 const effectiveDistance = Math.max(0, distance);
 
                 minDistance = Math.min(minDistance, effectiveDistance);
@@ -396,28 +415,49 @@ const GlobalSpotlight = ({
                     glowIntensity = (fadeDistance - effectiveDistance) / (fadeDistance - proximity);
                 }
 
-                updateCardGlowProperties(cardElement, e.clientX, e.clientY, glowIntensity, spotlightRadius);
+                glowUpdates.push({element, mouseX: e.clientX, mouseY: e.clientY, glowIntensity, radius: spotlightRadius});
             });
 
-            gsap.to(spotlightRef.current, {
-                left: e.clientX,
-                top: e.clientY,
-                duration: 0.1,
-                ease: 'power2.out'
-            });
+            // Batch all style writes in one frame (use cached rects - no DOM reads)
+            requestAnimationFrame(() => {
+                // Use cached rects from cardData to avoid re-reading getBoundingClientRect
+                glowUpdates.forEach(({element, mouseX, mouseY, glowIntensity, radius}, index) => {
+                    const cachedRect = cardData[index].rect;
+                    const relativeX = ((mouseX - cachedRect.left) / cachedRect.width) * 100;
+                    const relativeY = ((mouseY - cachedRect.top) / cachedRect.height) * 100;
 
-            const targetOpacity =
-                minDistance <= proximity
-                    ? 0.8
-                    : minDistance <= fadeDistance
-                        ? ((fadeDistance - minDistance) / (fadeDistance - proximity)) * 0.8
-                        : 0;
+                    // Batch style updates (all writes in same frame)
+                    element.style.setProperty('--glow-x', `${relativeX}%`);
+                    element.style.setProperty('--glow-y', `${relativeY}%`);
+                    element.style.setProperty('--glow-intensity', glowIntensity.toString());
+                    element.style.setProperty('--glow-radius', `${radius}px`);
+                });
 
-            gsap.to(spotlightRef.current, {
-                opacity: targetOpacity,
-                duration: targetOpacity > 0 ? 0.2 : 0.5,
-                ease: 'power2.out'
+                gsap.to(spotlightRef.current, {
+                    left: e.clientX,
+                    top: e.clientY,
+                    duration: 0.1,
+                    ease: 'power2.out'
+                });
+
+                const targetOpacity =
+                    minDistance <= proximity
+                        ? 0.8
+                        : minDistance <= fadeDistance
+                            ? ((fadeDistance - minDistance) / (fadeDistance - proximity)) * 0.8
+                            : 0;
+
+                gsap.to(spotlightRef.current, {
+                    opacity: targetOpacity,
+                    duration: targetOpacity > 0 ? 0.2 : 0.5,
+                    ease: 'power2.out'
+                });
             });
+        };
+
+        const handleMouseMoveRaw = (e) => {
+            // Process immediately (throttled externally) but batch DOM operations
+            processMouseMove(e);
         };
         
         // Throttle mouse move to ~60fps

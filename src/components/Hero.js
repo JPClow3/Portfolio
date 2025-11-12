@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {lazy, Suspense} from 'react';
 import {useLanguage} from '../context/AppContext';
 import {portfolioData} from '../data';
 import {TypingAnimation} from './VisualComponents';
-import LaserFlow from './LaserFlow';
+
+// Lazy load LaserFlow to reduce initial bundle size (Three.js is heavy)
+const LaserFlow = lazy(() => import('./LaserFlow'));
 
 const Hero = () => {
     const {language} = useLanguage();
@@ -11,22 +13,24 @@ const Hero = () => {
     return (
         <section id="hero" className="relative h-screen flex items-center justify-center text-center overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-full z-[-1]" aria-hidden="true">
-                <LaserFlow
-                    wispDensity={1.8}
-                    fogIntensity={0.75}
-                    flowSpeed={0.45}
-                    wispSpeed={20}
-                    wispIntensity={7.0}
-                    flowStrength={0.5}
-                    fogScale={0.22}
-                    color="#a855f7"
-                    decay={1.4}
-                    verticalSizing={2.8}
-                    horizontalSizing={0.75}
-                    falloffStart={1.4}
-                    fogFallSpeed={0.7}
-                    mouseTiltStrength={0.02}
-                />
+                <Suspense fallback={<div className="w-full h-full bg-gradient-to-br from-purple-900/40 via-blue-900/50 to-indigo-900/40"/>}>
+                    <LaserFlow
+                        wispDensity={1.8}
+                        fogIntensity={0.75}
+                        flowSpeed={0.45}
+                        wispSpeed={20}
+                        wispIntensity={7.0}
+                        flowStrength={0.5}
+                        fogScale={0.22}
+                        color="#a855f7"
+                        decay={1.4}
+                        verticalSizing={2.8}
+                        horizontalSizing={0.75}
+                        falloffStart={1.4}
+                        fogFallSpeed={0.7}
+                        mouseTiltStrength={0.02}
+                    />
+                </Suspense>
             </div>
             {/* Enhanced overlay with gradient for better text visibility */}
             <div

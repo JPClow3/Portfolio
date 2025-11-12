@@ -136,9 +136,12 @@ export const ProfileCardComponent = ({
         const card = cardRef.current;
         const wrap = wrapRef.current;
 
+        // Batch DOM reads to avoid forced reflows
+        let pendingTilt = null;
         const onMoveRaw = (event) => {
-            const { clientWidth: width, clientHeight: height } = card;
+            // Batch DOM reads first
             const rect = card.getBoundingClientRect();
+            const { clientWidth: width, clientHeight: height } = card;
             const offsetX = event.clientX - rect.left;
             const offsetY = event.clientY - rect.top;
             const percentX = Math.min(Math.max(offsetX / width, 0), 1) * 100;
@@ -146,18 +149,28 @@ export const ProfileCardComponent = ({
             const centerX = percentX - 50;
             const centerY = percentY - 50;
 
-            gsap.to(card, {
-                duration: 0.5,
-                rotationY: centerY / 12,
-                rotationX: -centerX / 15,
-                ease: "power1.out"
-            });
-            gsap.to(wrap, {
-                duration: 0.5,
-                '--pointer-x': `${percentX}%`,
-                '--pointer-y': `${percentY}%`,
-                '--pointer-from-center': Math.min(Math.max(Math.hypot(centerY, centerX) / 50, 0), 1),
-                ease: "power1.out"
+            // Cancel pending updates to batch DOM reads/writes
+            if (pendingTilt) {
+                cancelAnimationFrame(pendingTilt);
+            }
+            
+            // Batch DOM reads (getBoundingClientRect) and writes in RAF
+            // GSAP already batches internally, but batching DOM reads prevents forced reflows
+            pendingTilt = requestAnimationFrame(() => {
+                gsap.to(card, {
+                    duration: 0.5,
+                    rotationY: centerY / 12,
+                    rotationX: -centerX / 15,
+                    ease: "power1.out"
+                });
+                gsap.to(wrap, {
+                    duration: 0.5,
+                    '--pointer-x': `${percentX}%`,
+                    '--pointer-y': `${percentY}%`,
+                    '--pointer-from-center': Math.min(Math.max(Math.hypot(centerY, centerX) / 50, 0), 1),
+                    ease: "power1.out"
+                });
+                pendingTilt = null;
             });
         };
         

@@ -16,8 +16,10 @@ root.render(
     </React.StrictMode>
 );
 
+// Register service worker asynchronously to not block main thread
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
+    // Use requestIdleCallback if available, otherwise use setTimeout
+    const registerSW = () => {
         navigator.serviceWorker.register('./sw.js').then(reg => {
             // Listen for updates
             const listen = (worker) => {
@@ -30,9 +32,20 @@ if ('serviceWorker' in navigator) {
             };
             listen(reg.installing);
             reg.addEventListener('updatefound', () => listen(reg.installing));
-            // Periodic update check every 10 minutes
-            setInterval(() => reg.update().catch(() => {
-            }), 10 * 60 * 1000);
+            // Periodic update check every 10 minutes (defer to avoid blocking)
+            setTimeout(() => {
+                setInterval(() => reg.update().catch(() => {}), 10 * 60 * 1000);
+            }, 5000); // Wait 5s before first check
         }).catch(err => console.warn('SW registration failed', err));
-    });
+    };
+
+    // Defer service worker registration to avoid blocking initial load
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(registerSW, {timeout: 2000});
+    } else {
+        // Fallback: register after load event
+        window.addEventListener('load', () => {
+            setTimeout(registerSW, 100);
+        });
+    }
 }

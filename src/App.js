@@ -86,17 +86,9 @@ function App() {
             }
         };
         navigator.serviceWorker?.addEventListener('controllerchange', onController);
-        // Optional: log SW messages (could later be turned into toasts)
-        const onMessage = (e) => {
-            if (e.data?.type === 'SW_ACTIVATED' && waitingSW) {
-                // Already reloading via controllerchange
-            }
-        };
-        navigator.serviceWorker?.addEventListener('message', onMessage);
         return () => {
             window.removeEventListener('sw-update-available', onUpdate);
             navigator.serviceWorker?.removeEventListener('controllerchange', onController);
-            navigator.serviceWorker?.removeEventListener('message', onMessage);
         };
     }, [push, waitingSW]);
 

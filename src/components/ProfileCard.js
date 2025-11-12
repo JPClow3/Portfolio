@@ -50,7 +50,10 @@ const ProfileCardComponent = ({
 
         let rafId = null;
 
+        // Batch DOM reads/writes to avoid forced reflows
+        let pendingTransform = null;
         const updateCardTransform = (offsetX, offsetY, card, wrap) => {
+            // Batch DOM reads
             const width = card.clientWidth;
             const height = card.clientHeight;
 
@@ -72,8 +75,15 @@ const ProfileCardComponent = ({
                 '--rotate-y': `${round(centerY / 4)}deg`
             };
 
-            Object.entries(properties).forEach(([property, value]) => {
-                wrap.style.setProperty(property, value);
+            // Batch style writes in RAF
+            if (pendingTransform) {
+                cancelAnimationFrame(pendingTransform);
+            }
+            pendingTransform = requestAnimationFrame(() => {
+                Object.entries(properties).forEach(([property, value]) => {
+                    wrap.style.setProperty(property, value);
+                });
+                pendingTransform = null;
             });
         };
 

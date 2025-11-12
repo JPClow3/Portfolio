@@ -1,9 +1,6 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
+// Tree-shake GSAP - import only core, ScrollTrigger will be lazy-loaded
 import {gsap} from 'gsap';
-import {ScrollTrigger} from 'gsap/ScrollTrigger';
-
-// Register ScrollTrigger plugin immediately on import
-gsap.registerPlugin(ScrollTrigger);
 
 export const AppContext = createContext();
 export const LibsContext = createContext();
@@ -165,7 +162,18 @@ export function AppProvider({ children }) {
     };
 
     const appValue = {user, setUser, loading};
-    const libsValue = {libs, setLibs, gsap, ScrollTrigger};
+    // ScrollTrigger is lazy-loaded - provide helper to register it
+    const libsValue = {
+        libs,
+        setLibs,
+        gsap,
+        registerScrollTrigger: async () => {
+            // Lazy-load ScrollTrigger only when needed
+            const {ScrollTrigger} = await import('gsap/ScrollTrigger');
+            gsap.registerPlugin(ScrollTrigger);
+            return ScrollTrigger;
+        }
+    };
     const themeValue = {theme, setTheme, toggleTheme, toggleThemeWithOrigin, themeTransition};
     const languageValue = {language, setLanguage};
     const effectsValue = {

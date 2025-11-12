@@ -34,7 +34,7 @@ const Contact = () => {
                             <a
                                 href={item.href}
                                 target={item.target || '_self'}
-                                rel={item.target ? 'noopener noreferrer' : ''}
+                                rel={item.target ? 'noopener noreferrer' : undefined}
                                 className="flex items-center p-4 md:p-6 text-left bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:via-purple-900/20 dark:to-blue-900/30 rounded-xl border-2 border-blue-200 dark:border-indigo-700 hover:border-purple-400 dark:hover:border-purple-500 hover:bg-gradient-to-br hover:from-indigo-50 hover:via-purple-50 hover:to-blue-50 dark:hover:from-indigo-900/40 dark:hover:via-purple-900/30 dark:hover:to-blue-900/40 transition-all duration-300 group hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-dark-bg relative"
                                 aria-label={`Contact via ${item.label} - ${item.href.startsWith('mailto:') ? 'Opens email client' : item.href.startsWith('tel:') ? 'Opens phone dialer' : 'Opens in new tab'}`}
                                 title={item.href.startsWith('mailto:') ? 'Click to send an email' : item.href.startsWith('tel:') ? 'Click to call' : 'Opens in new tab'}

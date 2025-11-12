@@ -31,17 +31,45 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// Helper: stale-while-revalidate
-async function staleWhileRevalidate(request, cacheName) {
+// Helper: Create response with cache headers
+function createCachedResponse(response, maxAge = 31536000) {
+    const headers = new Headers(response.headers);
+    headers.set('Cache-Control', `public, max-age=${maxAge}, immutable`);
+    headers.set('Expires', new Date(Date.now() + maxAge * 1000).toUTCString());
+    return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: headers
+    });
+}
+
+// Helper: stale-while-revalidate with long cache lifetime
+async function staleWhileRevalidate(request, cacheName, maxAge = 31536000) {
     const cache = await caches.open(cacheName);
     const cached = await cache.match(request);
+    
+    // Return cached immediately if available
+    if (cached) {
+        // Revalidate in background
+        fetch(request).then(resp => {
+            if (resp && resp.status === 200) {
+                cache.put(request, createCachedResponse(resp, maxAge));
+            }
+        }).catch(() => {});
+        return cached;
+    }
+    
+    // Fetch and cache with long TTL
     const fetchPromise = fetch(request).then(resp => {
         if (resp && resp.status === 200) {
-            cache.put(request, resp.clone());
+            const cachedResp = createCachedResponse(resp, maxAge);
+            cache.put(request, cachedResp.clone());
+            return cachedResp;
         }
         return resp;
     }).catch(() => cached);
-    return cached || fetchPromise;
+    
+    return fetchPromise;
 }
 
 self.addEventListener('fetch', (event) => {
@@ -61,10 +89,15 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Same-origin static assets (css/js/media) => stale-while-revalidate
+    // Same-origin static assets (css/js/media) => stale-while-revalidate with long cache
     if (url.origin === location.origin) {
+        // Static assets (JS, CSS, images) - cache for 1 year
         if (/\.(?:js|css|png|jpg|jpeg|svg|gif|webp|ico)$/.test(url.pathname)) {
-            event.respondWith(staleWhileRevalidate(request, RUNTIME_CACHE));
+            // Extract filename to check if it's a hashed asset (immutable)
+            const isHashedAsset = /[a-f0-9]{8,}\.(?:js|css)$/i.test(url.pathname) || 
+                                  /\/static\//.test(url.pathname);
+            const maxAge = isHashedAsset ? 31536000 : 86400; // 1 year for hashed, 1 day for others
+            event.respondWith(staleWhileRevalidate(request, RUNTIME_CACHE, maxAge));
             return;
         }
     }
@@ -80,17 +113,4 @@ self.addEventListener('message', (event) => {
     if (event.data === 'SKIP_WAITING') {
         self.skipWaiting();
     }
-});
-
-// Notify clients of new SW after install
-self.addEventListener('install', () => {
-    self.clients.matchAll({includeUncontrolled: true, type: 'window'}).then(clients => {
-        clients.forEach(client => client.postMessage({type: 'SW_INSTALLED', version: SW_VERSION}));
-    });
-});
-
-self.addEventListener('activate', () => {
-    self.clients.matchAll({includeUncontrolled: true, type: 'window'}).then(clients => {
-        clients.forEach(client => client.postMessage({type: 'SW_ACTIVATED', version: SW_VERSION}));
-    });
 });

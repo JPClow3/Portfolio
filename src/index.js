@@ -33,9 +33,8 @@ if ('serviceWorker' in navigator) {
             listen(reg.installing);
             reg.addEventListener('updatefound', () => listen(reg.installing));
             // Periodic update check every 10 minutes (defer to avoid blocking)
-            setTimeout(() => {
-                setInterval(() => reg.update().catch(() => {}), 10 * 60 * 1000);
-            }, 5000); // Wait 5s before first check
+            // Interval runs for app lifetime - clearing on page unload is handled by browser
+            setInterval(() => reg.update().catch(() => {}), 10 * 60 * 1000);
         }).catch(err => console.warn('SW registration failed', err));
     };
 

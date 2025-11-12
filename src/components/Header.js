@@ -31,13 +31,21 @@ const Header = ({onThemeOriginClick}) => {
 
     // Handle resize - close mobile menu if screen becomes desktop size
     useEffect(() => {
+        // Throttle resize to avoid excessive calls on mobile
+        let resizeTimeout;
         const handleResize = () => {
-            if (window.innerWidth >= 768 && isMenuOpen) {
-                setIsMenuOpen(false);
-            }
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (window.innerWidth >= 768 && isMenuOpen) {
+                    setIsMenuOpen(false);
+                }
+            }, 150);
         };
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
+        window.addEventListener('resize', handleResize, {passive: true});
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            clearTimeout(resizeTimeout);
+        };
     }, [isMenuOpen]);
 
     // Prevent body scroll when menu is open

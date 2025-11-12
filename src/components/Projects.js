@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useLanguage} from '../context/AppContext';
 import {portfolioData} from '../data';
 import {FadeInOnScroll, Section} from './VisualComponents';
@@ -8,15 +8,29 @@ const Projects = () => {
     const {language} = useLanguage();
     const {projects} = portfolioData[language];
     const [loadingLinks, setLoadingLinks] = useState({});
+    const timeoutRefs = useRef({});
 
     const handleLinkClick = (projectLink, projectIndex) => {
+        // Clear any existing timeout for this project
+        if (timeoutRefs.current[projectIndex]) {
+            clearTimeout(timeoutRefs.current[projectIndex]);
+        }
         setLoadingLinks(prev => ({...prev, [projectIndex]: true}));
         // The link will navigate naturally, but we show loading state
         // Reset loading state after a delay in case navigation doesn't happen
-        setTimeout(() => {
+        timeoutRefs.current[projectIndex] = setTimeout(() => {
             setLoadingLinks(prev => ({...prev, [projectIndex]: false}));
+            delete timeoutRefs.current[projectIndex];
         }, 3000);
     };
+
+    // Cleanup timeouts on unmount
+    useEffect(() => {
+        return () => {
+            Object.values(timeoutRefs.current).forEach(timeout => clearTimeout(timeout));
+            timeoutRefs.current = {};
+        };
+    }, []);
 
     return (
         <Section id="projects" title={projects.title}>

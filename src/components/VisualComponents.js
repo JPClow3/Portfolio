@@ -1,5 +1,6 @@
 import React, {forwardRef, useEffect, useMemo, useRef, useState} from 'react';
 import {useEffects, useLibs, useTheme} from '../context/AppContext';
+import {throttle} from '../utils/throttle';
 
 // --- Card foi movido para cá e exportado diretamente ---
 export const Card = forwardRef(({ customClass, ...rest }, ref) => (
@@ -53,9 +54,13 @@ export const TypingAnimation = ({ text, className, gradientColors, animationSpee
 
     return (
         <h1 className={className}>
-            <GradientText colors={gradientColors} animationSpeed={animationSpeed}>
-                {typedText}<span className="typing-cursor">|</span>
-            </GradientText>
+            <span aria-label={text} role="heading" aria-level="1">
+                <span aria-hidden="true">
+                    <GradientText colors={gradientColors} animationSpeed={animationSpeed}>
+                        {typedText}<span className="typing-cursor">|</span>
+                    </GradientText>
+                </span>
+            </span>
         </h1>
     );
 };
@@ -131,7 +136,7 @@ export const ProfileCardComponent = ({
         const card = cardRef.current;
         const wrap = wrapRef.current;
 
-        const onMove = (event) => {
+        const onMoveRaw = (event) => {
             const { clientWidth: width, clientHeight: height } = card;
             const rect = card.getBoundingClientRect();
             const offsetX = event.clientX - rect.left;
@@ -155,6 +160,10 @@ export const ProfileCardComponent = ({
                 ease: "power1.out"
             });
         };
+        
+        // Throttle pointer move to ~60fps
+        const onMove = throttle(onMoveRaw, 16);
+        
         const onEnter = () => wrap.classList.add("active");
         const onLeave = () => {
             wrap.classList.remove("active");

@@ -1,4 +1,5 @@
-import React, {useCallback, useEffect, useMemo, useRef} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {throttle} from '../utils/throttle';
 
 const DEFAULT_BEHIND_GRADIENT = 'radial-gradient(80% 100% at 50% -100%,hsl(266,0%,60%,0) 100%),radial-gradient(35% 52% at 55% 20%,#00ffaac4 0%,#073aff00 100%),radial-gradient(100% 100% at 50% 50%,#00c1ffff 1%,#073aff00 76%),conic-gradient(from 124deg at 50% 50%,#c137ffff 0%,#07c6ffff 40%,#07c6ffff 60%,#c137ffff 100%)';
 
@@ -111,7 +112,7 @@ const ProfileCardComponent = ({
         };
     }, [enableTilt]);
 
-    const handlePointerMove = useCallback(
+    const handlePointerMoveRaw = useCallback(
         event => {
             const card = cardRef.current;
             const wrap = wrapRef.current;
@@ -123,6 +124,15 @@ const ProfileCardComponent = ({
         },
         [animationHandlers]
     );
+    
+    // Throttle pointer move to ~60fps
+    const handlePointerMoveRef = useRef(null);
+    useEffect(() => {
+        handlePointerMoveRef.current = throttle(handlePointerMoveRaw, 16);
+        return () => {
+            handlePointerMoveRef.current = null;
+        };
+    }, [handlePointerMoveRaw]);
 
     const handlePointerEnter = useCallback(() => {
         const card = cardRef.current;
@@ -155,7 +165,7 @@ const ProfileCardComponent = ({
         [animationHandlers]
     );
 
-    const handleDeviceOrientation = useCallback(
+    const handleDeviceOrientationRaw = useCallback(
         event => {
             const card = cardRef.current;
             const wrap = wrapRef.current;
@@ -174,6 +184,15 @@ const ProfileCardComponent = ({
         },
         [animationHandlers, mobileTiltSensitivity]
     );
+    
+    // Throttle device orientation to reduce updates
+    const handleDeviceOrientationRef = useRef(null);
+    useEffect(() => {
+        handleDeviceOrientationRef.current = throttle(handleDeviceOrientationRaw, 100);
+        return () => {
+            handleDeviceOrientationRef.current = null;
+        };
+    }, [handleDeviceOrientationRaw]);
 
     useEffect(() => {
         if (!enableTilt || !animationHandlers) return;
@@ -183,23 +202,30 @@ const ProfileCardComponent = ({
 
         if (!card || !wrap) return;
 
-        const pointerMoveHandler = handlePointerMove;
+        const pointerMoveHandler = (e) => handlePointerMoveRef.current?.(e);
         const pointerEnterHandler = handlePointerEnter;
         const pointerLeaveHandler = handlePointerLeave;
-        const deviceOrientationHandler = handleDeviceOrientation;
+        const deviceOrientationHandler = (e) => handleDeviceOrientationRef.current?.(e);
 
-        const handleClick = () => {
+        const handleClick = async () => {
             if (!enableMobileTilt || window.location.protocol !== 'https:') return;
-            if (typeof window.DeviceMotionEvent.requestPermission === 'function') {
-                window.DeviceMotionEvent.requestPermission()
-                    .then(state => {
-                        if (state === 'granted') {
-                            window.addEventListener('deviceorientation', deviceOrientationHandler);
-                        }
-                    })
-                    .catch(err => console.error(err));
-            } else {
-                window.addEventListener('deviceorientation', deviceOrientationHandler);
+            
+            try {
+                if (typeof window.DeviceMotionEvent?.requestPermission === 'function') {
+                    const permission = await window.DeviceMotionEvent.requestPermission();
+                    if (permission === 'granted') {
+                        window.addEventListener('deviceorientation', deviceOrientationHandler, {passive: true});
+                    } else {
+                        // User-friendly message for denied permission
+                        console.warn('Device motion permission denied. Mobile tilt will not be available.');
+                    }
+                } else if (window.DeviceOrientationEvent) {
+                    // For browsers that don't require permission (older iOS, Android)
+                    window.addEventListener('deviceorientation', deviceOrientationHandler, {passive: true});
+                }
+            } catch (err) {
+                // Handle Safari-specific errors and other exceptions
+                console.error('Device motion not supported or error requesting permission:', err);
             }
         };
 

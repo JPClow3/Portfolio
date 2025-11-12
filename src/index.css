@@ -303,6 +303,8 @@ h1, h2, h3, h4, h5, h6, p, span, div {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: gradient-text-flow linear infinite;
+    /* Add text-shadow fallback for better readability and accessibility */
+    text-shadow: 0 0 0 rgba(0, 0, 0, 0.3);
 }
 
 .animated-gradient-text {
@@ -311,6 +313,57 @@ h1, h2, h3, h4, h5, h6, p, span, div {
 
 h1 > .animated-gradient-text {
     display: inline;
+}
+
+/* Reduced motion support - critical for users with vestibular disorders */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .custom-cursor {
+        display: none !important;
+    }
+    
+    /* Disable animated gradients for reduced motion */
+    .animated-gradient-text .text-content {
+        animation: none !important;
+        -webkit-text-fill-color: inherit !important;
+        background-clip: border-box !important;
+        -webkit-background-clip: border-box !important;
+    }
+}
+
+/* Mobile viewport height fix - use dynamic viewport height for mobile browsers */
+.h-screen {
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile */
+}
+
+/* Touch target sizes - ensure minimum 44x44px for iOS accessibility */
+button,
+a[role="button"],
+.pc-contact-btn,
+.p-2,
+.p-3 {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+/* Ensure interactive elements meet touch target requirements */
+@media (hover: none) and (pointer: coarse) {
+    button,
+    a[role="button"],
+    .pc-contact-btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 12px 16px;
+    }
 }
 
 

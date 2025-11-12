@@ -1,16 +1,23 @@
-import React from 'react';
+import {useEffect, useState} from 'react';
 
-export function useScrollDetection() {
-    const [isScrolled, setIsScrolled] = React.useState(false);
+/**
+ * Hook to detect if user has scrolled past a threshold
+ * @param {number} threshold - Scroll threshold in pixels (default: 50)
+ * @returns {boolean} Whether the page has been scrolled past the threshold
+ */
+export function useScrollDetection(threshold = 50) {
+    const [isScrolled, setIsScrolled] = useState(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const handleScroll = () => {
-            setIsScrolled(window.scrollY > 50);
+            setIsScrolled(window.scrollY > threshold);
         };
 
-        window.addEventListener('scroll', handleScroll);
+        // Check initial scroll position
+        handleScroll();
+        window.addEventListener('scroll', handleScroll, {passive: true});
         return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    }, [threshold]);
 
     return isScrolled;
 }

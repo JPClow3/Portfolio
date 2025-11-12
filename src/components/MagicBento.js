@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {gsap} from 'gsap';
+import {throttle} from '../utils/throttle';
 
 const DEFAULT_PARTICLE_COUNT = 12;
 const DEFAULT_SPOTLIGHT_RADIUS = 300;
@@ -63,9 +64,25 @@ const ParticleCard = ({
         if (particlesInitialized.current || !cardRef.current) return;
 
         const {width, height} = cardRef.current.getBoundingClientRect();
-        memoizedParticles.current = Array.from({length: particleCount}, () =>
-            createParticleElement(Math.random() * width, Math.random() * height, glowColor)
-        );
+        
+        // Pre-create particle elements but don't append them yet
+        const particles = Array.from({length: particleCount}, () => {
+            const particle = createParticleElement(Math.random() * width, Math.random() * height, glowColor);
+            // Hide particles initially with CSS transform instead of display:none
+            particle.style.transform = 'scale(0)';
+            particle.style.opacity = '0';
+            particle.style.pointerEvents = 'none';
+            return particle;
+        });
+        
+        // Append all particles at once to reduce DOM manipulation
+        if (cardRef.current) {
+            particles.forEach(particle => {
+                cardRef.current.appendChild(particle);
+            });
+        }
+        
+        memoizedParticles.current = particles;
         particlesInitialized.current = true;
     }, [particleCount, glowColor]);
 
@@ -74,19 +91,21 @@ const ParticleCard = ({
         timeoutsRef.current = [];
         magnetismAnimationRef.current?.kill();
 
+        // Animate particles out but keep them in DOM for reuse
         particlesRef.current.forEach(particle => {
+            gsap.killTweensOf(particle);
             gsap.to(particle, {
                 scale: 0,
                 opacity: 0,
+                x: 0,
+                y: 0,
+                rotation: 0,
                 duration: 0.3,
-                ease: 'back.in(1.7)',
-                onComplete: () => {
-                    particle.parentNode?.removeChild(particle);
-                }
+                ease: 'back.in(1.7)'
             });
         });
         particlesRef.current = [];
-    }, []); // No dependencies needed - uses only refs
+    }, []);
 
     const animateParticles = useCallback(() => {
         if (!cardRef.current || !isHoveredRef.current) return;
@@ -95,22 +114,33 @@ const ParticleCard = ({
             initializeParticles();
         }
 
+        // Use pre-created particles with CSS transforms instead of cloning
         memoizedParticles.current.forEach((particle, index) => {
             const timeoutId = setTimeout(() => {
                 if (!isHoveredRef.current || !cardRef.current) return;
+                
+                // Reset particle position if it was already animated
+                const wasAnimated = particlesRef.current.includes(particle);
+                if (!wasAnimated) {
+                    particlesRef.current.push(particle);
+                }
 
-                const clone = particle.cloneNode(true);
-                cardRef.current.appendChild(clone);
-                particlesRef.current.push(clone);
-
-                gsap.fromTo(clone, {scale: 0, opacity: 0}, {
+                // Animate existing particle using CSS transforms
+                gsap.fromTo(particle, {
+                    scale: 0,
+                    opacity: 0,
+                    x: 0,
+                    y: 0,
+                    rotation: 0
+                }, {
                     scale: 1,
                     opacity: 1,
                     duration: 0.3,
-                    ease: 'back.out(1.7)'
+                    ease: 'back.out(1.7)',
+                    immediateRender: wasAnimated
                 });
 
-                gsap.to(clone, {
+                gsap.to(particle, {
                     x: (Math.random() - 0.5) * 100,
                     y: (Math.random() - 0.5) * 100,
                     rotation: Math.random() * 360,
@@ -120,7 +150,7 @@ const ParticleCard = ({
                     yoyo: true
                 });
 
-                gsap.to(clone, {
+                gsap.to(particle, {
                     opacity: 0.3,
                     duration: 1.5,
                     ease: 'power2.inOut',
@@ -131,7 +161,7 @@ const ParticleCard = ({
 
             timeoutsRef.current.push(timeoutId);
         });
-    }, [initializeParticles]); // Only depends on initializeParticles callback
+    }, [initializeParticles]);
 
     useEffect(() => {
         if (disableAnimations || !cardRef.current) return;
@@ -176,7 +206,7 @@ const ParticleCard = ({
             }
         };
 
-        const handleMouseMove = e => {
+        const handleMouseMoveRaw = e => {
             if (!enableTilt && !enableMagnetism) return;
 
             const rect = element.getBoundingClientRect();
@@ -210,6 +240,9 @@ const ParticleCard = ({
                 });
             }
         };
+        
+        // Throttle mouse move to ~60fps
+        const handleMouseMove = throttle(handleMouseMoveRaw, 16);
 
         const handleClick = e => {
             if (!clickEffect) return;
@@ -319,7 +352,7 @@ const GlobalSpotlight = ({
         document.body.appendChild(spotlight);
         spotlightRef.current = spotlight;
 
-        const handleMouseMove = e => {
+        const handleMouseMoveRaw = e => {
             if (!spotlightRef.current || !gridRef.current) return;
 
             const section = gridRef.current.closest('.bento-section');
@@ -386,6 +419,9 @@ const GlobalSpotlight = ({
                 ease: 'power2.out'
             });
         };
+        
+        // Throttle mouse move to ~60fps
+        const handleMouseMove = throttle(handleMouseMoveRaw, 16);
 
         const handleMouseLeave = () => {
             isInsideSection.current = false;
@@ -524,7 +560,7 @@ const MagicBento = ({
                                 ref={el => {
                                     if (!el) return;
 
-                                    const handleMouseMove = e => {
+                                    const handleMouseMoveRaw = e => {
                                         if (shouldDisableAnimations) return;
 
                                         const rect = el.getBoundingClientRect();
@@ -558,6 +594,9 @@ const MagicBento = ({
                                             });
                                         }
                                     };
+                                    
+                                    // Throttle mouse move to ~60fps
+                                    const handleMouseMove = throttle(handleMouseMoveRaw, 16);
 
                                     const handleMouseLeave = () => {
                                         if (shouldDisableAnimations) return;

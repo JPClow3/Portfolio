@@ -35,15 +35,24 @@ const Contact = () => {
                                 href={item.href}
                                 target={item.target || '_self'}
                                 rel={item.target ? 'noopener noreferrer' : ''}
-                                className="flex items-center p-4 md:p-6 text-left bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:via-purple-900/20 dark:to-blue-900/30 rounded-xl border-2 border-blue-200 dark:border-indigo-700 hover:border-purple-400 dark:hover:border-purple-500 hover:bg-gradient-to-br hover:from-indigo-50 hover:via-purple-50 hover:to-blue-50 dark:hover:from-indigo-900/40 dark:hover:via-purple-900/30 dark:hover:to-blue-900/40 transition-all duration-300 group hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-dark-bg"
-                                aria-label={`Contact via ${item.label}`}
+                                className="flex items-center p-4 md:p-6 text-left bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:via-purple-900/20 dark:to-blue-900/30 rounded-xl border-2 border-blue-200 dark:border-indigo-700 hover:border-purple-400 dark:hover:border-purple-500 hover:bg-gradient-to-br hover:from-indigo-50 hover:via-purple-50 hover:to-blue-50 dark:hover:from-indigo-900/40 dark:hover:via-purple-900/30 dark:hover:to-blue-900/40 transition-all duration-300 group hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-dark-bg relative"
+                                aria-label={`Contact via ${item.label} - ${item.href.startsWith('mailto:') ? 'Opens email client' : item.href.startsWith('tel:') ? 'Opens phone dialer' : 'Opens in new tab'}`}
+                                title={item.href.startsWith('mailto:') ? 'Click to send an email' : item.href.startsWith('tel:') ? 'Click to call' : 'Opens in new tab'}
                             >
                                 <span
                                     className="flex-shrink-0 mr-4 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-indigo-800 dark:to-purple-800 p-3 md:p-4 rounded-full group-hover:from-purple-200 group-hover:to-blue-200 dark:group-hover:from-purple-700 dark:group-hover:to-blue-700 transition-all duration-300 shadow-md group-hover:shadow-lg">
                                     {item.icon}
                                 </span>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">{item.label}</p>
+                                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1 flex items-center gap-2">
+                                        {item.label}
+                                        {item.href.startsWith('mailto:') && (
+                                            <span className="text-xs opacity-60" aria-hidden="true">📧</span>
+                                        )}
+                                        {item.href.startsWith('tel:') && (
+                                            <span className="text-xs opacity-60" aria-hidden="true">📞</span>
+                                        )}
+                                    </p>
                                     <p className="text-base md:text-lg font-semibold text-slate-800 dark:text-slate-200 group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 dark:group-hover:from-cyan-400 dark:group-hover:to-purple-400 group-hover:bg-clip-text group-hover:text-transparent transition-all truncate">
                                         {item.text}
                                     </p>
@@ -53,6 +62,7 @@ const Contact = () => {
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
+                                    aria-hidden="true"
                                 >
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                           d="M9 5l7 7-7 7"/>

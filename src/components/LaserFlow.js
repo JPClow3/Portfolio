@@ -1,5 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import * as THREE from 'three';
+import {throttle} from '../utils/throttle';
 
 const VERT = `
 precision highp float;
@@ -387,14 +388,27 @@ export const LaserFlow = ({
 
         const io = new IntersectionObserver(
             entries => {
-                inViewRef.current = entries[0]?.isIntersecting ?? true;
+                const isIntersecting = entries[0]?.isIntersecting ?? true;
+                const wasVisible = inViewRef.current;
+                inViewRef.current = isIntersecting;
+                
+                // Restart animation if becoming visible
+                if (isIntersecting && !wasVisible && !pausedRef.current && !raf) {
+                    raf = requestAnimationFrame(animate);
+                }
             },
             {root: null, threshold: 0}
         );
         io.observe(mount);
 
         const onVis = () => {
+            const wasPaused = pausedRef.current;
             pausedRef.current = document.hidden;
+            
+            // Restart animation if becoming visible
+            if (!document.hidden && wasPaused && inViewRef.current && !raf) {
+                raf = requestAnimationFrame(animate);
+            }
         };
         document.addEventListener('visibilitychange', onVis, {passive: true});
 
@@ -407,7 +421,9 @@ export const LaserFlow = ({
             const hb = rect.height * ratio;
             mouseTarget.set(x * ratio, hb - y * ratio);
         };
-        const onMove = ev => updateMouse(ev.clientX, ev.clientY);
+        // Throttle mouse move events to ~60fps (16ms)
+        const throttledUpdateMouse = throttle(updateMouse, 16);
+        const onMove = ev => throttledUpdateMouse(ev.clientX, ev.clientY);
         const onLeave = () => mouseTarget.set(0, 0);
         canvas.addEventListener('pointermove', onMove, {passive: true});
         canvas.addEventListener('pointerdown', onMove, {passive: true});
@@ -417,10 +433,40 @@ export const LaserFlow = ({
         const onCtxLost = e => {
             e.preventDefault();
             pausedRef.current = true;
+            // Cancel any pending RAF
+            if (raf) {
+                cancelAnimationFrame(raf);
+                raf = 0;
+            }
         };
         const onCtxRestored = () => {
+            // Reinitialize after context restoration
             pausedRef.current = false;
+            
+            // Reset clock
+            clock.start();
+            prevTime = 0;
+            
+            // Reset fade state
+            hasFadedRef.current = false;
+            
+            // Resize and update uniforms
             scheduleResize();
+            
+            // Reset uniform values - they'll be updated by the useEffect hook
+            // that watches for prop changes, but we reset time-based ones here
+            const uniforms = uniformsRef.current;
+            if (uniforms) {
+                uniforms.iTime.value = 0;
+                uniforms.uFlowTime.value = 0;
+                uniforms.uFogTime.value = 0;
+                uniforms.uFade.value = 0;
+            }
+            
+            // Restart animation if visible
+            if (!pausedRef.current && inViewRef.current && !raf) {
+                raf = requestAnimationFrame(animate);
+            }
         };
         canvas.addEventListener('webglcontextlost', onCtxLost, false);
         canvas.addEventListener('webglcontextrestored', onCtxRestored, false);
@@ -432,6 +478,10 @@ export const LaserFlow = ({
         const lowerThresh = 50;
         const upperThresh = 58;
 
+        // Batch DPR adjustments to avoid frequent reflows
+        let dprUpdatePending = false;
+        let pendingDprValue = null;
+        
         const adjustDprIfNeeded = now => {
             const elapsed = now - lastFpsCheckRef.current;
             if (elapsed < 750) return;
@@ -453,8 +503,19 @@ export const LaserFlow = ({
             }
 
             if (Math.abs(next - currentDprRef.current) > 0.01) {
-                currentDprRef.current = next;
-                setSizeNow();
+                pendingDprValue = next;
+                if (!dprUpdatePending) {
+                    dprUpdatePending = true;
+                    // Batch DPR update on next frame to avoid reflow
+                    requestAnimationFrame(() => {
+                        if (pendingDprValue !== null) {
+                            currentDprRef.current = pendingDprValue;
+                            setSizeNow();
+                            pendingDprValue = null;
+                        }
+                        dprUpdatePending = false;
+                    });
+                }
             }
 
             fpsSamplesRef.current = [];
@@ -462,8 +523,11 @@ export const LaserFlow = ({
         };
 
         const animate = () => {
-            raf = requestAnimationFrame(animate);
-            if (pausedRef.current || !inViewRef.current) return;
+            // Only schedule next frame if visible and active
+            if (pausedRef.current || !inViewRef.current) {
+                raf = 0;
+                return;
+            }
 
             const t = clock.getElapsedTime();
             const dt = Math.max(0, t - prevTime);
@@ -495,9 +559,19 @@ export const LaserFlow = ({
             renderer.render(scene, camera);
 
             adjustDprIfNeeded(performance.now());
+            
+            // Schedule next frame only if still visible and active
+            if (!pausedRef.current && inViewRef.current) {
+                raf = requestAnimationFrame(animate);
+            } else {
+                raf = 0;
+            }
         };
 
-        animate();
+        // Start animation only if visible
+        if (!pausedRef.current && inViewRef.current) {
+            raf = requestAnimationFrame(animate);
+        }
 
         return () => {
             cancelAnimationFrame(raf);

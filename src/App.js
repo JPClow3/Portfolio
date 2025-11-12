@@ -66,14 +66,24 @@ function App() {
                 type: 'info',
                 actionLabel: 'Reload',
                 onAction: () => {
-                    if (worker) worker.postMessage('SKIP_WAITING');
+                    if (worker) {
+                        // User confirmed reload, set waiting state and skip waiting
+                        setWaitingSW(worker);
+                        worker.postMessage('SKIP_WAITING');
+                        // Reload will happen on controllerchange event
+                    }
                 }
             });
         };
         window.addEventListener('sw-update-available', onUpdate);
-        // reload after activation
+        // reload after activation - but only if user has already clicked reload button
         const onController = () => {
-            window.location.reload();
+            // Only reload if user has explicitly requested it via the toast action
+            // This prevents unexpected reloads that lose user's scroll position
+            if (waitingSW) {
+                // User already clicked reload, so proceed with reload
+                window.location.reload();
+            }
         };
         navigator.serviceWorker?.addEventListener('controllerchange', onController);
         // Optional: log SW messages (could later be turned into toasts)

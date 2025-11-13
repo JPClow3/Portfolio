@@ -19,28 +19,47 @@ export function AppProvider({ children }) {
         return 'light';
     });
     const [language, setLanguage] = useState('en');
-    const [enableCardAnimations, setEnableCardAnimations] = useState(() => localStorage.getItem('enableCardAnimations') !== 'false');
-    const [enableCustomCursor, setEnableCustomCursor] = useState(() => localStorage.getItem('enableCustomCursor') !== 'false');
-    const [enableHighContrastGrid, setEnableHighContrastGrid] = useState(() => localStorage.getItem('enableHighContrastGrid') === 'true');
+    // Helper function to safely get localStorage value
+    const getLocalStorageItem = (key, defaultValue) => {
+        try {
+            if (typeof window !== 'undefined' && window.localStorage) {
+                return localStorage.getItem(key);
+            }
+        } catch (e) {
+            // localStorage may be disabled or unavailable
+            console.warn(`Failed to read ${key} from localStorage:`, e);
+        }
+        return defaultValue;
+    };
+
+    const [enableCardAnimations, setEnableCardAnimations] = useState(() => getLocalStorageItem('enableCardAnimations', null) !== 'false');
+    const [enableCustomCursor, setEnableCustomCursor] = useState(() => getLocalStorageItem('enableCustomCursor', null) !== 'false');
+    const [enableHighContrastGrid, setEnableHighContrastGrid] = useState(() => getLocalStorageItem('enableHighContrastGrid', null) === 'true');
     const [themeTransition, setThemeTransition] = useState(null); // {x,y,toggleTo}
 
     // Skill swap feature toggles
-    const [skillSwapFast, setSkillSwapFast] = useState(() => localStorage.getItem('skillSwapFast') === 'true');
-    const [skillSwapRandomOrder, setSkillSwapRandomOrder] = useState(() => localStorage.getItem('skillSwapRandomOrder') !== 'false'); // default true
-    const [skillSwapControls, setSkillSwapControls] = useState(() => localStorage.getItem('skillSwapControls') !== 'false'); // default true
-    const [skillSwapPulse, setSkillSwapPulse] = useState(() => localStorage.getItem('skillSwapPulse') !== 'false'); // default true
-    const [skillSwapRandomEasing, setSkillSwapRandomEasing] = useState(() => localStorage.getItem('skillSwapRandomEasing') !== 'false'); // default true
-    const [skillSwapBaseOffset, setSkillSwapBaseOffset] = useState(() => parseInt(localStorage.getItem('skillSwapBaseOffset') || '-90', 10));
-    const [skillSwapVerticalOffset, setSkillSwapVerticalOffset] = useState(() => parseInt(localStorage.getItem('skillSwapVerticalOffset') || '34', 10));
-    const [skillSwapMaxVisible, setSkillSwapMaxVisible] = useState(() => parseInt(localStorage.getItem('skillSwapMaxVisible') || '4', 10));
-    const [skillSwapPauseOnHover, setSkillSwapPauseOnHover] = useState(() => localStorage.getItem('skillSwapPauseOnHover') !== 'false');
-    const [gridAnimate, setGridAnimate] = useState(() => localStorage.getItem('gridAnimate') !== 'false');
-    const [gridTint, setGridTint] = useState(() => localStorage.getItem('gridTint') === 'true');
-    const [performanceMode, setPerformanceMode] = useState(() => localStorage.getItem('performanceMode') === 'true');
+    const [skillSwapFast, setSkillSwapFast] = useState(() => getLocalStorageItem('skillSwapFast', null) === 'true');
+    const [skillSwapRandomOrder, setSkillSwapRandomOrder] = useState(() => getLocalStorageItem('skillSwapRandomOrder', null) !== 'false'); // default true
+    const [skillSwapControls, setSkillSwapControls] = useState(() => getLocalStorageItem('skillSwapControls', null) !== 'false'); // default true
+    const [skillSwapPulse, setSkillSwapPulse] = useState(() => getLocalStorageItem('skillSwapPulse', null) !== 'false'); // default true
+    const [skillSwapRandomEasing, setSkillSwapRandomEasing] = useState(() => getLocalStorageItem('skillSwapRandomEasing', null) !== 'false'); // default true
+    const [skillSwapBaseOffset, setSkillSwapBaseOffset] = useState(() => parseInt(getLocalStorageItem('skillSwapBaseOffset', '-90'), 10));
+    const [skillSwapVerticalOffset, setSkillSwapVerticalOffset] = useState(() => parseInt(getLocalStorageItem('skillSwapVerticalOffset', '34'), 10));
+    const [skillSwapMaxVisible, setSkillSwapMaxVisible] = useState(() => parseInt(getLocalStorageItem('skillSwapMaxVisible', '4'), 10));
+    const [skillSwapPauseOnHover, setSkillSwapPauseOnHover] = useState(() => getLocalStorageItem('skillSwapPauseOnHover', null) !== 'false');
+    const [gridAnimate, setGridAnimate] = useState(() => getLocalStorageItem('gridAnimate', null) !== 'false');
+    const [gridTint, setGridTint] = useState(() => getLocalStorageItem('gridTint', null) === 'true');
+    const [performanceMode, setPerformanceMode] = useState(() => getLocalStorageItem('performanceMode', null) === 'true');
 
     const toggleTheme = () => setTheme(prev => {
         const next = prev === 'dark' ? 'light' : 'dark';
-        if (typeof window !== 'undefined') localStorage.setItem('theme', next);
+        try {
+            if (typeof window !== 'undefined' && window.localStorage) {
+                localStorage.setItem('theme', next);
+            }
+        } catch (e) {
+            console.warn('Failed to save theme to localStorage:', e);
+        }
         return next;
     });
     const toggleThemeWithOrigin = (coord) => {
@@ -55,51 +74,63 @@ export function AppProvider({ children }) {
         requestAnimationFrame(() => toggleTheme());
     };
 
+    // Helper function to safely set localStorage value
+    const setLocalStorageItem = (key, value) => {
+        try {
+            if (typeof window !== 'undefined' && window.localStorage) {
+                localStorage.setItem(key, String(value));
+            }
+        } catch (e) {
+            // localStorage may be disabled or unavailable
+            console.warn(`Failed to save ${key} to localStorage:`, e);
+        }
+    };
+
     // Persist effects toggles
     useEffect(() => {
-        localStorage.setItem('enableCardAnimations', String(enableCardAnimations));
+        setLocalStorageItem('enableCardAnimations', enableCardAnimations);
     }, [enableCardAnimations]);
     useEffect(() => {
-        localStorage.setItem('enableCustomCursor', String(enableCustomCursor));
+        setLocalStorageItem('enableCustomCursor', enableCustomCursor);
     }, [enableCustomCursor]);
     useEffect(() => {
-        localStorage.setItem('enableHighContrastGrid', String(enableHighContrastGrid));
+        setLocalStorageItem('enableHighContrastGrid', enableHighContrastGrid);
     }, [enableHighContrastGrid]);
     useEffect(() => {
-        localStorage.setItem('skillSwapFast', String(skillSwapFast));
+        setLocalStorageItem('skillSwapFast', skillSwapFast);
     }, [skillSwapFast]);
     useEffect(() => {
-        localStorage.setItem('skillSwapRandomOrder', String(skillSwapRandomOrder));
+        setLocalStorageItem('skillSwapRandomOrder', skillSwapRandomOrder);
     }, [skillSwapRandomOrder]);
     useEffect(() => {
-        localStorage.setItem('skillSwapControls', String(skillSwapControls));
+        setLocalStorageItem('skillSwapControls', skillSwapControls);
     }, [skillSwapControls]);
     useEffect(() => {
-        localStorage.setItem('skillSwapPulse', String(skillSwapPulse));
+        setLocalStorageItem('skillSwapPulse', skillSwapPulse);
     }, [skillSwapPulse]);
     useEffect(() => {
-        localStorage.setItem('skillSwapRandomEasing', String(skillSwapRandomEasing));
+        setLocalStorageItem('skillSwapRandomEasing', skillSwapRandomEasing);
     }, [skillSwapRandomEasing]);
     useEffect(() => {
-        localStorage.setItem('skillSwapBaseOffset', String(skillSwapBaseOffset));
+        setLocalStorageItem('skillSwapBaseOffset', skillSwapBaseOffset);
     }, [skillSwapBaseOffset]);
     useEffect(() => {
-        localStorage.setItem('skillSwapVerticalOffset', String(skillSwapVerticalOffset));
+        setLocalStorageItem('skillSwapVerticalOffset', skillSwapVerticalOffset);
     }, [skillSwapVerticalOffset]);
     useEffect(() => {
-        localStorage.setItem('skillSwapMaxVisible', String(skillSwapMaxVisible));
+        setLocalStorageItem('skillSwapMaxVisible', skillSwapMaxVisible);
     }, [skillSwapMaxVisible]);
     useEffect(() => {
-        localStorage.setItem('skillSwapPauseOnHover', String(skillSwapPauseOnHover));
+        setLocalStorageItem('skillSwapPauseOnHover', skillSwapPauseOnHover);
     }, [skillSwapPauseOnHover]);
     useEffect(() => {
-        localStorage.setItem('gridAnimate', String(gridAnimate));
+        setLocalStorageItem('gridAnimate', gridAnimate);
     }, [gridAnimate]);
     useEffect(() => {
-        localStorage.setItem('gridTint', String(gridTint));
+        setLocalStorageItem('gridTint', gridTint);
     }, [gridTint]);
     useEffect(() => {
-        localStorage.setItem('performanceMode', String(performanceMode));
+        setLocalStorageItem('performanceMode', performanceMode);
     }, [performanceMode]);
 
     useEffect(() => {

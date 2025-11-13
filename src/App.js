@@ -1,4 +1,4 @@
-import React, {lazy, Suspense, useCallback, useEffect, useState} from 'react';
+import React, {lazy, Suspense, useCallback, useEffect, useRef, useState} from 'react';
 import {useTheme} from './context/AppContext';
 import {useKonamiCode} from './hooks/useKonamiCode';
 import './index.css'; // Importando nosso CSS consolidado
@@ -33,12 +33,30 @@ function App() {
     const [overlayVisible, setOverlayVisible] = useState(false);
     const [waitingSW, setWaitingSW] = useState(null);
     const {push} = useToast();
+    const confettiTimeoutRef = useRef(null);
 
     // Hook do Konami Code
     useKonamiCode(useCallback(() => {
         setShowConfetti(true);
-        setTimeout(() => setShowConfetti(false), 5000);
+        // Clear any existing timeout
+        if (confettiTimeoutRef.current) {
+            clearTimeout(confettiTimeoutRef.current);
+        }
+        confettiTimeoutRef.current = setTimeout(() => {
+            setShowConfetti(false);
+            confettiTimeoutRef.current = null;
+        }, 5000);
     }, []));
+
+    // Cleanup confetti timeout on unmount
+    useEffect(() => {
+        return () => {
+            if (confettiTimeoutRef.current) {
+                clearTimeout(confettiTimeoutRef.current);
+                confettiTimeoutRef.current = null;
+            }
+        };
+    }, []);
 
     // Gerenciar o ciclo de vida da sobreposição de transição de tema
     useEffect(() => {
@@ -56,7 +74,14 @@ function App() {
         } else {
             document.documentElement.classList.remove('dark');
         }
-        localStorage.setItem('theme', theme);
+        try {
+            if (typeof window !== 'undefined' && window.localStorage) {
+                localStorage.setItem('theme', theme);
+            }
+        } catch (e) {
+            // localStorage may be disabled or unavailable
+            console.warn('Failed to save theme to localStorage:', e);
+        }
     }, [theme]);
 
     // Listen for custom SW update event dispatched from index.js

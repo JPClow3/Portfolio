@@ -1,6 +1,7 @@
 import React from 'react';
 import {BUILD_VERSION} from '../version';
 import {GithubIcon, LinkedInIcon, MailIcon} from './Icons';
+import GitHubContributions from './GitHubContributions';
 
 const Footer = () => {
     const currentYear = new Date().getFullYear();
@@ -25,7 +26,13 @@ const Footer = () => {
     return (
         <footer
             className="bg-gradient-to-r from-indigo-100 via-blue-100 to-purple-100 dark:from-dark-surface/80 dark:via-dark-bg/80 dark:to-indigo-950/80 border-t-2 border-blue-300 dark:border-indigo-700 relative z-40 shadow-lg shadow-blue-500/10 dark:shadow-purple-500/10">
-            <div className="container mx-auto px-4 py-8 text-center space-y-4">
+            <div className="container mx-auto px-4 py-8 space-y-8">
+                {/* GitHub Contributions Widget */}
+                <div className="max-w-4xl mx-auto">
+                    <GitHubContributions username="JPClow3" limit={5} />
+                </div>
+                
+                <div className="text-center space-y-4">
                 {/* Social Links */}
                 <div className="flex justify-center items-center gap-4">
                     {socialLinks.map((link, index) => (

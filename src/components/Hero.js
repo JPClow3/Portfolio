@@ -3,6 +3,7 @@ import {useLanguage} from '../context/AppContext';
 import {portfolioData} from '../data';
 import {TypingAnimation} from './VisualComponents';
 import ScrollIndicator from './ScrollIndicator';
+import {trackButtonClick, trackResumeDownload} from '../utils/analytics';
 
 // Lazy load LaserFlow to reduce initial bundle size (Three.js is heavy)
 const LaserFlow = lazy(() => import('./LaserFlow'));
@@ -50,6 +51,58 @@ const Hero = () => {
                         gradientColors={['#67e8f9', '#a78bfa', '#67e8f9']}
                         animationSpeed={8}
                     />
+                </div>
+                {/* Tagline */}
+                {hero.tagline && (
+                    <p className="text-lg sm:text-xl md:text-2xl text-blue-100/90 dark:text-slate-300/90 mt-4 max-w-2xl mx-auto px-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
+                        {hero.tagline}
+                    </p>
+                )}
+                {/* CTA Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8 px-4">
+                    <a
+                        href="#projects"
+                        onClick={() => trackButtonClick('view_work', 'hero')}
+                        className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-purple-600 hover:to-blue-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
+                        aria-label={hero.cta?.viewWork || 'View My Work'}
+                    >
+                        {hero.cta?.viewWork || 'View My Work'}
+                    </a>
+                    <a
+                        href="#contact"
+                        onClick={() => trackButtonClick('get_in_touch', 'hero')}
+                        className="px-6 py-3 bg-white/10 dark:bg-slate-800/50 backdrop-blur-md hover:bg-white/20 dark:hover:bg-slate-700/50 text-white font-semibold rounded-lg border-2 border-white/30 dark:border-slate-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
+                        aria-label={hero.cta?.getInTouch || 'Get in Touch'}
+                    >
+                        {hero.cta?.getInTouch || 'Get in Touch'}
+                    </a>
+                </div>
+                {/* Resume Download Buttons */}
+                <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mt-6 px-4">
+                    <a
+                        href="/resumes/Curriculo-EN.pdf"
+                        download
+                        onClick={() => trackResumeDownload('EN')}
+                        className="px-5 py-2.5 text-sm bg-white/10 dark:bg-slate-800/50 backdrop-blur-md hover:bg-white/20 dark:hover:bg-slate-700/50 text-white font-medium rounded-lg border border-white/30 dark:border-slate-600 shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
+                        aria-label="Download CV in English"
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        {language === 'en' ? 'Download CV (EN)' : 'Baixar CV (EN)'}
+                    </a>
+                    <a
+                        href="/resumes/Curriculo-PT.pdf"
+                        download
+                        onClick={() => trackResumeDownload('PT')}
+                        className="px-5 py-2.5 text-sm bg-white/10 dark:bg-slate-800/50 backdrop-blur-md hover:bg-white/20 dark:hover:bg-slate-700/50 text-white font-medium rounded-lg border border-white/30 dark:border-slate-600 shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
+                        aria-label="Baixar CV em Português"
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        {language === 'en' ? 'Download CV (PT)' : 'Baixar CV (PT)'}
+                    </a>
                 </div>
             </div>
             {/* Scroll indicator */}

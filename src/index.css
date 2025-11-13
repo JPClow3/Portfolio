@@ -703,3 +703,97 @@ a[role="button"],
         min-height: 180px;
     }
 }
+
+/* --- PRINT STYLES --- */
+@media print {
+    /* Hide non-essential elements */
+    header,
+    nav,
+    footer,
+    .back-to-top,
+    .scroll-progress,
+    .scroll-indicator,
+    .custom-cursor,
+    button:not(.print-keep),
+    .theme-toggle,
+    .language-selector {
+        display: none !important;
+    }
+
+    /* Remove backgrounds and ensure good contrast */
+    body {
+        background: white !important;
+        color: black !important;
+    }
+
+    /* Ensure all text is readable */
+    * {
+        color: black !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    /* Resume/CV specific styles */
+    section {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        page-break-after: avoid;
+    }
+
+    /* Links should be visible */
+    a {
+        color: #0000EE !important;
+        text-decoration: underline !important;
+    }
+
+    a[href^="http"]::after {
+        content: " (" attr(href) ")";
+        font-size: 0.8em;
+        color: #666;
+    }
+
+    /* Print-friendly resume layout */
+    .resume-print {
+        max-width: 8.5in;
+        margin: 0 auto;
+        padding: 1in;
+    }
+}
+
+/* Enhanced reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    /* Disable animations for LaserFlow */
+    .laser-flow-background {
+        display: none !important;
+    }
+
+    /* Disable particle animations in MagicBento */
+    .particle {
+        display: none !important;
+    }
+
+    /* Simplify scroll animations */
+    .fade-in-section {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    /* Disable scroll progress animation */
+    .scroll-progress-shimmer {
+        animation: none !important;
+    }
+
+    /* Disable typing animation */
+    .typing-cursor {
+        display: none !important;
+    }
+
+    /* Disable bounce animations */
+    .animate-bounce-subtle {
+        animation: none !important;
+    }
+}

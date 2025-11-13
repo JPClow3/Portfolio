@@ -11,7 +11,12 @@ export const portfolioData = {
         hero: {
             greeting: "Hello, I'm",
             name: "João Paulo Gonçalves Santos",
-            title: "Software Engineering Student | Front-End Developer"
+            title: "Software Engineering Student | Front-End Developer",
+            tagline: "Transforming ideas into innovative digital solutions",
+            cta: {
+                viewWork: "View My Work",
+                getInTouch: "Get in Touch"
+            }
         },
         profile: {title: "My Profile", card: {status: "Available for new opportunities", contactText: "LinkedIn"}},
         summary: {
@@ -69,30 +74,37 @@ export const portfolioData = {
         },
         skills: {
             title: "Skills & Certifications",
+            tagline: "Building modern solutions with passion and precision",
             categories: [{
                 name: "Testing & QA",
                 items: ["Automated & Manual Testing", "Robot Framework", "API Testing (Postman Certified)"],
-                icon: "qa"
+                icon: "qa",
+                proficiency: "Advanced"
             }, {
                 name: "Low-Code",
                 items: ["Power Automate", "Power Apps", "Microsoft Power BI"],
-                icon: "lowcode"
+                icon: "lowcode",
+                proficiency: "Advanced"
             }, {
                 name: "Front-End",
                 items: ["HTML", "CSS", "JavaScript", "TypeScript", "React"],
-                icon: "frontend"
+                icon: "frontend",
+                proficiency: "Intermediate"
             }, {
                 name: "Back-End & Databases",
                 items: ["Python", "Node.js", "SQL", "REST APIs"],
-                icon: "tools"
+                icon: "tools",
+                proficiency: "Intermediate"
             }, {
                 name: "Tools & Methodologies",
                 items: ["Git", "GitHub", "Agile", "SAP"],
-                icon: "tools"
+                icon: "tools",
+                proficiency: "Advanced"
             }, {
                 name: "Languages",
                 items: ["Advanced English", "Native Portuguese"],
-                icon: "languages"
+                icon: "languages",
+                proficiency: "Native/Advanced"
             }],
             certifications_title: "Certifications",
             certifications: ["Postman API Fundamentals Student Expert", "Software Testing"]
@@ -117,7 +129,12 @@ export const portfolioData = {
         hero: {
             greeting: "Olá, eu sou",
             name: "João Paulo Gonçalves Santos",
-            title: "Estudante de Engenharia de Software | Desenvolvedor Front-End"
+            title: "Estudante de Engenharia de Software | Desenvolvedor Front-End",
+            tagline: "Transformando ideias em soluções digitais inovadoras",
+            cta: {
+                viewWork: "Ver Meus Trabalhos",
+                getInTouch: "Entre em Contato"
+            }
         },
         profile: {title: "Meu Perfil", card: {status: "Disponível para novas oportunidades", contactText: "LinkedIn"}},
         summary: {
@@ -175,27 +192,38 @@ export const portfolioData = {
         },
         skills: {
             title: "Habilidades & Certificações",
+            tagline: "Construindo soluções modernas com paixão e precisão",
             categories: [{
                 name: "Testes & QA",
                 items: ["Testes Automatizados e Manuais", "Robot Framework", "Teste de API (Certificado Postman)"],
-                icon: "qa"
+                icon: "qa",
+                proficiency: "Avançado"
             }, {
                 name: "Low-Code",
                 items: ["Power Automate", "Power Apps", "Microsoft Power BI"],
-                icon: "lowcode"
+                icon: "lowcode",
+                proficiency: "Avançado"
             }, {
                 name: "Front-End",
                 items: ["HTML", "CSS", "JavaScript", "TypeScript", "React"],
-                icon: "frontend"
+                icon: "frontend",
+                proficiency: "Intermediário"
             }, {
                 name: "Back-End & Databases",
                 items: ["Python", "Node.js", "SQL", "REST APIs"],
-                icon: "tools"
+                icon: "tools",
+                proficiency: "Intermediário"
             }, {
                 name: "Tools & Methodologies",
                 items: ["Ferramentas e Metodologias", "GitHub", "Ágil", "SAP"],
-                icon: "tools"
-            }, {name: "Idiomas", items: ["Inglês Avançado", "Português Nativo"], icon: "languages"}],
+                icon: "tools",
+                proficiency: "Avançado"
+            }, {
+                name: "Idiomas",
+                items: ["Inglês Avançado", "Português Nativo"],
+                icon: "languages",
+                proficiency: "Nativo/Avançado"
+            }],
             certifications_title: "Certificações",
             certifications: ["Postman API Fundamentals Student Expert", "Software Testing"]
         },

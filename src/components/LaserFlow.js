@@ -301,6 +301,16 @@ export const LaserFlow = ({
     };
 
     useEffect(() => {
+        // Check for reduced motion preference
+        const prefersReducedMotion = typeof window !== 'undefined' && 
+            window.matchMedia && 
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        
+        if (prefersReducedMotion) {
+            // Don't initialize LaserFlow if user prefers reduced motion
+            return;
+        }
+
         const mount = mountRef.current;
         const renderer = new WebGLRenderer({
             antialias: false,

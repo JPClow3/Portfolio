@@ -155,7 +155,12 @@ const ParticleCard = ({
     }, [initializeParticles]);
 
     useEffect(() => {
-        if (disableAnimations || !cardRef.current) return;
+        // Check for reduced motion preference
+        const prefersReducedMotion = typeof window !== 'undefined' && 
+            window.matchMedia && 
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        
+        if (disableAnimations || prefersReducedMotion || !cardRef.current) return;
 
         const element = cardRef.current;
 

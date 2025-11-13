@@ -1,0 +1,45 @@
+{
+  "short_name": "JP Santos Portfolio",
+  "name": "João Paulo Gonçalves Santos | Portfolio",
+  "description": "Portfolio of João Paulo Gonçalves Santos - Software Engineering Student and Front-End Developer",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": "./",
+  "display": "standalone",
+  "theme_color": "#6366f1",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "categories": ["portfolio", "developer", "software"],
+  "lang": "en",
+  "dir": "ltr",
+  "scope": "./",
+  "shortcuts": [
+    {
+      "name": "About",
+      "short_name": "About",
+      "description": "View about section",
+      "url": "./#about",
+      "icons": [{"src": "favicon.ico", "sizes": "96x96"}]
+    },
+    {
+      "name": "Projects",
+      "short_name": "Projects",
+      "description": "View projects",
+      "url": "./#projects",
+      "icons": [{"src": "favicon.ico", "sizes": "96x96"}]
+    },
+    {
+      "name": "Contact",
+      "short_name": "Contact",
+      "description": "Contact me",
+      "url": "./#contact",
+      "icons": [{"src": "favicon.ico", "sizes": "96x96"}]
+    }
+  ]
+}
+

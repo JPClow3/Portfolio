@@ -1,8 +1,10 @@
 import React, {lazy, Suspense, useCallback, useEffect, useRef, useState} from 'react';
-import {useTheme} from './context/AppContext';
+import {useTheme, useLanguage} from './context/AppContext';
 import {useKonamiCode} from './hooks/useKonamiCode';
 import './index.css'; // Importando nosso CSS consolidado
 import ErrorBoundary from './components/ErrorBoundary';
+import {SEOHead} from './components/SEOHead';
+import {SectionSkeleton} from './components/LoadingSkeleton';
 // Critical above-the-fold components loaded immediately
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -11,6 +13,8 @@ import BackToTop from './components/BackToTop';
 // Importando componentes visuais que o App usa diretamente
 import {Confetti, CustomCursor, SectionSeparator} from './components/VisualComponents';
 import {useToast} from './components/Toaster';
+import CookieConsent from './components/CookieConsent';
+import {initAnalytics} from './utils/analytics';
 // Below-the-fold components lazy loaded to reduce initial bundle size
 const About = lazy(() => import('./components/About'));
 const Profile = lazy(() => import('./components/Profile'));
@@ -21,14 +25,11 @@ const Contact = lazy(() => import('./components/Contact'));
 const Footer = lazy(() => import('./components/Footer'));
 
 // Loading fallback component
-const SectionLoader = () => (
-    <div className="flex items-center justify-center py-24">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-    </div>
-);
+const SectionLoader = SectionSkeleton;
 
 function App() {
     const {theme, toggleThemeWithOrigin, themeTransition} = useTheme();
+    const {language} = useLanguage();
     const [showConfetti, setShowConfetti] = useState(false);
     const [overlayVisible, setOverlayVisible] = useState(false);
     const [waitingSW, setWaitingSW] = useState(null);
@@ -56,6 +57,18 @@ function App() {
                 confettiTimeoutRef.current = null;
             }
         };
+    }, []);
+
+    // Initialize analytics if consent given
+    useEffect(() => {
+        try {
+            const consent = localStorage.getItem('analytics-consent');
+            if (consent === 'granted') {
+                initAnalytics();
+            }
+        } catch (e) {
+            // Analytics initialization failed
+        }
     }, []);
 
     // Gerenciar o ciclo de vida da sobreposição de transição de tema
@@ -121,6 +134,7 @@ function App() {
 
     return (
         <ErrorBoundary fallbackMessage="We're sorry, but something went wrong loading the portfolio.">
+            <SEOHead language={language} />
             <div
                 className="relative z-0 bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 dark:from-dark-bg dark:via-dark-surface dark:to-indigo-950 text-slate-800 dark:text-slate-200 font-sans transition-colors duration-300 overflow-x-hidden">
                 <CustomCursor/>
@@ -196,6 +210,7 @@ function App() {
                     <Footer/>
                 </Suspense>
                 <BackToTop />
+                <CookieConsent />
             </div>
         </ErrorBoundary>
     );

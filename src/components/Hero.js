@@ -2,6 +2,7 @@ import React, {lazy, Suspense} from 'react';
 import {useLanguage} from '../context/AppContext';
 import {portfolioData} from '../data';
 import {TypingAnimation} from './VisualComponents';
+import ScrollIndicator from './ScrollIndicator';
 
 // Lazy load LaserFlow to reduce initial bundle size (Three.js is heavy)
 const LaserFlow = lazy(() => import('./LaserFlow'));
@@ -51,6 +52,8 @@ const Hero = () => {
                     />
                 </div>
             </div>
+            {/* Scroll indicator */}
+            <ScrollIndicator />
         </section>
     );
 };

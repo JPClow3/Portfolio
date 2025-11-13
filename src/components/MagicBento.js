@@ -1,6 +1,8 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {gsap} from 'gsap';
 import {throttle} from '../utils/throttle';
+// NOTE: Using non-cryptographic random for visual effects only (particles, animations)
+import {random} from '../utils/random';
 
 const DEFAULT_PARTICLE_COUNT = 12;
 const DEFAULT_SPOTLIGHT_RADIUS = 300;
@@ -56,7 +58,7 @@ const ParticleCard = ({
         
         // Pre-create particle elements but don't append them yet
         const particles = Array.from({length: particleCount}, () => {
-            const particle = createParticleElement(Math.random() * width, Math.random() * height, glowColor);
+            const particle = createParticleElement(random() * width, random() * height, glowColor);
             // Hide particles initially with CSS transform instead of display:none
             particle.style.transform = 'scale(0)';
             particle.style.opacity = '0';
@@ -130,10 +132,10 @@ const ParticleCard = ({
                 });
 
                 gsap.to(particle, {
-                    x: (Math.random() - 0.5) * 100,
-                    y: (Math.random() - 0.5) * 100,
-                    rotation: Math.random() * 360,
-                    duration: 2 + Math.random() * 2,
+                    x: (random() - 0.5) * 100,
+                    y: (random() - 0.5) * 100,
+                    rotation: random() * 360,
+                    duration: 2 + random() * 2,
                     ease: 'none',
                     repeat: -1,
                     yoyo: true

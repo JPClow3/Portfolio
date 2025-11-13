@@ -176,6 +176,41 @@ h1, h2, h3, h4, h5, h6, p, span, div {
     animation: fade-in-down 0.3s ease-out;
 }
 
+/* Scroll indicator animation - subtle bounce */
+@keyframes bounce-subtle {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.animate-bounce-subtle {
+    animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+/* Scroll progress bar animation */
+@keyframes shimmer {
+    0% {
+        background-position: -100% 0;
+    }
+    100% {
+        background-position: 100% 0;
+    }
+}
+
+.scroll-progress-shimmer {
+    background-size: 200% 100%;
+    background-image: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    animation: shimmer 2s linear infinite;
+}
+
 /* Accessibility helpers */
 .sr-only {
     position: absolute;

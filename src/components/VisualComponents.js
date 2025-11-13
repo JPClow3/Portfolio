@@ -1,6 +1,8 @@
 import React, {forwardRef, useEffect, useMemo, useRef, useState} from 'react';
 import {useEffects, useLibs, useTheme} from '../context/AppContext';
 import {throttle} from '../utils/throttle';
+// NOTE: Using non-cryptographic random for visual effects only (confetti animation)
+import {random, randomInt} from '../utils/random';
 
 // --- Card foi movido para cá e exportado diretamente ---
 export const Card = forwardRef(({ customClass, ...rest }, ref) => (
@@ -240,11 +242,11 @@ export const SectionSeparator = ({className = ''}) => (
 export const Confetti = React.memo(() => {
     const [pieces] = useState(() => Array.from({length: 50}, (_, i) => ({
         id: i,
-        left: Math.random() * 100,
-        delay: Math.random() * 0.25,
-        duration: 3.5 + Math.random() * 1.5,
-        size: 5 + Math.random() * 5,
-        hue: Math.floor(Math.random() * 360)
+        left: random() * 100,
+        delay: random() * 0.25,
+        duration: 3.5 + random() * 1.5,
+        size: 5 + random() * 5,
+        hue: randomInt(0, 360)
     })));
     return (
         <div className="confetti-wrapper pointer-events-none fixed inset-0 overflow-hidden z-[9999]" aria-hidden="true">

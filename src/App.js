@@ -1,22 +1,24 @@
-import React, {Suspense, useCallback, useEffect, useState} from 'react';
+import React, {lazy, Suspense, useCallback, useEffect, useState} from 'react';
 import {useTheme} from './context/AppContext';
 import {useKonamiCode} from './hooks/useKonamiCode';
 import './index.css'; // Importando nosso CSS consolidado
 import ErrorBoundary from './components/ErrorBoundary';
-// Importando os componentes de seção
+// Critical above-the-fold components loaded immediately
 import Header from './components/Header';
 import Hero from './components/Hero';
-import About from './components/About';
-import Profile from './components/Profile';
-import Experience from './components/Experience';
-import Projects from './components/Projects';
-import Skills from './components/Skills';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
-
+import ScrollProgress from './components/ScrollProgress';
+import BackToTop from './components/BackToTop';
 // Importando componentes visuais que o App usa diretamente
 import {Confetti, CustomCursor, SectionSeparator} from './components/VisualComponents';
 import {useToast} from './components/Toaster';
+// Below-the-fold components lazy loaded to reduce initial bundle size
+const About = lazy(() => import('./components/About'));
+const Profile = lazy(() => import('./components/Profile'));
+const Experience = lazy(() => import('./components/Experience'));
+const Projects = lazy(() => import('./components/Projects'));
+const Skills = lazy(() => import('./components/Skills'));
+const Contact = lazy(() => import('./components/Contact'));
+const Footer = lazy(() => import('./components/Footer'));
 
 // Loading fallback component
 const SectionLoader = () => (
@@ -97,6 +99,7 @@ function App() {
             <div
                 className="relative z-0 bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 dark:from-dark-bg dark:via-dark-surface dark:to-indigo-950 text-slate-800 dark:text-slate-200 font-sans transition-colors duration-300 overflow-x-hidden">
                 <CustomCursor/>
+                <ScrollProgress/>
                 {showConfetti && <Confetti/>}
                 {overlayVisible && themeTransition && (
                     <div
@@ -167,6 +170,7 @@ function App() {
                 <Suspense fallback={null}>
                     <Footer/>
                 </Suspense>
+                <BackToTop />
             </div>
         </ErrorBoundary>
     );

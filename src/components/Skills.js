@@ -3,33 +3,7 @@ import {useLanguage} from '../context/AppContext';
 import {portfolioData} from '../data';
 import {FadeInOnScroll, Section} from './VisualComponents';
 import MagicBento from './MagicBento';
-import {
-    SiJavascript, SiTypescript, SiPostgresql, SiMicrosoft, SiPowerautomate,
-    SiPowerapps, SiMicrosoftpowerbi, SiRobotframework, SiPostman
-} from 'react-icons/si';
-import {FaReact, FaPython, FaNodeJs, FaHtml5, FaCss3Alt, FaJs, FaGitAlt, FaGithub, FaBug, FaCode, FaDatabase, FaToolbox, FaLanguage} from 'react-icons/fa';
-
-// Icon mapping for technologies
-const getIconForTech = (tech) => {
-    const techLower = tech.toLowerCase();
-    if (techLower.includes('react')) return <FaReact className="w-6 h-6 text-blue-500" />;
-    if (techLower.includes('python')) return <FaPython className="w-6 h-6 text-yellow-500" />;
-    if (techLower.includes('node')) return <FaNodeJs className="w-6 h-6 text-green-600" />;
-    if (techLower.includes('html')) return <FaHtml5 className="w-6 h-6 text-orange-500" />;
-    if (techLower.includes('css')) return <FaCss3Alt className="w-6 h-6 text-blue-500" />;
-    if (techLower.includes('javascript') && !techLower.includes('typescript')) return <FaJs className="w-6 h-6 text-yellow-400" />;
-    if (techLower.includes('typescript')) return <SiTypescript className="w-6 h-6 text-blue-600" />;
-    if (techLower.includes('git')) return <FaGitAlt className="w-6 h-6 text-red-500" />;
-    if (techLower.includes('github')) return <FaGithub className="w-6 h-6 text-gray-800 dark:text-white" />;
-    if (techLower.includes('sql') || techLower.includes('database')) return <FaDatabase className="w-6 h-6 text-blue-600" />;
-    if (techLower.includes('power automate')) return <SiPowerautomate className="w-6 h-6 text-blue-600" />;
-    if (techLower.includes('power apps')) return <SiPowerapps className="w-6 h-6 text-purple-600" />;
-    if (techLower.includes('power bi')) return <SiMicrosoftpowerbi className="w-6 h-6 text-yellow-500" />;
-    if (techLower.includes('robot')) return <SiRobotframework className="w-6 h-6 text-red-600" />;
-    if (techLower.includes('postman')) return <SiPostman className="w-6 h-6 text-orange-500" />;
-    if (techLower.includes('microsoft')) return <SiMicrosoft className="w-6 h-6 text-blue-600" />;
-    return <FaCode className="w-6 h-6 text-gray-500" />;
-};
+import {FaBug, FaCode, FaToolbox, FaLanguage} from 'react-icons/fa';
 
 // Category icon mapping
 const getCategoryIcon = (iconName) => {
@@ -177,9 +151,6 @@ const Skills = () => {
                         })}
                     </div>
                 </div>
-
-                {/* Original Skills Grid (kept for compatibility) */}
-                <MagicBento cardData={cardData}/>
 
                 {/* Certifications Section */}
                 {skills.certifications && skills.certifications.length > 0 && (

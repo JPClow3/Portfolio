@@ -1,5 +1,9 @@
 import React, {useEffect, useRef} from 'react';
 // Tree-shake Three.js - import only what we need
+// NOTE: Security scanners may flag Math.random() usage in Three.js (chunk 408).
+// This is a false positive - Three.js uses Math.random() only for visual effects
+// (shader calculations, particle positions, etc.) and NOT for security-sensitive operations.
+// Our own random utilities in src/utils/random.js are also documented as non-cryptographic.
 import {
     WebGLRenderer,
     SRGBColorSpace,

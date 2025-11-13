@@ -58,6 +58,7 @@ const Footer = () => {
                         Build {BUILD_VERSION}
                     </p>
                 </div>
+                </div>
             </div>
         </footer>
     );

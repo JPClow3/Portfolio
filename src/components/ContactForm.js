@@ -1,13 +1,11 @@
 import React, {useState} from 'react';
 import {useLanguage} from '../context/AppContext';
-import {portfolioData} from '../data';
 import {validateForm} from '../utils/formValidation';
 import {useToast} from './Toaster';
 import {trackFormSubmission} from '../utils/analytics';
 
 const ContactForm = ({onSubmit}) => {
     const {language} = useLanguage();
-    const {contact} = portfolioData[language];
     const {push} = useToast();
     
     const [formData, setFormData] = useState({

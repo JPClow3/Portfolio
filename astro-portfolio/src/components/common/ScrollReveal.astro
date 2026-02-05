@@ -1,0 +1,118 @@
+---
+interface Props {
+  animation?: 'fade-up' | 'fade-down' | 'fade-left' | 'fade-right' | 'scale' | 'fade';
+  delay?: number;
+  duration?: number;
+  threshold?: number;
+  class?: string;
+  tag?: 'div' | 'section' | 'article' | 'li' | 'span';
+}
+
+const {
+  animation = 'fade-up',
+  delay = 0,
+  duration = 600,
+  threshold = 0.1,
+  class: className = '',
+  tag = 'div',
+} = Astro.props;
+
+const Tag = tag;
+---
+
+<Tag
+  class:list={['scroll-reveal', `scroll-reveal--${animation}`, className]}
+  data-scroll-reveal
+  data-threshold={threshold}
+  style={`--reveal-delay: ${delay}ms; --reveal-duration: ${duration}ms;`}
+>
+  <slot />
+</Tag>
+
+<style>
+  .scroll-reveal {
+    opacity: 0;
+    transition-property: opacity, transform;
+    transition-duration: var(--reveal-duration, 600ms);
+    transition-delay: var(--reveal-delay, 0ms);
+    transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .scroll-reveal--fade-up {
+    transform: translateY(30px);
+  }
+
+  .scroll-reveal--fade-down {
+    transform: translateY(-30px);
+  }
+
+  .scroll-reveal--fade-left {
+    transform: translateX(30px);
+  }
+
+  .scroll-reveal--fade-right {
+    transform: translateX(-30px);
+  }
+
+  .scroll-reveal--scale {
+    transform: scale(0.95);
+  }
+
+  .scroll-reveal--fade {
+    transform: none;
+  }
+
+  .scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0) translateX(0) scale(1);
+  }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  function initScrollReveal() {
+    const elements = document.querySelectorAll('[data-scroll-reveal]');
+
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      // If reduced motion is preferred, show all elements immediately
+      elements.forEach((el) => el.classList.add('revealed'));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        rootMargin: '0px 0px -50px 0px',
+      }
+    );
+
+    elements.forEach((el) => {
+      const threshold = parseFloat(el.getAttribute('data-threshold') || '0.1');
+      observer.observe(el);
+    });
+  }
+
+  // Run on initial load
+  initScrollReveal();
+
+  // Run on Astro page transitions
+  document.addEventListener('astro:page-load', initScrollReveal);
+</script>

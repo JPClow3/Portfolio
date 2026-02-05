@@ -1,0 +1,158 @@
+---
+import { ui } from '@/lib/i18n';
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
+import Icon from '@/components/common/Icon.astro';
+
+const t = ui.en;
+
+// Skill icons mapped to category names
+const categoryIcons: Record<string, typeof Icon extends (props: infer P) => any ? P['name'] : never> = {
+  'Testing & QA': 'check',
+  'Low-Code': 'code',
+  'Front-End': 'code',
+  'Back-End & Databases': 'code',
+  'Tools & Methodologies': 'briefcase',
+  'Languages': 'graduation',
+};
+
+const skillCategories = [
+  {
+    name: 'Testing & QA',
+    items: ['Automated & Manual Testing', 'Robot Framework', 'API Testing (Postman Certified)'],
+    proficiency: 'Advanced',
+    gradient: 'from-emerald-500 to-teal-500',
+  },
+  {
+    name: 'Low-Code',
+    items: ['Power Automate', 'Power Apps', 'Microsoft Power BI'],
+    proficiency: 'Advanced',
+    gradient: 'from-blue-500 to-cyan-500',
+  },
+  {
+    name: 'Front-End',
+    items: ['HTML', 'CSS', 'JavaScript', 'TypeScript', 'React'],
+    proficiency: 'Intermediate',
+    gradient: 'from-violet-500 to-purple-500',
+  },
+  {
+    name: 'Back-End & Databases',
+    items: ['Python', 'Node.js', 'SQL', 'REST APIs'],
+    proficiency: 'Intermediate',
+    gradient: 'from-orange-500 to-red-500',
+  },
+  {
+    name: 'Tools & Methodologies',
+    items: ['Git', 'GitHub', 'Agile', 'SAP'],
+    proficiency: 'Advanced',
+    gradient: 'from-pink-500 to-rose-500',
+  },
+  {
+    name: 'Languages',
+    items: ['Advanced English', 'Native Portuguese'],
+    proficiency: 'Native/Advanced',
+    gradient: 'from-amber-500 to-yellow-500',
+  },
+];
+
+const certifications = [
+  'Postman API Fundamentals Student Expert',
+  'Software Testing',
+];
+
+function getProficiencyStyles(proficiency: string): { bg: string; text: string; border: string } {
+  switch (proficiency.toLowerCase()) {
+    case 'advanced':
+      return {
+        bg: 'bg-emerald-500/10',
+        text: 'text-emerald-600 dark:text-emerald-400',
+        border: 'border-emerald-500/30',
+      };
+    case 'intermediate':
+      return {
+        bg: 'bg-blue-500/10',
+        text: 'text-blue-600 dark:text-blue-400',
+        border: 'border-blue-500/30',
+      };
+    case 'native/advanced':
+      return {
+        bg: 'bg-purple-500/10',
+        text: 'text-purple-600 dark:text-purple-400',
+        border: 'border-purple-500/30',
+      };
+    default:
+      return {
+        bg: 'bg-gray-500/10',
+        text: 'text-gray-600 dark:text-gray-400',
+        border: 'border-gray-500/30',
+      };
+  }
+}
+---
+
+<section id="skills" class="py-24">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <ScrollReveal animation="fade-up">
+      <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4">
+        {t['skills.title']}
+      </h2>
+      <p class="text-center text-[rgb(var(--color-text-muted))] mb-16">
+        {t['skills.tagline']}
+      </p>
+    </ScrollReveal>
+
+    <!-- Skills Grid -->
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+      {
+        skillCategories.map((category, index) => {
+          const profStyles = getProficiencyStyles(category.proficiency);
+          return (
+            <ScrollReveal animation="fade-up" delay={index * 100}>
+              <div class="group p-6 rounded-2xl bg-[rgb(var(--color-bg-secondary))] border border-[rgb(var(--color-border))] hover:border-[rgb(var(--color-accent)/0.5)] transition-all duration-300 hover:shadow-xl hover:shadow-[rgb(var(--color-accent)/0.1)] hover:-translate-y-1">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center gap-3">
+                    <div class={`p-2.5 rounded-xl bg-gradient-to-br ${category.gradient} text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                      <Icon name={categoryIcons[category.name] || 'code'} size={20} />
+                    </div>
+                    <h3 class="font-semibold">{category.name}</h3>
+                  </div>
+                  <span
+                    class={`px-2.5 py-1 text-xs font-medium rounded-full border ${profStyles.bg} ${profStyles.text} ${profStyles.border}`}
+                  >
+                    {category.proficiency}
+                  </span>
+                </div>
+                <ul class="space-y-2">
+                  {category.items.map((item) => (
+                    <li class="flex items-center gap-2 text-sm text-[rgb(var(--color-text-secondary))] group-hover:text-[rgb(var(--color-text-primary))] transition-colors">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[rgb(var(--color-accent))] group-hover:scale-125 transition-transform" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </ScrollReveal>
+          );
+        })
+      }
+    </div>
+
+    <!-- Certifications -->
+    <ScrollReveal animation="fade-up" delay={600}>
+      <div class="text-center">
+        <h3 class="text-xl font-semibold mb-6">{t['skills.certifications']}</h3>
+        <div class="flex flex-wrap justify-center gap-4">
+          {
+            certifications.map((cert) => (
+              <div class="group px-6 py-3 rounded-xl bg-gradient-to-r from-[rgb(var(--color-accent)/0.1)] to-[rgb(168_85_247/0.1)] border border-[rgb(var(--color-accent)/0.3)] hover:border-[rgb(var(--color-accent)/0.6)] transition-all duration-300 hover:shadow-lg hover:shadow-[rgb(var(--color-accent)/0.1)]">
+                <span class="text-sm font-medium text-[rgb(var(--color-text-primary))] flex items-center gap-2">
+                  <Icon name="check" size={16} class="text-[rgb(var(--color-accent))] group-hover:scale-110 transition-transform" />
+                  {cert}
+                </span>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </ScrollReveal>
+  </div>
+</section>

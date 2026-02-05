@@ -1,4 +1,4 @@
-### react template
+### React (Legacy)
 .DS_*
 *.log
 logs
@@ -14,3 +14,26 @@ psd
 thumb
 sketch
 
+### Astro
+astro-portfolio/dist/
+astro-portfolio/.astro/
+astro-portfolio/.vercel/
+astro-portfolio/node_modules/
+
+### Environment
+.env
+.env.*
+!.env.example
+
+### Claude Code
+.claude/settings.local.json
+
+### IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+### OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,81 @@
+---
+import { ui } from '@/lib/i18n';
+import HeroScene from '@/components/islands/HeroScene.svelte';
+import Icon from '@/components/common/Icon.astro';
+
+const t = ui.en;
+---
+
+<section
+  id="hero"
+  class="relative min-h-screen flex items-center justify-center overflow-hidden"
+>
+  <!-- 3D Background Scene - lazy load for performance -->
+  <HeroScene client:visible />
+
+  <!-- Background gradient overlay -->
+  <div
+    class="absolute inset-0 bg-gradient-to-br from-[rgb(var(--color-bg-primary)/0.8)] via-[rgb(var(--color-bg-primary)/0.5)] to-[rgb(var(--color-bg-primary)/0.8)]"
+  >
+  </div>
+
+  <!-- Content -->
+  <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <!-- Greeting -->
+    <p
+      class="text-lg sm:text-xl text-[rgb(var(--color-text-secondary))] mb-4 animate-slide-down stagger-1"
+    >
+      {t['hero.greeting']}
+    </p>
+
+    <!-- Name -->
+    <h1
+      class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 animate-slide-down stagger-2"
+    >
+      <span class="gradient-text">{t['hero.name']}</span>
+    </h1>
+
+    <!-- Title -->
+    <p
+      class="text-xl sm:text-2xl text-[rgb(var(--color-text-secondary))] mb-4 animate-slide-down stagger-3"
+    >
+      {t['hero.title']}
+    </p>
+
+    <!-- Tagline -->
+    <p
+      class="text-lg text-[rgb(var(--color-text-muted))] mb-10 animate-slide-down stagger-4"
+    >
+      {t['hero.tagline']}
+    </p>
+
+    <!-- CTA Buttons -->
+    <div
+      class="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up stagger-5"
+    >
+      <a
+        href="#projects"
+        class="group px-8 py-4 bg-[rgb(var(--color-accent))] hover:bg-[rgb(var(--color-accent-hover))] text-white font-medium rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-[rgb(var(--color-accent)/0.25)]"
+      >
+        {t['hero.cta.work']}
+      </a>
+      <a
+        href="#contact"
+        class="px-8 py-4 bg-[rgb(var(--color-bg-secondary))] hover:bg-[rgb(var(--color-bg-tertiary))] text-[rgb(var(--color-text-primary))] font-medium rounded-xl border border-[rgb(var(--color-border))] transition-all duration-200 hover:scale-105 hover:border-[rgb(var(--color-accent)/0.5)]"
+      >
+        {t['hero.cta.contact']}
+      </a>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+    <a
+      href="#about"
+      aria-label="Scroll to about section"
+      class="block p-2 rounded-full hover:bg-[rgb(var(--color-bg-secondary)/0.5)] transition-colors"
+    >
+      <Icon name="arrow-down" size={24} class="text-[rgb(var(--color-text-muted))]" />
+    </a>
+  </div>
+</section>

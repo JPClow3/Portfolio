@@ -21,11 +21,13 @@ export const ui = {
 
     // Hero
     'hero.greeting': "Hello, I'm",
-    'hero.name': 'João Paulo Gonçalves Santos',
+    'hero.name': 'João Paulo Santos',
     'hero.title': 'Front-End Developer & QA Automation Engineer',
-    'hero.tagline': 'Building tested, accessible web experiences with React, TypeScript & Python',
+    'hero.tagline': 'I specialize in creating exceptional digital experiences. Transforming complex ideas into elegant and efficient code.',
+    'hero.availability': 'Available for Projects',
     'hero.cta.work': 'View My Work',
     'hero.cta.contact': 'Get in Touch',
+    'hero.cta.github': 'My GitHub',
     'hero.cta.resume': 'Download Resume',
 
     // Profile
@@ -93,11 +95,13 @@ export const ui = {
 
     // Hero
     'hero.greeting': 'Olá, eu sou',
-    'hero.name': 'João Paulo Gonçalves Santos',
+    'hero.name': 'João Paulo Santos',
     'hero.title': 'Desenvolvedor Front-End & Engenheiro de Automação QA',
-    'hero.tagline': 'Construindo experiências web testadas e acessíveis com React, TypeScript e Python',
+    'hero.tagline': 'Especializado em criar experiências digitais excepcionais. Transformando ideias complexas em código elegante e eficiente.',
+    'hero.availability': 'Disponível para Projetos',
     'hero.cta.work': 'Ver Meus Trabalhos',
     'hero.cta.contact': 'Entre em Contato',
+    'hero.cta.github': 'Meu GitHub',
     'hero.cta.resume': 'Baixar Currículo',
 
     // Profile

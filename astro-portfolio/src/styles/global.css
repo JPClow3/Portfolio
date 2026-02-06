@@ -2,25 +2,28 @@
 
 /* Custom CSS Variables for Theming */
 :root {
-  /* Colors - Light Mode */
-  --color-bg-primary: 255 255 255;
-  --color-bg-secondary: 249 250 251;
-  --color-bg-tertiary: 243 244 246;
+  /* Colors - Light Mode (Clean Blue Palette) */
+  --color-bg-primary: 248 250 252;
+  --color-bg-secondary: 255 255 255;
+  --color-bg-tertiary: 241 245 249;
 
-  --color-text-primary: 17 24 39;
-  --color-text-secondary: 75 85 99;
-  --color-text-muted: 156 163 175;
+  --color-text-primary: 30 41 59;
+  --color-text-secondary: 71 85 105;
+  --color-text-muted: 100 116 139;
 
-  --color-accent: 99 102 241;
-  --color-accent-hover: 79 70 229;
-  --color-accent-light: 224 231 255;
+  --color-accent: 29 78 216;
+  --color-accent-hover: 30 64 175;
+  --color-accent-light: 219 234 254;
 
-  --color-border: 229 231 235;
-  --color-border-hover: 209 213 219;
+  --color-border: 226 232 240;
+  --color-border-hover: 203 213 225;
+
+  /* Secondary accent for variety */
+  --color-secondary: 59 130 246;
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, rgb(99 102 241) 0%, rgb(168 85 247) 100%);
-  --gradient-text: linear-gradient(135deg, rgb(99 102 241) 0%, rgb(236 72 153) 50%, rgb(168 85 247) 100%);
+  --gradient-primary: linear-gradient(135deg, rgb(29 78 216) 0%, rgb(59 130 246) 100%);
+  --gradient-text: linear-gradient(to right, rgb(37 99 235), rgb(96 165 250));
 
   /* Shadows - Elevation System */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -56,21 +59,24 @@
 }
 
 html.dark {
-  /* Colors - Dark Mode */
-  --color-bg-primary: 17 24 39;
-  --color-bg-secondary: 31 41 55;
-  --color-bg-tertiary: 55 65 81;
+  /* Colors - Dark Mode (Deep Slate) */
+  --color-bg-primary: 15 23 42;
+  --color-bg-secondary: 30 41 59;
+  --color-bg-tertiary: 51 65 85;
 
-  --color-text-primary: 249 250 251;
-  --color-text-secondary: 209 213 219;
-  --color-text-muted: 156 163 175;
+  --color-text-primary: 241 245 249;
+  --color-text-secondary: 203 213 225;
+  --color-text-muted: 148 163 184;
 
-  --color-accent: 129 140 248;
-  --color-accent-hover: 165 180 252;
-  --color-accent-light: 55 48 163;
+  --color-accent: 59 130 246;
+  --color-accent-hover: 96 165 250;
+  --color-accent-light: 30 58 138;
 
-  --color-border: 55 65 81;
-  --color-border-hover: 75 85 99;
+  --color-border: 51 65 85;
+  --color-border-hover: 71 85 105;
+
+  /* Secondary accent */
+  --color-secondary: 96 165 250;
 
   /* Shadows - darker in dark mode */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
@@ -95,12 +101,16 @@ body {
   background-color: rgb(var(--color-bg-primary));
   color: rgb(var(--color-text-primary));
   transition: background-color var(--transition-base), color var(--transition-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
   font-weight: 700;
   line-height: 1.2;
+  letter-spacing: -0.025em;
 }
 
 /* Selection */

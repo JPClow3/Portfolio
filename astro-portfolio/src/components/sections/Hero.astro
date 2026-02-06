@@ -8,63 +8,84 @@ const t = ui.en;
 
 <section
   id="hero"
-  class="relative min-h-screen flex items-center justify-center overflow-hidden"
+  class="relative min-h-screen flex items-center overflow-hidden pt-20 lg:pt-0"
 >
   <!-- 3D Background Scene - lazy load for performance -->
   <HeroScene client:visible />
 
-  <!-- Background gradient overlay -->
-  <div
-    class="absolute inset-0 bg-gradient-to-br from-[rgb(var(--color-bg-primary)/0.8)] via-[rgb(var(--color-bg-primary)/0.5)] to-[rgb(var(--color-bg-primary)/0.8)]"
-  >
-  </div>
+  <!-- Decorative blobs -->
+  <div class="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-blue-100 dark:bg-blue-900/10 rounded-full blur-3xl -z-10"></div>
+  <div class="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-purple-100 dark:bg-purple-900/10 rounded-full blur-3xl -z-10"></div>
 
   <!-- Content -->
-  <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    <!-- Greeting -->
-    <p
-      class="text-lg sm:text-xl text-[rgb(var(--color-text-secondary))] mb-4 animate-slide-down stagger-1"
-    >
-      {t['hero.greeting']}
-    </p>
+  <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-16">
 
-    <!-- Name -->
-    <h1
-      class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 animate-slide-down stagger-2"
-    >
-      <span class="gradient-text">{t['hero.name']}</span>
-    </h1>
+      <!-- Text Content -->
+      <div class="flex-1 text-center lg:text-left">
+        <!-- Availability Badge -->
+        <div class="inline-block px-4 py-1.5 mb-6 text-xs font-semibold tracking-wider text-[rgb(var(--color-accent))] uppercase bg-[rgb(var(--color-accent)/0.1)] dark:bg-[rgb(var(--color-accent)/0.2)] rounded-full border border-[rgb(var(--color-accent)/0.2)] animate-slide-down stagger-1">
+          {t['hero.availability']}
+        </div>
 
-    <!-- Title -->
-    <p
-      class="text-xl sm:text-2xl text-[rgb(var(--color-text-secondary))] mb-4 animate-slide-down stagger-3"
-    >
-      {t['hero.title']}
-    </p>
+        <!-- Greeting & Name -->
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 animate-slide-down stagger-2">
+          {t['hero.greeting']} <br />
+          <span class="gradient-text">{t['hero.name']}</span>
+        </h1>
 
-    <!-- Tagline -->
-    <p
-      class="text-lg text-[rgb(var(--color-text-muted))] mb-10 animate-slide-down stagger-4"
-    >
-      {t['hero.tagline']}
-    </p>
+        <!-- Title -->
+        <p class="text-xl sm:text-2xl text-[rgb(var(--color-text-secondary))] mb-4 animate-slide-down stagger-3">
+          {t['hero.title']}
+        </p>
 
-    <!-- CTA Buttons -->
-    <div
-      class="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up stagger-5"
-    >
-      <a
-        href="#projects"
-        class="group px-8 py-4 bg-[rgb(var(--color-accent))] hover:bg-[rgb(var(--color-accent-hover))] text-white font-medium rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-[rgb(var(--color-accent)/0.25)]"
-      >
-        {t['hero.cta.work']}
-      </a>
-      <a
-        href="#contact"
-        class="px-8 py-4 bg-[rgb(var(--color-bg-secondary))] hover:bg-[rgb(var(--color-bg-tertiary))] text-[rgb(var(--color-text-primary))] font-medium rounded-xl border border-[rgb(var(--color-border))] transition-all duration-200 hover:scale-105 hover:border-[rgb(var(--color-accent)/0.5)]"
-      >
-        {t['hero.cta.contact']}
-      </a>
+        <!-- Tagline -->
+        <p class="text-lg text-[rgb(var(--color-text-muted))] mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed animate-slide-down stagger-4">
+          {t['hero.tagline']}
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-slide-up stagger-5">
+          <a
+            href="https://github.com/JPClow3"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-[rgb(var(--color-accent))] hover:bg-[rgb(var(--color-accent-hover))] text-white font-semibold rounded-xl shadow-lg shadow-[rgb(var(--color-accent)/0.3)] transition-all duration-200 hover:-translate-y-0.5"
+          >
+            <Icon name="github" size={20} />
+            {t['hero.cta.github']}
+          </a>
+          <a
+            href="#contact"
+            class="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-[rgb(var(--color-bg-secondary))] hover:bg-[rgb(var(--color-bg-tertiary))] text-[rgb(var(--color-text-primary))] font-semibold rounded-xl border border-[rgb(var(--color-border))] hover:border-[rgb(var(--color-accent))] transition-all duration-200 hover:-translate-y-0.5"
+          >
+            <Icon name="email" size={20} class="group-hover:text-[rgb(var(--color-accent))] transition-colors" />
+            {t['hero.cta.contact']}
+          </a>
+        </div>
+      </div>
+
+      <!-- Profile Photo -->
+      <div class="flex-1 relative animate-scale-in stagger-3">
+        <!-- Glow effect behind photo -->
+        <div class="absolute inset-0 bg-gradient-to-tr from-[rgb(var(--color-accent))] to-purple-500 rounded-full blur-3xl opacity-20 dark:opacity-30 animate-pulse"></div>
+
+        <!-- Photo container -->
+        <div class="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-[400px] lg:h-[400px] mx-auto">
+          <div class="w-full h-full rounded-full overflow-hidden border-4 border-[rgb(var(--color-bg-secondary))] dark:border-[rgb(var(--color-bg-tertiary))] shadow-2xl bg-[rgb(var(--color-bg-secondary))]">
+            <img
+              src="/images/profile.jpg"
+              alt="João Paulo Gonçalves Santos - Front-End Developer"
+              class="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-105"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+            />
+            <!-- Fallback if image not found -->
+            <div class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-[rgb(var(--color-accent))] to-purple-500">
+              <span class="text-6xl sm:text-7xl lg:text-8xl font-bold text-white/90">JP</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

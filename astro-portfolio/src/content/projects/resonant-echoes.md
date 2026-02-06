@@ -1,10 +1,10 @@
 ---
 title: "Resonant Echoes"
-description: "A dynamic text adventure set in the high fantasy world of Aerthos, powered by Google Gemini. Players shape the story through choices and Echo Weaving—interacting with remnants of past events."
-tech: ["Godot", "GDScript", "Game Development", "Aseprite"]
+description: "A dynamic text adventure set in the high fantasy world of Aerthos, powered by Google Gemini AI. Players shape the story through choices and Echo Weaving—interacting with remnants of past events."
+tech: ["TypeScript", "Google Gemini", "AI", "Game Development"]
 github: "https://github.com/JPClow3/Resonant-Echoes"
 featured: true
-order: 2
+order: 3
 lang: en
 ---
 
@@ -18,7 +18,6 @@ Resonant Echoes is an immersive text adventure game set in the high fantasy worl
 - **AI-Powered Narrative** - Dynamic story generation with Google Gemini
 - **Rich Lore** - Explore the mysterious world of Aerthos
 - **Player Agency** - Your choices shape the fate of the realm
-- **Pixel Art** - Custom assets created in Aseprite
 
 ## The World
 

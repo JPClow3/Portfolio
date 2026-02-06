@@ -37,7 +37,7 @@ export const ui = {
 
     // Summary
     'summary.title': 'About Me',
-    'summary.text': 'Front-end developer with 2+ years of professional experience in enterprise environments. I specialize in building automated solutions with Power Platform, testing APIs with industry-certified practices, and creating responsive web interfaces with React and TypeScript. Currently pursuing a Software Engineering degree while working as a developer at Louis Dreyfus Company, where I build internal tools and automation workflows that streamline business operations.',
+    'summary.text': 'Software Engineering student passionate about front-end development and AI applications. I build interactive web experiences with React and TypeScript, and explore creative AI projects including game development and strategic tools. Currently seeking opportunities to grow as a developer.',
 
     // Experience
     'experience.title': 'Professional Experience',
@@ -111,7 +111,7 @@ export const ui = {
 
     // Summary
     'summary.title': 'Sobre Mim',
-    'summary.text': 'Desenvolvedor front-end com mais de 2 anos de experiência profissional em ambientes corporativos. Me especializo em construir soluções automatizadas com Power Platform, testar APIs com práticas certificadas pela indústria e criar interfaces web responsivas com React e TypeScript. Atualmente cursando Engenharia de Software enquanto trabalho como desenvolvedor na Louis Dreyfus Company, onde construo ferramentas internas e fluxos de automação que otimizam operações de negócio.',
+    'summary.text': 'Estudante de Engenharia de Software apaixonado por desenvolvimento front-end e aplicações de IA. Construo experiências web interativas com React e TypeScript, e exploro projetos criativos de IA incluindo desenvolvimento de jogos e ferramentas estratégicas. Atualmente buscando oportunidades para crescer como desenvolvedor.',
 
     // Experience
     'experience.title': 'Experiência Profissional',

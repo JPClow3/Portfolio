@@ -5,7 +5,7 @@ tech: ["Astro", "Svelte", "TypeScript", "Tailwind CSS", "Three.js"]
 link: "https://joaopaulosantos.dev"
 github: "https://github.com/JPClow3/Portfolio"
 featured: true
-order: 2
+order: 4
 lang: en
 ---
 

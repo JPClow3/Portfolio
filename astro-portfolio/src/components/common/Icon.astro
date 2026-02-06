@@ -1,6 +1,6 @@
 ---
 interface Props {
-  name: 'github' | 'linkedin' | 'email' | 'phone' | 'location' | 'external-link' | 'arrow-down' | 'menu' | 'close' | 'sun' | 'moon' | 'calendar' | 'briefcase' | 'graduation' | 'code' | 'check';
+  name: 'github' | 'linkedin' | 'email' | 'phone' | 'location' | 'external-link' | 'arrow-down' | 'menu' | 'close' | 'sun' | 'moon' | 'calendar' | 'briefcase' | 'graduation' | 'code' | 'check' | 'instagram';
   size?: number;
   class?: string;
 }
@@ -24,6 +24,7 @@ const icons: Record<string, string> = {
   graduation: `<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>`,
   code: `<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>`,
   check: `<polyline points="20 6 9 17 4 12"/>`,
+  instagram: `<rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>`,
 };
 
 const iconPath = icons[name] || '';

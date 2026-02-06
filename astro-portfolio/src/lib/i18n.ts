@@ -17,14 +17,16 @@ export const ui = {
     'nav.skills': 'Skills',
     'nav.blog': 'Blog',
     'nav.contact': 'Contact',
+    'nav.resume': 'Resume',
 
     // Hero
     'hero.greeting': "Hello, I'm",
     'hero.name': 'João Paulo Gonçalves Santos',
-    'hero.title': 'Software Engineering Student | Front-End Developer',
-    'hero.tagline': 'Transforming ideas into innovative digital solutions',
+    'hero.title': 'Front-End Developer & QA Automation Engineer',
+    'hero.tagline': 'Building tested, accessible web experiences with React, TypeScript & Python',
     'hero.cta.work': 'View My Work',
     'hero.cta.contact': 'Get in Touch',
+    'hero.cta.resume': 'Download Resume',
 
     // Profile
     'profile.title': 'My Profile',
@@ -32,8 +34,8 @@ export const ui = {
     'profile.contactText': 'LinkedIn',
 
     // Summary
-    'summary.title': 'Summary',
-    'summary.text': 'Proactive Software Engineering student with hands-on experience in low-code development, a strong foundation in software quality principles, and a growing passion for front-end technologies. Skilled in Agile methodologies and modern web development. Eager to apply my diverse skills in a dynamic software engineering role to contribute to robust and innovative solutions.',
+    'summary.title': 'About Me',
+    'summary.text': 'Front-end developer with 2+ years of professional experience in enterprise environments. I specialize in building automated solutions with Power Platform, testing APIs with industry-certified practices, and creating responsive web interfaces with React and TypeScript. Currently pursuing a Software Engineering degree while working as a developer at Louis Dreyfus Company, where I build internal tools and automation workflows that streamline business operations.',
 
     // Experience
     'experience.title': 'Professional Experience',
@@ -43,7 +45,7 @@ export const ui = {
     'education.title': 'Education',
     'education.institution': 'University of Rio Verde',
     'education.degree': 'Software Engineering',
-    'education.status': 'Currently in the 4th Semester (Expected Graduation: Aug 2028)',
+    'education.status': '4th Semester \u2022 Expected Graduation: 2028',
 
     // Projects
     'projects.title': 'Projects',
@@ -68,13 +70,15 @@ export const ui = {
     'contact.info.location': 'Location',
 
     // Blog
-    'blog.title': 'Blog',
+    'blog.title': 'Latest Posts',
     'blog.readMore': 'Read More',
-    'blog.allPosts': 'All Posts',
+    'blog.allPosts': 'View All Posts',
+    'blog.subtitle': 'Thoughts on development, automation, and building for the web',
 
     // Common
     'common.loading': 'Loading...',
     'common.error': 'Something went wrong',
+    'common.backToTop': 'Back to top',
   },
   pt: {
     // Navigation
@@ -85,14 +89,16 @@ export const ui = {
     'nav.skills': 'Habilidades',
     'nav.blog': 'Blog',
     'nav.contact': 'Contato',
+    'nav.resume': 'Currículo',
 
     // Hero
     'hero.greeting': 'Olá, eu sou',
     'hero.name': 'João Paulo Gonçalves Santos',
-    'hero.title': 'Estudante de Engenharia de Software | Desenvolvedor Front-End',
-    'hero.tagline': 'Transformando ideias em soluções digitais inovadoras',
+    'hero.title': 'Desenvolvedor Front-End & Engenheiro de Automação QA',
+    'hero.tagline': 'Construindo experiências web testadas e acessíveis com React, TypeScript e Python',
     'hero.cta.work': 'Ver Meus Trabalhos',
     'hero.cta.contact': 'Entre em Contato',
+    'hero.cta.resume': 'Baixar Currículo',
 
     // Profile
     'profile.title': 'Meu Perfil',
@@ -100,8 +106,8 @@ export const ui = {
     'profile.contactText': 'LinkedIn',
 
     // Summary
-    'summary.title': 'Resumo',
-    'summary.text': 'Estudante proativo de Engenharia de Software com experiência prática em desenvolvimento low-code, uma base sólida em princípios de qualidade de software e uma paixão crescente por tecnologias front-end. Habilidoso em metodologias Ágeis e desenvolvimento web moderno. Ansioso para aplicar minhas diversas habilidades em uma função dinâmica de engenharia de software para contribuir com soluções robustas e inovadoras.',
+    'summary.title': 'Sobre Mim',
+    'summary.text': 'Desenvolvedor front-end com mais de 2 anos de experiência profissional em ambientes corporativos. Me especializo em construir soluções automatizadas com Power Platform, testar APIs com práticas certificadas pela indústria e criar interfaces web responsivas com React e TypeScript. Atualmente cursando Engenharia de Software enquanto trabalho como desenvolvedor na Louis Dreyfus Company, onde construo ferramentas internas e fluxos de automação que otimizam operações de negócio.',
 
     // Experience
     'experience.title': 'Experiência Profissional',
@@ -111,7 +117,7 @@ export const ui = {
     'education.title': 'Formação',
     'education.institution': 'Universidade de Rio Verde',
     'education.degree': 'Engenharia de Software',
-    'education.status': 'Cursando o 4º Semestre (Previsão de Conclusão: Ago 2028)',
+    'education.status': '4º Semestre \u2022 Previsão de Conclusão: 2028',
 
     // Projects
     'projects.title': 'Projetos',
@@ -136,13 +142,15 @@ export const ui = {
     'contact.info.location': 'Localização',
 
     // Blog
-    'blog.title': 'Blog',
+    'blog.title': 'Últimos Posts',
     'blog.readMore': 'Leia Mais',
-    'blog.allPosts': 'Todos os Posts',
+    'blog.allPosts': 'Ver Todos os Posts',
+    'blog.subtitle': 'Reflexões sobre desenvolvimento, automação e construção para a web',
 
     // Common
     'common.loading': 'Carregando...',
     'common.error': 'Algo deu errado',
+    'common.backToTop': 'Voltar ao topo',
   },
 } as const;
 

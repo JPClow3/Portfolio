@@ -16,10 +16,17 @@ const t = ui.en;
             class="aspect-square rounded-2xl bg-gradient-to-br from-[rgb(var(--color-accent))] to-[rgb(168_85_247)] p-1"
           >
             <div
-              class="w-full h-full rounded-2xl bg-[rgb(var(--color-bg-secondary))] flex items-center justify-center"
+              class="w-full h-full rounded-2xl bg-[rgb(var(--color-bg-secondary))] flex items-center justify-center overflow-hidden"
             >
-              <!-- Placeholder for profile image -->
-              <div class="text-center p-8">
+              <!-- Profile Image with fallback -->
+              <img
+                src="/images/profile.jpg"
+                alt="João Paulo Gonçalves Santos - Front-End Developer"
+                class="w-full h-full object-cover"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+              />
+              <!-- Fallback if image not found -->
+              <div class="text-center p-8 hidden flex-col items-center justify-center w-full h-full" style="display: none;">
                 <div
                   class="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-br from-[rgb(var(--color-accent))] to-[rgb(168_85_247)] flex items-center justify-center shadow-lg shadow-[rgb(var(--color-accent)/0.3)]"
                 >

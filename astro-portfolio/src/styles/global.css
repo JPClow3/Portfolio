@@ -324,6 +324,16 @@ html.dark .glass-card {
     scroll-behavior: auto !important;
   }
 
+  /* Ensure animated content is always visible */
+  .animate-slide-down,
+  .animate-slide-up,
+  .animate-fade-in,
+  .animate-scale-in {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
   .scroll-reveal {
     opacity: 1;
     transform: none;

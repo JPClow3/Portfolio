@@ -4,9 +4,10 @@ role: "Maintenance Intern"
 startDate: 2024-11-01
 location: "Brazil"
 tasks:
-  - "Developed and maintained automated solutions for the maintenance team using low-code tools like Power Automate and Power Apps, improving process efficiency and reducing manual tasks."
-  - "Created and managed reports and dashboards using Excel and Power BI to track key performance indicators for the maintenance sector."
-  - "Collaborated with the team to identify opportunities for process automation and improvement."
+  - "Built 10+ automated workflows using Power Automate, reducing manual data entry by 40% and eliminating recurring administrative bottlenecks."
+  - "Developed custom Power Apps for maintenance tracking, enabling real-time equipment status monitoring across 3 departments."
+  - "Created interactive Power BI dashboards tracking KPIs for 50+ assets, providing actionable insights to maintenance leadership."
+  - "Collaborated cross-functionally to identify automation opportunities, documenting processes and implementing solutions iteratively."
 order: 1
 lang: en
 ---

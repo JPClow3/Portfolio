@@ -1,5 +1,25 @@
 import React, {useEffect, useRef} from 'react';
-import * as THREE from 'three';
+// Tree-shake Three.js - import only what we need
+// NOTE: Security scanners may flag Math.random() usage in Three.js (chunk 408).
+// This is a false positive - Three.js uses Math.random() only for visual effects
+// (shader calculations, particle positions, etc.) and NOT for security-sensitive operations.
+// Our own random utilities in src/utils/random.js are also documented as non-cryptographic.
+import {
+    WebGLRenderer,
+    SRGBColorSpace,
+    Scene,
+    OrthographicCamera,
+    BufferGeometry,
+    BufferAttribute,
+    Vector3,
+    Vector4,
+    Vector2,
+    RawShaderMaterial,
+    NormalBlending,
+    Mesh,
+    Clock
+} from 'three';
+import {throttle} from '../utils/throttle';
 
 const VERT = `
 precision highp float;
@@ -285,8 +305,18 @@ export const LaserFlow = ({
     };
 
     useEffect(() => {
+        // Check for reduced motion preference
+        const prefersReducedMotion = typeof window !== 'undefined' && 
+            window.matchMedia && 
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        
+        if (prefersReducedMotion) {
+            // Don't initialize LaserFlow if user prefers reduced motion
+            return;
+        }
+
         const mount = mountRef.current;
-        const renderer = new THREE.WebGLRenderer({
+        const renderer = new WebGLRenderer({
             antialias: false,
             alpha: false,
             depth: false,
@@ -304,7 +334,7 @@ export const LaserFlow = ({
 
         renderer.setPixelRatio(currentDprRef.current);
         renderer.shadowMap.enabled = false;
-        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.outputColorSpace = SRGBColorSpace;
         renderer.setClearColor(0x000000, 1);
         const canvas = renderer.domElement;
         canvas.style.width = '100%';
@@ -312,16 +342,16 @@ export const LaserFlow = ({
         canvas.style.display = 'block';
         mount.appendChild(canvas);
 
-        const scene = new THREE.Scene();
-        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        const scene = new Scene();
+        const camera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-        const geometry = new THREE.BufferGeometry();
-        geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([-1, -1, 0, 3, -1, 0, -1, 3, 0]), 3));
+        const geometry = new BufferGeometry();
+        geometry.setAttribute('position', new BufferAttribute(new Float32Array([-1, -1, 0, 3, -1, 0, -1, 3, 0]), 3));
 
         const uniforms = {
             iTime: {value: 0},
-            iResolution: {value: new THREE.Vector3(1, 1, 1)},
-            iMouse: {value: new THREE.Vector4(0, 0, 0, 0)},
+            iResolution: {value: new Vector3(1, 1, 1)},
+            iMouse: {value: new Vector4(0, 0, 0, 0)},
             uWispDensity: {value: wispDensity},
             uTiltScale: {value: mouseTiltStrength},
             uFlowTime: {value: 0},
@@ -339,39 +369,43 @@ export const LaserFlow = ({
             uDecay: {value: decay},
             uFalloffStart: {value: falloffStart},
             uFogFallSpeed: {value: fogFallSpeed},
-            uColor: {value: new THREE.Vector3(1, 1, 1)},
+            uColor: {value: new Vector3(1, 1, 1)},
             uFade: {value: hasFadedRef.current ? 1 : 0}
         };
         uniformsRef.current = uniforms;
 
-        const material = new THREE.RawShaderMaterial({
+        const material = new RawShaderMaterial({
             vertexShader: VERT,
             fragmentShader: FRAG,
             uniforms,
             transparent: false,
             depthTest: false,
             depthWrite: false,
-            blending: THREE.NormalBlending
+            blending: NormalBlending
         });
 
-        const mesh = new THREE.Mesh(geometry, material);
+        const mesh = new Mesh(geometry, material);
         mesh.frustumCulled = false;
         scene.add(mesh);
 
-        const clock = new THREE.Clock();
+        const clock = new Clock();
         let prevTime = 0;
         let fade = hasFadedRef.current ? 1 : 0;
 
-        const mouseTarget = new THREE.Vector2(0, 0);
-        const mouseSmooth = new THREE.Vector2(0, 0);
+        const mouseTarget = new Vector2(0, 0);
+        const mouseSmooth = new Vector2(0, 0);
 
         const setSizeNow = () => {
+            // Batch DOM reads first
             const w = mount.clientWidth || 1;
             const h = mount.clientHeight || 1;
             const pr = currentDprRef.current;
+            
+            // Batch DOM writes immediately (already in RAF from scheduleResize)
             renderer.setPixelRatio(pr);
             renderer.setSize(w, h, false);
             uniforms.iResolution.value.set(w * pr, h * pr, pr);
+            // Cache rect for mouse calculations (only read when needed)
             rectRef.current = canvas.getBoundingClientRect();
         };
 
@@ -387,28 +421,50 @@ export const LaserFlow = ({
 
         const io = new IntersectionObserver(
             entries => {
-                inViewRef.current = entries[0]?.isIntersecting ?? true;
+                const isIntersecting = entries[0]?.isIntersecting ?? true;
+                const wasVisible = inViewRef.current;
+                inViewRef.current = isIntersecting;
+                
+                // Restart animation if becoming visible
+                if (isIntersecting && !wasVisible && !pausedRef.current && !raf) {
+                    raf = requestAnimationFrame(animate);
+                }
             },
             {root: null, threshold: 0}
         );
         io.observe(mount);
 
         const onVis = () => {
+            const wasPaused = pausedRef.current;
             pausedRef.current = document.hidden;
+            
+            // Restart animation if becoming visible
+            if (!document.hidden && wasPaused && inViewRef.current && !raf) {
+                raf = requestAnimationFrame(animate);
+            }
         };
         document.addEventListener('visibilitychange', onVis, {passive: true});
 
         const updateMouse = (clientX, clientY) => {
+            // Use cached rect if available, otherwise read once per frame
+            if (!rectRef.current) {
+                rectRef.current = canvas.getBoundingClientRect();
+            }
             const rect = rectRef.current;
-            if (!rect) return;
             const x = clientX - rect.left;
             const y = clientY - rect.top;
             const ratio = currentDprRef.current;
             const hb = rect.height * ratio;
             mouseTarget.set(x * ratio, hb - y * ratio);
         };
-        const onMove = ev => updateMouse(ev.clientX, ev.clientY);
-        const onLeave = () => mouseTarget.set(0, 0);
+        // Throttle mouse move events to ~60fps (16ms)
+        const throttledUpdateMouse = throttle(updateMouse, 16);
+        const onMove = ev => throttledUpdateMouse(ev.clientX, ev.clientY);
+        const onLeave = () => {
+            mouseTarget.set(0, 0);
+            // Invalidate cached rect on mouse leave
+            rectRef.current = null;
+        };
         canvas.addEventListener('pointermove', onMove, {passive: true});
         canvas.addEventListener('pointerdown', onMove, {passive: true});
         canvas.addEventListener('pointerenter', onMove, {passive: true});
@@ -417,10 +473,40 @@ export const LaserFlow = ({
         const onCtxLost = e => {
             e.preventDefault();
             pausedRef.current = true;
+            // Cancel any pending RAF
+            if (raf) {
+                cancelAnimationFrame(raf);
+                raf = 0;
+            }
         };
         const onCtxRestored = () => {
+            // Reinitialize after context restoration
             pausedRef.current = false;
+            
+            // Reset clock
+            clock.start();
+            prevTime = 0;
+            
+            // Reset fade state
+            hasFadedRef.current = false;
+            
+            // Resize and update uniforms
             scheduleResize();
+            
+            // Reset uniform values - they'll be updated by the useEffect hook
+            // that watches for prop changes, but we reset time-based ones here
+            const uniforms = uniformsRef.current;
+            if (uniforms) {
+                uniforms.iTime.value = 0;
+                uniforms.uFlowTime.value = 0;
+                uniforms.uFogTime.value = 0;
+                uniforms.uFade.value = 0;
+            }
+            
+            // Restart animation if visible
+            if (!pausedRef.current && inViewRef.current && !raf) {
+                raf = requestAnimationFrame(animate);
+            }
         };
         canvas.addEventListener('webglcontextlost', onCtxLost, false);
         canvas.addEventListener('webglcontextrestored', onCtxRestored, false);
@@ -432,6 +518,10 @@ export const LaserFlow = ({
         const lowerThresh = 50;
         const upperThresh = 58;
 
+        // Batch DPR adjustments to avoid frequent reflows
+        let dprUpdatePending = false;
+        let pendingDprValue = null;
+        
         const adjustDprIfNeeded = now => {
             const elapsed = now - lastFpsCheckRef.current;
             if (elapsed < 750) return;
@@ -453,8 +543,19 @@ export const LaserFlow = ({
             }
 
             if (Math.abs(next - currentDprRef.current) > 0.01) {
-                currentDprRef.current = next;
-                setSizeNow();
+                pendingDprValue = next;
+                if (!dprUpdatePending) {
+                    dprUpdatePending = true;
+                    // Batch DPR update on next frame to avoid reflow
+                    requestAnimationFrame(() => {
+                        if (pendingDprValue !== null) {
+                            currentDprRef.current = pendingDprValue;
+                            setSizeNow();
+                            pendingDprValue = null;
+                        }
+                        dprUpdatePending = false;
+                    });
+                }
             }
 
             fpsSamplesRef.current = [];
@@ -462,8 +563,11 @@ export const LaserFlow = ({
         };
 
         const animate = () => {
-            raf = requestAnimationFrame(animate);
-            if (pausedRef.current || !inViewRef.current) return;
+            // Only schedule next frame if visible and active
+            if (pausedRef.current || !inViewRef.current) {
+                raf = 0;
+                return;
+            }
 
             const t = clock.getElapsedTime();
             const dt = Math.max(0, t - prevTime);
@@ -495,9 +599,19 @@ export const LaserFlow = ({
             renderer.render(scene, camera);
 
             adjustDprIfNeeded(performance.now());
+            
+            // Schedule next frame only if still visible and active
+            if (!pausedRef.current && inViewRef.current) {
+                raf = requestAnimationFrame(animate);
+            } else {
+                raf = 0;
+            }
         };
 
-        animate();
+        // Start animation only if visible
+        if (!pausedRef.current && inViewRef.current) {
+            raf = requestAnimationFrame(animate);
+        }
 
         return () => {
             cancelAnimationFrame(raf);

@@ -1,0 +1,112 @@
+---
+import { getCollection } from 'astro:content';
+import { ui } from '@/lib/i18n';
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
+import Icon from '@/components/common/Icon.astro';
+
+const t = ui.en;
+
+const experiences = await getCollection('experience', ({ data }) => data.lang === 'en');
+const sortedExperiences = experiences.sort((a, b) => a.data.order - b.data.order);
+
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+}
+---
+
+<section id="experience" class="py-24">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <ScrollReveal animation="fade-up">
+      <h2 class="text-3xl sm:text-4xl font-bold text-center mb-16">
+        {t['experience.title']}
+      </h2>
+    </ScrollReveal>
+
+    <!-- Timeline -->
+    <div class="relative">
+      <!-- Timeline line with gradient -->
+      <div
+        class="timeline-line absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-[rgb(var(--color-accent))] via-[rgb(var(--color-border))] to-[rgb(var(--color-border))] transform md:-translate-x-1/2"
+      >
+      </div>
+
+      <!-- Experience items -->
+      <div class="space-y-12">
+        {
+          sortedExperiences.map((exp, index) => (
+            <ScrollReveal
+              animation={index % 2 === 0 ? 'fade-left' : 'fade-right'}
+              delay={index * 150}
+            >
+              <div
+                class={`relative flex flex-col md:flex-row gap-8 ${
+                  index % 2 === 0 ? 'md:flex-row-reverse' : ''
+                }`}
+              >
+                {/* Timeline dot */}
+                <div class="absolute left-0 md:left-1/2 w-4 h-4 bg-[rgb(var(--color-accent))] rounded-full transform -translate-x-1/2 md:-translate-x-1/2 border-4 border-[rgb(var(--color-bg-primary))] shadow-lg shadow-[rgb(var(--color-accent)/0.3)] z-10" />
+
+                {/* Content */}
+                <div
+                  class={`ml-8 md:ml-0 md:w-1/2 ${
+                    index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'
+                  }`}
+                >
+                  <div class="p-6 rounded-xl bg-[rgb(var(--color-bg-secondary))] border border-[rgb(var(--color-border))] hover:border-[rgb(var(--color-accent)/0.5)] transition-all duration-300 hover:shadow-lg hover:shadow-[rgb(var(--color-accent)/0.05)] hover:-translate-y-1">
+                    <div
+                      class={`flex items-center gap-2 mb-2 ${
+                        index % 2 === 0 ? 'md:justify-end' : ''
+                      }`}
+                    >
+                      <Icon name="calendar" size={14} class="text-[rgb(var(--color-accent))]" />
+                      <span class="text-sm font-medium text-[rgb(var(--color-accent))]">
+                        {formatDate(exp.data.startDate)} -{' '}
+                        {exp.data.endDate ? formatDate(exp.data.endDate) : t['experience.present']}
+                      </span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-1">{exp.data.role}</h3>
+                    <p class="text-[rgb(var(--color-text-secondary))] mb-4 flex items-center gap-1">
+                      <Icon name="briefcase" size={14} class="inline shrink-0" />
+                      <span>
+                        {exp.data.company}
+                        {exp.data.location && ` · ${exp.data.location}`}
+                      </span>
+                    </p>
+                    <ul
+                      class={`space-y-2 text-sm text-[rgb(var(--color-text-muted))] ${
+                        index % 2 === 0 ? 'md:text-right' : ''
+                      }`}
+                    >
+                      {exp.data.tasks.map((task) => (
+                        <li class={`flex items-start gap-2 ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+                          <span class="text-[rgb(var(--color-accent))] mt-1 shrink-0">
+                            <Icon name="check" size={12} />
+                          </span>
+                          <span>{task}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Spacer for alternating layout */}
+                <div class="hidden md:block md:w-1/2" />
+              </div>
+            </ScrollReveal>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .timeline-line {
+    background: linear-gradient(
+      to bottom,
+      rgb(var(--color-accent)) 0%,
+      rgb(var(--color-accent)) 20%,
+      rgb(var(--color-border)) 100%
+    );
+  }
+</style>

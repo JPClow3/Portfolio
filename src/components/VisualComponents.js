@@ -1,5 +1,8 @@
 import React, {forwardRef, useEffect, useMemo, useRef, useState} from 'react';
 import {useEffects, useLibs, useTheme} from '../context/AppContext';
+import {throttle} from '../utils/throttle';
+// NOTE: Using non-cryptographic random for visual effects only (confetti animation)
+import {random, randomInt} from '../utils/random';
 
 // --- Card foi movido para cá e exportado diretamente ---
 export const Card = forwardRef(({ customClass, ...rest }, ref) => (
@@ -53,9 +56,13 @@ export const TypingAnimation = ({ text, className, gradientColors, animationSpee
 
     return (
         <h1 className={className}>
-            <GradientText colors={gradientColors} animationSpeed={animationSpeed}>
-                {typedText}<span className="typing-cursor">|</span>
-            </GradientText>
+            <span aria-label={text} role="heading" aria-level="1">
+                <span aria-hidden="true">
+                    <GradientText colors={gradientColors} animationSpeed={animationSpeed}>
+                        {typedText}<span className="typing-cursor">|</span>
+                    </GradientText>
+                </span>
+            </span>
         </h1>
     );
 };
@@ -131,9 +138,12 @@ export const ProfileCardComponent = ({
         const card = cardRef.current;
         const wrap = wrapRef.current;
 
-        const onMove = (event) => {
-            const { clientWidth: width, clientHeight: height } = card;
+        // Batch DOM reads to avoid forced reflows
+        let pendingTilt = null;
+        const onMoveRaw = (event) => {
+            // Batch DOM reads first
             const rect = card.getBoundingClientRect();
+            const { clientWidth: width, clientHeight: height } = card;
             const offsetX = event.clientX - rect.left;
             const offsetY = event.clientY - rect.top;
             const percentX = Math.min(Math.max(offsetX / width, 0), 1) * 100;
@@ -141,20 +151,34 @@ export const ProfileCardComponent = ({
             const centerX = percentX - 50;
             const centerY = percentY - 50;
 
-            gsap.to(card, {
-                duration: 0.5,
-                rotationY: centerY / 12,
-                rotationX: -centerX / 15,
-                ease: "power1.out"
-            });
-            gsap.to(wrap, {
-                duration: 0.5,
-                '--pointer-x': `${percentX}%`,
-                '--pointer-y': `${percentY}%`,
-                '--pointer-from-center': Math.min(Math.max(Math.hypot(centerY, centerX) / 50, 0), 1),
-                ease: "power1.out"
+            // Cancel pending updates to batch DOM reads/writes
+            if (pendingTilt) {
+                cancelAnimationFrame(pendingTilt);
+            }
+            
+            // Batch DOM reads (getBoundingClientRect) and writes in RAF
+            // GSAP already batches internally, but batching DOM reads prevents forced reflows
+            pendingTilt = requestAnimationFrame(() => {
+                gsap.to(card, {
+                    duration: 0.5,
+                    rotationY: centerY / 12,
+                    rotationX: -centerX / 15,
+                    ease: "power1.out"
+                });
+                gsap.to(wrap, {
+                    duration: 0.5,
+                    '--pointer-x': `${percentX}%`,
+                    '--pointer-y': `${percentY}%`,
+                    '--pointer-from-center': Math.min(Math.max(Math.hypot(centerY, centerX) / 50, 0), 1),
+                    ease: "power1.out"
+                });
+                pendingTilt = null;
             });
         };
+        
+        // Throttle pointer move to ~60fps
+        const onMove = throttle(onMoveRaw, 16);
+        
         const onEnter = () => wrap.classList.add("active");
         const onLeave = () => {
             wrap.classList.remove("active");
@@ -218,11 +242,11 @@ export const SectionSeparator = ({className = ''}) => (
 export const Confetti = React.memo(() => {
     const [pieces] = useState(() => Array.from({length: 50}, (_, i) => ({
         id: i,
-        left: Math.random() * 100,
-        delay: Math.random() * 0.25,
-        duration: 3.5 + Math.random() * 1.5,
-        size: 5 + Math.random() * 5,
-        hue: Math.floor(Math.random() * 360)
+        left: random() * 100,
+        delay: random() * 0.25,
+        duration: 3.5 + random() * 1.5,
+        size: 5 + random() * 5,
+        hue: randomInt(0, 360)
     })));
     return (
         <div className="confetti-wrapper pointer-events-none fixed inset-0 overflow-hidden z-[9999]" aria-hidden="true">

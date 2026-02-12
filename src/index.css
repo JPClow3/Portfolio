@@ -176,6 +176,41 @@ h1, h2, h3, h4, h5, h6, p, span, div {
     animation: fade-in-down 0.3s ease-out;
 }
 
+/* Scroll indicator animation - subtle bounce */
+@keyframes bounce-subtle {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.animate-bounce-subtle {
+    animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+/* Scroll progress bar animation */
+@keyframes shimmer {
+    0% {
+        background-position: -100% 0;
+    }
+    100% {
+        background-position: 100% 0;
+    }
+}
+
+.scroll-progress-shimmer {
+    background-size: 200% 100%;
+    background-image: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    animation: shimmer 2s linear infinite;
+}
+
 /* Accessibility helpers */
 .sr-only {
     position: absolute;
@@ -303,6 +338,8 @@ h1, h2, h3, h4, h5, h6, p, span, div {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: gradient-text-flow linear infinite;
+    /* Add text-shadow fallback for better readability and accessibility */
+    text-shadow: 0 0 0 rgba(0, 0, 0, 0.3);
 }
 
 .animated-gradient-text {
@@ -311,6 +348,57 @@ h1, h2, h3, h4, h5, h6, p, span, div {
 
 h1 > .animated-gradient-text {
     display: inline;
+}
+
+/* Reduced motion support - critical for users with vestibular disorders */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .custom-cursor {
+        display: none !important;
+    }
+    
+    /* Disable animated gradients for reduced motion */
+    .animated-gradient-text .text-content {
+        animation: none !important;
+        -webkit-text-fill-color: inherit !important;
+        background-clip: border-box !important;
+        -webkit-background-clip: border-box !important;
+    }
+}
+
+/* Mobile viewport height fix - use dynamic viewport height for mobile browsers */
+.h-screen {
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile */
+}
+
+/* Touch target sizes - ensure minimum 44x44px for iOS accessibility */
+button,
+a[role="button"],
+.pc-contact-btn,
+.p-2,
+.p-3 {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+/* Ensure interactive elements meet touch target requirements */
+@media (hover: none) and (pointer: coarse) {
+    button,
+    a[role="button"],
+    .pc-contact-btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 12px 16px;
+    }
 }
 
 
@@ -613,5 +701,99 @@ h1 > .animated-gradient-text {
     .card-responsive .card {
         width: 100%;
         min-height: 180px;
+    }
+}
+
+/* --- PRINT STYLES --- */
+@media print {
+    /* Hide non-essential elements */
+    header,
+    nav,
+    footer,
+    .back-to-top,
+    .scroll-progress,
+    .scroll-indicator,
+    .custom-cursor,
+    button:not(.print-keep),
+    .theme-toggle,
+    .language-selector {
+        display: none !important;
+    }
+
+    /* Remove backgrounds and ensure good contrast */
+    body {
+        background: white !important;
+        color: black !important;
+    }
+
+    /* Ensure all text is readable */
+    * {
+        color: black !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    /* Resume/CV specific styles */
+    section {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        page-break-after: avoid;
+    }
+
+    /* Links should be visible */
+    a {
+        color: #0000EE !important;
+        text-decoration: underline !important;
+    }
+
+    a[href^="http"]::after {
+        content: " (" attr(href) ")";
+        font-size: 0.8em;
+        color: #666;
+    }
+
+    /* Print-friendly resume layout */
+    .resume-print {
+        max-width: 8.5in;
+        margin: 0 auto;
+        padding: 1in;
+    }
+}
+
+/* Enhanced reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    /* Disable animations for LaserFlow */
+    .laser-flow-background {
+        display: none !important;
+    }
+
+    /* Disable particle animations in MagicBento */
+    .particle {
+        display: none !important;
+    }
+
+    /* Simplify scroll animations */
+    .fade-in-section {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    /* Disable scroll progress animation */
+    .scroll-progress-shimmer {
+        animation: none !important;
+    }
+
+    /* Disable typing animation */
+    .typing-cursor {
+        display: none !important;
+    }
+
+    /* Disable bounce animations */
+    .animate-bounce-subtle {
+        animation: none !important;
     }
 }

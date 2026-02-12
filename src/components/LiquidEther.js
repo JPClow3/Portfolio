@@ -1,4 +1,6 @@
 import React, {useEffect, useRef} from 'react';
+// NOTE: Using non-cryptographic random for visual effects only (animation)
+import {random, randomRange} from '../utils/random';
 
 const LiquidEther = () => {
     const canvasRef = useRef(null);
@@ -23,8 +25,8 @@ const LiquidEther = () => {
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                this.vx = (Math.random() - 0.5) * config.pointSpeed;
-                this.vy = (Math.random() - 0.5) * config.pointSpeed;
+                this.vx = (random() - 0.5) * config.pointSpeed;
+                this.vy = (random() - 0.5) * config.pointSpeed;
             }
 
             update() {
@@ -46,7 +48,7 @@ const LiquidEther = () => {
         const init = () => {
             points = [];
             for (let i = 0; i < config.pointCount; i++) {
-                points.push(new Point(Math.random() * width, Math.random() * height));
+                points.push(new Point(randomRange(0, width), randomRange(0, height)));
             }
         };
 

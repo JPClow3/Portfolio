@@ -1,0 +1,28 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
+import Hero from '@/components/sections/Hero.astro';
+import About from '@/components/sections/About.astro';
+import Experience from '@/components/sections/Experience.astro';
+import Projects from '@/components/sections/Projects.astro';
+import Skills from '@/components/sections/Skills.astro';
+import BlogPreview from '@/components/sections/BlogPreview.astro';
+import Contact from '@/components/sections/Contact.astro';
+---
+
+<BaseLayout title="João Paulo Santos | Front-End Developer">
+  <Header />
+
+  <main id="main-content">
+    <Hero />
+    <About />
+    <Experience />
+    <Projects />
+    <Skills />
+    <BlogPreview />
+    <Contact />
+  </main>
+
+  <Footer />
+</BaseLayout>

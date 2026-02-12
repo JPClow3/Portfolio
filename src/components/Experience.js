@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useLanguage, useLibs} from '../context/AppContext';
 import {portfolioData} from '../data';
 import {Section, SpotlightCard} from './VisualComponents';
@@ -6,11 +6,23 @@ import {Section, SpotlightCard} from './VisualComponents';
 const Experience = () => {
     const {language} = useLanguage();
     const {experience} = portfolioData[language];
-    const {gsap} = useLibs();
+    const {gsap, registerScrollTrigger} = useLibs();
     const timelineRef = useRef(null);
+    const [scrollTriggerLoaded, setScrollTriggerLoaded] = useState(false);
+
+    // Lazy-load ScrollTrigger only when Experience component mounts
+    useEffect(() => {
+        if (!registerScrollTrigger) return;
+        
+        registerScrollTrigger().then(() => {
+            setScrollTriggerLoaded(true);
+        }).catch(err => {
+            console.warn('Failed to load ScrollTrigger:', err);
+        });
+    }, [registerScrollTrigger]);
 
     useEffect(() => {
-        if (!gsap || !timelineRef.current) return;
+        if (!gsap || !timelineRef.current || !scrollTriggerLoaded) return;
 
         const timeline = timelineRef.current;
         const line = timeline.querySelector('.timeline-line');
@@ -40,7 +52,7 @@ const Experience = () => {
                 },
             });
         });
-    }, [gsap]);
+    }, [gsap, scrollTriggerLoaded]);
 
     return (
         <Section id="experience" title={experience.title}>

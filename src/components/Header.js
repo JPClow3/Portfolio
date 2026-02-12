@@ -3,15 +3,18 @@ import {useLanguage, useTheme} from '../context/AppContext';
 import {portfolioData} from '../data';
 import {useNavigation} from '../hooks/useNavigation';
 import {useScrollDetection} from '../hooks/useScrollDetection';
+import {useFocusTrap} from '../hooks/useFocusTrap';
 import {ThemeToggleButton} from './Icons';
 
 const Header = ({onThemeOriginClick}) => {
     const {language, setLanguage} = useLanguage();
-    const {theme} = useTheme();
+    const {theme, themeTransition} = useTheme();
     const {nav: navData} = portfolioData[language];
     const activeId = useNavigation(Object.keys(navData));
     const isScrolled = useScrollDetection(80);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const menuRef = useFocusTrap(isMenuOpen);
+    const isTransitioning = themeTransition !== null;
 
     const navLinks = Object.entries(navData).map(([key, name]) => ({id: key, name}));
 
@@ -28,13 +31,21 @@ const Header = ({onThemeOriginClick}) => {
 
     // Handle resize - close mobile menu if screen becomes desktop size
     useEffect(() => {
+        // Throttle resize to avoid excessive calls on mobile
+        let resizeTimeout;
         const handleResize = () => {
-            if (window.innerWidth >= 768 && isMenuOpen) {
-                setIsMenuOpen(false);
-            }
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (window.innerWidth >= 768 && isMenuOpen) {
+                    setIsMenuOpen(false);
+                }
+            }, 150);
         };
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
+        window.addEventListener('resize', handleResize, {passive: true});
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            clearTimeout(resizeTimeout);
+        };
     }, [isMenuOpen]);
 
     // Prevent body scroll when menu is open
@@ -86,12 +97,13 @@ const Header = ({onThemeOriginClick}) => {
                             </div>
                         </nav>
                         <div className="flex items-center gap-2">
-                            <ThemeToggleButton onClick={onThemeOriginClick} theme={theme}/>
-                            <div className="relative ml-2 hidden sm:block">
+                            <ThemeToggleButton onClick={onThemeOriginClick} theme={theme} isTransitioning={isTransitioning}/>
+                            {/* Language selector - visible on mobile in menu, visible on desktop */}
+                            <div className="relative ml-2">
                                 <select
                                     value={language}
                                     onChange={(e) => setLanguage(e.target.value)}
-                                    className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/50 dark:to-purple-900/50 text-slate-800 dark:text-white rounded-md py-1 px-2 border-2 border-indigo-200 dark:border-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
+                                    className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/50 dark:to-purple-900/50 text-slate-800 dark:text-white rounded-md py-1 px-2 border-2 border-indigo-200 dark:border-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hidden sm:block"
                                     aria-label="Select language"
                                 >
                                     <option value="en">EN</option>
@@ -133,6 +145,7 @@ const Header = ({onThemeOriginClick}) => {
                     />
                     {/* Menu Panel */}
                     <nav
+                        ref={menuRef}
                         id="mobile-menu"
                         className="fixed top-16 left-0 right-0 bottom-0 z-50 bg-gradient-to-br from-white via-indigo-50/50 to-purple-50/50 dark:from-dark-surface dark:via-dark-bg dark:to-indigo-950 md:hidden animate-slide-in-top overflow-y-auto"
                         aria-label="Mobile navigation"

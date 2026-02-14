@@ -112,15 +112,41 @@ const githubUsername = profile.github.replace(/\/+$/, '').split('/').pop() ?? ''
 const githubActivityCachePath = new URL('../../.cache/github-activity.json', import.meta.url);
 const githubActivityTtlMs = 30 * 60 * 1000;
 
+const createFallbackGithubActivity = (username: string): NormalizedActivity[] => [
+  {
+    repo: 'Portfolio',
+    message: 'Updated portfolio content and UI polish',
+    link: `https://github.com/${username || 'JPClow3'}/Portfolio`,
+    date: 'Recently',
+  },
+  {
+    repo: 'League-AI-Oracle',
+    message: 'Improved data processing for prediction workflows',
+    link: `https://github.com/${username || 'JPClow3'}/League-AI-Oracle`,
+    date: 'Recently',
+  },
+  {
+    repo: 'Resonant-Echoes',
+    message: 'Refined game systems and balancing pass',
+    link: `https://github.com/${username || 'JPClow3'}/Resonant-Echoes`,
+    date: 'Recently',
+  },
+];
+
+const fallbackGithubActivity = createFallbackGithubActivity(githubUsername);
+
 async function readGithubActivityCache() {
   try {
     const rawCache = await readFile(githubActivityCachePath, 'utf-8');
-    const parsedCache = JSON.parse(rawCache) as {
-      updatedAt: number;
-      data: typeof fallbackGithubActivity;
-    };
+    const parsedCache = JSON.parse(rawCache);
 
-    if (!Array.isArray(parsedCache?.data)) {
+    if (
+      !parsedCache ||
+      typeof parsedCache !== 'object' ||
+      typeof parsedCache.updatedAt !== 'number' ||
+      parsedCache.username !== githubUsername ||
+      !Array.isArray(parsedCache.data)
+    ) {
       return null;
     }
 
@@ -128,7 +154,7 @@ async function readGithubActivityCache() {
       return null;
     }
 
-    return parsedCache.data;
+    return parsedCache.data as typeof fallbackGithubActivity;
   } catch (error) {
     if ((error as NodeJS.ErrnoException)?.code !== 'ENOENT') {
       console.warn('GitHub activity cache read skipped:', error);
@@ -140,7 +166,11 @@ async function readGithubActivityCache() {
 async function writeGithubActivityCache(data: typeof fallbackGithubActivity) {
   try {
     await mkdir(new URL('../../.cache', import.meta.url), { recursive: true });
-    await writeFile(githubActivityCachePath, JSON.stringify({ updatedAt: Date.now(), data }, null, 2), 'utf-8');
+    await writeFile(
+      githubActivityCachePath,
+      JSON.stringify({ updatedAt: Date.now(), username: githubUsername, data }, null, 2),
+      'utf-8',
+    );
   } catch (error) {
     console.warn('GitHub activity cache write skipped:', error);
   }
@@ -159,9 +189,12 @@ async function getGithubActivity() {
 
   try {
     // In Vercel static mode this runs at build time, so GitHub API rate limits can fail the build and should be handled gracefully.
-    const response = await fetch('https://api.github.com/users/JPClow3/events/public');
+    const response = await fetch(`https://api.github.com/users/${githubUsername}/events/public`);
 
-    if (!response.ok) return [];
+    if (!response.ok) {
+      console.warn(`GitHub activity request returned ${response.status}. Using fallback activity.`);
+      return fallbackGithubActivity;
+    }
 
     const events = (await response.json()) as GithubEvent[];
 
@@ -184,24 +217,29 @@ async function getGithubActivity() {
       }
     }
 
-    return normalized.slice(0, 6);
+    const latestActivity = normalized.slice(0, 6);
+    if (latestActivity.length) {
+      await writeGithubActivityCache(latestActivity);
+    }
+
+    return latestActivity;
   } catch {
-    return [];
+    return fallbackGithubActivity;
   }
 }
 
-await getGithubActivity();
+const githubActivity = await getGithubActivity();
 ---
 
 <BaseLayout title="João Paulo Gonçalves Santos - Portfolio" description="Personal portfolio of João Paulo with projects, journey and GitHub updates.">
-  <main id="main-content" class="noise-bg relative overflow-x-hidden px-4 pb-14 pt-6 sm:px-6 lg:px-8">
+  <main id="main-content" tabindex="-1" class="noise-bg relative overflow-x-hidden px-4 pb-14 pt-6 sm:px-6 lg:px-8">
     <div class="pointer-events-none fixed inset-0 -z-10">
       <div class="bg-grid absolute inset-0 opacity-20"></div>
       <div class="absolute -right-24 -top-24 h-[420px] w-[420px] rounded-full bg-violet-600/25 blur-[120px]"></div>
       <div class="absolute -left-28 top-[48%] h-[400px] w-[400px] rounded-full bg-indigo-500/25 blur-[120px]"></div>
     </div>
 
-  <main id="main-content">
+  <main>
     <Hero />
     <section id="about" class="scroll-mt-28">
       <About />

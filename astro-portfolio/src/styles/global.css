@@ -139,9 +139,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Focus styles */
-:focus-visible {
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+summary:focus-visible {
   outline: 2px solid rgb(var(--color-accent));
-  outline-offset: 2px;
+  outline-offset: 3px;
+  border-radius: 0.5rem;
 }
 
 /* Skip Link for Accessibility */
@@ -157,8 +164,8 @@ h1, h2, h3, h4, h5, h6 {
   transition: top var(--transition-fast);
 }
 
-.skip-link:focus {
-  top: 0;
+.skip-link:focus-visible {
+  top: 1rem;
 }
 
 /* Gradient text utility */
@@ -348,6 +355,16 @@ html.dark .glass-card {
     opacity: 1;
     transform: none;
   }
+  .animate-marquee {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .animate-ping {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
 }
 
 /* Blog Prose Styles */

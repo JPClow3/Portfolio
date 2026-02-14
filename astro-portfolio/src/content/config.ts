@@ -46,8 +46,29 @@ const blogCollection = defineCollection({
   }),
 });
 
+// Profile Collection
+const profileCollection = defineCollection({
+  type: 'content',
+  schema: z.object({
+    lang: z.enum(['en', 'pt']).default('en'),
+    currentFocus: z.object({
+      title: z.string(),
+      items: z.array(z.string()).min(1),
+    }),
+    customMetric: z.object({
+      label: z.string(),
+      githubUsername: z.string(),
+      fallbackEvents: z.array(z.object({
+        repo: z.string(),
+        date: z.coerce.date(),
+      })).default([]),
+    }),
+  }),
+});
+
 export const collections = {
   projects: projectsCollection,
   experience: experienceCollection,
   blog: blogCollection,
+  profile: profileCollection,
 };

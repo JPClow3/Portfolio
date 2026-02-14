@@ -1,4 +1,5 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
 import Footer from '@/components/layout/Footer.astro';
@@ -9,13 +10,83 @@ import Projects from '@/components/sections/Projects.astro';
 import Skills from '@/components/sections/Skills.astro';
 import BlogPreview from '@/components/sections/BlogPreview.astro';
 import Contact from '@/components/sections/Contact.astro';
+
+const currentYear = new Date().getFullYear();
+
+const [projects, experiences, profileContent] = await Promise.all([
+  getCollection('projects', ({ data }) => data.lang === 'en'),
+  getCollection('experience', ({ data }) => data.lang === 'en'),
+  getCollection('profile', ({ data }) => data.lang === 'en'),
+]);
+
+const earliestExperience = experiences.reduce((earliest, experience) => {
+  if (!earliest || experience.data.startDate < earliest) {
+    return experience.data.startDate;
+  }
+  return earliest;
+}, experiences[0]?.data.startDate);
+
+const yearsOfExperience = earliestExperience
+  ? Math.max(1, currentYear - earliestExperience.getFullYear())
+  : 0;
+
+const profile = profileContent[0]?.data;
+
+async function getCustomMetricValue() {
+  const fallbackEvents = profile?.customMetric.fallbackEvents ?? [];
+  const fallbackCount = new Set(
+    fallbackEvents
+      .filter((event) => event.date.getFullYear() === currentYear)
+      .map((event) => event.repo),
+  ).size;
+
+  if (!profile?.customMetric.githubUsername) {
+    return fallbackCount;
+  }
+
+  try {
+    const response = await fetch(
+      `https://api.github.com/users/${profile.customMetric.githubUsername}/events/public?per_page=100`,
+      {
+        headers: {
+          Accept: 'application/vnd.github+json',
+          'User-Agent': 'astro-portfolio',
+        },
+      },
+    );
+
+    if (!response.ok) return fallbackCount;
+
+    const events = await response.json();
+    const reposTouchedThisYear = new Set(
+      events
+        .filter((event: { created_at?: string; repo?: { name?: string } }) => {
+          return event.created_at && new Date(event.created_at).getFullYear() === currentYear;
+        })
+        .map((event: { repo?: { name?: string } }) => event.repo?.name)
+        .filter(Boolean),
+    );
+
+    return reposTouchedThisYear.size || fallbackCount;
+  } catch {
+    return fallbackCount;
+  }
+}
+
+const customMetricValue = await getCustomMetricValue();
+
+const profileStats = [
+  { label: 'Projects', value: `${projects.length}+` },
+  { label: 'Years Experience', value: `${yearsOfExperience}+` },
+  { label: profile?.customMetric.label ?? 'Repos touched this year', value: `${customMetricValue}+` },
+];
 ---
 
 <BaseLayout title="João Paulo Santos | Front-End Developer">
   <Header />
 
   <main id="main-content">
-    <Hero />
+    <Hero profileStats={profileStats} currentFocus={profile?.currentFocus} />
     <About />
     <Experience />
     <Projects />

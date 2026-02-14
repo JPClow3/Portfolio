@@ -1,0 +1,48 @@
+<section id="build-log" class="relative py-16 sm:py-20" aria-labelledby="build-log-heading">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mb-8 sm:mb-10">
+      <p class="text-xs font-semibold tracking-[0.2em] uppercase text-[rgb(var(--color-accent))] mb-3">Micro Interaction</p>
+      <h2 id="build-log-heading" class="text-3xl sm:text-4xl font-bold">Build pulse & quality telemetry</h2>
+      <p class="mt-3 text-[rgb(var(--color-text-secondary))] max-w-2xl">
+        A lightweight snapshot of how this portfolio is being crafted right now: rotating focus states and an execution quality meter.
+      </p>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-2">
+      <article class="glass-card rounded-2xl p-6 md:p-8 micro-accent micro-flip-card overflow-hidden">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-xl font-semibold">Build log</h3>
+          <span class="micro-live-dot" aria-hidden="true"></span>
+        </div>
+
+        <div class="micro-flip-track" role="status" aria-live="polite" aria-label="Current build focus">
+          <p class="micro-state"><span>Frontend</span><small>Astro sections refined with responsive, accessible UI patterns.</small></p>
+          <p class="micro-state"><span>Automation</span><small>Lint/build checks and scripted validation keep regressions in check.</small></p>
+          <p class="micro-state"><span>Learning</span><small>Iterating on motion, semantics, and performance for each release.</small></p>
+        </div>
+      </article>
+
+      <article class="glass-card rounded-2xl p-6 md:p-8 micro-accent micro-meter-card overflow-hidden">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-xl font-semibold">Quality score</h3>
+          <span class="text-sm text-[rgb(var(--color-text-muted))]">Updated this sprint</span>
+        </div>
+
+        <div class="micro-meter-wrap" aria-label="Quality score 92 out of 100">
+          <div class="micro-meter-fill" style="--quality-score: 92"></div>
+        </div>
+
+        <div class="mt-4 flex items-center justify-between text-sm text-[rgb(var(--color-text-secondary))]">
+          <span>Stack confidence</span>
+          <strong class="text-base text-[rgb(var(--color-text-primary))]">92 / 100</strong>
+        </div>
+
+        <ul class="mt-6 space-y-2 text-sm text-[rgb(var(--color-text-secondary))]">
+          <li class="flex items-center justify-between"><span>Astro + Tailwind delivery</span><span>High</span></li>
+          <li class="flex items-center justify-between"><span>Component resilience</span><span>High</span></li>
+          <li class="flex items-center justify-between"><span>Motion accessibility</span><span>Verified</span></li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>

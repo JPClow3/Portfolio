@@ -1,0 +1,27 @@
+---
+interface Props {
+  items: string[];
+}
+
+const { items } = Astro.props;
+const marqueeItems = [...items, ...items];
+---
+
+<section aria-label="Core technologies" class="py-6 border-y border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.5)] overflow-hidden">
+  <div class="animate-[marquee_24s_linear_infinite] whitespace-nowrap will-change-transform">
+    {
+      marqueeItems.map((item) => (
+        <span class="inline-flex items-center mx-3 px-4 py-2 rounded-full text-sm font-medium bg-[rgb(var(--color-bg-primary))] border border-[rgb(var(--color-border))] text-[rgb(var(--color-text-secondary))]">
+          {item}
+        </span>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+</style>

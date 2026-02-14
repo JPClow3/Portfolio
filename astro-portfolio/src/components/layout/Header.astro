@@ -8,12 +8,10 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-  { label: 'About', href: '#about' },
-  { label: 'Experience', href: '#experience' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Skills', href: '#skills' },
+  { label: 'About', href: '/#about' },
+  { label: 'Projects', href: '/#projects' },
   { label: 'Blog', href: '/blog' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Contact', href: '/#contact' },
 ];
 
 // Resume link (separate since it has download behavior)
@@ -56,7 +54,7 @@ const resumeLink = '/resume.pdf';
           class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-[rgb(var(--color-accent))] border border-[rgb(var(--color-accent)/0.5)] rounded-lg hover:bg-[rgb(var(--color-accent)/0.1)] transition-colors"
           aria-label="Download resume PDF"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
           Resume
         </a>
         <ThemeToggle client:load />
@@ -73,6 +71,8 @@ const resumeLink = '/resume.pdf';
           <!-- Hamburger icon -->
           <svg
             id="menu-icon-open"
+            aria-hidden="true"
+            focusable="false"
             xmlns="http://www.w3.org/2000/svg"
             class="w-6 h-6"
             fill="none"
@@ -89,6 +89,8 @@ const resumeLink = '/resume.pdf';
           <!-- Close icon (hidden by default) -->
           <svg
             id="menu-icon-close"
+            aria-hidden="true"
+            focusable="false"
             xmlns="http://www.w3.org/2000/svg"
             class="w-6 h-6 hidden"
             fill="none"

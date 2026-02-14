@@ -1,0 +1,36 @@
+---
+import GlassPanel from './GlassPanel.astro';
+import type { GithubStats } from './types';
+
+interface Props {
+  stats: GithubStats;
+}
+
+const { stats } = Astro.props;
+---
+
+<section id="github" class="py-20">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-end justify-between gap-4 flex-wrap">
+      <h2 class="text-3xl sm:text-4xl font-bold">GitHub History</h2>
+      <a href={stats.profileUrl} class="text-sm hover:text-[rgb(var(--color-accent))]" target="_blank" rel="noopener noreferrer">@{stats.username}</a>
+    </div>
+
+    <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <GlassPanel class="p-4"><p class="text-sm text-[rgb(var(--color-text-muted))]">Public Repos</p><p class="text-3xl font-bold mt-1">{stats.publicRepos}</p></GlassPanel>
+      <GlassPanel class="p-4"><p class="text-sm text-[rgb(var(--color-text-muted))]">Followers</p><p class="text-3xl font-bold mt-1">{stats.followers}</p></GlassPanel>
+      <GlassPanel class="p-4"><p class="text-sm text-[rgb(var(--color-text-muted))]">Following</p><p class="text-3xl font-bold mt-1">{stats.following}</p></GlassPanel>
+      <GlassPanel class="p-4"><p class="text-sm text-[rgb(var(--color-text-muted))]">Total Stars</p><p class="text-3xl font-bold mt-1">{stats.totalStars}</p></GlassPanel>
+    </div>
+
+    <div class="mt-6 grid md:grid-cols-2 gap-4">
+      {stats.recentRepos.map((repo) => (
+        <GlassPanel class="p-4">
+          <a href={repo.url} target="_blank" rel="noopener noreferrer" class="font-semibold hover:text-[rgb(var(--color-accent))]">{repo.name}</a>
+          <p class="text-sm mt-1 text-[rgb(var(--color-text-muted))]">Updated {new Date(repo.updatedAt).toLocaleDateString()}</p>
+          <p class="text-sm mt-1 text-[rgb(var(--color-text-secondary))]">{repo.language ?? 'N/A'} · ★ {repo.stars}</p>
+        </GlassPanel>
+      ))}
+    </div>
+  </div>
+</section>

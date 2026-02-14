@@ -1,0 +1,146 @@
+---
+import Icon from '@/components/common/Icon.astro';
+import { ui } from '@/lib/i18n';
+
+const t = ui.en;
+const currentYear = new Date().getFullYear();
+
+const navLinks = [
+  { name: 'About', href: '/#about' },
+  { name: 'Projects', href: '/#projects' },
+  { name: 'Blog', href: '/blog' },
+  { name: 'Contact', href: '/#contact' },
+];
+
+const socialLinks = [
+  {
+    name: 'GitHub',
+    href: 'https://github.com/JPClow3',
+    icon: 'github' as const,
+  },
+  {
+    name: 'LinkedIn',
+    href: 'https://linkedin.com/in/joaopaulosantosgo',
+    icon: 'linkedin' as const,
+  },
+  {
+    name: 'Instagram',
+    href: 'https://www.instagram.com/_joao.paulo_sa/',
+    icon: 'instagram' as const,
+  },
+  {
+    name: 'Email',
+    href: 'mailto:joaopaulo.grv4@gmail.com',
+    icon: 'email' as const,
+  },
+];
+---
+
+<footer class="bg-[rgb(var(--color-bg-secondary))] border-t border-[rgb(var(--color-border))]">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Main Footer Content -->
+    <div class="grid md:grid-cols-3 gap-8 mb-8">
+      <!-- Logo & About -->
+      <div>
+        <a href="/" class="text-2xl font-bold gradient-text">JP</a>
+        <p class="mt-3 text-sm text-[rgb(var(--color-text-secondary))] leading-relaxed">
+          Front-End Developer & QA Automation Engineer building tested, accessible web experiences.
+        </p>
+      </div>
+
+      <!-- Navigation Links -->
+      <div>
+        <h3 class="font-semibold mb-4 text-[rgb(var(--color-text-primary))]">Quick Links</h3>
+        <nav class="grid grid-cols-2 gap-2">
+          {navLinks.map((link) => (
+            <a
+              href={link.href}
+              class="text-sm text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-accent))] transition-colors"
+            >
+              {link.name}
+            </a>
+          ))}
+        </nav>
+      </div>
+
+      <!-- Social & Contact -->
+      <div>
+        <h3 class="font-semibold mb-4 text-[rgb(var(--color-text-primary))]">Connect</h3>
+        <div class="flex items-center gap-3">
+          {socialLinks.map((link) => (
+            <a
+              href={link.href}
+              target={link.href.startsWith('http') ? '_blank' : undefined}
+              rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+              class="p-2.5 rounded-lg bg-[rgb(var(--color-bg-tertiary))] text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-accent))] hover:bg-[rgb(var(--color-accent)/0.1)] transition-colors"
+              aria-label={link.name}
+            >
+              <Icon name={link.icon} size={20} />
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="border-t border-[rgb(var(--color-border))] pt-8">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <!-- Copyright -->
+        <p class="text-sm text-[rgb(var(--color-text-muted))]">
+          &copy; {currentYear} João Paulo Gonçalves Santos. All rights reserved.
+        </p>
+
+        <!-- Back to Top -->
+        <a
+          href="#"
+          class="inline-flex items-center gap-2 text-sm text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-accent))] transition-colors group"
+          aria-label={t['common.backToTop']}
+        >
+          {t['common.backToTop']}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-4 h-4 group-hover:-translate-y-0.5 transition-transform"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="m18 15-6-6-6 6"/>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Tech Stack -->
+      <p class="text-center text-sm text-[rgb(var(--color-text-muted))] mt-6">
+        Built with
+        <a
+          href="https://astro.build"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-[rgb(var(--color-accent))] hover:underline"
+        >
+          Astro
+        </a>,
+        <a
+          href="https://svelte.dev"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-[rgb(var(--color-accent))] hover:underline"
+        >
+          Svelte
+        </a>
+        &amp;
+        <a
+          href="https://tailwindcss.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-[rgb(var(--color-accent))] hover:underline"
+        >
+          Tailwind CSS
+        </a>
+      </p>
+    </div>
+  </div>
+</footer>

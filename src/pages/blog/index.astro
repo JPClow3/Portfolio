@@ -1,0 +1,84 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
+import { ui } from '@/lib/i18n';
+
+const t = ui.en;
+
+const posts = await getCollection('blog', ({ data }) => !data.draft && data.lang === 'en');
+const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+---
+
+<BaseLayout title="Blog | João Paulo Santos" description="Thoughts on software development, front-end technologies, and my learning journey.">
+  <Header />
+
+  <main id="main-content" class="pt-24 pb-16" tabindex="-1">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Header -->
+      <div class="text-center mb-16">
+        <h1 class="text-4xl sm:text-5xl font-bold mb-4">{t['blog.title']}</h1>
+        <p class="text-lg text-[rgb(var(--color-text-muted))]">
+          Thoughts on software development, front-end technologies, and my learning journey.
+        </p>
+      </div>
+
+      <!-- Posts -->
+      {sortedPosts.length > 0 ? (
+        <div class="space-y-8">
+          {sortedPosts.map((post) => (
+            <article class="group p-6 rounded-2xl bg-[rgb(var(--color-bg-secondary))] border border-[rgb(var(--color-border))] hover:border-[rgb(var(--color-accent)/0.5)] transition-all duration-300">
+              <a href={`/blog/${post.slug}`} class="block">
+                <div class="flex flex-wrap gap-2 mb-3">
+                  {post.data.tags.map((tag) => (
+                    <span class="px-2 py-0.5 text-xs font-medium bg-[rgb(var(--color-bg-tertiary))] text-[rgb(var(--color-text-muted))] rounded">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <h2 class="text-2xl font-semibold mb-2 group-hover:text-[rgb(var(--color-accent))] transition-colors">
+                  {post.data.title}
+                </h2>
+
+                <p class="text-[rgb(var(--color-text-secondary))] mb-4 line-clamp-2">
+                  {post.data.description}
+                </p>
+
+                <div class="flex items-center justify-between">
+                  <time
+                    datetime={post.data.pubDate.toISOString()}
+                    class="text-sm text-[rgb(var(--color-text-muted))]"
+                  >
+                    {formatDate(post.data.pubDate)}
+                  </time>
+
+                  <span class="text-sm font-medium text-[rgb(var(--color-accent))] group-hover:underline">
+                    {t['blog.readMore']} →
+                  </span>
+                </div>
+              </a>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-16">
+          <p class="text-[rgb(var(--color-text-muted))]">
+            No posts yet. Check back soon!
+          </p>
+        </div>
+      )}
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

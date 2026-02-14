@@ -1,0 +1,103 @@
+---
+import { getCollection } from 'astro:content';
+import { ui } from '@/lib/i18n';
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
+import Icon from '@/components/common/Icon.astro';
+
+const t = ui.en;
+
+// Get latest 3 published blog posts
+const allPosts = await getCollection('blog', ({ data }) => {
+  return !data.draft && data.lang === 'en';
+});
+
+const latestPosts = allPosts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+// Format date helper
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+---
+
+{latestPosts.length > 0 && (
+  <section id="blog" class="py-24 bg-[rgb(var(--color-bg-secondary))]">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ScrollReveal animation="fade-up">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl sm:text-4xl font-bold mb-4">
+            {t['blog.title']}
+          </h2>
+          <p class="text-[rgb(var(--color-text-muted))] max-w-2xl mx-auto">
+            {t['blog.subtitle']}
+          </p>
+        </div>
+      </ScrollReveal>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        {latestPosts.map((post, index) => (
+          <ScrollReveal animation="fade-up" delay={index * 100}>
+            <a
+              href={`/blog/${post.slug}`}
+              class="group block h-full"
+            >
+              <article class="h-full p-6 rounded-2xl bg-[rgb(var(--color-bg-primary))] border border-[rgb(var(--color-border))] hover:border-[rgb(var(--color-accent)/0.5)] transition-all duration-300 hover:shadow-xl hover:shadow-[rgb(var(--color-accent)/0.1)] hover:-translate-y-1">
+                {post.data.heroImage && (
+                  <div class="aspect-video mb-4 rounded-lg overflow-hidden bg-[rgb(var(--color-bg-tertiary))]">
+                    <img
+                      src={post.data.heroImage}
+                      alt={post.data.title}
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                )}
+
+                <div class="flex items-center gap-2 text-sm text-[rgb(var(--color-text-muted))] mb-3">
+                  <Icon name="calendar" size={14} />
+                  <time datetime={post.data.pubDate.toISOString()}>
+                    {formatDate(post.data.pubDate)}
+                  </time>
+                </div>
+
+                <h3 class="text-lg font-semibold mb-2 group-hover:text-[rgb(var(--color-accent))] transition-colors line-clamp-2">
+                  {post.data.title}
+                </h3>
+
+                <p class="text-sm text-[rgb(var(--color-text-secondary))] line-clamp-3 mb-4">
+                  {post.data.description}
+                </p>
+
+                {post.data.tags.length > 0 && (
+                  <div class="flex flex-wrap gap-2 mt-auto">
+                    {post.data.tags.slice(0, 3).map((tag) => (
+                      <span class="px-2 py-1 text-xs rounded-full bg-[rgb(var(--color-accent)/0.1)] text-[rgb(var(--color-accent))]">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </article>
+            </a>
+          </ScrollReveal>
+        ))}
+      </div>
+
+      <ScrollReveal animation="fade-up" delay={400}>
+        <div class="text-center mt-12">
+          <a
+            href="/blog"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-[rgb(var(--color-border))] hover:border-[rgb(var(--color-accent))] hover:text-[rgb(var(--color-accent))] transition-colors"
+          >
+            View all posts
+            <Icon name="external-link" size={16} />
+          </a>
+        </div>
+      </ScrollReveal>
+    </div>
+  </section>
+)}

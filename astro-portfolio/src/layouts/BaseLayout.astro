@@ -4,111 +4,34 @@ import '@/styles/global.css';
 interface Props {
   title: string;
   description?: string;
-  image?: string;
-  noIndex?: boolean;
 }
 
 const {
   title,
-  description = 'Front-End Developer & QA Automation Engineer building tested, accessible web experiences with React, TypeScript & Python',
-  image = '/og-image.png',
-  noIndex = false,
+  description = 'João Paulo Gonçalves Santos portfolio built with Astro and Tailwind.',
 } = Astro.props;
-
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-
-// Structured Data for SEO
-const structuredData = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "João Paulo Gonçalves Santos",
-  "url": "https://joaopaulosantos.dev",
-  "jobTitle": "Front-End Developer & QA Automation Engineer",
-  "description": description,
-  "sameAs": [
-    "https://github.com/JPClow3",
-    "https://linkedin.com/in/joaopaulosantosgo",
-    "https://www.instagram.com/_joao.paulo_sa/"
-  ],
-  "knowsAbout": ["React", "TypeScript", "JavaScript", "Astro", "Svelte", "Tailwind CSS", "Python"],
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Rio Verde",
-    "addressRegion": "GO",
-    "addressCountry": "BR"
-  }
-};
 ---
 
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="dark scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="canonical" href={canonicalURL} />
-
-    <!-- Primary Meta Tags -->
     <title>{title}</title>
-    <meta name="title" content={title} />
     <meta name="description" content={description} />
-    <meta name="author" content="João Paulo Gonçalves Santos" />
-    {noIndex && <meta name="robots" content="noindex, nofollow" />}
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalURL} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(image, Astro.site)} />
-    <meta property="og:site_name" content="João Paulo Santos" />
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={canonicalURL} />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={new URL(image, Astro.site)} />
-
-    <!-- Fonts - Preload for performance -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      rel="preload"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap"
-      as="style"
-      onload="this.onload=null;this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
     />
-    <noscript>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap"
-        rel="stylesheet"
-      />
-    </noscript>
-
-    <!-- Structured Data -->
-    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
-
-    <!-- Theme Script (inline to prevent flash) -->
-    <script is:inline>
-      (function() {
-        const theme = localStorage.getItem('theme');
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        if (theme === 'dark' || (!theme && systemDark)) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-      })();
-    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+      rel="stylesheet"
+    />
   </head>
-  <body class="min-h-screen bg-[rgb(var(--color-bg-primary))] text-[rgb(var(--color-text-primary))] antialiased transition-colors duration-200">
-    <!-- Skip Link for Accessibility -->
-    <a href="#main-content" class="skip-link">
-      Skip to main content
-    </a>
-
+  <body>
     <slot />
   </body>
 </html>

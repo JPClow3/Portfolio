@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 
 const profile = {
@@ -52,27 +53,102 @@ const fallbackGithubActivity = [
   },
 ];
 
-async function getGithubActivity() {
+interface GitHubEvent {
+  type: string;
+  repo: {
+    name: string;
+  };
+  payload?: {
+    commits?: Array<{
+      message: string;
+      sha: string;
+    }>;
+  };
+  created_at: string;
+}
+
+const githubUsername = profile.github.replace(/\/+$/, '').split('/').pop() ?? '';
+const githubActivityCachePath = new URL('../../.cache/github-activity.json', import.meta.url);
+const githubActivityTtlMs = 30 * 60 * 1000;
+
+async function readGithubActivityCache() {
   try {
-    const response = await fetch('https://api.github.com/users/JPClow3/events/public', {
-      headers: { Accept: 'application/vnd.github+json' },
+    const rawCache = await readFile(githubActivityCachePath, 'utf-8');
+    const parsedCache = JSON.parse(rawCache) as {
+      updatedAt: number;
+      data: typeof fallbackGithubActivity;
+    };
+
+    if (!Array.isArray(parsedCache?.data)) {
+      return null;
+    }
+
+    if (Date.now() - parsedCache.updatedAt > githubActivityTtlMs) {
+      return null;
+    }
+
+    return parsedCache.data;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException)?.code !== 'ENOENT') {
+      console.warn('GitHub activity cache read skipped:', error);
+    }
+    return null;
+  }
+}
+
+async function writeGithubActivityCache(data: typeof fallbackGithubActivity) {
+  try {
+    await mkdir(new URL('../../.cache', import.meta.url), { recursive: true });
+    await writeFile(githubActivityCachePath, JSON.stringify({ updatedAt: Date.now(), data }, null, 2), 'utf-8');
+  } catch (error) {
+    console.warn('GitHub activity cache write skipped:', error);
+  }
+}
+
+async function getGithubActivity() {
+  if (!githubUsername) {
+    console.warn('GitHub activity fallback: unable to derive username from profile.github');
+    return fallbackGithubActivity;
+  }
+
+  const cachedActivity = await readGithubActivityCache();
+  if (cachedActivity?.length) {
+    return cachedActivity;
+  }
+
+  try {
+    const githubToken = import.meta.env.GITHUB_TOKEN;
+    const response = await fetch(`https://api.github.com/users/${githubUsername}/events/public`, {
+      headers: {
+        Accept: 'application/vnd.github+json',
+        ...(githubToken ? { Authorization: `Bearer ${githubToken}` } : {}),
+      },
     });
 
-    if (!response.ok) return fallbackGithubActivity;
+    if (!response.ok) {
+      console.warn(`GitHub activity request returned ${response.status}. Using fallback activity.`);
+      return fallbackGithubActivity;
+    }
 
-    const events = await response.json();
+    const events = (await response.json()) as GitHubEvent[];
     const pushEvents = events
-      .filter((event: any) => event.type === 'PushEvent' && event.payload?.commits?.length)
+      .filter((event) => event.type === 'PushEvent' && event.payload?.commits?.length)
       .slice(0, 3)
-      .map((event: any) => ({
-        repo: event.repo.name.replace('JPClow3/', ''),
+      .map((event) => ({
+        repo: event.repo.name.replace(`${githubUsername}/`, ''),
         message: event.payload.commits[0].message,
         date: new Date(event.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
         url: `https://github.com/${event.repo.name}/commit/${event.payload.commits[0].sha}`,
       }));
 
-    return pushEvents.length ? pushEvents : fallbackGithubActivity;
-  } catch {
+    if (pushEvents.length) {
+      await writeGithubActivityCache(pushEvents);
+      return pushEvents;
+    }
+
+    return fallbackGithubActivity;
+  } catch (error) {
+    console.error('GitHub activity request failed. Returning fallback activity.', error);
     return fallbackGithubActivity;
   }
 }

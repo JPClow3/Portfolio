@@ -12,8 +12,8 @@ const profile = {
   location: 'Brazil',
   timezone: 'UTC-3',
   github: 'https://github.com/JPClow3',
-  linkedin: 'https://linkedin.com/in/joaopaulosantosgo',
-  email: 'joaopaulossantos00@gmail.com',
+  linkedin: 'https://www.linkedin.com/in/joaopaulosantosgo/',
+  email: 'joaopaulo.grv4@gmail.com',
 };
 
 const currentFocus = [
@@ -273,7 +273,14 @@ const formatDate = (date: Date) =>
 
         <div class="flex flex-col gap-5 lg:col-span-5">
           <article class="glass-panel rounded-3xl p-7 text-center">
-            <div class="mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-tr from-violet-500 to-indigo-500 text-3xl">👨‍💻</div>
+            <div class="mx-auto mb-3 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-2 border-white/20">
+              <img
+                src="https://2.gravatar.com/avatar/272aea5ad66497c40ffb664e876e5d83bd91572d82d77a7aabcb0beab1271614?s=160&d=initials"
+                alt={profile.shortName}
+                class="hovercard h-full w-full object-cover"
+                data-gravatar-hash="272aea5ad66497c40ffb664e876e5d83bd91572d82d77a7aabcb0beab1271614"
+              />
+            </div>
             <h2 class="text-2xl font-bold">{profile.shortName}</h2>
             <p class="text-sm text-[rgb(var(--primary))]">{profile.role}</p>
             <div class="mt-3 flex justify-center gap-2 text-xs">

@@ -45,7 +45,7 @@ const contactInfo = [
           <form id="contact-form" class="space-y-6">
             <!-- Web3Forms Access Key - Set PUBLIC_WEB3FORMS_ACCESS_KEY in env or at https://web3forms.com -->
             <input type="hidden" name="access_key" value={import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY ?? 'YOUR_WEB3FORMS_ACCESS_KEY'} />
-            <input type="hidden" name="subject" value="New Contact from Portfolio" />
+            <input type="hidden" name="subject" value="New message from jpclow.dev" />
             <input type="hidden" name="from_name" value="Portfolio Contact Form" />
             <input type="checkbox" name="botcheck" class="hidden" style="display: none;" />
 
@@ -63,7 +63,7 @@ const contactInfo = [
                 required
                 aria-required="true"
                 class="w-full px-4 py-3 rounded-xl bg-[rgb(var(--color-bg-secondary))] border border-[rgb(var(--color-border))] text-[rgb(var(--color-text-primary))] placeholder-[rgb(var(--color-text-muted))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-accent))] focus:border-transparent transition-all"
-                placeholder="Your name"
+                placeholder={t['contact.form.placeholderName']}
               />
               <p id="name-error" class="text-red-500 text-sm mt-1 hidden" role="alert"></p>
             </div>
@@ -82,7 +82,7 @@ const contactInfo = [
                 required
                 aria-required="true"
                 class="w-full px-4 py-3 rounded-xl bg-[rgb(var(--color-bg-secondary))] border border-[rgb(var(--color-border))] text-[rgb(var(--color-text-primary))] placeholder-[rgb(var(--color-text-muted))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-accent))] focus:border-transparent transition-all"
-                placeholder="your@email.com"
+                placeholder={t['contact.form.placeholderEmail']}
               />
               <p id="email-error" class="text-red-500 text-sm mt-1 hidden" role="alert"></p>
             </div>
@@ -101,7 +101,7 @@ const contactInfo = [
                 required
                 aria-required="true"
                 class="w-full px-4 py-3 rounded-xl bg-[rgb(var(--color-bg-secondary))] border border-[rgb(var(--color-border))] text-[rgb(var(--color-text-primary))] placeholder-[rgb(var(--color-text-muted))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-accent))] focus:border-transparent transition-all resize-none"
-                placeholder="Your message..."
+                placeholder={t['contact.form.placeholderMessage']}
               ></textarea>
               <p id="message-error" class="text-red-500 text-sm mt-1 hidden" role="alert"></p>
             </div>
@@ -122,10 +122,10 @@ const contactInfo = [
             <div id="form-status" class="hidden" role="status" aria-live="polite">
               <div id="success-message" class="hidden p-4 rounded-xl bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 flex items-center gap-2">
                 <Icon name="check" size={20} />
-                <span>Message sent successfully! I'll get back to you soon.</span>
+                <span>{t['contact.success']}</span>
               </div>
               <div id="error-message" class="hidden p-4 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200">
-                <span>Something went wrong. Please try again or email me directly.</span>
+                <span>{t['contact.error']}</span>
               </div>
             </div>
           </form>
@@ -177,7 +177,7 @@ const contactInfo = [
                   <Icon name="github" size={20} />
                 </a>
                 <a
-                  href="https://linkedin.com/in/joaopaulosantosgo"
+                  href="https://www.linkedin.com/in/joaopaulosantosgo/"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="p-3 rounded-xl bg-[rgb(var(--color-bg-primary))] border border-[rgb(var(--color-border))] text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-accent))] hover:border-[rgb(var(--color-accent)/0.5)] transition-all hover:scale-105"
@@ -203,7 +203,15 @@ const contactInfo = [
   </div>
 </section>
 
-<script>
+<script define:vars={{
+  sendingText: t['contact.form.sending'],
+  sendText: t['contact.form.send'],
+  validationName: t['contact.validation.nameRequired'],
+  validationEmail: t['contact.validation.emailRequired'],
+  validationEmailInvalid: t['contact.validation.emailInvalid'],
+  validationMessage: t['contact.validation.messageRequired'],
+  validationMessageMin: t['contact.validation.messageMin'],
+}}>
   function initContactForm() {
     const form = document.getElementById('contact-form') as HTMLFormElement;
     if (!form) return;
@@ -251,23 +259,23 @@ const contactInfo = [
       ['name', 'email', 'message'].forEach(clearError);
 
       if (!name) {
-        showError('name', 'Please enter your name');
+        showError('name', validationName);
         isValid = false;
       }
 
       if (!email) {
-        showError('email', 'Please enter your email');
+        showError('email', validationEmail);
         isValid = false;
       } else if (!validateEmail(email)) {
-        showError('email', 'Please enter a valid email address');
+        showError('email', validationEmailInvalid);
         isValid = false;
       }
 
       if (!message) {
-        showError('message', 'Please enter a message');
+        showError('message', validationMessage);
         isValid = false;
       } else if (message.length < 10) {
-        showError('message', 'Message must be at least 10 characters');
+        showError('message', validationMessageMin);
         isValid = false;
       }
 
@@ -298,7 +306,7 @@ const contactInfo = [
 
       // Show loading state
       if (submitBtn) submitBtn.disabled = true;
-      if (btnText) btnText.textContent = 'Sending...';
+      if (btnText) btnText.textContent = sendingText;
       if (btnSpinner) btnSpinner.classList.remove('hidden');
 
       try {
@@ -324,7 +332,7 @@ const contactInfo = [
       } finally {
         // Reset button state
         if (submitBtn) submitBtn.disabled = false;
-        if (btnText) btnText.textContent = 'Send Message';
+        if (btnText) btnText.textContent = sendText;
         if (btnSpinner) btnSpinner.classList.add('hidden');
       }
     });

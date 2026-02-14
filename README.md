@@ -2,7 +2,7 @@
 
 Personal portfolio for João Paulo Gonçalves Santos — Astro 5, Svelte 5, TypeScript, Tailwind CSS v4. Static site with islands architecture, content collections, and a design system.
 
-**Live:** https://joaopaulosantos.dev
+**Live:** https://jpclow.dev
 
 ## Commands
 

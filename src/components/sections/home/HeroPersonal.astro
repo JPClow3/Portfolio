@@ -40,7 +40,12 @@ const { hero } = Astro.props;
       </div>
 
       <GlassPanel class="p-6 sm:p-8">
-        <img src="/images/profile.jpg" alt={`${hero.name} profile photo`} class="w-full max-w-xs mx-auto rounded-2xl object-cover border border-white/20" />
+        <img
+          src="https://2.gravatar.com/avatar/272aea5ad66497c40ffb664e876e5d83bd91572d82d77a7aabcb0beab1271614?s=256&d=initials"
+          alt={`${hero.name} profile photo`}
+          class="hovercard w-full max-w-xs mx-auto rounded-2xl object-cover border border-white/20"
+          data-gravatar-hash="272aea5ad66497c40ffb664e876e5d83bd91572d82d77a7aabcb0beab1271614"
+        />
         <p class="mt-4 text-center text-sm text-[rgb(var(--color-text-muted))]">
           Building polished interfaces and quality-focused engineering workflows.
         </p>

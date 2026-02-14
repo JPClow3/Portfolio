@@ -5,7 +5,7 @@
 ## Project Overview
 Modern portfolio website for João Paulo Gonçalves Santos built with Astro 5, Svelte 5, and TypeScript. Uses islands architecture for optimal performance with a comprehensive design system.
 
-**Live Site:** https://joaopaulosantos.dev
+**Live Site:** https://jpclow.dev
 
 ### Owner Info
 - **GitHub:** https://github.com/JPClow3

@@ -25,6 +25,28 @@ body {
     radial-gradient(circle at 70% 85%, rgb(99 102 241 / 0.12), transparent 35%), linear-gradient(180deg, #110d24 0%, #0f0b20 100%);
 }
 
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  z-index: 1000;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: rgb(var(--primary));
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-140%);
+  transition: transform 0.2s ease;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
 .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
 }

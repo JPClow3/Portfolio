@@ -1,0 +1,50 @@
+---
+import Icon from '@/components/common/Icon.astro';
+import HeroScene from '@/components/islands/HeroScene.svelte';
+import GlassPanel from './GlassPanel.astro';
+import type { HeroPersonalProps } from './types';
+
+interface Props {
+  hero: HeroPersonalProps;
+}
+
+const { hero } = Astro.props;
+---
+
+<section id="hero" class="relative min-h-screen overflow-hidden pt-24 pb-12">
+  <HeroScene client:visible />
+
+  <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-[1.2fr,0.8fr] gap-10 items-center">
+      <div>
+        <p class="inline-flex items-center px-4 py-1 text-xs tracking-widest uppercase rounded-full bg-[rgb(var(--color-accent)/0.2)] text-[rgb(var(--color-accent))] border border-[rgb(var(--color-accent)/0.3)]">
+          {hero.availability}
+        </p>
+
+        <h1 class="mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight">
+          {hero.name}
+        </h1>
+        <p class="mt-4 text-xl sm:text-2xl text-[rgb(var(--color-text-secondary))]">{hero.title}</p>
+        <p class="mt-6 text-lg text-[rgb(var(--color-text-muted))] max-w-2xl">{hero.tagline}</p>
+
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a href={hero.githubUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[rgb(var(--color-accent))] text-white font-semibold hover:bg-[rgb(var(--color-accent-hover))] transition-colors">
+            <Icon name="github" size={18} />
+            GitHub
+          </a>
+          <a href={hero.contactHref} class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary))] hover:border-[rgb(var(--color-accent))] transition-colors">
+            <Icon name="email" size={18} />
+            Contact
+          </a>
+        </div>
+      </div>
+
+      <GlassPanel class="p-6 sm:p-8">
+        <img src="/images/profile.jpg" alt={`${hero.name} profile photo`} class="w-full max-w-xs mx-auto rounded-2xl object-cover border border-white/20" />
+        <p class="mt-4 text-center text-sm text-[rgb(var(--color-text-muted))]">
+          Building polished interfaces and quality-focused engineering workflows.
+        </p>
+      </GlassPanel>
+    </div>
+  </div>
+</section>

@@ -4,6 +4,15 @@ import HeroScene from '@/components/islands/HeroScene.svelte';
 import Icon from '@/components/common/Icon.astro';
 
 const t = ui.en;
+
+const {
+  profileStats = [
+    { label: 'Projects', value: '3+' },
+    { label: 'Years Experience', value: '2+' },
+    { label: 'Repos touched this year', value: '100%' },
+  ],
+  currentFocus,
+} = Astro.props;
 ---
 
 <section
@@ -64,6 +73,33 @@ const t = ui.en;
             <Icon name="email" size={20} class="group-hover:text-[rgb(var(--color-accent))] transition-colors" />
             {t['hero.cta.contact']}
           </a>
+        </div>
+
+        <!-- Profile & Focus Cards -->
+        <div class="mt-10 grid gap-4 sm:grid-cols-2 animate-slide-up stagger-6">
+          <div class="glass-card rounded-2xl p-5 border border-[rgb(var(--color-border))]">
+            <h3 class="text-sm uppercase tracking-wide text-[rgb(var(--color-text-muted))] mb-4">Profile Stats</h3>
+            <div class="grid grid-cols-3 gap-3">
+              {profileStats.map((stat) => (
+                <div class="text-center">
+                  <p class="text-xl sm:text-2xl font-bold text-[rgb(var(--color-accent))]">{stat.value}</p>
+                  <p class="text-xs text-[rgb(var(--color-text-muted))] mt-1">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5 border border-[rgb(var(--color-border))]">
+            <h3 class="text-sm uppercase tracking-wide text-[rgb(var(--color-text-muted))] mb-4">{currentFocus?.title ?? 'Current Focus'}</h3>
+            <ul class="space-y-2 text-sm text-[rgb(var(--color-text-secondary))]">
+              {(currentFocus?.items ?? []).map((item) => (
+                <li class="flex items-start gap-2">
+                  <span class="text-[rgb(var(--color-accent))] mt-0.5">•</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
 

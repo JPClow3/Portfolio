@@ -31,7 +31,15 @@ const {
       rel="stylesheet"
     />
   </head>
-  <body>
+  <body class="min-h-screen bg-[rgb(var(--color-bg-primary))] text-[rgb(var(--color-text-primary))] antialiased transition-colors duration-200">
+    <!-- Skip Link for Accessibility -->
+    <a
+      href="#main-content"
+      class="skip-link focus-visible:top-4 focus-visible:left-4"
+    >
+      Skip to main content
+    </a>
+
     <slot />
   </body>
 </html>

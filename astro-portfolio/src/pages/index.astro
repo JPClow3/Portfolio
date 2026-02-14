@@ -130,21 +130,24 @@ async function getGithubActivity() {
 await getGithubActivity();
 ---
 
-<BaseLayout title="João Paulo Gonçalves Santos - Portfolio" description="Personal portfolio of João Paulo with projects, journey and GitHub updates.">
-  <main class="noise-bg relative overflow-x-hidden px-4 pb-14 pt-6 sm:px-6 lg:px-8">
-    <div class="pointer-events-none fixed inset-0 -z-10">
-      <div class="bg-grid absolute inset-0 opacity-20"></div>
-      <div class="absolute -right-24 -top-24 h-[420px] w-[420px] rounded-full bg-violet-600/25 blur-[120px]"></div>
-      <div class="absolute -left-28 top-[48%] h-[400px] w-[400px] rounded-full bg-indigo-500/25 blur-[120px]"></div>
-    </div>
+<BaseLayout title="João Paulo Santos | Front-End Developer">
+  <Header />
 
-    <div class="fixed left-0 right-0 top-5 z-50 flex justify-center px-4">
-      <nav class="glass-panel flex items-center gap-1 rounded-full px-2 py-2 text-xs text-slate-200/90 sm:text-sm">
-        <a href="#projects" class="flex items-center gap-1 rounded-full px-3 py-2 hover:bg-white/10"><span class="material-symbols-outlined text-base">code</span>Projects</a>
-        <a href="#about" class="flex items-center gap-1 rounded-full px-3 py-2 hover:bg-white/10"><span class="material-symbols-outlined text-base">person</span>About</a>
-        <a href="#contact" class="ml-1 flex items-center gap-1 rounded-full bg-[rgb(var(--primary))] px-4 py-2 font-semibold text-white">Say Hello<span class="material-symbols-outlined text-base">arrow_forward</span></a>
-      </nav>
-    </div>
+  <main id="main-content">
+    <Hero />
+    <section id="about" class="scroll-mt-28">
+      <About />
+    </section>
+    <Experience />
+    <section id="projects" class="scroll-mt-28">
+      <Projects />
+    </section>
+    <Skills />
+    <BlogPreview />
+    <section id="contact" class="scroll-mt-28">
+      <Contact />
+    </section>
+  </main>
 
     <div class="mx-auto max-w-7xl pt-24">
       <header id="about" class="mb-20 grid grid-cols-1 gap-10 lg:grid-cols-12">

@@ -241,4 +241,14 @@ body {
     opacity: 1;
     transform: none;
   }
+  .animate-marquee {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .animate-ping {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
 }

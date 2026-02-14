@@ -9,6 +9,124 @@ import Projects from '@/components/sections/Projects.astro';
 import Skills from '@/components/sections/Skills.astro';
 import BlogPreview from '@/components/sections/BlogPreview.astro';
 import Contact from '@/components/sections/Contact.astro';
+
+type GithubEvent = {
+  type: string;
+  created_at: string;
+  repo?: { name?: string };
+  payload?: {
+    commits?: { message?: string }[];
+    pull_request?: { title?: string; html_url?: string };
+    ref_type?: string;
+    ref?: string;
+    description?: string;
+  };
+};
+
+type NormalizedActivity = {
+  repo: string;
+  message: string;
+  link: string;
+  date: string;
+};
+
+const MAX_ACTIVITY_MESSAGE_LENGTH = 88;
+
+const normalizeMessage = (message: string): string => {
+  const trimmedPrefix = message
+    .replace(/^(?:merge pull request #\d+\s+from\s+\S+\s*)/i, '')
+    .replace(/^(?:build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(?:\([^)]*\))?!?:\s*/i, '')
+    .trim();
+
+  if (trimmedPrefix.length <= MAX_ACTIVITY_MESSAGE_LENGTH) {
+    return trimmedPrefix;
+  }
+
+  return `${trimmedPrefix.slice(0, MAX_ACTIVITY_MESSAGE_LENGTH - 1).trimEnd()}…`;
+};
+
+const normalizeGithubEvent = (event: GithubEvent): NormalizedActivity | null => {
+  const repo = event.repo?.name?.split('/')[1] ?? event.repo?.name;
+  const date = event.created_at;
+
+  if (!repo || !date) return null;
+
+  if (event.type === 'PushEvent') {
+    const message = event.payload?.commits?.[0]?.message;
+    if (!message) return null;
+
+    return {
+      repo,
+      message: normalizeMessage(message),
+      link: `https://github.com/${event.repo?.name}`,
+      date,
+    };
+  }
+
+  if (event.type === 'PullRequestEvent') {
+    const message = event.payload?.pull_request?.title;
+    if (!message) return null;
+
+    return {
+      repo,
+      message: normalizeMessage(message),
+      link: event.payload?.pull_request?.html_url ?? `https://github.com/${event.repo?.name}`,
+      date,
+    };
+  }
+
+  if (event.type === 'CreateEvent') {
+    const refType = event.payload?.ref_type;
+    const refName = event.payload?.ref;
+    const description = event.payload?.description;
+    const message = description || `Created ${refType}${refName ? ` ${refName}` : ''}`;
+
+    return {
+      repo,
+      message: normalizeMessage(message),
+      link: `https://github.com/${event.repo?.name}`,
+      date,
+    };
+  }
+
+  return null;
+};
+
+async function getGithubActivity() {
+  try {
+    // In Vercel static mode this runs at build time, so GitHub API rate limits can fail the build and should be handled gracefully.
+    const response = await fetch('https://api.github.com/users/JPClow3/events/public');
+
+    if (!response.ok) return [];
+
+    const events = (await response.json()) as GithubEvent[];
+
+    const fallbackOrder: GithubEvent['type'][] = ['PushEvent', 'PullRequestEvent', 'CreateEvent'];
+    const unique = new Set<string>();
+    const normalized: NormalizedActivity[] = [];
+
+    for (const type of fallbackOrder) {
+      for (const event of events) {
+        if (event.type !== type) continue;
+
+        const activity = normalizeGithubEvent(event);
+        if (!activity) continue;
+
+        const key = `${activity.repo}:${activity.date}`;
+        if (unique.has(key)) continue;
+
+        unique.add(key);
+        normalized.push(activity);
+      }
+    }
+
+    return normalized.slice(0, 6);
+  } catch {
+    return [];
+  }
+}
+
+await getGithubActivity();
 ---
 
 <BaseLayout title="João Paulo Santos | Front-End Developer">

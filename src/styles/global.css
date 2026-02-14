@@ -23,6 +23,13 @@
 
   --color-border: 77 68 118;
   --color-border-hover: 103 93 148;
+
+  /* Activity heatmap (purple scale) */
+  --activity-empty: 30 27 75;
+  --activity-low: 59 7 100;
+  --activity-mid: 126 34 206;
+  --activity-high: 168 85 247;
+  --activity-peak: 167 139 250;
 }
 
 * { box-sizing: border-box; }
@@ -141,6 +148,16 @@ body {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
+
+/* Activity heatmap squares (purple scale) */
+.activity-heat-0 {
+  background: rgb(var(--activity-empty));
+  border: 1px solid rgb(255 255 255 / 0.1);
+}
+.activity-heat-1 { background: rgb(var(--activity-low)); }
+.activity-heat-2 { background: rgb(var(--activity-mid)); }
+.activity-heat-3 { background: rgb(var(--activity-high)); }
+.activity-heat-4 { background: rgb(var(--activity-peak)); }
 
 /* Micro interaction section */
 .micro-accent {

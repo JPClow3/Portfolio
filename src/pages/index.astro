@@ -45,11 +45,14 @@ type GithubEvent = {
   };
 };
 
+type EventType = 'push' | 'pr' | 'create';
+
 type NormalizedActivity = {
   repo: string;
   message: string;
   url: string;
   date: string;
+  eventType: EventType;
 };
 
 const MAX_ACTIVITY_MESSAGE_LENGTH = 88;
@@ -82,6 +85,7 @@ const normalizeGithubEvent = (event: GithubEvent): NormalizedActivity | null => 
       message: normalizeMessage(message),
       url: `https://github.com/${event.repo?.name}`,
       date,
+      eventType: 'push',
     };
   }
 
@@ -94,6 +98,7 @@ const normalizeGithubEvent = (event: GithubEvent): NormalizedActivity | null => 
       message: normalizeMessage(message),
       url: event.payload?.pull_request?.html_url ?? `https://github.com/${event.repo?.name}`,
       date,
+      eventType: 'pr',
     };
   }
 
@@ -108,6 +113,7 @@ const normalizeGithubEvent = (event: GithubEvent): NormalizedActivity | null => 
       message: normalizeMessage(message),
       url: `https://github.com/${event.repo?.name}`,
       date,
+      eventType: 'create',
     };
   }
 
@@ -121,21 +127,24 @@ const githubActivityTtlMs = 30 * 60 * 1000;
 const createFallbackGithubActivity = (username: string): NormalizedActivity[] => [
   {
     repo: 'Portfolio',
-    message: 'Updated portfolio content and UI polish',
+    message: 'Updated portfolio with Astro, Svelte and UI polish',
     url: `https://github.com/${username || 'JPClow3'}/Portfolio`,
     date: 'Recently',
+    eventType: 'push',
   },
   {
     repo: 'League-AI-Oracle',
     message: 'Improved data processing for prediction workflows',
     url: `https://github.com/${username || 'JPClow3'}/League-AI-Oracle`,
     date: 'Recently',
+    eventType: 'push',
   },
   {
     repo: 'Resonant-Echoes',
     message: 'Refined game systems and balancing pass',
     url: `https://github.com/${username || 'JPClow3'}/Resonant-Echoes`,
     date: 'Recently',
+    eventType: 'push',
   },
 ];
 
@@ -190,7 +199,7 @@ async function getGithubActivity() {
 
   const cachedActivity = await readGithubActivityCache();
   if (cachedActivity?.length) {
-    return cachedActivity;
+    return cachedActivity.map((a) => ({ ...a, eventType: (a as NormalizedActivity).eventType ?? 'push' as EventType }));
   }
 
   try {
@@ -234,6 +243,23 @@ async function getGithubActivity() {
 }
 
 const recentGithubActivity = await getGithubActivity();
+
+/** Returns intensity levels 0–4 for a heatmap strip (10 squares) from repo+date. */
+function getActivityHeatmapLevels(repo: string, date: string): number[] {
+  const seed = `${repo}-${date}`;
+  const levels: number[] = [];
+  for (let i = 0; i < 10; i++) {
+    const hash = seed.split('').reduce((acc, c) => acc + c.charCodeAt(0) + i, 0);
+    levels.push(hash % 5);
+  }
+  return levels;
+}
+
+const EVENT_BADGE_LABELS: Record<EventType, string> = {
+  push: 'Push',
+  pr: 'PR',
+  create: 'Create',
+};
 
 const formatDate = (date: Date) =>
   new Intl.DateTimeFormat('en-US', {
@@ -376,19 +402,44 @@ const formatDate = (date: Date) =>
 
       <section class="mb-20">
         <div class="mb-6 flex items-end justify-between">
-          <h2 class="text-3xl font-bold">Commit History</h2>
-          <a href={profile.github} target="_blank" rel="noreferrer" class="text-sm text-slate-400 hover:text-white">View full profile ↗</a>
+          <h2 class="text-3xl font-bold">Latest Activity</h2>
+          <a href={profile.github} target="_blank" rel="noreferrer" class="text-sm text-slate-400 hover:text-[rgb(var(--primary))] transition-colors">View full profile ↗</a>
         </div>
-        <div class="glass-panel overflow-hidden rounded-2xl">
-          {recentGithubActivity.map((event) => (
-            <a href={event.url} target="_blank" rel="noreferrer" class="flex items-center justify-between gap-4 border-b border-white/10 p-4 last:border-0 hover:bg-white/5">
-              <div>
-                <p class="text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--primary))]">{event.repo}</p>
-                <p class="text-sm text-slate-200/90">{event.message}</p>
-              </div>
-              <span class="text-xs text-slate-400">{event.date}</span>
-            </a>
-          ))}
+        <div class="space-y-4">
+          {recentGithubActivity.map((event) => {
+            const heatLevels = getActivityHeatmapLevels(event.repo, event.date);
+            const eventType = event.eventType ?? 'push';
+            return (
+              <a
+                href={event.url}
+                target="_blank"
+                rel="noreferrer"
+                class="activity-card group glass-panel block overflow-hidden rounded-2xl border-white/20 transition-all hover:border-[rgb(var(--primary))]/40"
+              >
+                <div class="flex items-center justify-between border-b border-white/10 bg-white/5 px-4 py-3">
+                  <div class="flex items-center gap-3">
+                    <span class="text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--primary))]">{event.repo}</span>
+                    <span class={`rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${eventType === 'push' ? 'bg-purple-900/80 text-violet-300' : eventType === 'pr' ? 'bg-purple-700/80 text-violet-200' : 'bg-purple-500/80 text-white'}`}>
+                      {EVENT_BADGE_LABELS[eventType]}
+                    </span>
+                  </div>
+                  <span class="text-xs text-slate-400">{event.date}</span>
+                </div>
+                <div class="p-4">
+                  <p class="text-sm text-slate-200/90 leading-relaxed">{event.message}</p>
+                  <div class="mt-3 flex gap-1">
+                    {heatLevels.map((level, i) => (
+                      <span
+                        key={i}
+                        class={`h-3 w-3 shrink-0 rounded-sm activity-heat-${level}`}
+                        aria-hidden
+                      />
+                    ))}
+                  </div>
+                </div>
+              </a>
+            );
+          })}
         </div>
       </section>
 

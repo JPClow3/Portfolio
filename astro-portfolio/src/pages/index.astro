@@ -1,27 +1,119 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
 import Footer from '@/components/layout/Footer.astro';
-import Hero from '@/components/sections/Hero.astro';
-import About from '@/components/sections/About.astro';
-import Experience from '@/components/sections/Experience.astro';
-import Projects from '@/components/sections/Projects.astro';
-import Skills from '@/components/sections/Skills.astro';
-import BlogPreview from '@/components/sections/BlogPreview.astro';
-import Contact from '@/components/sections/Contact.astro';
+import HeroPersonal from '@/components/sections/home/HeroPersonal.astro';
+import TechMarquee from '@/components/sections/home/TechMarquee.astro';
+import ProjectsBento from '@/components/sections/home/ProjectsBento.astro';
+import JourneyTimeline from '@/components/sections/home/JourneyTimeline.astro';
+import GithubHistory from '@/components/sections/home/GithubHistory.astro';
+import ContactPanel from '@/components/sections/home/ContactPanel.astro';
+import { ui } from '@/lib/i18n';
+import type { GithubStats } from '@/components/sections/home/types';
+
+const t = ui.en;
+const githubUsername = 'JPClow3';
+const githubProfileUrl = `https://github.com/${githubUsername}`;
+
+const projectsCollection = await getCollection('projects', ({ data }) => data.lang === 'en');
+const experienceCollection = await getCollection('experience', ({ data }) => data.lang === 'en');
+
+const projects = projectsCollection
+  .sort((a, b) => a.data.order - b.data.order)
+  .map(({ data }) => ({
+    title: data.title,
+    description: data.description,
+    tech: data.tech,
+    github: data.github,
+    link: data.link,
+    featured: data.featured,
+  }));
+
+const journey = experienceCollection
+  .sort((a, b) => a.data.order - b.data.order)
+  .map(({ data }) => ({
+    company: data.company,
+    role: data.role,
+    startDate: data.startDate,
+    endDate: data.endDate,
+    location: data.location,
+    tasks: data.tasks,
+  }));
+
+const githubStatsFallback: GithubStats = {
+  username: githubUsername,
+  profileUrl: githubProfileUrl,
+  publicRepos: 0,
+  followers: 0,
+  following: 0,
+  totalStars: 0,
+  recentRepos: [],
+};
+
+let githubStats: GithubStats = githubStatsFallback;
+
+try {
+  const [userRes, reposRes] = await Promise.all([
+    fetch(`https://api.github.com/users/${githubUsername}`),
+    fetch(`https://api.github.com/users/${githubUsername}/repos?per_page=6&sort=updated`),
+  ]);
+
+  if (userRes.ok && reposRes.ok) {
+    const user = await userRes.json();
+    const repos = await reposRes.json();
+
+    githubStats = {
+      username: githubUsername,
+      profileUrl: githubProfileUrl,
+      publicRepos: user.public_repos ?? 0,
+      followers: user.followers ?? 0,
+      following: user.following ?? 0,
+      totalStars: Array.isArray(repos) ? repos.reduce((sum, repo) => sum + (repo.stargazers_count ?? 0), 0) : 0,
+      recentRepos: Array.isArray(repos)
+        ? repos.slice(0, 4).map((repo) => ({
+            name: repo.name,
+            url: repo.html_url,
+            stars: repo.stargazers_count ?? 0,
+            updatedAt: repo.updated_at,
+            language: repo.language,
+          }))
+        : [],
+    };
+  }
+} catch {
+  githubStats = githubStatsFallback;
+}
+
+const hero = {
+  name: t['hero.name'],
+  title: t['hero.title'],
+  tagline: t['hero.tagline'],
+  availability: t['hero.availability'],
+  githubUrl: githubProfileUrl,
+  contactHref: '#contact',
+};
+
+const contact = {
+  email: 'joaopaulo@example.com',
+  location: 'Brazil',
+  linkedinUrl: 'https://www.linkedin.com/in/joaopaulosantos/',
+  githubUrl: githubProfileUrl,
+};
+
+const techItems = ['TypeScript', 'React', 'Astro', 'Svelte', 'Tailwind CSS', 'Playwright', 'Node.js', 'Testing Library'];
 ---
 
 <BaseLayout title="João Paulo Santos | Front-End Developer">
   <Header />
 
   <main id="main-content">
-    <Hero />
-    <About />
-    <Experience />
-    <Projects />
-    <Skills />
-    <BlogPreview />
-    <Contact />
+    <HeroPersonal hero={hero} />
+    <TechMarquee items={techItems} />
+    <ProjectsBento projects={projects} />
+    <JourneyTimeline journey={journey} />
+    <GithubHistory stats={githubStats} />
+    <ContactPanel contact={contact} />
   </main>
 
   <Footer />

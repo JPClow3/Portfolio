@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
 import Footer from '@/components/layout/Footer.astro';
@@ -93,7 +94,69 @@ const normalizeGithubEvent = (event: GithubEvent): NormalizedActivity | null => 
   return null;
 };
 
+interface GitHubEvent {
+  type: string;
+  repo: {
+    name: string;
+  };
+  payload?: {
+    commits?: Array<{
+      message: string;
+      sha: string;
+    }>;
+  };
+  created_at: string;
+}
+
+const githubUsername = profile.github.replace(/\/+$/, '').split('/').pop() ?? '';
+const githubActivityCachePath = new URL('../../.cache/github-activity.json', import.meta.url);
+const githubActivityTtlMs = 30 * 60 * 1000;
+
+async function readGithubActivityCache() {
+  try {
+    const rawCache = await readFile(githubActivityCachePath, 'utf-8');
+    const parsedCache = JSON.parse(rawCache) as {
+      updatedAt: number;
+      data: typeof fallbackGithubActivity;
+    };
+
+    if (!Array.isArray(parsedCache?.data)) {
+      return null;
+    }
+
+    if (Date.now() - parsedCache.updatedAt > githubActivityTtlMs) {
+      return null;
+    }
+
+    return parsedCache.data;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException)?.code !== 'ENOENT') {
+      console.warn('GitHub activity cache read skipped:', error);
+    }
+    return null;
+  }
+}
+
+async function writeGithubActivityCache(data: typeof fallbackGithubActivity) {
+  try {
+    await mkdir(new URL('../../.cache', import.meta.url), { recursive: true });
+    await writeFile(githubActivityCachePath, JSON.stringify({ updatedAt: Date.now(), data }, null, 2), 'utf-8');
+  } catch (error) {
+    console.warn('GitHub activity cache write skipped:', error);
+  }
+}
+
 async function getGithubActivity() {
+  if (!githubUsername) {
+    console.warn('GitHub activity fallback: unable to derive username from profile.github');
+    return fallbackGithubActivity;
+  }
+
+  const cachedActivity = await readGithubActivityCache();
+  if (cachedActivity?.length) {
+    return cachedActivity;
+  }
+
   try {
     // In Vercel static mode this runs at build time, so GitHub API rate limits can fail the build and should be handled gracefully.
     const response = await fetch('https://api.github.com/users/JPClow3/events/public');

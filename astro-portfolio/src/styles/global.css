@@ -2,10 +2,28 @@
 
 :root {
   color-scheme: dark;
+
+  /* New palette primitives */
   --bg: 19 16 34;
   --text: 226 232 240;
   --muted: 148 163 184;
   --primary: 75 43 238;
+
+  /* Shared app tokens (legacy + current templates) */
+  --color-bg-primary: var(--bg);
+  --color-bg-secondary: 30 24 54;
+  --color-bg-tertiary: 44 37 73;
+
+  --color-text-primary: var(--text);
+  --color-text-secondary: 203 213 225;
+  --color-text-muted: var(--muted);
+
+  --color-accent: var(--primary);
+  --color-accent-hover: 99 66 255;
+  --color-accent-light: 75 43 238;
+
+  --color-border: 77 68 118;
+  --color-border-hover: 103 93 148;
 }
 
 * { box-sizing: border-box; }
@@ -68,6 +86,13 @@ body {
   background-size: 64px 64px;
 }
 
+
+.glass {
+  background: rgb(var(--color-bg-primary) / 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
 .glass-panel {
   background: linear-gradient(110deg, rgb(255 255 255 / 0.13) 0%, rgb(255 255 255 / 0.08) 40%, rgb(255 255 255 / 0.14) 100%);
   border: 1px solid rgb(255 255 255 / 0.12);
@@ -75,7 +100,8 @@ body {
   box-shadow: 0 12px 40px rgb(0 0 0 / 0.25);
 }
 
-.text-gradient {
+.text-gradient,
+.gradient-text {
   background: linear-gradient(to right, #a78bfa, #4b2bee);
   -webkit-background-clip: text;
   background-clip: text;
@@ -263,4 +289,14 @@ body {
     opacity: 1;
     transform: none;
   }
+  .animate-marquee {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .animate-ping {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
 }

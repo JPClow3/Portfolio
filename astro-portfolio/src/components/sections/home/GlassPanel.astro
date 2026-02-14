@@ -1,0 +1,14 @@
+---
+interface Props {
+  class?: string;
+  as?: keyof HTMLElementTagNameMap;
+}
+
+const { class: className = '', as: Tag = 'div' } = Astro.props;
+---
+
+<Tag
+  class={`rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-xl shadow-black/20 ${className}`}
+>
+  <slot />
+</Tag>

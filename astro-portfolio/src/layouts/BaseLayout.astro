@@ -13,7 +13,7 @@ const {
 ---
 
 <!doctype html>
-<html lang="en" class="dark scroll-smooth">
+<html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -30,8 +30,25 @@ const {
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
       rel="stylesheet"
     />
+    <script is:inline>
+      (() => {
+        const theme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldUseDark = theme === 'dark' || (!theme && prefersDark);
+
+        document.documentElement.classList.toggle('dark', shouldUseDark);
+      })();
+    </script>
   </head>
-  <body>
+  <body class="min-h-screen bg-[rgb(var(--color-bg-primary))] text-[rgb(var(--color-text-primary))] antialiased transition-colors duration-200">
+    <!-- Skip Link for Accessibility -->
+    <a
+      href="#main-content"
+      class="skip-link focus-visible:top-4 focus-visible:left-4"
+    >
+      Skip to main content
+    </a>
+
     <slot />
   </body>
 </html>

@@ -51,9 +51,25 @@ const profileCollection = defineCollection({
   type: 'content',
   schema: z.object({
     lang: z.enum(['en', 'pt']).default('en'),
+    profile: z.object({
+      name: z.string(),
+      shortName: z.string(),
+      role: z.string(),
+      subtitle: z.string(),
+      location: z.string(),
+      timezone: z.string(),
+      github: z.string().url(),
+      linkedin: z.string().url(),
+      email: z.string().email(),
+      gravatarHash: z.string(),
+    }),
     currentFocus: z.object({
       title: z.string(),
-      items: z.array(z.string()).min(1),
+      items: z.array(z.object({
+        label: z.string(),
+        value: z.string(),
+        icon: z.string(),
+      })).min(1),
     }),
     customMetric: z.object({
       label: z.string(),

@@ -54,6 +54,10 @@ export const ui = {
     'projects.viewAll': 'View All Projects',
     'projects.viewProject': 'View Project',
     'projects.viewCode': 'View Code',
+    'projects.subtitle': "A selection of projects I've worked on, showcasing my skills in various technologies.",
+    'projects.featured': 'Featured',
+    'projects.more': 'more',
+    'projects.previewAlt': 'preview',
 
     // Skills
     'skills.title': 'Skills & Certifications',
@@ -139,6 +143,10 @@ export const ui = {
     'projects.viewAll': 'Ver Todos os Projetos',
     'projects.viewProject': 'Ver Projeto',
     'projects.viewCode': 'Ver Código',
+    'projects.subtitle': 'Uma seleção de projetos em que trabalhei, mostrando minhas habilidades em diferentes tecnologias.',
+    'projects.featured': 'Destaque',
+    'projects.more': 'a mais',
+    'projects.previewAlt': 'prévia',
 
     // Skills
     'skills.title': 'Habilidades & Certificações',

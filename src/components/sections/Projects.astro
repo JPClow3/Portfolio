@@ -7,7 +7,10 @@ import ScrollReveal from '@/components/common/ScrollReveal.astro';
 const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
 const t = ui[currentLang] ?? ui[defaultLang];
 
-const projects = await getCollection('projects', ({ data }) => data.lang === currentLang);
+const localizedProjects = await getCollection('projects', ({ data }) => data.lang === currentLang);
+const projects = localizedProjects.length
+  ? localizedProjects
+  : await getCollection('projects', ({ data }) => data.lang === defaultLang);
 const sortedProjects = projects.sort((a, b) => a.data.order - b.data.order);
 
 

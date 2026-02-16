@@ -185,7 +185,7 @@ export async function getGithubActivity(username: string, fallbackEvents: Fallba
 
   const cachedActivity = await readGithubActivityCache(username);
   if (cachedActivity?.length) {
-    return cachedActivity.map((activity) => ({ ...activity, eventType: activity.eventType ?? 'push' }));
+    return cachedActivity;
   }
 
   try {
@@ -222,7 +222,8 @@ export async function getGithubActivity(username: string, fallbackEvents: Fallba
     }
 
     return latestActivity.length ? latestActivity : fallbackGithubActivity;
-  } catch {
+  } catch (error) {
+    console.warn('GitHub activity fetch failed, using fallback. Error:', error);
     return fallbackGithubActivity;
   }
 }

@@ -1,10 +1,11 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { defaultLang, type Lang } from '@/lib/i18n';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
 import { getGithubActivity, type EventType } from '@/lib/github';
 
 const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
 
 const profileEntries = await getCollection('profile', ({ data }) => data.lang === currentLang);
 const fallbackProfileEntries = await getCollection('profile', ({ data }) => data.lang === defaultLang);
@@ -20,19 +21,21 @@ const currentFocus = profileEntry.data.currentFocus;
 
 const techMarquee = ['HTML5', 'CSS3', 'JavaScript', 'TypeScript', 'Astro', 'React', 'Tailwind', 'Python'];
 
-const localizedProjects = (await getCollection('projects'))
-  .filter((project) => project.data.lang === currentLang);
-const fallbackProjects = (await getCollection('projects'))
-  .filter((project) => project.data.lang === defaultLang);
-const projects = (localizedProjects.length ? localizedProjects : fallbackProjects)
+async function getLocalizedCollection<C extends 'projects' | 'experience'>(collection: C): Promise<CollectionEntry<C>[]> {
+  const localizedEntries = await getCollection(collection, ({ data }) => data.lang === currentLang);
+
+  if (localizedEntries.length > 0 || currentLang === defaultLang) {
+    return localizedEntries;
+  }
+
+  return getCollection(collection, ({ data }) => data.lang === defaultLang);
+}
+
+const projects = (await getLocalizedCollection('projects'))
   .sort((a, b) => a.data.order - b.data.order)
   .slice(0, 4);
 
-const localizedExperience = (await getCollection('experience'))
-  .filter((job) => job.data.lang === currentLang);
-const fallbackExperience = (await getCollection('experience'))
-  .filter((job) => job.data.lang === defaultLang);
-const experience = (localizedExperience.length ? localizedExperience : fallbackExperience)
+const experience = (await getLocalizedCollection('experience'))
   .sort((a, b) => a.data.order - b.data.order);
 
 const recentGithubActivity = await getGithubActivity(
@@ -65,60 +68,6 @@ const formatDate = (date: Date) =>
   }).format(date);
 
 
-const copyByLang: Record<Lang, {
-  availability: string;
-  viewWork: string;
-  githubProfile: string;
-  years: string;
-  projects: string;
-  commitment: string;
-  technologies: string;
-  buildTitle: string;
-  seeAllRepos: string;
-  journeyTitle: string;
-  present: string;
-  latestActivity: string;
-  viewFullProfile: string;
-  viewProject: string;
-  live: string;
-}> = {
-  en: {
-    availability: 'Available for opportunities',
-    viewWork: 'View Work',
-    githubProfile: 'GitHub Profile',
-    years: 'Years',
-    projects: 'Projects',
-    commitment: 'Commitment',
-    technologies: 'Technologies I work with',
-    buildTitle: 'Things I’ve been building',
-    seeAllRepos: 'See all repos →',
-    journeyTitle: 'My journey so far',
-    present: 'Present',
-    latestActivity: 'Latest Activity',
-    viewFullProfile: 'View full profile ↗',
-    viewProject: 'View Project ↗',
-    live: 'Live ↗',
-  },
-  pt: {
-    availability: 'Disponível para oportunidades',
-    viewWork: 'Ver trabalhos',
-    githubProfile: 'Perfil no GitHub',
-    years: 'Anos',
-    projects: 'Projetos',
-    commitment: 'Compromisso',
-    technologies: 'Tecnologias com as quais trabalho',
-    buildTitle: 'Coisas que venho construindo',
-    seeAllRepos: 'Ver todos os repositórios →',
-    journeyTitle: 'Minha jornada até aqui',
-    present: 'Presente',
-    latestActivity: 'Atividade recente',
-    viewFullProfile: 'Ver perfil completo ↗',
-    viewProject: 'Ver projeto ↗',
-    live: 'Demo ↗',
-  },
-};
-
-const copy = copyByLang[currentLang] ?? copyByLang[defaultLang];
 ---
 <BaseLayout title="João Paulo Gonçalves Santos - Portfolio" description="Personal portfolio of João Paulo with projects, journey and GitHub updates.">
   <main id="main-content" tabindex="-1" class="noise-bg relative overflow-x-hidden px-4 pb-14 pt-6 sm:px-6 lg:px-8">
@@ -136,7 +85,7 @@ const copy = copyByLang[currentLang] ?? copyByLang[defaultLang];
               <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
               <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-500"></span>
             </span>
-            {copy.availability}
+            {t['home.availability']}
           </div>
           <h1 class="text-5xl font-extrabold leading-[1.02] tracking-tight text-slate-100 md:text-6xl lg:text-7xl">
             I’m João — crafting
@@ -145,8 +94,8 @@ const copy = copyByLang[currentLang] ?? copyByLang[defaultLang];
           </h1>
           <p class="mt-6 max-w-2xl text-lg text-slate-300/80">{profile.subtitle}</p>
           <div class="mt-8 flex flex-wrap gap-3">
-            <a href="/#projects" class="rounded-full bg-white px-7 py-3 text-sm font-semibold text-slate-900">{copy.viewWork}</a>
-            <a href={profile.github} target="_blank" rel="noreferrer" class="rounded-full border border-white/20 px-7 py-3 text-sm font-semibold text-white/90">{copy.githubProfile}</a>
+            <a href="#projects" class="rounded-full bg-white px-7 py-3 text-sm font-semibold text-slate-900">{t['home.viewWork']}</a>
+            <a href={profile.github} target="_blank" rel="noreferrer" class="rounded-full border border-white/20 px-7 py-3 text-sm font-semibold text-white/90">{t['home.githubProfile']}</a>
           </div>
         </div>
 
@@ -169,9 +118,9 @@ const copy = copyByLang[currentLang] ?? copyByLang[defaultLang];
               <span class="rounded-full border border-white/15 px-3 py-1">{profile.timezone}</span>
             </div>
             <div class="mt-5 grid grid-cols-3 gap-2 border-t border-white/10 pt-5 text-center">
-              <div><p class="text-lg font-bold">3+</p><p class="text-[10px] uppercase text-slate-400">{copy.years}</p></div>
-              <div><p class="text-lg font-bold">20+</p><p class="text-[10px] uppercase text-slate-400">{copy.projects}</p></div>
-              <div><p class="text-lg font-bold">100%</p><p class="text-[10px] uppercase text-slate-400">{copy.commitment}</p></div>
+              <div><p class="text-lg font-bold">3+</p><p class="text-[10px] uppercase text-slate-400">{t['home.years']}</p></div>
+              <div><p class="text-lg font-bold">20+</p><p class="text-[10px] uppercase text-slate-400">{t['home.projects']}</p></div>
+              <div><p class="text-lg font-bold">100%</p><p class="text-[10px] uppercase text-slate-400">{t['home.commitment']}</p></div>
             </div>
           </article>
 
@@ -193,7 +142,7 @@ const copy = copyByLang[currentLang] ?? copyByLang[defaultLang];
       </header>
 
       <section class="mb-20 overflow-hidden">
-        <h3 class="mb-4 text-center text-xs font-bold uppercase tracking-[0.25em] text-slate-400">{copy.technologies}</h3>
+        <h3 class="mb-4 text-center text-xs font-bold uppercase tracking-[0.25em] text-slate-400">{t['home.technologies']}</h3>
         <div class="marquee flex min-w-max gap-10 whitespace-nowrap py-3 text-3xl font-bold text-white/70">
           {[...techMarquee, ...techMarquee].map((tech) => (
             <span>{tech}</span>
@@ -203,8 +152,8 @@ const copy = copyByLang[currentLang] ?? copyByLang[defaultLang];
 
       <section id="projects" class="mb-20">
         <div class="mb-6 flex items-end justify-between">
-          <h2 class="text-4xl font-bold tracking-tight">{copy.buildTitle}</h2>
-          <a href={`${profile.github}?tab=repositories`} target="_blank" rel="noreferrer" class="text-sm text-slate-400 hover:text-white">{copy.seeAllRepos}</a>
+          <h2 class="text-4xl font-bold tracking-tight">{t['home.buildTitle']}</h2>
+          <a href={`${profile.github}?tab=repositories`} target="_blank" rel="noreferrer" class="text-sm text-slate-400 hover:text-white">{t['home.seeAllRepos']}</a>
         </div>
         <div class="bento-grid">
           {projects.map((project, index) => (
@@ -221,8 +170,8 @@ const copy = copyByLang[currentLang] ?? copyByLang[defaultLang];
                 ))}
               </div>
               <div class="mt-5 flex gap-4 text-sm">
-                {project.data.github && <a href={project.data.github} target="_blank" rel="noreferrer" class="font-semibold text-[rgb(var(--primary))]">{copy.viewProject}</a>}
-                {project.data.link && <a href={project.data.link} target="_blank" rel="noreferrer" class="text-slate-300">{copy.live}</a>}
+                {project.data.github && <a href={project.data.github} target="_blank" rel="noreferrer" class="font-semibold text-[rgb(var(--primary))]">{t['home.viewProject']}</a>}
+                {project.data.link && <a href={project.data.link} target="_blank" rel="noreferrer" class="text-slate-300">{t['home.live']}</a>}
               </div>
             </article>
           ))}
@@ -230,7 +179,7 @@ const copy = copyByLang[currentLang] ?? copyByLang[defaultLang];
       </section>
 
       <section class="mb-20">
-        <h2 class="mb-8 text-4xl font-bold tracking-tight">{copy.journeyTitle}</h2>
+        <h2 class="mb-8 text-4xl font-bold tracking-tight">{t['home.journeyTitle']}</h2>
         <div class="timeline relative space-y-8 pl-8">
           {experience.map((job, idx) => (
             <article class="glass-panel relative rounded-2xl p-6">
@@ -243,7 +192,7 @@ const copy = copyByLang[currentLang] ?? copyByLang[defaultLang];
                   <h3 class="text-xl font-bold">{job.data.role}</h3>
                   <p class="text-[rgb(var(--primary))]">{job.data.company}</p>
                 </div>
-                <span class="rounded-full border border-white/15 px-3 py-1 text-xs text-slate-300">{formatDate(job.data.startDate)} — {job.data.endDate ? formatDate(job.data.endDate) : copy.present}</span>
+                <span class="rounded-full border border-white/15 px-3 py-1 text-xs text-slate-300">{formatDate(job.data.startDate)} — {job.data.endDate ? formatDate(job.data.endDate) : t['home.present']}</span>
               </div>
               <ul class="list-disc space-y-1 pl-5 text-sm text-slate-300/80 marker:text-[rgb(var(--primary))]">
                 {job.data.tasks.slice(0, 2).map((task) => (
@@ -257,8 +206,8 @@ const copy = copyByLang[currentLang] ?? copyByLang[defaultLang];
 
       <section class="mb-20">
         <div class="mb-6 flex items-end justify-between">
-          <h2 class="text-3xl font-bold">{copy.latestActivity}</h2>
-          <a href={profile.github} target="_blank" rel="noreferrer" class="text-sm text-slate-400 hover:text-[rgb(var(--primary))] transition-colors">{copy.viewFullProfile}</a>
+          <h2 class="text-3xl font-bold">{t['home.latestActivity']}</h2>
+          <a href={profile.github} target="_blank" rel="noreferrer" class="text-sm text-slate-400 hover:text-[rgb(var(--primary))] transition-colors">{t['home.viewFullProfile']}</a>
         </div>
         <div class="space-y-4">
           {recentGithubActivity.map((event) => {
@@ -300,13 +249,13 @@ const copy = copyByLang[currentLang] ?? copyByLang[defaultLang];
 
       <footer id="contact" class="glass-panel mb-8 flex flex-col items-center justify-between gap-6 rounded-3xl p-10 text-center md:flex-row md:text-left">
         <div>
-          <p class="mb-2 inline-block rounded-full border border-[rgb(var(--primary))]/40 bg-[rgb(var(--primary))]/20 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--primary))]">Let’s Connect</p>
-          <h2 class="text-4xl font-bold">Have a project in mind?</h2>
+          <p class="mb-2 inline-block rounded-full border border-[rgb(var(--primary))]/40 bg-[rgb(var(--primary))]/20 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--primary))]">{t['home.contactBadge']}</p>
+          <h2 class="text-4xl font-bold">{t['home.contactTitle']}</h2>
           <a class="mt-2 block text-xl text-slate-300 hover:text-white" href={`mailto:${profile.email}`}>{profile.email}</a>
         </div>
         <div class="flex flex-wrap gap-3">
-          <a href={`mailto:${profile.email}`} class="rounded-full bg-[rgb(var(--primary))] px-7 py-3 text-sm font-bold text-white">Say hello</a>
-          <a href={profile.linkedin} target="_blank" rel="noreferrer" class="rounded-full border border-white/15 px-7 py-3 text-sm font-bold text-slate-100">LinkedIn ↗</a>
+          <a href={`mailto:${profile.email}`} class="rounded-full bg-[rgb(var(--primary))] px-7 py-3 text-sm font-bold text-white">{t['home.sayHello']}</a>
+          <a href={profile.linkedin} target="_blank" rel="noreferrer" class="rounded-full border border-white/15 px-7 py-3 text-sm font-bold text-slate-100">{t['home.linkedin']}</a>
         </div>
       </footer>
     </div>

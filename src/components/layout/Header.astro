@@ -1,19 +1,22 @@
 ---
 import ThemeToggle from '@components/islands/ThemeToggle.svelte';
-import Icon from '@/components/common/Icon.astro';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
 
 interface NavLink {
   label: string;
   href: string;
 }
 
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
+
 const navLinks: NavLink[] = [
-  { label: 'About', href: '/#about' },
-  { label: 'Projects', href: '/#projects' },
-  { label: 'Journey', href: '/#experience' },
-  { label: 'Activity', href: '/#activity' },
-  { label: 'Blog', href: '/blog' },
-  { label: 'Contact', href: '/#contact' },
+  { label: t['nav.about'], href: '/#about' },
+  { label: t['nav.projects'], href: '/#projects' },
+  { label: t['nav.experience'], href: '/#experience' },
+  { label: t['nav.activity'], href: '/#activity' },
+  { label: t['nav.blog'], href: '/blog' },
+  { label: t['nav.contact'], href: '/#contact' },
 ];
 
 // Resume link (separate since it has download behavior)
@@ -57,7 +60,7 @@ const resumeLink = '/resume.pdf';
           aria-label="Download resume PDF"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-          Resume
+          {t['nav.resume']}
         </a>
         <ThemeToggle client:load />
 
@@ -133,7 +136,7 @@ const resumeLink = '/resume.pdf';
             download
             class="px-4 py-3 text-sm font-medium text-[rgb(var(--color-accent))] hover:bg-[rgb(var(--color-accent)/0.1)] rounded-lg transition-colors"
           >
-            Download Resume
+            {t['nav.resume']}
           </a>
         </div>
       </div>

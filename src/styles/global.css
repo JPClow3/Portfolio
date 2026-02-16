@@ -118,6 +118,11 @@ body {
   animation: marquee 28s linear infinite;
 }
 
+.marquee:hover,
+.marquee:focus-within {
+  animation-play-state: paused;
+}
+
 .bento-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -305,6 +310,7 @@ body {
     opacity: 1;
     transform: none;
   }
+  .marquee,
   .animate-marquee {
     animation: none !important;
     transform: none !important;
@@ -315,4 +321,9 @@ body {
     opacity: 1 !important;
   }
 
+}
+
+:where(a, button, [role="button"], input, textarea, select):focus-visible {
+  outline: 2px solid rgb(var(--primary));
+  outline-offset: 2px;
 }

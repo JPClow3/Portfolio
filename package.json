@@ -20,9 +20,9 @@
     "@threlte/core": "^8.3.1",
     "@threlte/extras": "^9.7.1",
     "@types/three": "^0.182.0",
-    "astro": "^5.17.1",
-    "serve": "^14.2.4",
-    "svelte": "^5.49.1",
+    "astro": "^5.17.2",
+    "serve": "^14.2.5",
+    "svelte": "^5.51.2",
     "tailwindcss": "^4.1.18",
     "three": "^0.182.0"
   }

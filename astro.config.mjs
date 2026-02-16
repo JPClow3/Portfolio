@@ -29,5 +29,8 @@ export default defineConfig({
     routing: {
       prefixDefaultLocale: false
     }
+  },
+  image: {
+    domains: ['2.gravatar.com', 'gravatar.com', 'secure.gravatar.com']
   }
 });

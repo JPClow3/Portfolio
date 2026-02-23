@@ -18,7 +18,7 @@
     "@astrojs/svelte": "^7.2.5",
     "@tailwindcss/vite": "^4.1.18",
     "@threlte/core": "^8.3.1",
-    "@threlte/extras": "^9.7.1",
+    "@threlte/extras": "^9.8.1",
     "@types/three": "^0.182.0",
     "astro": "^5.17.2",
     "serve": "^14.2.5",

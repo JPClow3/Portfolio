@@ -1,15 +1,60 @@
 @import "tailwindcss";
 
+/* ──────────────────────────────────────────────
+   Light mode (default)
+   ────────────────────────────────────────────── */
 :root {
+  color-scheme: light;
+
+  /* Palette primitives */
+  --bg: 248 247 252;
+  --text: 30 27 55;
+  --muted: 100 106 125;
+  --primary: 75 43 238;
+
+  /* App tokens */
+  --color-bg-primary: var(--bg);
+  --color-bg-secondary: 240 238 249;
+  --color-bg-tertiary: 230 226 244;
+
+  --color-text-primary: var(--text);
+  --color-text-secondary: 55 53 80;
+  --color-text-muted: var(--muted);
+
+  --color-accent: var(--primary);
+  --color-accent-hover: 60 30 210;
+
+  --color-border: 210 205 230;
+  --color-border-hover: 180 175 205;
+
+  /* Activity heatmap (purple scale – light) */
+  --activity-empty: 235 232 248;
+  --activity-low: 210 195 240;
+  --activity-mid: 168 130 230;
+  --activity-high: 130 75 215;
+  --activity-peak: 100 50 200;
+
+  /* Glass overlays */
+  --glass-tint: 255 255 255;
+  --glass-shadow: 0 0 0;
+  --glass-border-opacity: 0.18;
+  --glass-bg-opacity: 0.6;
+
+  /* Noise / grid dot colour */
+  --dot-color: 0 0 0;
+}
+
+/* ──────────────────────────────────────────────
+   Dark mode
+   ────────────────────────────────────────────── */
+html.dark {
   color-scheme: dark;
 
-  /* New palette primitives */
   --bg: 19 16 34;
   --text: 226 232 240;
   --muted: 148 163 184;
   --primary: 75 43 238;
 
-  /* Shared app tokens (legacy + current templates) */
   --color-bg-primary: var(--bg);
   --color-bg-secondary: 30 24 54;
   --color-bg-tertiary: 44 37 73;
@@ -24,12 +69,18 @@
   --color-border: 77 68 118;
   --color-border-hover: 103 93 148;
 
-  /* Activity heatmap (purple scale) */
   --activity-empty: 30 27 75;
   --activity-low: 59 7 100;
   --activity-mid: 126 34 206;
   --activity-high: 168 85 247;
   --activity-peak: 167 139 250;
+
+  --glass-tint: 255 255 255;
+  --glass-shadow: 0 0 0;
+  --glass-border-opacity: 0.12;
+  --glass-bg-opacity: 0.05;
+
+  --dot-color: 255 255 255;
 }
 
 * { box-sizing: border-box; }
@@ -55,8 +106,15 @@ body {
 
 body {
   min-height: 100vh;
+  background-image: radial-gradient(circle at 15% 10%, rgb(75 43 238 / 0.08), transparent 32%),
+    radial-gradient(circle at 70% 85%, rgb(99 102 241 / 0.06), transparent 35%),
+    linear-gradient(180deg, rgb(var(--bg)), rgb(var(--color-bg-secondary)));
+}
+
+html.dark body {
   background-image: radial-gradient(circle at 15% 10%, rgb(75 43 238 / 0.16), transparent 32%),
-    radial-gradient(circle at 70% 85%, rgb(99 102 241 / 0.12), transparent 35%), linear-gradient(180deg, #110d24 0%, #0f0b20 100%);
+    radial-gradient(circle at 70% 85%, rgb(99 102 241 / 0.12), transparent 35%),
+    linear-gradient(180deg, rgb(var(--bg)), rgb(var(--color-bg-secondary)));
 }
 
 
@@ -92,13 +150,19 @@ body {
   pointer-events: none;
   opacity: 0.05;
   z-index: 1;
-  background-image: radial-gradient(rgb(255 255 255 / 0.25) 0.6px, transparent 0.6px);
+  background-image: radial-gradient(rgb(var(--dot-color) / 0.25) 0.6px, transparent 0.6px);
   background-size: 4px 4px;
 }
 
 .bg-grid {
-  background-image: linear-gradient(to right, rgb(75 43 238 / 0.11) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(75 43 238 / 0.11) 1px, transparent 1px);
+  background-image: linear-gradient(to right, rgb(var(--primary) / 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--primary) / 0.07) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+html.dark .bg-grid {
+  background-image: linear-gradient(to right, rgb(var(--primary) / 0.11) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--primary) / 0.11) 1px, transparent 1px);
   background-size: 64px 64px;
 }
 
@@ -110,14 +174,26 @@ body {
 }
 
 .glass-panel {
-  background: linear-gradient(110deg, rgb(255 255 255 / 0.13) 0%, rgb(255 255 255 / 0.08) 40%, rgb(255 255 255 / 0.14) 100%);
-  border: 1px solid rgb(255 255 255 / 0.12);
+  background: linear-gradient(110deg, rgb(var(--glass-tint) / 0.13) 0%, rgb(var(--glass-tint) / 0.08) 40%, rgb(var(--glass-tint) / 0.14) 100%);
+  border: 1px solid rgb(var(--glass-tint) / var(--glass-border-opacity));
   backdrop-filter: blur(16px);
-  box-shadow: 0 12px 40px rgb(0 0 0 / 0.25);
+  box-shadow: 0 12px 40px rgb(var(--glass-shadow) / 0.1);
+}
+
+html.dark .glass-panel {
+  box-shadow: 0 12px 40px rgb(var(--glass-shadow) / 0.25);
 }
 
 .text-gradient,
 .gradient-text {
+  background: linear-gradient(to right, #7c3aed, #4b2bee);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+html.dark .text-gradient,
+html.dark .gradient-text {
   background: linear-gradient(to right, #a78bfa, #4b2bee);
   -webkit-background-clip: text;
   background-clip: text;
@@ -156,7 +232,7 @@ body {
   top: 0.5rem;
   bottom: 0.5rem;
   width: 2px;
-  background: rgb(255 255 255 / 0.12);
+  background: rgb(var(--color-border));
 }
 
 @keyframes marquee {
@@ -220,7 +296,7 @@ body {
 /* Activity heatmap squares (purple scale) */
 .activity-heat-0 {
   background: rgb(var(--activity-empty));
-  border: 1px solid rgb(255 255 255 / 0.1);
+  border: 1px solid rgb(var(--color-border) / 0.3);
 }
 .activity-heat-1 { background: rgb(var(--activity-low)); }
 .activity-heat-2 { background: rgb(var(--activity-mid)); }

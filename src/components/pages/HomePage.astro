@@ -75,9 +75,9 @@ const formatDate = (date: Date) =>
   <Header />
   <main id="main-content" tabindex="-1" class="noise-bg relative overflow-x-hidden px-4 pb-14 pt-6 sm:px-6 lg:px-8">
     <div class="pointer-events-none fixed inset-0 -z-10">
-      <div class="bg-grid absolute inset-0 opacity-10"></div>
-      <div class="absolute -right-24 -top-24 h-[420px] w-[420px] rounded-full bg-violet-600/20 blur-[120px]"></div>
-      <div class="absolute -left-24 top-[42%] h-[360px] w-[360px] rounded-full bg-indigo-500/20 blur-[120px]"></div>
+      <div class="bg-grid absolute inset-0 opacity-10 dark:opacity-10"></div>
+      <div class="absolute -right-24 -top-24 h-[420px] w-[420px] rounded-full bg-violet-600/10 blur-[120px] dark:bg-violet-600/20"></div>
+      <div class="absolute -left-24 top-[42%] h-[360px] w-[360px] rounded-full bg-indigo-500/10 blur-[120px] dark:bg-indigo-500/20"></div>
     </div>
 
     <div class="mx-auto max-w-7xl pt-24">
@@ -91,17 +91,17 @@ const formatDate = (date: Date) =>
             {t['home.availability']}
           </div>
 
-          <h1 class="max-w-3xl text-5xl font-extrabold leading-[1.02] tracking-tight text-slate-100 md:text-6xl lg:text-7xl">
+          <h1 class="max-w-3xl text-5xl font-extrabold leading-[1.02] tracking-tight text-[rgb(var(--color-text-primary))] md:text-6xl lg:text-7xl">
             I’m João — crafting
             <span class="text-gradient block">beautiful, reliable</span>
             digital experiences.
           </h1>
 
-          <p class="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300/80">{profile.subtitle}</p>
+          <p class="mt-6 max-w-2xl text-lg leading-relaxed text-[rgb(var(--color-text-secondary))]">{profile.subtitle}</p>
 
           <div class="mt-8 flex flex-wrap gap-3">
-            <a href="#projects" class="rounded-full bg-white px-7 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#110d24]">{t['home.viewWork']}</a>
-            <a href={profile.github} target="_blank" rel="noreferrer" class="rounded-full border border-white/20 px-7 py-3 text-sm font-semibold text-white/90 transition hover:border-white/40 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[#110d24]">{t['home.githubProfile']}</a>
+            <a href="#projects" class="rounded-full bg-[rgb(var(--primary))] px-7 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[rgb(var(--color-accent-hover))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]">{t['home.viewWork']}</a>
+            <a href={profile.github} target="_blank" rel="noreferrer" class="rounded-full border border-[rgb(var(--color-border))] px-7 py-3 text-sm font-semibold text-[rgb(var(--color-text-primary))] transition hover:border-[rgb(var(--color-border-hover))] hover:bg-[rgb(var(--color-bg-tertiary)/0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]">{t['home.githubProfile']}</a>
           </div>
         </div>
 
@@ -120,25 +120,25 @@ const formatDate = (date: Date) =>
             <h2 class="text-2xl font-bold">{profile.shortName}</h2>
             <p class="text-sm font-medium text-[rgb(var(--primary))]">{profile.role}</p>
             <div class="mt-3 flex justify-center gap-2 text-xs">
-              <span class="rounded-full border border-white/15 bg-white/5 px-3 py-1">🇧🇷 {profile.location}</span>
-              <span class="rounded-full border border-white/15 bg-white/5 px-3 py-1">{profile.timezone}</span>
+              <span class="rounded-full border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-tertiary)/0.5)] px-3 py-1">🇧🇷 {profile.location}</span>
+              <span class="rounded-full border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-tertiary)/0.5)] px-3 py-1">{profile.timezone}</span>
             </div>
-            <div class="mt-6 grid grid-cols-3 gap-2 border-t border-white/10 pt-5 text-center">
-              <div><p class="text-lg font-bold">3+</p><p class="text-[10px] uppercase text-slate-400">{t['home.years']}</p></div>
-              <div><p class="text-lg font-bold">20+</p><p class="text-[10px] uppercase text-slate-400">{t['home.projects']}</p></div>
-              <div><p class="text-lg font-bold">100%</p><p class="text-[10px] uppercase text-slate-400">{t['home.commitment']}</p></div>
+            <div class="mt-6 grid grid-cols-3 gap-2 border-t border-[rgb(var(--color-border))] pt-5 text-center">
+              <div><p class="text-lg font-bold">3+</p><p class="text-[10px] uppercase text-[rgb(var(--color-text-muted))]">{t['home.years']}</p></div>
+              <div><p class="text-lg font-bold">20+</p><p class="text-[10px] uppercase text-[rgb(var(--color-text-muted))]">{t['home.projects']}</p></div>
+              <div><p class="text-lg font-bold">100%</p><p class="text-[10px] uppercase text-[rgb(var(--color-text-muted))]">{t['home.commitment']}</p></div>
             </div>
           </article>
 
           <article class="glass-panel rounded-3xl p-6">
-            <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">{currentFocus.title}</p>
+            <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[rgb(var(--color-text-muted))]">{currentFocus.title}</p>
             <div class="space-y-4">
               {currentFocus.items.map((item) => (
                 <div class="flex items-start gap-3">
-                  <span class="material-symbols-outlined rounded-xl bg-white/10 p-2 text-base text-[rgb(var(--primary))]">{item.icon}</span>
+                  <span class="material-symbols-outlined rounded-xl bg-[rgb(var(--color-bg-tertiary))] p-2 text-base text-[rgb(var(--primary))]">{item.icon}</span>
                   <div>
-                    <p class="text-[10px] uppercase tracking-[0.18em] text-slate-400">{item.label}</p>
-                    <p class="text-sm text-slate-100">{item.value}</p>
+                    <p class="text-[10px] uppercase tracking-[0.18em] text-[rgb(var(--color-text-muted))]">{item.label}</p>
+                    <p class="text-sm text-[rgb(var(--color-text-primary))]">{item.value}</p>
                   </div>
                 </div>
               ))}
@@ -147,11 +147,11 @@ const formatDate = (date: Date) =>
         </div>
       </header>
 
-      <section class="mb-24 overflow-hidden rounded-2xl border border-white/10 bg-white/5 px-4 py-8">
-        <h3 class="mb-4 text-center text-xs font-bold uppercase tracking-[0.25em] text-slate-400">{t['home.technologies']}</h3>
-        <div class="marquee flex min-w-max gap-6 whitespace-nowrap py-2 text-sm font-semibold uppercase tracking-[0.16em] text-slate-300/80">
+      <section class="mb-24 overflow-hidden rounded-2xl border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/var(--glass-bg-opacity))] px-4 py-8">
+        <h3 class="mb-4 text-center text-xs font-bold uppercase tracking-[0.25em] text-[rgb(var(--color-text-muted))]">{t['home.technologies']}</h3>
+        <div class="marquee flex min-w-max gap-6 whitespace-nowrap py-2 text-sm font-semibold uppercase tracking-[0.16em] text-[rgb(var(--color-text-secondary))]">
           {[...techMarquee, ...techMarquee].map((tech) => (
-            <span class="rounded-full border border-white/15 bg-[#0f1122] px-5 py-2">{tech}</span>
+            <span class="rounded-full border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary))] px-5 py-2">{tech}</span>
           ))}
         </div>
       </section>
@@ -159,7 +159,7 @@ const formatDate = (date: Date) =>
       <section id="projects" class="mb-24">
         <div class="mb-8 flex items-end justify-between">
           <h2 class="text-4xl font-bold tracking-tight">{t['home.buildTitle']}</h2>
-          <a href={`${profile.github}?tab=repositories`} target="_blank" rel="noreferrer" class="text-sm text-slate-400 transition-colors hover:text-white">{t['home.seeAllRepos']}</a>
+          <a href={`${profile.github}?tab=repositories`} target="_blank" rel="noreferrer" class="text-sm text-[rgb(var(--color-text-muted))] transition-colors hover:text-[rgb(var(--color-text-primary))]">{t['home.seeAllRepos']}</a>
         </div>
 
         <div class="bento-grid">
@@ -172,15 +172,15 @@ const formatDate = (date: Date) =>
               <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-purple-500/10 opacity-80 transition-opacity group-hover:opacity-100"></div>
               <div class="relative">
                 <h3 class="text-2xl font-bold">{project.data.title}</h3>
-                <p class="mt-3 text-sm leading-relaxed text-slate-300/80">{project.data.description}</p>
+                <p class="mt-3 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.description}</p>
                 <div class="mt-4 flex flex-wrap gap-2">
                   {project.data.tech.slice(0, 4).map((tech) => (
-                    <span class="rounded-full border border-white/20 bg-[#10142c] px-3 py-1 text-[10px] uppercase tracking-wide text-slate-300">{tech}</span>
+                    <span class="rounded-full border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary))] px-3 py-1 text-[10px] uppercase tracking-wide text-[rgb(var(--color-text-secondary))]">{tech}</span>
                   ))}
                 </div>
                 <div class="mt-5 flex gap-4 text-sm">
-                  {project.data.github && <a href={project.data.github} target="_blank" rel="noreferrer" class="font-semibold text-[rgb(var(--primary))] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[#110d24]">{t['home.viewProject']}</a>}
-                  {project.data.link && <a href={project.data.link} target="_blank" rel="noreferrer" class="text-slate-300 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[#110d24]">{t['home.live']}</a>}
+                  {project.data.github && <a href={project.data.github} target="_blank" rel="noreferrer" class="font-semibold text-[rgb(var(--primary))] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]">{t['home.viewProject']}</a>}
+                  {project.data.link && <a href={project.data.link} target="_blank" rel="noreferrer" class="text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]">{t['home.live']}</a>}
                 </div>
               </div>
             </article>
@@ -195,28 +195,28 @@ const formatDate = (date: Date) =>
           <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
             <div class="glass-panel rounded-2xl p-6 text-center">
               <p class="text-3xl font-bold text-[rgb(var(--primary))]">{githubProfile.publicRepos}</p>
-              <p class="mt-1 text-sm text-slate-400">{t['stats.repos']}</p>
+              <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{t['stats.repos']}</p>
             </div>
             <div class="glass-panel rounded-2xl p-6 text-center">
               <p class="text-3xl font-bold text-[rgb(var(--primary))]">{githubProfile.followers}</p>
-              <p class="mt-1 text-sm text-slate-400">{t['stats.followers']}</p>
+              <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{t['stats.followers']}</p>
             </div>
             <div class="glass-panel rounded-2xl p-6 text-center">
               <p class="text-3xl font-bold text-[rgb(var(--primary))]">{recentGithubActivity.length}</p>
-              <p class="mt-1 text-sm text-slate-400">{t['stats.contributions']}</p>
+              <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{t['stats.contributions']}</p>
             </div>
             <div class="glass-panel rounded-2xl p-6 text-center">
               <p class="text-3xl font-bold text-[rgb(var(--primary))]">{githubProfile.yearsOnGithub}+</p>
-              <p class="mt-1 text-sm text-slate-400">{t['stats.years']}</p>
+              <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{t['stats.years']}</p>
             </div>
           </div>
-          <p class="mt-4 text-center text-xs text-slate-500">{t['stats.memberSince']} {githubProfile.memberSince}</p>
+          <p class="mt-4 text-center text-xs text-[rgb(var(--color-text-muted))]">{t['stats.memberSince']} {githubProfile.memberSince}</p>
           <div class="mt-4 text-center">
             <a
               href={`https://github.com/${profileEntry.data.customMetric.githubUsername}`}
               target="_blank"
               rel="noreferrer"
-              class="text-sm text-slate-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[#110d24]"
+              class="text-sm text-[rgb(var(--color-text-muted))] transition-colors hover:text-[rgb(var(--color-text-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
             >{t['stats.viewProfile']}</a>
           </div>
         </section>
@@ -228,17 +228,17 @@ const formatDate = (date: Date) =>
           {experience.map((job, idx) => (
             <article class="glass-panel relative rounded-2xl p-6 transition hover:border-[rgb(var(--primary))]/35">
               <span class:list={[
-                'absolute -left-[31px] top-7 h-5 w-5 rounded-full border-4 border-[#120f23] shadow-[0_0_0_2px_rgba(255,255,255,0.06)]',
-                idx === 0 ? 'bg-[rgb(var(--primary))]' : 'bg-slate-500',
+                'absolute -left-[31px] top-7 h-5 w-5 rounded-full border-4 border-[rgb(var(--bg))] shadow-[0_0_0_2px_rgba(var(--color-border),0.2)]',
+                idx === 0 ? 'bg-[rgb(var(--primary))]' : 'bg-[rgb(var(--color-text-muted))]',
               ]}></span>
               <div class="mb-3 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
                 <div>
                   <h3 class="text-xl font-bold">{job.data.role}</h3>
                   <p class="text-[rgb(var(--primary))]">{job.data.company}</p>
                 </div>
-                <span class="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-slate-300">{formatDate(job.data.startDate)} — {job.data.endDate ? formatDate(job.data.endDate) : t['home.present']}</span>
+                <span class="rounded-full border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-tertiary)/0.5)] px-3 py-1 text-xs text-[rgb(var(--color-text-secondary))]">{formatDate(job.data.startDate)} — {job.data.endDate ? formatDate(job.data.endDate) : t['home.present']}</span>
               </div>
-              <ul class="list-disc space-y-1 pl-5 text-sm text-slate-300/80 marker:text-[rgb(var(--primary))]">
+              <ul class="list-disc space-y-1 pl-5 text-sm text-[rgb(var(--color-text-secondary))] marker:text-[rgb(var(--primary))]">
                 {job.data.tasks.slice(0, 2).map((task) => (
                   <li>{task}</li>
                 ))}
@@ -251,7 +251,7 @@ const formatDate = (date: Date) =>
       <section id="activity" class="mb-20">
         <div class="mb-6 flex items-end justify-between">
           <h2 class="text-3xl font-bold">{t['home.latestActivity']}</h2>
-          <a href={profile.github} target="_blank" rel="noreferrer" class="text-sm text-slate-400 transition-colors hover:text-[rgb(var(--primary))]">{t['home.viewFullProfile']}</a>
+          <a href={profile.github} target="_blank" rel="noreferrer" class="text-sm text-[rgb(var(--color-text-muted))] transition-colors hover:text-[rgb(var(--primary))]">{t['home.viewFullProfile']}</a>
         </div>
         <div class="space-y-4">
           {recentGithubActivity.map((event) => {
@@ -262,19 +262,19 @@ const formatDate = (date: Date) =>
                 href={event.url}
                 target="_blank"
                 rel="noreferrer"
-                class="activity-card group glass-panel block overflow-hidden rounded-2xl border-white/20 transition-all hover:border-[rgb(var(--primary))]/40"
+                class="activity-card group glass-panel block overflow-hidden rounded-2xl transition-all hover:border-[rgb(var(--primary))]/40"
               >
-                <div class="flex items-center justify-between border-b border-white/10 bg-white/5 px-4 py-3">
+                <div class="flex items-center justify-between border-b border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/var(--glass-bg-opacity))] px-4 py-3">
                   <div class="flex items-center gap-3">
                     <span class="text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--primary))]">{event.repo}</span>
-                    <span class={`rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${eventType === 'push' ? 'bg-purple-900/80 text-violet-300' : eventType === 'pr' ? 'bg-purple-700/80 text-violet-200' : 'bg-purple-500/80 text-white'}`}>
+                    <span class={`rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${eventType === 'push' ? 'bg-[rgb(var(--primary)/0.15)] text-[rgb(var(--primary))]' : eventType === 'pr' ? 'bg-[rgb(var(--primary)/0.25)] text-[rgb(var(--primary))]' : 'bg-[rgb(var(--primary)/0.35)] text-[rgb(var(--primary))]'}`}>
                       {EVENT_BADGE_LABELS[eventType]}
                     </span>
                   </div>
-                  <span class="text-xs text-slate-400">{event.date}</span>
+                  <span class="text-xs text-[rgb(var(--color-text-muted))]">{event.date}</span>
                 </div>
                 <div class="p-4">
-                  <p class="text-sm leading-relaxed text-slate-200/90">{event.message}</p>
+                  <p class="text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{event.message}</p>
                   <div class="mt-3 flex gap-1">
                     {heatLevels.map((level, i) => (
                       <span key={i} class={`h-3 w-3 shrink-0 rounded-sm activity-heat-${level}`} aria-hidden />
@@ -291,11 +291,11 @@ const formatDate = (date: Date) =>
         <div>
           <p class="mb-2 inline-block rounded-full border border-[rgb(var(--primary))]/40 bg-[rgb(var(--primary))]/20 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--primary))]">{t['home.contactBadge']}</p>
           <h2 class="text-4xl font-bold">{t['home.contactTitle']}</h2>
-          <a class="mt-2 block text-xl text-slate-300 transition-colors hover:text-white" href={`mailto:${profile.email}`}>{profile.email}</a>
+          <a class="mt-2 block text-xl text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-text-primary))]" href={`mailto:${profile.email}`}>{profile.email}</a>
         </div>
         <div class="flex flex-wrap gap-3">
           <a href={`mailto:${profile.email}`} class="rounded-full bg-[rgb(var(--primary))] px-7 py-3 text-sm font-bold text-white transition hover:bg-[rgb(var(--color-accent-hover))]">{t['home.sayHello']}</a>
-          <a href={profile.linkedin} target="_blank" rel="noreferrer" class="rounded-full border border-white/15 px-7 py-3 text-sm font-bold text-slate-100 transition hover:border-white/35 hover:bg-white/5">{t['home.linkedin']}</a>
+          <a href={profile.linkedin} target="_blank" rel="noreferrer" class="rounded-full border border-[rgb(var(--color-border))] px-7 py-3 text-sm font-bold text-[rgb(var(--color-text-primary))] transition hover:border-[rgb(var(--color-border-hover))] hover:bg-[rgb(var(--color-bg-tertiary)/0.5)]">{t['home.linkedin']}</a>
         </div>
       </footer>
     </div>

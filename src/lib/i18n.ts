@@ -80,6 +80,15 @@ export const ui = {
     'home.sayHello': 'Say hello',
     'home.linkedin': 'LinkedIn ↗',
 
+    // GitHub Stats
+    'stats.title': 'GitHub at a Glance',
+    'stats.repos': 'Public Repos',
+    'stats.followers': 'Followers',
+    'stats.contributions': 'Recent Commits',
+    'stats.years': 'Years on GitHub',
+    'stats.memberSince': 'Member since',
+    'stats.viewProfile': 'View GitHub Profile ↗',
+
     // Skills
     'skills.title': 'Skills & Certifications',
     'skills.tagline': 'Building modern solutions with passion and precision',
@@ -189,6 +198,15 @@ export const ui = {
     'home.contactTitle': 'Tem um projeto em mente?',
     'home.sayHello': 'Diga olá',
     'home.linkedin': 'LinkedIn ↗',
+
+    // GitHub Stats
+    'stats.title': 'GitHub num Relance',
+    'stats.repos': 'Repos Públicos',
+    'stats.followers': 'Seguidores',
+    'stats.contributions': 'Commits Recentes',
+    'stats.years': 'Anos no GitHub',
+    'stats.memberSince': 'Membro desde',
+    'stats.viewProfile': 'Ver Perfil GitHub ↗',
 
     // Skills
     'skills.title': 'Habilidades & Certificações',

@@ -34,6 +34,10 @@
 
 * { box-sizing: border-box; }
 
+html {
+  scroll-behavior: smooth;
+}
+
 html,
 body {
   margin: 0;
@@ -41,6 +45,12 @@ body {
   font-family: "Plus Jakarta Sans", system-ui, sans-serif;
   background: rgb(var(--bg));
   color: rgb(var(--text));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
@@ -152,6 +162,59 @@ body {
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    background-position: 200% 0;
+  }
+  50% {
+    opacity: 1;
+    background-position: 0 0;
+  }
+}
+
+/* Page transition animations (via View Transitions API when available in Astro 4+)
+   Note: Currently using link-based navigation with fade CSS.
+   Enable view transitions by upgrading Astro and importing { viewTransitions } from 'astro:transitions'
+*/
+
+/* Reduced motion: disable animations */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* Skeleton loading animation */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgb(var(--color-bg-secondary)),
+    rgb(var(--color-bg-tertiary)),
+    rgb(var(--color-bg-secondary))
+  );
+  background-size: 200% 100%;
+  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  border-radius: 0.5rem;
+  pointer-events: none;
+}
+
+.skeleton-text {
+  height: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-text.short {
+  width: 60%;
+}
+
+.skeleton-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
 }
 
 /* Activity heatmap squares (purple scale) */
@@ -296,7 +359,8 @@ body {
   .micro-live-dot,
   .micro-state,
   .micro-meter-fill,
-  .micro-meter-fill::after {
+  .micro-meter-fill::after,
+  .skeleton {
     animation: none !important;
   }
 

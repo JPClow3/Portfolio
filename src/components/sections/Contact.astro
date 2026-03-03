@@ -1,9 +1,10 @@
 ---
-import { ui } from '@/lib/i18n';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
 import Icon from '@/components/common/Icon.astro';
 import ScrollReveal from '@/components/common/ScrollReveal.astro';
 
-const t = ui.en;
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
 
 const contactInfo = [
   {
@@ -43,8 +44,8 @@ const contactInfo = [
       <ScrollReveal animation="fade-up" delay={100}>
         <div class="glass-card rounded-2xl p-8">
           <form id="contact-form" class="space-y-6">
-            <!-- Web3Forms Access Key - Set PUBLIC_WEB3FORMS_ACCESS_KEY in env or at https://web3forms.com -->
-            <input type="hidden" name="access_key" value={import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY ?? 'YOUR_WEB3FORMS_ACCESS_KEY'} />
+            <!-- Web3Forms Access Key - Required: Set PUBLIC_WEB3FORMS_ACCESS_KEY in env -->
+            <input type="hidden" name="access_key" value={import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY} />
             <input type="hidden" name="subject" value="New message from jpclow.dev" />
             <input type="hidden" name="from_name" value="Portfolio Contact Form" />
             <input type="checkbox" name="botcheck" class="hidden" style="display: none;" />
@@ -119,12 +120,12 @@ const contactInfo = [
             </button>
 
             <!-- Status Messages -->
-            <div id="form-status" class="hidden" role="status" aria-live="polite">
-              <div id="success-message" class="hidden p-4 rounded-xl bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 flex items-center gap-2">
+            <div id="form-status" class="hidden animate-scale-in" role="status" aria-live="polite" aria-atomic="true">
+              <div id="success-message" class="hidden p-4 rounded-xl bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 flex items-center gap-2 animate-slide-down">
                 <Icon name="check" size={20} />
                 <span>{t['contact.success']}</span>
               </div>
-              <div id="error-message" class="hidden p-4 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200">
+              <div id="error-message" class="hidden p-4 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 animate-slide-down">
                 <span>{t['contact.error']}</span>
               </div>
             </div>
@@ -216,16 +217,24 @@ const contactInfo = [
     const form = document.getElementById('contact-form') as HTMLFormElement;
     if (!form) return;
 
+    // Guard against re-initialization to prevent duplicate listeners
+    if ((form as any).dataset.initialized === 'true') return;
+    (form as any).dataset.initialized = 'true';
+
     const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
     const btnText = document.getElementById('btn-text');
     const btnSpinner = document.getElementById('btn-spinner');
     const formStatus = document.getElementById('form-status');
     const successMessage = document.getElementById('success-message');
     const errorMessage = document.getElementById('error-message');
+    
+    let isSubmitting = false;
 
     // Validation functions
     function validateEmail(email: string): boolean {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      // Simple but effective email validation
+      // More robust than regex, avoids DOM creation
+      return email.includes('@') && email.includes('.') && email.length > 5;
     }
 
     function showError(fieldId: string, message: string) {
@@ -297,12 +306,19 @@ const contactInfo = [
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      // Prevent double submission
+      if (isSubmitting) return;
+      isSubmitting = true;
+
       // Hide previous status messages
       if (formStatus) formStatus.classList.add('hidden');
       if (successMessage) successMessage.classList.add('hidden');
       if (errorMessage) errorMessage.classList.add('hidden');
 
-      if (!validateForm()) return;
+      if (!validateForm()) {
+        isSubmitting = false;
+        return;
+      }
 
       // Show loading state
       if (submitBtn) submitBtn.disabled = true;
@@ -321,7 +337,13 @@ const contactInfo = [
         if (formStatus) formStatus.classList.remove('hidden');
 
         if (result.success) {
-          if (successMessage) successMessage.classList.remove('hidden');
+          if (successMessage) {
+            successMessage.classList.remove('hidden');
+            // Scroll to success message smoothly
+            setTimeout(() => {
+              successMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+          }
           form.reset();
         } else {
           if (errorMessage) errorMessage.classList.remove('hidden');
@@ -334,6 +356,7 @@ const contactInfo = [
         if (submitBtn) submitBtn.disabled = false;
         if (btnText) btnText.textContent = sendText;
         if (btnSpinner) btnSpinner.classList.add('hidden');
+        isSubmitting = false;
       }
     });
   }

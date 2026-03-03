@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /.cache/
+
+Sitemap: https://jpclow.dev/sitemap-index.xml
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /

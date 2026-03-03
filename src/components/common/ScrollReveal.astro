@@ -78,13 +78,15 @@ const Tag = tag;
 </style>
 
 <script>
+  import { prefersReducedMotion } from '@/lib/accessibility';
+
   function initScrollReveal() {
     const elements = document.querySelectorAll('[data-scroll-reveal]');
 
     // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reducedMotion = prefersReducedMotion();
 
-    if (prefersReducedMotion) {
+    if (reducedMotion) {
       // If reduced motion is preferred, show all elements immediately
       elements.forEach((el) => el.classList.add('revealed'));
       return;

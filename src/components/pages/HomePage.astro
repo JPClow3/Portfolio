@@ -3,7 +3,7 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
 import { defaultLang, type Lang, ui } from '@/lib/i18n';
-import { getGithubActivity, type EventType } from '@/lib/github';
+import { getGithubActivity, getGithubProfile, type EventType } from '@/lib/github';
 
 const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
 const t = ui[currentLang] ?? ui[defaultLang];
@@ -43,6 +43,8 @@ const recentGithubActivity = await getGithubActivity(
   profileEntry.data.customMetric.githubUsername,
   profileEntry.data.customMetric.fallbackEvents,
 );
+
+const githubProfile = await getGithubProfile(profileEntry.data.customMetric.githubUsername);
 
 /** Returns intensity levels 0–4 for a heatmap strip (10 squares) from repo+date. */
 function getActivityHeatmapLevels(repo: string, date: string): number[] {
@@ -108,7 +110,7 @@ const formatDate = (date: Date) =>
             <div class="mx-auto mb-3 flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-2 border-[rgb(var(--primary))/0.55] shadow-[0_0_30px_rgb(79,70,229,0.3)]">
               <img
                 src={`https://2.gravatar.com/avatar/${profile.gravatarHash}?s=180&d=initials`}
-                alt={profile.shortName}
+                alt={`${profile.shortName}, ${profile.role}`}
                 width="90"
                 height="90"
                 loading="lazy"
@@ -185,6 +187,40 @@ const formatDate = (date: Date) =>
           ))}
         </div>
       </section>
+
+      {/* GitHub Stats Dashboard */}
+      {githubProfile && (
+        <section id="github-stats" aria-label={t['stats.title']} class="mb-24">
+          <h2 class="mb-10 text-4xl font-bold tracking-tight">{t['stats.title']}</h2>
+          <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <div class="glass-panel rounded-2xl p-6 text-center">
+              <p class="text-3xl font-bold text-[rgb(var(--primary))]">{githubProfile.publicRepos}</p>
+              <p class="mt-1 text-sm text-slate-400">{t['stats.repos']}</p>
+            </div>
+            <div class="glass-panel rounded-2xl p-6 text-center">
+              <p class="text-3xl font-bold text-[rgb(var(--primary))]">{githubProfile.followers}</p>
+              <p class="mt-1 text-sm text-slate-400">{t['stats.followers']}</p>
+            </div>
+            <div class="glass-panel rounded-2xl p-6 text-center">
+              <p class="text-3xl font-bold text-[rgb(var(--primary))]">{recentGithubActivity.length}</p>
+              <p class="mt-1 text-sm text-slate-400">{t['stats.contributions']}</p>
+            </div>
+            <div class="glass-panel rounded-2xl p-6 text-center">
+              <p class="text-3xl font-bold text-[rgb(var(--primary))]">{githubProfile.yearsOnGithub}+</p>
+              <p class="mt-1 text-sm text-slate-400">{t['stats.years']}</p>
+            </div>
+          </div>
+          <p class="mt-4 text-center text-xs text-slate-500">{t['stats.memberSince']} {githubProfile.memberSince}</p>
+          <div class="mt-4 text-center">
+            <a
+              href={`https://github.com/${profileEntry.data.customMetric.githubUsername}`}
+              target="_blank"
+              rel="noreferrer"
+              class="text-sm text-slate-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[#110d24]"
+            >{t['stats.viewProfile']}</a>
+          </div>
+        </section>
+      )}
 
       <section id="experience" class="mb-24">
         <h2 class="mb-10 text-4xl font-bold tracking-tight">{t['home.journeyTitle']}</h2>

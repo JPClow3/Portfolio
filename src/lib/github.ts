@@ -227,3 +227,74 @@ export async function getGithubActivity(username: string, fallbackEvents: Fallba
     return fallbackGithubActivity;
   }
 }
+
+export type GithubProfile = {
+  publicRepos: number;
+  followers: number;
+  memberSince: number; // year
+  yearsOnGithub: number;
+};
+
+const githubProfileCachePath = new URL('../../.cache/github-profile.json', import.meta.url);
+
+export async function getGithubProfile(username: string): Promise<GithubProfile | null> {
+  if (!username) return null;
+
+  // Check cache
+  try {
+    const rawCache = await readFile(githubProfileCachePath, 'utf-8');
+    const parsedCache = JSON.parse(rawCache);
+
+    if (
+      parsedCache &&
+      typeof parsedCache === 'object' &&
+      parsedCache.username === username &&
+      typeof parsedCache.updatedAt === 'number' &&
+      Date.now() - parsedCache.updatedAt < githubActivityTtlMs
+    ) {
+      return parsedCache.data as GithubProfile;
+    }
+  } catch {
+    // Cache miss or read error — continue to fetch
+  }
+
+  try {
+    const response = await fetch(`https://api.github.com/users/${username}`);
+    if (!response.ok) {
+      console.warn(`GitHub profile request returned ${response.status}.`);
+      return null;
+    }
+
+    const profile = await response.json() as {
+      public_repos?: number;
+      followers?: number;
+      created_at?: string;
+    };
+
+    const createdYear = profile.created_at ? new Date(profile.created_at).getFullYear() : new Date().getFullYear();
+
+    const data: GithubProfile = {
+      publicRepos: profile.public_repos ?? 0,
+      followers: profile.followers ?? 0,
+      memberSince: createdYear,
+      yearsOnGithub: new Date().getFullYear() - createdYear,
+    };
+
+    // Write cache
+    try {
+      await mkdir(new URL('../../.cache', import.meta.url), { recursive: true });
+      await writeFile(
+        githubProfileCachePath,
+        JSON.stringify({ updatedAt: Date.now(), username, data }, null, 2),
+        'utf-8',
+      );
+    } catch {
+      // Cache write error — non-critical
+    }
+
+    return data;
+  } catch (error) {
+    console.warn('GitHub profile fetch failed:', error);
+    return null;
+  }
+}

@@ -1,5 +1,6 @@
 ---
 import ThemeToggle from '@components/islands/ThemeToggle.svelte';
+import Icon from '@components/common/Icon.astro';
 import { defaultLang, type Lang, ui } from '@/lib/i18n';
 
 interface NavLink {
@@ -9,6 +10,9 @@ interface NavLink {
 
 const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
 const t = ui[currentLang] ?? ui[defaultLang];
+
+const isEnglish = currentLang === 'en';
+const isPortuguese = currentLang === 'pt';
 
 const navLinks: NavLink[] = [
   { label: t['nav.about'], href: '/#about' },
@@ -62,6 +66,33 @@ const resumeLink = '/resume.pdf';
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
           {t['nav.resume']}
         </a>
+
+        <!-- Language Switcher (Desktop) -->
+        <div class="hidden md:flex items-center gap-0.5 rounded-full border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.5)] p-0.5" role="group" aria-label="Select language">
+          <a
+            href="/"
+            class:list={[
+              'px-2.5 py-1 text-xs font-semibold rounded-full transition-colors',
+              isEnglish
+                ? 'bg-[rgb(var(--color-accent))] text-white'
+                : 'text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))]',
+            ]}
+            aria-label="Switch to English"
+            aria-current={isEnglish ? 'true' : undefined}
+          >EN</a>
+          <a
+            href="/pt/"
+            class:list={[
+              'px-2.5 py-1 text-xs font-semibold rounded-full transition-colors',
+              isPortuguese
+                ? 'bg-[rgb(var(--color-accent))] text-white'
+                : 'text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))]',
+            ]}
+            aria-label="Mudar para Português"
+            aria-current={isPortuguese ? 'true' : undefined}
+          >PT</a>
+        </div>
+
         <ThemeToggle client:load />
 
         <!-- Mobile Menu Button -->
@@ -138,6 +169,33 @@ const resumeLink = '/resume.pdf';
           >
             {t['nav.resume']}
           </a>
+
+          <!-- Language Switcher (Mobile) -->
+          <div class="flex items-center gap-2 px-4 py-3 border-t border-[rgb(var(--color-border))] mt-1 pt-3" role="group" aria-label="Select language">
+            <Icon name="globe" size={16} class="text-[rgb(var(--color-text-muted))]" />
+            <a
+              href="/"
+              class:list={[
+                'px-3 py-1.5 text-xs font-semibold rounded-full transition-colors',
+                isEnglish
+                  ? 'bg-[rgb(var(--color-accent))] text-white'
+                  : 'text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] bg-[rgb(var(--color-bg-secondary))]',
+              ]}
+              aria-label="Switch to English"
+              aria-current={isEnglish ? 'true' : undefined}
+            >EN</a>
+            <a
+              href="/pt/"
+              class:list={[
+                'px-3 py-1.5 text-xs font-semibold rounded-full transition-colors',
+                isPortuguese
+                  ? 'bg-[rgb(var(--color-accent))] text-white'
+                  : 'text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] bg-[rgb(var(--color-bg-secondary))]',
+              ]}
+              aria-label="Mudar para Português"
+              aria-current={isPortuguese ? 'true' : undefined}
+            >PT</a>
+          </div>
         </div>
       </div>
     </div>
@@ -145,6 +203,11 @@ const resumeLink = '/resume.pdf';
 </header>
 
 <script>
+  // Global listener references for cleanup
+  let globalEscapeHandler: ((e: KeyboardEvent) => void) | null = null;
+  let globalClickHandler: ((e: MouseEvent) => void) | null = null;
+  let globalResizeHandler: (() => void) | null = null;
+
   function initMobileMenu() {
     const menuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
@@ -153,7 +216,13 @@ const resumeLink = '/resume.pdf';
 
     if (!menuButton || !mobileMenu) return;
 
+    // Guard against re-initialization
+    if (menuButton.dataset.initialized === 'true') return;
+    menuButton.dataset.initialized = 'true';
+
     let isOpen = false;
+    let focusTrapActive = false;
+    let focusTrapHandler: ((e: KeyboardEvent) => void) | null = null;
 
     function toggleMenu(open?: boolean) {
       isOpen = open !== undefined ? open : !isOpen;
@@ -171,9 +240,14 @@ const resumeLink = '/resume.pdf';
       if (isOpen) {
         mobileMenu.style.maxHeight = `${mobileMenu.scrollHeight}px`;
         mobileMenu.style.opacity = '1';
+        focusTrapActive = true;
+        attachFocusTrap();
       } else {
         mobileMenu.style.maxHeight = '0';
         mobileMenu.style.opacity = '0';
+        focusTrapActive = false;
+        detachFocusTrap();
+        menuButton.focus();
       }
     }
 
@@ -181,48 +255,106 @@ const resumeLink = '/resume.pdf';
       toggleMenu(false);
     }
 
+    function attachFocusTrap() {
+      const focusableElements = Array.from(
+        mobileMenu.querySelectorAll('a, button, [tabindex]:not([tabindex="-1"])')
+      ) as HTMLElement[];
+      
+      if (focusableElements.length === 0) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      // Remove old handler if it exists
+      if (focusTrapHandler) {
+        mobileMenu.removeEventListener('keydown', focusTrapHandler);
+      }
+
+      // Create new handler
+      focusTrapHandler = (e: KeyboardEvent) => {
+        if (!focusTrapActive || e.key !== 'Tab') return;
+
+        if (e.shiftKey && document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        } else if (!e.shiftKey && document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      };
+
+      mobileMenu.addEventListener('keydown', focusTrapHandler);
+    }
+
+    function detachFocusTrap() {
+      if (focusTrapHandler) {
+        mobileMenu.removeEventListener('keydown', focusTrapHandler);
+        focusTrapHandler = null;
+      }
+    }
+
     // Toggle on button click
     menuButton.addEventListener('click', () => toggleMenu());
 
     // Close menu when clicking a link
-    mobileMenu.querySelectorAll('a').forEach((link) => {
+    const links = mobileMenu.querySelectorAll('a');
+    links.forEach((link) => {
       link.addEventListener('click', closeMenu);
     });
 
-    // Close menu on Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && isOpen) {
-        closeMenu();
-        menuButton.focus(); // Return focus to button
-      }
-    });
-
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-      const target = e.target as Node;
-      if (isOpen && !menuButton.contains(target) && !mobileMenu.contains(target)) {
-        closeMenu();
-      }
-    });
-
-    // Handle window resize - close menu when switching to desktop
-    window.addEventListener('resize', () => {
-      if (window.innerWidth >= 768 && isOpen) {
-        closeMenu();
-      }
-    });
+    // Set up global listeners only once
+    attachGlobalListeners(closeMenu);
   }
 
-  // Initialize on load
-  initMobileMenu();
+  function attachGlobalListeners(closeMenu: () => void) {
+    const menuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (!menuButton || !mobileMenu) return;
 
-  // Re-initialize on Astro page transitions
-  document.addEventListener('astro:page-load', initMobileMenu);
+    // Remove old handlers if they exist (from previous initialization)
+    if (globalEscapeHandler) {
+      document.removeEventListener('keydown', globalEscapeHandler);
+    }
+    if (globalClickHandler) {
+      document.removeEventListener('click', globalClickHandler);
+    }
+    if (globalResizeHandler) {
+      window.removeEventListener('resize', globalResizeHandler);
+    }
 
-  // Header scroll effect
+    // Create and attach new handlers
+    globalEscapeHandler = (e: KeyboardEvent) => {
+      const currentIsOpen = menuButton.getAttribute('aria-expanded') === 'true';
+      if (e.key === 'Escape' && currentIsOpen) {
+        closeMenu();
+      }
+    };
+
+    globalClickHandler = (e: MouseEvent) => {
+      const currentIsOpen = menuButton.getAttribute('aria-expanded') === 'true';
+      const target = e.target as Node;
+      if (currentIsOpen && !menuButton.contains(target) && !mobileMenu.contains(target)) {
+        closeMenu();
+      }
+    };
+
+    globalResizeHandler = () => {
+      const currentIsOpen = menuButton.getAttribute('aria-expanded') === 'true';
+      if (window.innerWidth >= 768 && currentIsOpen) {
+        closeMenu();
+      }
+    };
+
+    document.addEventListener('keydown', globalEscapeHandler);
+    document.addEventListener('click', globalClickHandler);
+    window.addEventListener('resize', globalResizeHandler);
+  }
+
+  // Header scroll effect with guard
   function initHeaderScroll() {
     const header = document.getElementById('header');
-    if (!header) return;
+    if (!header || header.dataset.scrollInitialized === 'true') return;
+    header.dataset.scrollInitialized = 'true';
 
     function handleScroll() {
       if (window.scrollY > 50) {
@@ -236,8 +368,15 @@ const resumeLink = '/resume.pdf';
     handleScroll(); // Check initial state
   }
 
+  // Initialize on load
+  initMobileMenu();
   initHeaderScroll();
-  document.addEventListener('astro:page-load', initHeaderScroll);
+
+  // Re-initialize on Astro page transitions
+  document.addEventListener('astro:page-load', () => {
+    // Only re-initialize header scroll (listeners are already attached globally)
+    initHeaderScroll();
+  });
 </script>
 
 <style>

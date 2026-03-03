@@ -8,7 +8,7 @@
     isDark = document.documentElement.classList.contains('dark');
     mounted = true;
 
-    // Listen for system theme changes
+    // Listen for system theme changes and cleanup with returned function
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e: MediaQueryListEvent) => {
       if (!localStorage.getItem('theme')) {

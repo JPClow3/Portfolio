@@ -1,0 +1,48 @@
+---
+/**
+ * BlogSkeleton.astro - Skeleton loading placeholder for blog posts
+ * Used to show while blog content is loading
+ */
+interface Props {
+  count?: number;
+  class?: string;
+}
+
+const { count = 3, class: className = '' } = Astro.props;
+const skeletons = Array.from({ length: count });
+---
+
+<div class={`space-y-8 ${className}`}>
+  {skeletons.map(() => (
+    <article class="group p-6 rounded-2xl bg-[rgb(var(--color-bg-secondary))] border border-[rgb(var(--color-border))]">
+      <!-- Tags skeleton -->
+      <div class="flex flex-wrap gap-2 mb-4">
+        {[0, 1, 2].map(() => (
+          <div class="skeleton skeleton-text short" style="width: 60px; height: 24px;"></div>
+        ))}
+      </div>
+
+      <!-- Title skeleton -->
+      <div class="skeleton skeleton-text" style="height: 28px; margin-bottom: 8px;"></div>
+
+      <!-- Description skeleton -->
+      <div class="space-y-2 mb-4">
+        <div class="skeleton skeleton-text"></div>
+        <div class="skeleton skeleton-text"></div>
+        <div class="skeleton skeleton-text short"></div>
+      </div>
+
+      <!-- Meta skeleton (date + read time) -->
+      <div class="flex items-center gap-4">
+        <div class="skeleton" style="width: 100px; height: 16px;"></div>
+        <div class="skeleton" style="width: 80px; height: 16px;"></div>
+      </div>
+    </article>
+  ))}
+</div>
+
+<style>
+  .skeleton {
+    border-radius: 0.5rem;
+  }
+</style>

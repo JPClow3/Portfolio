@@ -10,20 +10,29 @@
     "build": "astro build",
     "preview": "astro preview",
     "start": "serve dist",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "vitest --run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",
     "@astrojs/sitemap": "^3.7.0",
     "@astrojs/svelte": "^7.2.5",
     "@tailwindcss/vite": "^4.1.18",
-    "@threlte/core": "^8.3.1",
-    "@threlte/extras": "^9.7.1",
     "@types/three": "^0.182.0",
     "astro": "^5.17.2",
-    "serve": "^14.2.5",
     "svelte": "^5.51.2",
     "tailwindcss": "^4.1.18",
     "three": "^0.182.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@vitest/ui": "^4.0.18",
+    "happy-dom": "^20.8.3",
+    "serve": "^14.2.5",
+    "vitest": "^4.0.18"
   }
 }

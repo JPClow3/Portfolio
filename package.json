@@ -23,7 +23,7 @@
     "@astrojs/svelte": "^7.2.5",
     "@tailwindcss/vite": "^4.1.18",
     "@types/three": "^0.182.0",
-    "astro": "^5.17.2",
+    "astro": "^5.18.0",
     "svelte": "^5.51.2",
     "tailwindcss": "^4.1.18",
     "three": "^0.182.0"

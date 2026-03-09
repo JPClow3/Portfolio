@@ -25,7 +25,7 @@
     "@types/three": "^0.182.0",
     "astro": "^5.17.2",
     "svelte": "^5.51.2",
-    "tailwindcss": "^4.1.18",
+    "tailwindcss": "^4.2.1",
     "three": "^0.182.0"
   },
   "devDependencies": {

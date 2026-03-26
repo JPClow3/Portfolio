@@ -7,6 +7,7 @@ import { getGithubActivity, getGithubProfile, type EventType } from '@/lib/githu
 
 const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
 const t = ui[currentLang] ?? ui[defaultLang];
+const siteUrl = Astro.site ?? new URL('https://jpclow.dev');
 
 const profileEntries = await getCollection('profile', ({ data }) => data.lang === currentLang);
 const fallbackProfileEntries = await getCollection('profile', ({ data }) => data.lang === defaultLang);
@@ -69,15 +70,37 @@ const formatDate = (date: Date) =>
     month: 'short',
     year: 'numeric',
   }).format(date);
+
+const projectItemsSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Featured Projects',
+  itemListElement: projects.map((project, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@type': 'SoftwareSourceCode',
+      name: project.data.title,
+      description: project.data.description,
+      codeRepository: project.data.github,
+      url: project.data.link ?? project.data.github ?? new URL('/#projects', siteUrl).toString(),
+      programmingLanguage: project.data.tech,
+    },
+  })),
+};
 ---
 
-<BaseLayout title="João Paulo Gonçalves Santos - Portfolio" description="Personal portfolio of João Paulo with projects, journey and GitHub updates.">
+<BaseLayout
+  title="João Paulo Gonçalves Santos - Portfolio"
+  description="Personal portfolio of João Paulo with projects, journey and GitHub updates."
+  schema={projectItemsSchema}
+>
   <Header />
   <main id="main-content" tabindex="-1" class="noise-bg relative overflow-x-hidden px-4 pb-14 pt-6 sm:px-6 lg:px-8">
     <div class="pointer-events-none fixed inset-0 -z-10">
       <div class="bg-grid absolute inset-0 opacity-10 dark:opacity-10"></div>
-      <div class="absolute -right-24 -top-24 h-[420px] w-[420px] rounded-full bg-violet-600/10 blur-[120px] dark:bg-violet-600/20"></div>
-      <div class="absolute -left-24 top-[42%] h-[360px] w-[360px] rounded-full bg-indigo-500/10 blur-[120px] dark:bg-indigo-500/20"></div>
+      <div class="absolute -right-24 -top-24 h-105 w-105 rounded-full bg-violet-600/10 blur-[120px] dark:bg-violet-600/20"></div>
+      <div class="absolute -left-24 top-[42%] h-90 w-90 rounded-full bg-indigo-500/10 blur-[120px] dark:bg-indigo-500/20"></div>
     </div>
 
     <div class="mx-auto max-w-7xl pt-24">
@@ -92,9 +115,9 @@ const formatDate = (date: Date) =>
           </div>
 
           <h1 class="max-w-3xl text-5xl font-extrabold leading-[1.02] tracking-tight text-[rgb(var(--color-text-primary))] md:text-6xl lg:text-7xl">
-            I’m João — crafting
-            <span class="text-gradient block">beautiful, reliable</span>
-            digital experiences.
+            {t['home.hero.lead']}
+            <span class="text-gradient block">{t['home.hero.highlight']}</span>
+            {t['home.hero.tail']}
           </h1>
 
           <p class="mt-6 max-w-2xl text-lg leading-relaxed text-[rgb(var(--color-text-secondary))]">{profile.subtitle}</p>
@@ -113,7 +136,9 @@ const formatDate = (date: Date) =>
                 alt={`${profile.shortName}, ${profile.role}`}
                 width="90"
                 height="90"
-                loading="lazy"
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
                 class="hovercard h-full w-full object-cover"
               />
             </div>
@@ -131,7 +156,7 @@ const formatDate = (date: Date) =>
           </article>
 
           <article class="glass-panel rounded-3xl p-6">
-            <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[rgb(var(--color-text-muted))]">{currentFocus.title}</p>
+            <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[rgb(var(--color-text-muted))]">{currentFocus.title || t['home.currentFocus']}</p>
             <div class="space-y-4">
               {currentFocus.items.map((item) => (
                 <div class="flex items-start gap-3">
@@ -169,7 +194,7 @@ const formatDate = (date: Date) =>
               index === 0 ? 'bento-span-2' : '',
               index === 1 ? 'bento-row-span-2' : '',
             ]}>
-              <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-purple-500/10 opacity-80 transition-opacity group-hover:opacity-100"></div>
+              <div class="absolute inset-0 bg-linear-to-br from-indigo-500/10 via-transparent to-purple-500/10 opacity-80 transition-opacity group-hover:opacity-100"></div>
               <div class="relative">
                 <h3 class="text-2xl font-bold">{project.data.title}</h3>
                 <p class="mt-3 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.description}</p>
@@ -228,7 +253,7 @@ const formatDate = (date: Date) =>
           {experience.map((job, idx) => (
             <article class="glass-panel relative rounded-2xl p-6 transition hover:border-[rgb(var(--primary))]/35">
               <span class:list={[
-                'absolute -left-[31px] top-7 h-5 w-5 rounded-full border-4 border-[rgb(var(--bg))] shadow-[0_0_0_2px_rgba(var(--color-border),0.2)]',
+                'absolute -left-7.75 top-7 h-5 w-5 rounded-full border-4 border-[rgb(var(--bg))] shadow-[0_0_0_2px_rgba(var(--color-border),0.2)]',
                 idx === 0 ? 'bg-[rgb(var(--primary))]' : 'bg-[rgb(var(--color-text-muted))]',
               ]}></span>
               <div class="mb-3 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
@@ -277,7 +302,7 @@ const formatDate = (date: Date) =>
                   <p class="text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{event.message}</p>
                   <div class="mt-3 flex gap-1">
                     {heatLevels.map((level, i) => (
-                      <span key={i} class={`h-3 w-3 shrink-0 rounded-sm activity-heat-${level}`} aria-hidden />
+                      <span class={`h-3 w-3 shrink-0 rounded-sm activity-heat-${level}`} aria-hidden />
                     ))}
                   </div>
                 </div>

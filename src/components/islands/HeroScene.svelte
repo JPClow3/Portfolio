@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import * as THREE from 'three';
   import { prefersReducedMotion } from '@/lib/accessibility';
 
   let container: HTMLDivElement;
@@ -11,6 +10,8 @@
   let errorMessage = $state('');
 
   onMount(() => {
+    let cleanup = () => {};
+
     mounted = true;
 
     // Check for reduced motion preference
@@ -22,137 +23,143 @@
       return;
     }
 
-    try {
-      // Check if mobile for reduced particle count
-      const isMobile = window.innerWidth < 768;
-      const particlesCount = isMobile ? 50 : 100;
+    const initScene = async () => {
+      try {
+        const THREE = await import('three');
 
-      // Scene setup
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-      camera.position.z = 5;
+        // Check if mobile for reduced particle count
+        const isMobile = window.innerWidth < 768;
+        const particlesCount = isMobile ? 50 : 100;
 
-      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isMobile });
-      renderer.setSize(container.clientWidth, container.clientHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
-      container.appendChild(renderer.domElement);
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.z = 5;
 
-      // Mark as loaded once canvas is ready
-      isLoading = false;
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isMobile });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
+        container.appendChild(renderer.domElement);
 
-    // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
+        // Mark as loaded once canvas is ready
+        isLoading = false;
 
-    const pointLight1 = new THREE.PointLight(0x6366f1, 1);
-    pointLight1.position.set(10, 10, 10);
-    scene.add(pointLight1);
+      // Lights
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(ambientLight);
 
-    const pointLight2 = new THREE.PointLight(0xa855f7, 0.5);
-    pointLight2.position.set(-10, -10, -10);
-    scene.add(pointLight2);
+      const pointLight1 = new THREE.PointLight(0x6366f1, 1);
+      pointLight1.position.set(10, 10, 10);
+      scene.add(pointLight1);
 
-    // Main geometry - Wireframe icosahedron
-    const geometry = new THREE.IcosahedronGeometry(1.5, 1);
-    const material = new THREE.MeshStandardMaterial({
-      color: 0x6366f1,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.6,
-    });
-    const icosahedron = new THREE.Mesh(geometry, material);
-    scene.add(icosahedron);
+      const pointLight2 = new THREE.PointLight(0xa855f7, 0.5);
+      pointLight2.position.set(-10, -10, -10);
+      scene.add(pointLight2);
 
-    // Particles
-    const particlesGeometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(particlesCount * 3);
+        // Main geometry - Wireframe icosahedron
+        const geometry = new THREE.IcosahedronGeometry(1.5, 1);
+        const material = new THREE.MeshStandardMaterial({
+          color: 0x6366f1,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.6,
+        });
+        const icosahedron = new THREE.Mesh(geometry, material);
+        scene.add(icosahedron);
 
-    for (let i = 0; i < particlesCount * 3; i++) {
-      positions[i] = (Math.random() - 0.5) * 20;
-    }
+      // Particles
+      const particlesGeometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(particlesCount * 3);
 
-    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const particlesMaterial = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.02,
-      transparent: true,
-      opacity: 0.5,
-    });
-    const particles = new THREE.Points(particlesGeometry, particlesMaterial);
-    scene.add(particles);
+        for (let i = 0; i < particlesCount * 3; i++) {
+          positions[i] = (Math.random() - 0.5) * 20;
+        }
 
-    // Animation
-    let animationId: number;
-    const clock = new THREE.Clock();
-    let isTabVisible = true;
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const particlesMaterial = new THREE.PointsMaterial({
+          color: 0xffffff,
+          size: 0.02,
+          transparent: true,
+          opacity: 0.5,
+        });
+        const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particles);
 
-    function animate() {
-      animationId = requestAnimationFrame(animate);
+      // Animation
+      let animationId: number;
+      const clock = new THREE.Clock();
+      let isTabVisible = true;
 
-      // Skip rendering if tab is not visible
-      if (!isTabVisible) return;
+        function animate() {
+          animationId = requestAnimationFrame(animate);
 
-      const elapsedTime = clock.getElapsedTime();
+          // Skip rendering if tab is not visible
+          if (!isTabVisible) return;
 
-      // Rotate icosahedron
-      icosahedron.rotation.x = Math.sin(elapsedTime * 0.3) * 0.1;
-      icosahedron.rotation.y = elapsedTime * 0.2;
+          const elapsedTime = clock.getElapsedTime();
 
-      // Float effect
-      icosahedron.position.y = Math.sin(elapsedTime * 0.5) * 0.2;
+          // Rotate icosahedron
+          icosahedron.rotation.x = Math.sin(elapsedTime * 0.3) * 0.1;
+          icosahedron.rotation.y = elapsedTime * 0.2;
 
-      // Rotate particles slowly
-      particles.rotation.y = elapsedTime * 0.05;
+          // Float effect
+          icosahedron.position.y = Math.sin(elapsedTime * 0.5) * 0.2;
 
-      renderer.render(scene, camera);
-    }
+          // Rotate particles slowly
+          particles.rotation.y = elapsedTime * 0.05;
 
-    animate();
+          renderer.render(scene, camera);
+        }
 
-    // Handle resize
-    function handleResize() {
-      const width = container.clientWidth;
-      const height = container.clientHeight;
+      animate();
 
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
+        // Handle resize
+        function handleResize() {
+          const width = container.clientWidth;
+          const height = container.clientHeight;
 
-      renderer.setSize(width, height);
-    }
+          camera.aspect = width / height;
+          camera.updateProjectionMatrix();
 
-    window.addEventListener('resize', handleResize);
+          renderer.setSize(width, height);
+        }
 
-    // Pause animation when tab is hidden (performance optimization)
-    function handleVisibilityChange() {
-      isTabVisible = !document.hidden;
-      if (isTabVisible) {
-        clock.start(); // Resume clock to prevent jump
-      }
-    }
+      window.addEventListener('resize', handleResize);
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+        // Pause animation when tab is hidden (performance optimization)
+        function handleVisibilityChange() {
+          isTabVisible = !document.hidden;
+          if (isTabVisible) {
+            clock.start(); // Resume clock to prevent jump
+          }
+        }
 
-    // Cleanup
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      cancelAnimationFrame(animationId);
-      renderer.dispose();
-      geometry.dispose();
-      material.dispose();
-      particlesGeometry.dispose();
-      particlesMaterial.dispose();
-      if (container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement);
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        cleanup = () => {
+          window.removeEventListener('resize', handleResize);
+          document.removeEventListener('visibilitychange', handleVisibilityChange);
+          cancelAnimationFrame(animationId);
+          renderer.dispose();
+          geometry.dispose();
+          material.dispose();
+          particlesGeometry.dispose();
+          particlesMaterial.dispose();
+          if (container.contains(renderer.domElement)) {
+            container.removeChild(renderer.domElement);
+          }
+        };
+      } catch (error) {
+        isLoading = false;
+        hasError = true;
+        errorMessage = error instanceof Error ? error.message : 'Failed to load 3D scene';
+        console.error('HeroScene error:', error);
       }
     };
-    } catch (error) {
-      isLoading = false;
-      hasError = true;
-      errorMessage = error instanceof Error ? error.message : 'Failed to load 3D scene';
-      console.error('HeroScene error:', error);
-      return () => {}; // Cleanup function
-    }
+
+    initScene();
+
+    return () => cleanup();
   });
 </script>
 

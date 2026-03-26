@@ -10,6 +10,22 @@ const t = ui.en;
 const posts = await getCollection('blog', ({ data }) => !data.draft && data.lang === 'en');
 const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
+const siteUrl = Astro.site ?? new URL('https://jpclow.dev');
+const blogSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: 'Joao Paulo Santos Blog',
+  description: t['blog.subtitle'],
+  url: new URL('/blog', siteUrl).toString(),
+  blogPost: sortedPosts.map((post) => ({
+    '@type': 'BlogPosting',
+    headline: post.data.title,
+    datePublished: post.data.pubDate.toISOString(),
+    dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+    url: new URL(`/blog/${post.id}`, siteUrl).toString(),
+  })),
+};
+
 function formatDate(date: Date): string {
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
@@ -19,7 +35,12 @@ function formatDate(date: Date): string {
 }
 ---
 
-<BaseLayout title="Blog | João Paulo Santos" description="Thoughts on software development, front-end technologies, and my learning journey.">
+<BaseLayout
+  title="Blog | João Paulo Santos"
+  description="Thoughts on software development, front-end technologies, and my learning journey."
+  ogImage="/favicon.svg"
+  schema={blogSchema}
+>
   <Header />
 
   <main id="main-content" class="pt-24 pb-16" tabindex="-1">
@@ -37,7 +58,7 @@ function formatDate(date: Date): string {
         <div class="space-y-8">
           {sortedPosts.map((post) => (
             <article class="group p-6 rounded-2xl bg-[rgb(var(--color-bg-secondary))] border border-[rgb(var(--color-border))] hover:border-[rgb(var(--color-accent)/0.5)] transition-all duration-300">
-              <a href={`/blog/${post.slug}`} class="block">
+              <a href={`/blog/${post.id}`} class="block">
                 <div class="flex flex-wrap gap-2 mb-3">
                   {post.data.tags.map((tag) => (
                     <span class="px-2 py-0.5 text-xs font-medium bg-[rgb(var(--color-bg-tertiary))] text-[rgb(var(--color-text-muted))] rounded">

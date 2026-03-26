@@ -47,13 +47,18 @@ describe('i18n Utilities', () => {
       expect(t('hero.name')).toBe('João Paulo Santos');
     });
 
-    it('should fallback to English for missing translation', () => {
+    it('should fallback to English for missing translation key in selected language', () => {
+      const ptDict = ui.pt as Record<string, string>;
+      const original = ptDict['common.loading'];
+
+      delete ptDict['common.loading'];
+
       const t = useTranslations('pt');
-      
-      // Assuming a key exists in EN but testing fallback behavior
-      const result = t('common.loading' as any);
-      expect(typeof result).toBe('string');
-      expect(result.length).toBeGreaterThan(0);
+      const result = t('common.loading');
+
+      expect(result).toBe(ui.en['common.loading']);
+
+      ptDict['common.loading'] = original;
     });
 
     it('should handle all EN translations without errors', () => {
@@ -185,12 +190,16 @@ describe('i18n Utilities', () => {
       });
     });
 
-    it('should have matching translation keys across languages', () => {
-      const enKeys = new Set(Object.keys(ui.en));
-      const ptKeys = new Set(Object.keys(ui.pt));
-      
-      // Check coverage
-      expect(enKeys.size).toBe(ptKeys.size);
+    it('should have strict key parity across languages', () => {
+      const enKeys = Object.keys(ui.en).sort();
+      const ptKeys = Object.keys(ui.pt).sort();
+
+      const missingInPt = enKeys.filter((key) => !ptKeys.includes(key));
+      const missingInEn = ptKeys.filter((key) => !enKeys.includes(key));
+
+      expect(missingInPt, `Missing keys in PT: ${missingInPt.join(', ')}`).toEqual([]);
+      expect(missingInEn, `Missing keys in EN: ${missingInEn.join(', ')}`).toEqual([]);
+      expect(enKeys).toEqual(ptKeys);
     });
   });
 });

@@ -27,7 +27,24 @@
       }
     }
 
+    function handleGlobalKeyDown(e: KeyboardEvent) {
+      const target = e.target as HTMLElement | null;
+      const isEditable =
+        target?.isContentEditable ||
+        target?.tagName === 'INPUT' ||
+        target?.tagName === 'TEXTAREA' ||
+        target?.tagName === 'SELECT';
+
+      if (isEditable) return;
+
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Home') {
+        e.preventDefault();
+        scrollToTop();
+      }
+    }
+
     window.addEventListener('scroll', handleScroll);
+    window.addEventListener('keydown', handleGlobalKeyDown);
     const button = document.querySelector('#back-to-top-btn') as HTMLButtonElement;
     if (button) {
       button.addEventListener('keydown', handleKeyDown);
@@ -35,6 +52,7 @@
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('keydown', handleGlobalKeyDown);
       if (button) {
         button.removeEventListener('keydown', handleKeyDown);
       }
@@ -44,7 +62,7 @@
 
 <button
   id="back-to-top-btn"
-  on:click={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+  onclick={() => window.scrollTo({ top: 0, behavior: showReducedMotion ? 'auto' : 'smooth' })}
   aria-label="Back to top"
   class="back-to-top-button"
   class:visible={isVisible}

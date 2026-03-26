@@ -27,7 +27,7 @@ test('hero section is visible', async ({ page }) => {
   await expect(hero).toBeVisible();
   
   // Check for call-to-action buttons
-  const ctaButtons = page.locator('a[href*="/#"]');
+  const ctaButtons = page.locator('a[href*="#projects"], a[href*="github.com"]');
   const count = await ctaButtons.count();
   expect(count).toBeGreaterThan(0);
 });
@@ -79,11 +79,10 @@ test('theme toggle works', async ({ page }) => {
 
 test('links are functional', async ({ page }) => {
   await page.goto('/');
-  
-  // Check internal links exist
-  const internalLinks = page.locator('a[href^="/"]');
-  const linkCount = await internalLinks.count();
-  
+
+  // Check navigation links exist
+  const navLinks = page.locator('nav a[href]');
+  const linkCount = await navLinks.count();
   expect(linkCount).toBeGreaterThan(0);
   
   // Check social links exist
@@ -103,7 +102,7 @@ test('page meets accessibility standards', async ({ page }) => {
   expect(await headings.count()).toBeGreaterThan(0);
   
   // Check for skip link (accessibility)
-  const skipLink = page.locator('a[href="#main"]');
+  const skipLink = page.locator('a[href="#main-content"]');
   if (await skipLink.isVisible({ timeout: 1000 }).catch(() => false)) {
     // Skip link exists
   } else {
@@ -138,7 +137,7 @@ test('meta tags are present', async ({ page }) => {
   
   // Check viewport meta
   const viewport = page.locator('meta[name="viewport"]');
-  await expect(viewport).toBeVisible();
+  await expect(viewport).toHaveCount(1);
   
   // Check canonical link
   const canonical = page.locator('link[rel="canonical"]');

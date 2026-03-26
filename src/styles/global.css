@@ -27,6 +27,11 @@
   --color-border: 210 205 230;
   --color-border-hover: 180 175 205;
 
+  /* Error states with proper contrast 4.5:1 for light theme */
+  --color-error: 220 38 38;
+  --color-error-light: 254 226 226;
+  --color-error-text: 127 29 29;
+
   /* Activity heatmap (purple scale – light) */
   --activity-empty: 235 232 248;
   --activity-low: 210 195 240;
@@ -68,6 +73,11 @@ html.dark {
 
   --color-border: 77 68 118;
   --color-border-hover: 103 93 148;
+
+  /* Error states with proper contrast 4.5:1 for dark theme */
+  --color-error: 248 113 113;
+  --color-error-light: 127 29 29;
+  --color-error-text: 254 226 226;
 
   --activity-empty: 30 27 75;
   --activity-low: 59 7 100;
@@ -136,6 +146,11 @@ html.dark body {
 .skip-link:focus-visible {
   transform: translateY(0);
   outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+:focus-visible {
+  outline: 3px solid rgb(var(--color-accent));
   outline-offset: 2px;
 }
 

@@ -43,12 +43,12 @@ const contactInfo = [
       <!-- Contact Form -->
       <ScrollReveal animation="fade-up" delay={100}>
         <div class="glass-card rounded-2xl p-8">
-          <form id="contact-form" class="space-y-6">
+          <form id="contact-form" class="space-y-6" novalidate>
             <!-- Web3Forms Access Key - Required: Set PUBLIC_WEB3FORMS_ACCESS_KEY in env -->
             <input type="hidden" name="access_key" value={import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY} />
             <input type="hidden" name="subject" value="New message from jpclow.dev" />
             <input type="hidden" name="from_name" value="Portfolio Contact Form" />
-            <input type="checkbox" name="botcheck" class="hidden" style="display: none;" />
+            <input type="checkbox" name="botcheck" class="hidden" style="display: none;" aria-hidden="true" tabindex="-1" />
 
             <div>
               <label
@@ -63,10 +63,11 @@ const contactInfo = [
                 name="name"
                 required
                 aria-required="true"
+                aria-describedby="name-error"
                 class="w-full px-4 py-3 rounded-xl bg-[rgb(var(--color-bg-secondary))] border border-[rgb(var(--color-border))] text-[rgb(var(--color-text-primary))] placeholder-[rgb(var(--color-text-muted))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-accent))] focus:border-transparent transition-all"
                 placeholder={t['contact.form.placeholderName']}
               />
-              <p id="name-error" class="text-red-500 text-sm mt-1 hidden" role="alert"></p>
+              <p id="name-error" class="text-[rgb(var(--color-error))] text-sm mt-1 hidden" role="alert"></p>
             </div>
 
             <div>
@@ -82,10 +83,11 @@ const contactInfo = [
                 name="email"
                 required
                 aria-required="true"
+                aria-describedby="email-error"
                 class="w-full px-4 py-3 rounded-xl bg-[rgb(var(--color-bg-secondary))] border border-[rgb(var(--color-border))] text-[rgb(var(--color-text-primary))] placeholder-[rgb(var(--color-text-muted))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-accent))] focus:border-transparent transition-all"
                 placeholder={t['contact.form.placeholderEmail']}
               />
-              <p id="email-error" class="text-red-500 text-sm mt-1 hidden" role="alert"></p>
+              <p id="email-error" class="text-[rgb(var(--color-error))] text-sm mt-1 hidden" role="alert"></p>
             </div>
 
             <div>
@@ -101,10 +103,11 @@ const contactInfo = [
                 rows="5"
                 required
                 aria-required="true"
+                aria-describedby="message-error"
                 class="w-full px-4 py-3 rounded-xl bg-[rgb(var(--color-bg-secondary))] border border-[rgb(var(--color-border))] text-[rgb(var(--color-text-primary))] placeholder-[rgb(var(--color-text-muted))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-accent))] focus:border-transparent transition-all resize-none"
                 placeholder={t['contact.form.placeholderMessage']}
               ></textarea>
-              <p id="message-error" class="text-red-500 text-sm mt-1 hidden" role="alert"></p>
+              <p id="message-error" class="text-[rgb(var(--color-error))] text-sm mt-1 hidden" role="alert"></p>
             </div>
 
             <button
@@ -121,12 +124,13 @@ const contactInfo = [
 
             <!-- Status Messages -->
             <div id="form-status" class="hidden animate-scale-in" role="status" aria-live="polite" aria-atomic="true">
-              <div id="success-message" class="hidden p-4 rounded-xl bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 flex items-center gap-2 animate-slide-down">
+              <p id="form-error-summary" class="hidden mb-3 rounded-xl border border-[rgb(var(--color-error)/0.35)] bg-[rgb(var(--color-error)/0.08)] px-3 py-2 text-sm text-[rgb(var(--color-error-text))]" role="alert"></p>
+              <div id="success-message" class="hidden p-4 rounded-xl bg-[rgb(var(--color-accent)/0.1)] text-[rgb(var(--color-accent))] animate-slide-down">
                 <Icon name="check" size={20} />
                 <span>{t['contact.success']}</span>
               </div>
-              <div id="error-message" class="hidden p-4 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 animate-slide-down">
-                <span>{t['contact.error']}</span>
+              <div id="error-message" class="hidden p-4 rounded-xl bg-[rgb(var(--color-error)/0.1)] text-[rgb(var(--color-error))] animate-slide-down" role="alert" aria-live="assertive">
+                <span id="error-message-text">{t['contact.error']}</span>
               </div>
             </div>
           </form>
@@ -166,7 +170,7 @@ const contactInfo = [
           <!-- Social Links -->
           <ScrollReveal animation="fade-left" delay={600} tag="div">
             <div class="pt-8 border-t border-[rgb(var(--color-border))]">
-              <p class="text-sm text-[rgb(var(--color-text-muted))] mb-4">Connect with me</p>
+              <p class="text-sm text-[rgb(var(--color-text-muted))] mb-4">{t['contact.social.connect']}</p>
               <div class="flex gap-4">
                 <a
                   href="https://github.com/JPClow3"
@@ -212,83 +216,112 @@ const contactInfo = [
   validationEmailInvalid: t['contact.validation.emailInvalid'],
   validationMessage: t['contact.validation.messageRequired'],
   validationMessageMin: t['contact.validation.messageMin'],
+  validationFix: t['contact.validation.fix'],
+  genericError: t['contact.error'],
+  networkError: t['contact.error.network'],
 }}>
   function initContactForm() {
-    const form = document.getElementById('contact-form') as HTMLFormElement;
+    const form = document.getElementById('contact-form');
     if (!form) return;
 
     // Guard against re-initialization to prevent duplicate listeners
-    if ((form as any).dataset.initialized === 'true') return;
-    (form as any).dataset.initialized = 'true';
+    if (form.dataset.initialized === 'true') return;
+    form.dataset.initialized = 'true';
 
-    const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+    const submitBtn = document.getElementById('submit-btn');
     const btnText = document.getElementById('btn-text');
     const btnSpinner = document.getElementById('btn-spinner');
     const formStatus = document.getElementById('form-status');
     const successMessage = document.getElementById('success-message');
     const errorMessage = document.getElementById('error-message');
+    const errorMessageText = document.getElementById('error-message-text');
+    const errorSummary = document.getElementById('form-error-summary');
     
     let isSubmitting = false;
 
     // Validation functions
-    function validateEmail(email: string): boolean {
-      // Simple but effective email validation
-      // More robust than regex, avoids DOM creation
-      return email.includes('@') && email.includes('.') && email.length > 5;
+    function validateEmail(email) {
+      // RFC 5322 simplified regex - more accurate than simple checks
+      // Validates basic structure: localpart@domain.tld
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
     }
 
-    function showError(fieldId: string, message: string) {
+    function showError(fieldId, message) {
       const errorEl = document.getElementById(`${fieldId}-error`);
       const inputEl = document.getElementById(fieldId);
       if (errorEl && inputEl) {
         errorEl.textContent = message;
         errorEl.classList.remove('hidden');
         inputEl.setAttribute('aria-invalid', 'true');
-        inputEl.classList.add('border-red-500');
+        inputEl.classList.add('border-[rgb(var(--color-error))]');
       }
     }
 
-    function clearError(fieldId: string) {
+    function clearError(fieldId) {
       const errorEl = document.getElementById(`${fieldId}-error`);
       const inputEl = document.getElementById(fieldId);
       if (errorEl && inputEl) {
         errorEl.classList.add('hidden');
         inputEl.removeAttribute('aria-invalid');
-        inputEl.classList.remove('border-red-500');
+        inputEl.classList.remove('border-[rgb(var(--color-error))]');
       }
     }
 
-    function validateForm(): boolean {
+    function setErrorSummary(message) {
+      if (!errorSummary) return;
+      errorSummary.textContent = message;
+      errorSummary.classList.remove('hidden');
+    }
+
+    function hideErrorSummary() {
+      if (!errorSummary) return;
+      errorSummary.classList.add('hidden');
+      errorSummary.textContent = '';
+    }
+
+    function setErrorMessage(message) {
+      if (!errorMessageText) return;
+      errorMessageText.textContent = message;
+    }
+
+    function validateForm() {
       let isValid = true;
-      const name = (document.getElementById('name') as HTMLInputElement).value.trim();
-      const email = (document.getElementById('email') as HTMLInputElement).value.trim();
-      const message = (document.getElementById('message') as HTMLTextAreaElement).value.trim();
+      let firstInvalidFieldId = null;
+      const name = (document.getElementById('name')?.value || '').trim();
+      const email = (document.getElementById('email')?.value || '').trim();
+      const message = (document.getElementById('message')?.value || '').trim();
 
       // Clear previous errors
       ['name', 'email', 'message'].forEach(clearError);
 
       if (!name) {
         showError('name', validationName);
+        firstInvalidFieldId = firstInvalidFieldId || 'name';
         isValid = false;
       }
 
       if (!email) {
         showError('email', validationEmail);
+        firstInvalidFieldId = firstInvalidFieldId || 'email';
         isValid = false;
       } else if (!validateEmail(email)) {
         showError('email', validationEmailInvalid);
+        firstInvalidFieldId = firstInvalidFieldId || 'email';
         isValid = false;
       }
 
       if (!message) {
         showError('message', validationMessage);
+        firstInvalidFieldId = firstInvalidFieldId || 'message';
         isValid = false;
       } else if (message.length < 10) {
         showError('message', validationMessageMin);
+        firstInvalidFieldId = firstInvalidFieldId || 'message';
         isValid = false;
       }
 
-      return isValid;
+      return { isValid, firstInvalidFieldId };
     }
 
     // Real-time validation
@@ -296,7 +329,7 @@ const contactInfo = [
       const input = document.getElementById(fieldId);
       if (input) {
         input.addEventListener('blur', () => {
-          if ((input as HTMLInputElement).value.trim()) {
+          if ((input.value || '').trim()) {
             clearError(fieldId);
           }
         });
@@ -314,8 +347,19 @@ const contactInfo = [
       if (formStatus) formStatus.classList.add('hidden');
       if (successMessage) successMessage.classList.add('hidden');
       if (errorMessage) errorMessage.classList.add('hidden');
+      hideErrorSummary();
+      setErrorMessage(genericError);
 
-      if (!validateForm()) {
+      const validation = validateForm();
+      if (!validation.isValid) {
+        if (formStatus) formStatus.classList.remove('hidden');
+        if (errorMessage) errorMessage.classList.remove('hidden');
+        setErrorSummary(validationFix);
+
+        if (validation.firstInvalidFieldId) {
+          document.getElementById(validation.firstInvalidFieldId)?.focus();
+        }
+
         isSubmitting = false;
         return;
       }
@@ -346,10 +390,12 @@ const contactInfo = [
           }
           form.reset();
         } else {
+          setErrorMessage(genericError);
           if (errorMessage) errorMessage.classList.remove('hidden');
         }
       } catch (error) {
         if (formStatus) formStatus.classList.remove('hidden');
+        setErrorMessage(networkError);
         if (errorMessage) errorMessage.classList.remove('hidden');
       } finally {
         // Reset button state

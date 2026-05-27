@@ -1,15 +1,16 @@
 ---
-company: "LDC (Louis Dreyfus Company)"
-role: "Maintenance Intern"
-startDate: 2024-11-01
-location: "Brazil"
+company: "Louis Dreyfus Company"
+role: "Planning & Control Intern"
+startDate: 2025-02-01
+endDate: 2026-01-01
+location: "Rio Verde, Goiás, Brazil"
 tasks:
-  - "Built 10+ automated workflows using Power Automate, reducing manual data entry by 40% and eliminating recurring administrative bottlenecks."
-  - "Developed custom Power Apps for maintenance tracking, enabling real-time equipment status monitoring across 3 departments."
-  - "Created interactive Power BI dashboards tracking KPIs for 50+ assets, providing actionable insights to maintenance leadership."
-  - "Collaborated cross-functionally to identify automation opportunities, documenting processes and implementing solutions iteratively."
-order: 1
+  - "Supported planning and control processes with a focus on operational efficiency and data-driven decision-making."
+  - "Created and maintained KPI reports and dashboards to provide actionable insights to leadership."
+  - "Automated repetitive processes and developed low-code solutions using Power Automate and Power Apps."
+  - "Assisted with process mapping and continuous improvement initiatives across operations."
+order: 2
 lang: en
 ---
 
-Currently working as a Maintenance Intern at LDC, focusing on process automation and data visualization to enhance maintenance operations efficiency.
+Interned in the Planning & Control department at one of the world's largest agribusiness companies, contributing to process automation and operational reporting.

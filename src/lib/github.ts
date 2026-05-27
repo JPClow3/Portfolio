@@ -189,7 +189,10 @@ export async function getGithubActivity(username: string, fallbackEvents: Fallba
   }
 
   try {
-    const response = await fetch(`https://api.github.com/users/${username}/events/public`);
+    const headers: Record<string, string> = { Accept: 'application/vnd.github+json' };
+    const token = import.meta.env.GITHUB_TOKEN;
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const response = await fetch(`https://api.github.com/users/${username}/events/public`, { headers });
 
     if (!response.ok) {
       console.warn(`GitHub activity request returned ${response.status}. Using fallback activity.`);
@@ -259,7 +262,10 @@ export async function getGithubProfile(username: string): Promise<GithubProfile 
   }
 
   try {
-    const response = await fetch(`https://api.github.com/users/${username}`);
+    const headers: Record<string, string> = { Accept: 'application/vnd.github+json' };
+    const token = import.meta.env.GITHUB_TOKEN;
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const response = await fetch(`https://api.github.com/users/${username}`, { headers });
     if (!response.ok) {
       console.warn(`GitHub profile request returned ${response.status}.`);
       return null;

@@ -1,16 +1,15 @@
 ---
 company: "Aliare"
 role: "ERP Support Assistant"
-startDate: 2024-02-01
+startDate: 2024-04-01
 endDate: 2024-10-01
-location: "Brazil"
+location: "Rio Verde, Goiás, Brazil"
 tasks:
-  - "Resolved 200+ ERP support tickets over 8 months, maintaining 95% first-contact resolution rate through systematic troubleshooting."
-  - "Documented common issues and solutions in internal knowledge base, reducing average resolution time by 25%."
-  - "Collaborated with development team to identify and report recurring bugs, contributing to 3 patch releases."
-  - "Trained new support staff on diagnostic procedures and escalation protocols."
-order: 2
+  - "Diagnosed and resolved incidents across the ERP system, supporting end users with clear communication and follow-through."
+  - "Documented recurring issues and bug reports to help the development team track and improve the product."
+  - "Worked with users and developers to trace root causes and follow fixes through to confirmed resolution."
+order: 3
 lang: en
 ---
 
-Provided technical support for ERP systems, helping users resolve issues and contributing to process optimization initiatives.
+Provided technical support for ERP systems, helping users resolve issues and contributing to process documentation and continuous improvement.

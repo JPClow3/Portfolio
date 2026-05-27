@@ -1,4 +1,4 @@
-export const languages = {
+﻿export const languages = {
   en: 'English',
   pt: 'Português',
 } as const;
@@ -23,8 +23,8 @@ export const ui = {
     // Hero
     'hero.greeting': "Hello, I'm",
     'hero.name': 'João Paulo Santos',
-    'hero.title': 'Front-End Developer & QA Automation Engineer',
-    'hero.tagline': 'I specialize in creating exceptional digital experiences. Transforming complex ideas into elegant and efficient code.',
+    'hero.title': 'Software Developer | Python · Django · React',
+    'hero.tagline': 'Building web applications, automation pipelines, and data solutions. Turning real-world demands into functional, well-crafted software.',
     'hero.availability': 'Available for Projects',
     'hero.cta.work': 'View My Work',
     'hero.cta.contact': 'Get in Touch',
@@ -38,7 +38,7 @@ export const ui = {
 
     // Summary
     'summary.title': 'About Me',
-    'summary.text': 'Software Engineering student passionate about front-end development and AI applications. I build interactive web experiences with React and TypeScript, and explore creative AI projects including game development and strategic tools. Currently seeking opportunities to grow as a developer.',
+    'summary.text': 'Software Engineering student building solutions that connect web development, automation, and data. I work with Python, Django, React, and TypeScript — from internal web apps and data pipelines to process automation with Power Automate. I focus on turning real-world demands into functional, organized software that actually helps.',
 
     // Experience
     'experience.title': 'Professional Experience',
@@ -72,21 +72,24 @@ export const ui = {
     'home.hero.tail': 'digital experiences.',
     'home.profileStats': 'Profile Stats',
     'home.currentFocus': 'Current Focus',
-    'home.buildTitle': 'Things I’ve been building',
+    'home.buildTitle': "Things I've been building",
     'home.seeAllRepos': 'See all repos →',
-    'home.journeyTitle': 'My journey so far',
+    'home.journeyTitle': 'Experience',
     'home.present': 'Present',
     'home.latestActivity': 'Latest Activity',
     'home.viewFullProfile': 'View full profile ↗',
     'home.viewProject': 'View Project ↗',
     'home.live': 'Live ↗',
-    'home.contactBadge': 'Let’s Connect',
-    'home.contactTitle': 'Have a project in mind?',
+    'home.repos': 'Repos',
+    'home.roles': 'Roles',
+    'home.viewOnGithub': 'View on GitHub ↗',
+    'home.contactBadge': "Let's Connect",
+    'home.contactTitle': 'Want to work together?',
     'home.sayHello': 'Say hello',
     'home.linkedin': 'LinkedIn ↗',
 
     // GitHub Stats
-    'stats.title': 'GitHub at a Glance',
+    'stats.title': 'GitHub',
     'stats.repos': 'Public Repos',
     'stats.followers': 'Followers',
     'stats.contributions': 'Recent Commits',
@@ -150,8 +153,8 @@ export const ui = {
     // Hero
     'hero.greeting': 'Olá, eu sou',
     'hero.name': 'João Paulo Santos',
-    'hero.title': 'Desenvolvedor Front-End & Engenheiro de Automação QA',
-    'hero.tagline': 'Especializado em criar experiências digitais excepcionais. Transformando ideias complexas em código elegante e eficiente.',
+    'hero.title': 'Desenvolvedor de Software | Python · Django · React',
+    'hero.tagline': 'Construindo aplicações web, pipelines de automação e soluções de dados. Transformando demandas reais em software funcional e bem estruturado.',
     'hero.availability': 'Disponível para Projetos',
     'hero.cta.work': 'Ver Meus Trabalhos',
     'hero.cta.contact': 'Entre em Contato',
@@ -165,7 +168,7 @@ export const ui = {
 
     // Summary
     'summary.title': 'Sobre Mim',
-    'summary.text': 'Estudante de Engenharia de Software apaixonado por desenvolvimento front-end e aplicações de IA. Construo experiências web interativas com React e TypeScript, e exploro projetos criativos de IA incluindo desenvolvimento de jogos e ferramentas estratégicas. Atualmente buscando oportunidades para crescer como desenvolvedor.',
+    'summary.text': 'Estudante de Engenharia de Software construindo soluções que conectam desenvolvimento web, automação e dados. Trabalho com Python, Django, React e TypeScript — desde aplicações web internas e pipelines de dados até automação de processos com Power Automate. Foco em transformar demandas reais em software funcional, organizado e útil.',
 
     // Experience
     'experience.title': 'Experiência Profissional',
@@ -201,19 +204,22 @@ export const ui = {
     'home.currentFocus': 'Foco atual',
     'home.buildTitle': 'Coisas que venho construindo',
     'home.seeAllRepos': 'Ver todos os repositórios →',
-    'home.journeyTitle': 'Minha jornada até aqui',
+    'home.journeyTitle': 'Experiência',
     'home.present': 'Presente',
     'home.latestActivity': 'Atividade recente',
     'home.viewFullProfile': 'Ver perfil completo ↗',
     'home.viewProject': 'Ver projeto ↗',
     'home.live': 'Demo ↗',
+    'home.repos': 'Repos',
+    'home.roles': 'Posições',
+    'home.viewOnGithub': 'Ver no GitHub ↗',
     'home.contactBadge': 'Vamos nos conectar',
-    'home.contactTitle': 'Tem um projeto em mente?',
+    'home.contactTitle': 'Quer trabalhar juntos?',
     'home.sayHello': 'Diga olá',
     'home.linkedin': 'LinkedIn ↗',
 
     // GitHub Stats
-    'stats.title': 'GitHub num Relance',
+    'stats.title': 'GitHub',
     'stats.repos': 'Repos Públicos',
     'stats.followers': 'Seguidores',
     'stats.contributions': 'Commits Recentes',

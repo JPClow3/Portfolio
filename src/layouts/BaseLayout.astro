@@ -17,7 +17,7 @@ interface Props {
 const {
   title,
   description = 'João Paulo Gonçalves Santos portfolio built with Astro and Tailwind.',
-  ogImage = '/favicon.svg',
+  ogImage = '/og-image.svg',
   ogType = 'website',
   twitterCard = 'summary_large_image',
   articlePublishedTime,
@@ -51,7 +51,7 @@ const defaultSchema: Array<Record<string, unknown>> = [
       'https://linkedin.com/in/joaopaulosantosgo',
       'https://www.instagram.com/_joao.paulo_sa/',
     ],
-    jobTitle: 'Front-End Developer & QA Automation Engineer',
+    jobTitle: 'Software Developer | Python, Django & React',
   },
 ];
 
@@ -114,23 +114,13 @@ const allSchema = [...defaultSchema, ...customSchema];
       />
     </noscript>
 
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
-      rel="stylesheet"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
-        rel="stylesheet"
-      />
-    </noscript>
+    <script type="module">
+      import * as lucide from 'https://esm.sh/lucide@latest';
+      function initLucide(el = document) { lucide.createIcons({ icons: lucide, el }); }
+      window._lucideInit = initLucide;
+      initLucide();
+      document.addEventListener('astro:page-load', () => initLucide());
+    </script>
 
     {allSchema.map((schemaBlock) => (
       <script type="application/ld+json" set:html={JSON.stringify(schemaBlock)}></script>

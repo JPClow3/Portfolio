@@ -47,17 +47,6 @@ const recentGithubActivity = await getGithubActivity(
 
 const githubProfile = await getGithubProfile(profileEntry.data.customMetric.githubUsername);
 
-/** Returns intensity levels 0–4 for a heatmap strip (10 squares) from repo+date. */
-function getActivityHeatmapLevels(repo: string, date: string): number[] {
-  const seed = `${repo}-${date}`;
-  const levels: number[] = [];
-  for (let i = 0; i < 10; i++) {
-    const hash = seed.split('').reduce((acc, c) => acc + c.charCodeAt(0) + i, 0);
-    levels.push(hash % 5);
-  }
-  return levels;
-}
-
 const EVENT_BADGE_LABELS_BY_LANG: Record<Lang, Record<EventType, string>> = {
   en: { push: 'Push', pr: 'PR', create: 'Create' },
   pt: { push: 'Commit', pr: 'PR', create: 'Criação' },
@@ -104,16 +93,8 @@ const projectItemsSchema = {
     </div>
 
     <div class="mx-auto max-w-7xl pt-24">
-      <header id="about" class="mb-24 grid grid-cols-1 items-start gap-10 lg:grid-cols-12">
+      <section id="about" class="mb-24 grid grid-cols-1 items-start gap-10 lg:grid-cols-12">
         <div class="lg:col-span-7">
-          <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-[rgb(var(--primary))/0.25] bg-[rgb(var(--primary))/0.1] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[rgb(var(--primary))]">
-            <span class="relative flex h-2.5 w-2.5">
-              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70"></span>
-              <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
-            </span>
-            {t['home.availability']}
-          </div>
-
           <h1 class="max-w-3xl text-5xl font-extrabold leading-[1.02] tracking-tight text-[rgb(var(--color-text-primary))] md:text-6xl lg:text-7xl">
             {t['home.hero.lead']}
             <span class="text-gradient block">{t['home.hero.highlight']}</span>
@@ -148,10 +129,9 @@ const projectItemsSchema = {
               <span class="rounded-full border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-tertiary)/0.5)] px-3 py-1">🇧🇷 {profile.location}</span>
               <span class="rounded-full border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-tertiary)/0.5)] px-3 py-1">{profile.timezone}</span>
             </div>
-            <div class="mt-6 grid grid-cols-3 gap-2 border-t border-[rgb(var(--color-border))] pt-5 text-center">
-              <div><p class="text-lg font-bold">3+</p><p class="text-[10px] uppercase text-[rgb(var(--color-text-muted))]">{t['home.years']}</p></div>
-              <div><p class="text-lg font-bold">20+</p><p class="text-[10px] uppercase text-[rgb(var(--color-text-muted))]">{t['home.projects']}</p></div>
-              <div><p class="text-lg font-bold">100%</p><p class="text-[10px] uppercase text-[rgb(var(--color-text-muted))]">{t['home.commitment']}</p></div>
+            <div class="mt-6 grid grid-cols-2 gap-2 border-t border-[rgb(var(--color-border))] pt-5 text-center">
+              <div><p class="text-lg font-bold">{githubProfile?.publicRepos ?? projects.length}</p><p class="text-[10px] uppercase text-[rgb(var(--color-text-muted))]">{t['home.repos']}</p></div>
+              <div><p class="text-lg font-bold">{experience.length}</p><p class="text-[10px] uppercase text-[rgb(var(--color-text-muted))]">{t['home.roles']}</p></div>
             </div>
           </article>
 
@@ -160,7 +140,7 @@ const projectItemsSchema = {
             <div class="space-y-4">
               {currentFocus.items.map((item) => (
                 <div class="flex items-start gap-3">
-                  <span class="material-symbols-outlined rounded-xl bg-[rgb(var(--color-bg-tertiary))] p-2 text-base text-[rgb(var(--primary))]">{item.icon}</span>
+                  <span class="flex items-center justify-center rounded-xl bg-[rgb(var(--color-bg-tertiary))] p-2 text-[rgb(var(--primary))]" aria-hidden="true"><i data-lucide={item.icon} class="w-5 h-5"></i></span>
                   <div>
                     <p class="text-[10px] uppercase tracking-[0.18em] text-[rgb(var(--color-text-muted))]">{item.label}</p>
                     <p class="text-sm text-[rgb(var(--color-text-primary))]">{item.value}</p>
@@ -170,10 +150,9 @@ const projectItemsSchema = {
             </div>
           </article>
         </div>
-      </header>
+      </section>
 
-      <section class="mb-24 overflow-hidden rounded-2xl border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/var(--glass-bg-opacity))] px-4 py-8">
-        <h3 class="mb-4 text-center text-xs font-bold uppercase tracking-[0.25em] text-[rgb(var(--color-text-muted))]">{t['home.technologies']}</h3>
+      <section class="mb-24 overflow-hidden rounded-2xl border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/var(--glass-bg-opacity))] px-4 py-6">
         <div class="marquee flex min-w-max gap-6 whitespace-nowrap py-2 text-sm font-semibold uppercase tracking-[0.16em] text-[rgb(var(--color-text-secondary))]">
           {[...techMarquee, ...techMarquee].map((tech) => (
             <span class="rounded-full border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary))] px-5 py-2">{tech}</span>
@@ -280,33 +259,33 @@ const projectItemsSchema = {
         </div>
         <div class="space-y-4">
           {recentGithubActivity.map((event) => {
-            const heatLevels = getActivityHeatmapLevels(event.repo, event.date);
             const eventType = event.eventType ?? 'push';
             return (
-              <a
-                href={event.url}
-                target="_blank"
-                rel="noreferrer"
-                class="activity-card group glass-panel block overflow-hidden rounded-2xl transition-all hover:border-[rgb(var(--primary))]/40"
-              >
+              <article class="activity-card glass-panel overflow-hidden rounded-2xl transition-all hover:border-[rgb(var(--primary))]/40">
                 <div class="flex items-center justify-between border-b border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/var(--glass-bg-opacity))] px-4 py-3">
                   <div class="flex items-center gap-3">
-                    <span class="text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--primary))]">{event.repo}</span>
+                    <a
+                      href={event.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      class="text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--primary))] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
+                    >{event.repo}</a>
                     <span class={`rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${eventType === 'push' ? 'bg-[rgb(var(--primary)/0.15)] text-[rgb(var(--primary))]' : eventType === 'pr' ? 'bg-[rgb(var(--primary)/0.25)] text-[rgb(var(--primary))]' : 'bg-[rgb(var(--primary)/0.35)] text-[rgb(var(--primary))]'}`}>
                       {EVENT_BADGE_LABELS[eventType]}
                     </span>
                   </div>
                   <span class="text-xs text-[rgb(var(--color-text-muted))]">{event.date}</span>
                 </div>
-                <div class="p-4">
+                <div class="flex items-end justify-between gap-4 p-4">
                   <p class="text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{event.message}</p>
-                  <div class="mt-3 flex gap-1">
-                    {heatLevels.map((level, i) => (
-                      <span class={`h-3 w-3 shrink-0 rounded-sm activity-heat-${level}`} aria-hidden />
-                    ))}
-                  </div>
+                  <a
+                    href={event.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    class="shrink-0 text-xs text-[rgb(var(--color-text-muted))] transition-colors hover:text-[rgb(var(--primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
+                  >{t['home.viewOnGithub']}</a>
                 </div>
-              </a>
+              </article>
             );
           })}
         </div>
@@ -314,7 +293,6 @@ const projectItemsSchema = {
 
       <footer id="contact" class="glass-panel mb-8 flex flex-col items-center justify-between gap-6 rounded-3xl p-10 text-center md:flex-row md:text-left">
         <div>
-          <p class="mb-2 inline-block rounded-full border border-[rgb(var(--primary))]/40 bg-[rgb(var(--primary))]/20 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--primary))]">{t['home.contactBadge']}</p>
           <h2 class="text-4xl font-bold">{t['home.contactTitle']}</h2>
           <a class="mt-2 block text-xl text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-text-primary))]" href={`mailto:${profile.email}`}>{profile.email}</a>
         </div>

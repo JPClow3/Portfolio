@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="orb1" cx="15%" cy="15%" r="40%">
+      <stop offset="0%" stop-color="#4b2bee" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#4b2bee" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="orb2" cx="85%" cy="85%" r="40%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#4b2bee"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#13102222"/>
+  <rect width="1200" height="630" fill="url(#orb1)"/>
+  <rect width="1200" height="630" fill="url(#orb2)"/>
+
+  <!-- Left accent bar -->
+  <rect x="80" y="160" width="5" height="310" rx="3" fill="url(#textGrad)"/>
+
+  <!-- Name -->
+  <text x="115" y="260" font-family="system-ui, -apple-system, sans-serif" font-size="68" font-weight="800" fill="#e2e8f0" letter-spacing="-2">João Paulo</text>
+  <text x="115" y="340" font-family="system-ui, -apple-system, sans-serif" font-size="68" font-weight="800" fill="#e2e8f0" letter-spacing="-2">Gonçalves Santos</text>
+
+  <!-- Role -->
+  <text x="115" y="405" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="500" fill="#a78bfa" letter-spacing="0.5">Frontend Engineer</text>
+
+  <!-- Divider -->
+  <line x1="115" y1="435" x2="560" y2="435" stroke="#4b2bee" stroke-opacity="0.35" stroke-width="1.5"/>
+
+  <!-- Tags -->
+  <rect x="115" y="455" width="130" height="36" rx="18" fill="#4b2bee" fill-opacity="0.2" stroke="#4b2bee" stroke-opacity="0.4" stroke-width="1"/>
+  <text x="180" y="478" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#a78bfa" text-anchor="middle" letter-spacing="1">ASTRO</text>
+
+  <rect x="258" y="455" width="160" height="36" rx="18" fill="#4b2bee" fill-opacity="0.2" stroke="#4b2bee" stroke-opacity="0.4" stroke-width="1"/>
+  <text x="338" y="478" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#a78bfa" text-anchor="middle" letter-spacing="1">TYPESCRIPT</text>
+
+  <rect x="431" y="455" width="130" height="36" rx="18" fill="#4b2bee" fill-opacity="0.2" stroke="#4b2bee" stroke-opacity="0.4" stroke-width="1"/>
+  <text x="496" y="478" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#a78bfa" text-anchor="middle" letter-spacing="1">SVELTE</text>
+
+  <!-- Site URL (bottom right) -->
+  <text x="1120" y="590" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="600" fill="#64748b" text-anchor="end" letter-spacing="0.5">jpclow.dev</text>
+</svg>

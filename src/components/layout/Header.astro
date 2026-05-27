@@ -63,7 +63,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
           class="hidden md:inline-flex items-center gap-1.5 rounded-full bg-[rgb(var(--color-accent))] px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(79,70,229,0.35)] transition hover:bg-[rgb(var(--color-accent-hover))]"
           aria-label={`${t['nav.resume']} PDF`}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+          <i data-lucide="download" class="w-4 h-4" aria-hidden="true" focusable="false"></i>
           {t['nav.resume']}
         </a>
 
@@ -71,6 +71,8 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
         <div class="hidden md:flex items-center gap-0.5 rounded-full border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.5)] p-0.5" role="group" aria-label="Select language">
           <a
             href="/"
+            data-lang-link
+            data-lang-base="/"
             class:list={[
               'px-2.5 py-1 text-xs font-semibold rounded-full transition-colors',
               isEnglish
@@ -82,6 +84,8 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
           >EN</a>
           <a
             href="/pt/"
+            data-lang-link
+            data-lang-base="/pt/"
             class:list={[
               'px-2.5 py-1 text-xs font-semibold rounded-full transition-colors',
               isPortuguese
@@ -105,41 +109,13 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
           id="mobile-menu-button"
         >
           <!-- Hamburger icon -->
-          <svg
-            id="menu-icon-open"
-            aria-hidden="true"
-            focusable="false"
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-6 h-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
+          <span id="menu-icon-open" aria-hidden="true" class="flex items-center justify-center">
+            <i data-lucide="menu" class="w-6 h-6" focusable="false"></i>
+          </span>
           <!-- Close icon (hidden by default) -->
-          <svg
-            id="menu-icon-close"
-            aria-hidden="true"
-            focusable="false"
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-6 h-6 hidden"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <span id="menu-icon-close" aria-hidden="true" class="hidden flex items-center justify-center">
+            <i data-lucide="x" class="w-6 h-6" focusable="false"></i>
+          </span>
         </button>
       </div>
     </div>
@@ -165,8 +141,9 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
           <a
             href={resumeLink}
             download
-            class="px-4 py-3 text-sm font-medium text-[rgb(var(--color-accent))] hover:bg-[rgb(var(--color-accent)/0.1)] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
+            class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-[rgb(var(--color-accent))] hover:bg-[rgb(var(--color-accent)/0.1)] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
           >
+            <i data-lucide="download" class="w-4 h-4" aria-hidden="true"></i>
             {t['nav.resume']}
           </a>
 
@@ -175,6 +152,8 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
             <Icon name="globe" size={16} class="text-[rgb(var(--color-text-muted))]" />
             <a
               href="/"
+              data-lang-link
+              data-lang-base="/"
               class:list={[
                 'px-3 py-1.5 text-xs font-semibold rounded-full transition-colors',
                 isEnglish
@@ -186,6 +165,8 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
             >EN</a>
             <a
               href="/pt/"
+              data-lang-link
+              data-lang-base="/pt/"
               class:list={[
                 'px-3 py-1.5 text-xs font-semibold rounded-full transition-colors',
                 isPortuguese
@@ -377,9 +358,20 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
     handleScroll(); // Check initial state
   }
 
+  function initLangLinks() {
+    const hash = window.location.hash;
+    if (!hash) return;
+    document.querySelectorAll<HTMLAnchorElement>('[data-lang-link]').forEach((link) => {
+      const base = link.dataset.langBase;
+      if (base) link.href = base + hash;
+    });
+  }
+
   // Initialize on load
   initMobileMenu();
   initHeaderScroll();
+  initLangLinks();
+  window.addEventListener('hashchange', initLangLinks);
 
   // Re-initialize on Astro page transitions
   document.addEventListener('astro:page-load', () => {

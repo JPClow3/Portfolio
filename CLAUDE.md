@@ -44,28 +44,12 @@ src/
 │   │   ├── Header.astro            # Glassmorphism nav, mobile menu
 │   │   └── Footer.astro            # Social links, credits
 │   ├── islands/             # Interactive Svelte components
+│   │   ├── BackToTop.svelte        # Scroll-to-top button
 │   │   ├── ThemeToggle.svelte      # Dark/light toggle w/ rotate animation
 │   │   └── HeroScene.svelte        # Three.js 3D scene
-│   └── sections/            # Reusable page sections (Astro)
-│       ├── Hero.astro              # 3D background, CTAs, scroll indicator
-│       ├── About.astro             # Profile, education (glass-card)
-│       ├── Experience.astro        # Timeline layout w/ ScrollReveal
-│       ├── Projects.astro          # Bento grid, gradient placeholders
-│       ├── Skills.astro            # Categorized skills w/ proficiency badges
-│       ├── Contact.astro           # Web3Forms, client validation
-│       ├── BlogPreview.astro       # Blog listing snippet
-│       ├── MicroInteraction.astro  # Micro-copy / UI copy block
-│       └── home/                   # Home-page specific subcomponents
-│           ├── HeroPersonal.astro  # Personal hero block
-│           ├── ContactPanel.astro  # Contact card
-│           ├── ProjectsBento.astro # Bento grid for projects
-│           ├── JourneyTimeline.astro # Experience timeline
-│           ├── TechMarquee.astro   # Tech strip
-│           ├── GithubHistory.astro # GitHub activity
-│           ├── GlassPanel.astro    # Glass-style panel
-│           └── types.ts            # Shared types for home sections
+│   └── pages/               # Page-level components (Astro)
+│       └── HomePage.astro          # Full homepage layout (all sections inline)
 ├── content/
-│   ├── config.ts            # Zod schemas for collections
 │   ├── projects/             # Project markdown files
 │   ├── experience/           # Experience markdown files
 │   ├── profile/              # Profile content (current focus, custom metric)
@@ -184,7 +168,7 @@ Respects `prefers-reduced-motion`. Re-initializes on Astro page transitions via 
 ## Key Patterns
 
 ### Homepage
-- `pages/index.astro` is a **custom single-page layout**: sections are inlined (hero, tech marquee, projects bento, journey timeline, GitHub history, contact footer). It does not compose the reusable section components from `sections/`. The `sections/` and `sections/home/` components are available for alternative layouts or future refactors.
+- `pages/index.astro` delegates to `components/pages/HomePage.astro`, which owns the full page layout with all sections inlined (hero, tech marquee, projects bento, journey timeline, GitHub stats, contact footer). The `pt/index.astro` page renders the same component, picking up the `pt` locale from Astro's i18n routing.
 
 ### Islands Architecture
 - Astro components are static by default (zero JS shipped)
@@ -241,22 +225,22 @@ Configured in `tsconfig.json`:
 
 ## Component Inventory
 
-| Component | Uses Icon | Uses ScrollReveal | Key Features |
-|-----------|-----------|-------------------|--------------|
-| Hero | arrow-down | No (CSS animations) | 3D background, gradient text, CTAs |
-| About | graduation, calendar | Yes (fade-right, fade-up) | Glass-card education, hover-lift |
-| Experience | calendar, briefcase, check | Yes (fade-left/right, stagger) | Timeline layout, alternating cards |
-| Projects | external-link | Yes (fade-up, stagger) | Bento grid, gradient placeholders |
-| Skills | category-mapped icons | Yes (fade-up, stagger) | Proficiency badges, gradient icon bg |
-| Contact | email, phone, location, github, linkedin, instagram, check | Yes (fade-up, fade-left) | Web3Forms, validation, loading states |
-| Header | Icon component | No | Glass, scroll shadow, mobile menu |
-| Footer | Inline SVGs | No | Social links, credits |
+| Component | File | Key Features |
+|-----------|------|--------------|
+| HomePage | `components/pages/HomePage.astro` | Full page layout — hero, marquee, bento grid, timeline, GitHub stats, contact footer |
+| Header | `components/layout/Header.astro` | Glass nav, scroll shadow, mobile menu, i18n |
+| Footer | `components/layout/Footer.astro` | Social links, credits |
+| Icon | `components/common/Icon.astro` | 17-icon SVG system |
+| ScrollReveal | `components/common/ScrollReveal.astro` | IntersectionObserver scroll animations |
+| HeroScene | `components/islands/HeroScene.svelte` | Three.js 3D icosahedron + particles |
+| ThemeToggle | `components/islands/ThemeToggle.svelte` | Dark/light toggle with icon animation |
+| BackToTop | `components/islands/BackToTop.svelte` | Scroll-to-top button |
 
 ---
 
 ## Important Files
 - `astro.config.mjs` — Svelte, MDX, Sitemap, i18n config (static output, no adapter)
-- `src/content/config.ts` — Zod schemas for content validation
+- `src/content.config.ts` — Zod schemas for content collections (Astro content layer)
 - `src/styles/global.css` — Complete design system (variables, utilities, animations)
 - `src/lib/i18n.ts` — Bilingual translations (EN/PT)
 - `src/components/common/Icon.astro` — Centralized icon system
@@ -277,4 +261,10 @@ Configured in `tsconfig.json`:
 
 ## Deployment
 - Static output (`output: 'static'`). No platform adapter.
-- Deploy on Railway: connect GitHub repo, build command `npm run build`, start command `npm start` (serves `dist/` via `serve`). Set env vars (e.g. Web3Forms) in Railway dashboard. Generate or attach a domain in Networking.
+- **Production:** Docker + Dokploy on AWS EC2. Multi-stage build: `node:22-alpine` builds `dist/`, `nginx:alpine` serves it.
+  - `Dockerfile` — two-stage build (see file for details)
+  - `nginx.conf` — static file serving, SSG routing (`try_files`), security headers, gzip, asset caching
+  - `.dockerignore` — excludes `node_modules`, `dist`, `.git`, tests
+  - Set `PUBLIC_WEB3FORMS_ACCESS_KEY` as a Docker build arg in Dokploy's service settings (it's embedded at build time).
+  - In Dokploy: create an App service, point to this repo, select Dockerfile. Set build arg `PUBLIC_WEB3FORMS_ACCESS_KEY`. Expose port 80.
+- **Local preview:** `npm run preview` (Astro's built-in preview server on port 4321)

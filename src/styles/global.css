@@ -99,6 +99,10 @@ html {
   scroll-behavior: smooth;
 }
 
+[id] {
+  scroll-margin-top: 5rem;
+}
+
 html,
 body {
   margin: 0;

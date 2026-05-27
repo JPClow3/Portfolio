@@ -1,0 +1,11 @@
+node_modules
+dist
+.astro
+.git
+.github
+tests
+playwright-report
+test-results
+.env
+.env.local
+.env.*.local

@@ -32,6 +32,6 @@
     "@playwright/test": "^1.60.0",
     "@vitest/ui": "^4.1.7",
     "happy-dom": "^20.9.0",
-    "vitest": "^4.1.7"
+    "vitest": "^4.1.8"
   }
 }

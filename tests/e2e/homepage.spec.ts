@@ -1,4 +1,87 @@
 import { test, expect } from '@playwright/test';
+import { inflateSync } from 'node:zlib';
+
+function paethPredictor(left: number, up: number, upLeft: number) {
+  const estimate = left + up - upLeft;
+  const leftDistance = Math.abs(estimate - left);
+  const upDistance = Math.abs(estimate - up);
+  const upLeftDistance = Math.abs(estimate - upLeft);
+
+  if (leftDistance <= upDistance && leftDistance <= upLeftDistance) return left;
+  if (upDistance <= upLeftDistance) return up;
+
+  return upLeft;
+}
+
+function pngHasNonBlankPixels(buffer: Buffer) {
+  let offset = 8;
+  let width = 0;
+  let height = 0;
+  let colorType = 6;
+  const idatChunks: Buffer[] = [];
+
+  while (offset < buffer.length) {
+    const length = buffer.readUInt32BE(offset);
+    const type = buffer.toString('ascii', offset + 4, offset + 8);
+    const dataStart = offset + 8;
+    const dataEnd = dataStart + length;
+
+    if (type === 'IHDR') {
+      width = buffer.readUInt32BE(dataStart);
+      height = buffer.readUInt32BE(dataStart + 4);
+      colorType = buffer[dataStart + 9];
+    } else if (type === 'IDAT') {
+      idatChunks.push(buffer.subarray(dataStart, dataEnd));
+    } else if (type === 'IEND') {
+      break;
+    }
+
+    offset = dataEnd + 4;
+  }
+
+  const bytesPerPixel = colorType === 6 ? 4 : 3;
+  const stride = width * bytesPerPixel;
+  const inflated = inflateSync(Buffer.concat(idatChunks));
+  let readOffset = 0;
+  let previous = new Uint8Array(stride);
+  let visiblePixels = 0;
+
+  for (let y = 0; y < height; y += 1) {
+    const filter = inflated[readOffset];
+    readOffset += 1;
+    const current = new Uint8Array(stride);
+
+    for (let x = 0; x < stride; x += 1) {
+      const raw = inflated[readOffset + x];
+      const left = x >= bytesPerPixel ? current[x - bytesPerPixel] : 0;
+      const up = previous[x] ?? 0;
+      const upLeft = x >= bytesPerPixel ? previous[x - bytesPerPixel] : 0;
+
+      if (filter === 1) current[x] = (raw + left) & 255;
+      else if (filter === 2) current[x] = (raw + up) & 255;
+      else if (filter === 3) current[x] = (raw + Math.floor((left + up) / 2)) & 255;
+      else if (filter === 4) current[x] = (raw + paethPredictor(left, up, upLeft)) & 255;
+      else current[x] = raw;
+    }
+
+    for (let x = 0; x < stride; x += bytesPerPixel * 18) {
+      const red = current[x] ?? 0;
+      const green = current[x + 1] ?? 0;
+      const blue = current[x + 2] ?? 0;
+      const alpha = bytesPerPixel === 4 ? current[x + 3] ?? 0 : 255;
+
+      if (alpha > 4 && red + green + blue > 8) {
+        visiblePixels += 1;
+      }
+    }
+
+    if (visiblePixels > 12) return true;
+    readOffset += stride;
+    previous = current;
+  }
+
+  return false;
+}
 
 test('homepage loads and displays main sections', async ({ page }) => {
   await page.goto('/');
@@ -32,6 +115,75 @@ test('hero section is visible', async ({ page }) => {
   expect(count).toBeGreaterThan(0);
 });
 
+test('ambient Three.js scene mounts and reacts to page scroll', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/');
+
+  const scene = page.locator('[data-testid="site-scene"]');
+  const canvas = scene.locator('canvas');
+  await expect(canvas).toBeVisible({ timeout: 15_000 });
+  await expect(scene).toHaveAttribute('data-scene-ready', 'true', { timeout: 15_000 });
+
+  await page.waitForTimeout(250);
+  const hasVisiblePixels = pngHasNonBlankPixels(await canvas.screenshot());
+
+  expect(hasVisiblePixels).toBeTruthy();
+
+  const initialTarget = Number(await scene.getAttribute('data-scroll-target'));
+  await page.evaluate(() => window.scrollTo(0, window.innerHeight));
+
+  await expect.poll(async () => Number(await scene.getAttribute('data-scroll-target'))).toBeGreaterThan(initialTarget + 0.02);
+});
+
+test('active navigation and ambient scene follow homepage sections', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/');
+
+  const scene = page.locator('[data-testid="site-scene"]');
+  await expect(scene).toHaveAttribute('data-scene-ready', 'true', { timeout: 15_000 });
+
+  await page.locator('#projects').scrollIntoViewIfNeeded();
+
+  const projectNav = page.locator('[data-nav-section="projects"]').first();
+  await expect(projectNav).toHaveAttribute('data-active', 'true', { timeout: 5_000 });
+  await expect(scene).toHaveAttribute('data-scene-section', 'projects', { timeout: 5_000 });
+});
+
+test('logo focus pulls ambient particles without breaking reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/');
+
+  const scene = page.locator('[data-testid="site-scene"]');
+  const logo = page.locator('[data-logo-signal]');
+
+  await expect(scene).toHaveAttribute('data-scene-ready', 'true', { timeout: 15_000 });
+  await logo.hover();
+  await expect(scene).toHaveAttribute('data-logo-focus', 'true', { timeout: 5_000 });
+  await page.mouse.move(20, 180);
+  await expect(scene).toHaveAttribute('data-logo-focus', 'false', { timeout: 5_000 });
+
+  const pageErrors: string[] = [];
+  page.on('pageerror', (error) => pageErrors.push(error.message));
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.reload();
+  await expect(scene.locator('.static-gradient')).toBeVisible({ timeout: 5_000 });
+  await logo.focus();
+  await page.waitForTimeout(100);
+  expect(pageErrors).toEqual([]);
+});
+
+test('project card interaction keeps case study links clickable', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/');
+
+  const motoTrackCard = page.locator('[data-testid="project-card"]').filter({ hasText: 'Moto Track' }).first();
+  await expect(motoTrackCard).toBeVisible();
+  await motoTrackCard.hover();
+  await expect(motoTrackCard).toHaveAttribute('data-pointer-active', 'true', { timeout: 5_000 });
+  await motoTrackCard.locator('a[href="/projects/moto-track/"]').click();
+  await expect(page).toHaveURL(/\/projects\/moto-track\/?$/);
+});
+
 test('mobile menu toggles correctly', async ({ page }) => {
   // Set mobile viewport
   await page.setViewportSize({ width: 375, height: 667 });
@@ -58,22 +210,20 @@ test('mobile menu toggles correctly', async ({ page }) => {
 });
 
 test('theme toggle works', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('theme', 'light'));
   await page.goto('/');
   
   // Look for theme toggle button
-  const themeToggle = page.locator('button[aria-label*="theme" i], button[aria-label*="dark" i], button[aria-label*="light" i]').first();
+  const themeToggle = page.locator('button[aria-label="Switch to dark mode"], button[aria-label="Switch to light mode"]').first();
   
   if (await themeToggle.isVisible()) {
     const initialClass = await page.locator('html').getAttribute('class');
+    await expect(themeToggle).toBeEnabled();
     
     // Click theme button
     await themeToggle.click();
     
-    // Wait a bit for class change
-    await page.waitForTimeout(200);
-    
-    const newClass = await page.locator('html').getAttribute('class');
-    expect(newClass).not.toBe(initialClass);
+    await expect.poll(async () => page.locator('html').getAttribute('class')).not.toBe(initialClass);
   }
 });
 

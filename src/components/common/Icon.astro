@@ -1,6 +1,6 @@
 ---
 interface Props {
-  name: 'github' | 'linkedin' | 'email' | 'phone' | 'location' | 'external-link' | 'arrow-down' | 'menu' | 'close' | 'sun' | 'moon' | 'calendar' | 'briefcase' | 'graduation' | 'code' | 'check' | 'instagram' | 'globe';
+  name: 'github' | 'linkedin' | 'email' | 'phone' | 'location' | 'external-link' | 'arrow-down' | 'menu' | 'close' | 'sun' | 'moon' | 'calendar' | 'briefcase' | 'graduation' | 'code' | 'check' | 'instagram' | 'globe' | 'download' | 'book-open' | 'headphones';
   size?: number;
   class?: string;
 }
@@ -29,6 +29,9 @@ const icons: Record<string, string> = {
   check: `<polyline points="20 6 9 17 4 12"/>`,
   instagram: `<rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>`,
   globe: `<circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>`,
+  download: `<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>`,
+  'book-open': `<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>`,
+  headphones: `<path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/>`,
 };
 
 const iconPath = icons[name] || '';

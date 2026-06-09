@@ -56,21 +56,21 @@ function formatDate(date: Date): string {
 >
   <Header />
 
-  <main id="main-content" class="pt-24 pb-16" tabindex="-1">
-    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+  <main id="main-content" class="pb-14 pt-[5.5rem]" tabindex="-1">
+    <article class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
       <!-- Header -->
-      <header class="mb-12">
-        <div class="flex flex-wrap gap-2 mb-4">
+      <header class="mb-9">
+        <div class="mb-4 flex flex-wrap gap-2">
           {tags.map((tag) => (
-            <span class="px-3 py-1 text-xs font-medium bg-[rgb(var(--color-accent)/0.1)] text-[rgb(var(--color-accent))] rounded-full">
+            <span class="rounded px-2.5 py-1 text-xs font-medium bg-[rgb(var(--color-accent)/0.1)] text-[rgb(var(--color-accent))]">
               {tag}
             </span>
           ))}
         </div>
 
-        <h1 class="text-4xl sm:text-5xl font-bold mb-4">{title}</h1>
+        <h1 class="mb-4 text-3xl font-bold sm:text-4xl">{title}</h1>
 
-        <p class="text-lg text-[rgb(var(--color-text-secondary))] mb-6">
+        <p class="mb-5 text-base leading-relaxed text-[rgb(var(--color-text-secondary))]">
           {description}
         </p>
 
@@ -88,7 +88,7 @@ function formatDate(date: Date): string {
         </div>
       </header>
 
-      <nav aria-label="Breadcrumb" class="mb-8">
+      <nav aria-label="Breadcrumb" class="mb-7">
         <ol class="flex items-center gap-2 text-sm text-[rgb(var(--color-text-secondary))]">
           <li>
             <a
@@ -116,7 +116,7 @@ function formatDate(date: Date): string {
 
       <!-- Hero Image -->
       {heroImage && (
-        <div class="mb-12 rounded-2xl overflow-hidden shadow-lg">
+        <div class="mb-9 overflow-hidden rounded-lg border border-[rgb(var(--color-border))] shadow-sm">
           <img
             src={heroImage}
             alt={title}
@@ -128,15 +128,15 @@ function formatDate(date: Date): string {
       )}
 
       <!-- Content -->
-      <div class="prose prose-lg dark:prose-invert max-w-none">
+      <div class="prose prose-slate dark:prose-invert max-w-none">
         <slot />
       </div>
 
       <!-- Back to blog -->
-      <div class="mt-16 pt-8 border-t border-[rgb(var(--color-border))]">
+      <div class="mt-12 border-t border-[rgb(var(--color-border))] pt-7">
         <a
           href="/blog"
-          class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-[rgb(var(--color-accent))] hover:bg-[rgb(var(--color-accent)/0.1)] transition-colors focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))] group"
+          class="group inline-flex items-center gap-2 rounded-md px-3 py-2 text-[rgb(var(--color-accent))] transition-colors hover:bg-[rgb(var(--color-accent)/0.1)] focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
         >
           <span class="group-hover:-translate-x-1 transition-transform">
             <Icon name="arrow-down" size={16} class="rotate-90" />

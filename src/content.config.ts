@@ -14,6 +14,17 @@ const projectsCollection = defineCollection({
     featured: z.boolean().default(false),
     order: z.number().default(0),
     lang: z.enum(['en', 'pt']).default('en'),
+    caseStudy: z.boolean().default(false),
+    problem: z.string().optional(),
+    solution: z.string().optional(),
+    impact: z.string().optional(),
+    role: z.string().optional(),
+    year: z.string().optional(),
+    metrics: z.array(z.object({
+      label: z.string(),
+      value: z.string(),
+    })).default([]),
+    highlights: z.array(z.string()).default([]),
   }),
 });
 

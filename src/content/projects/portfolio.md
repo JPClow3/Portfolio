@@ -5,7 +5,7 @@ tech: ["Astro", "Svelte", "TypeScript", "Tailwind CSS", "Three.js"]
 link: "https://jpclow.dev"
 github: "https://github.com/JPClow3/Portfolio"
 featured: true
-order: 4
+order: 6
 lang: en
 ---
 

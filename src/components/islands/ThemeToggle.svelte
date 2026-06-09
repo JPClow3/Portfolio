@@ -39,8 +39,10 @@
 
 <button
   onclick={toggleTheme}
+  disabled={!mounted}
   class="relative p-2 rounded-lg bg-[rgb(var(--color-bg-secondary))] hover:bg-[rgb(var(--color-bg-tertiary))] border border-[rgb(var(--color-border))] transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] overflow-hidden"
   aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+  aria-busy={!mounted}
   title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
 >
   {#if mounted}

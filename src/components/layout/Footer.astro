@@ -41,21 +41,21 @@ const socialLinks = [
 ];
 ---
 
-<footer class="bg-[rgb(var(--color-bg-secondary))] border-t border-[rgb(var(--color-border))]">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<footer class="border-t border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.72)]">
+  <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
     <!-- Main Footer Content -->
-    <div class="grid md:grid-cols-3 gap-8 mb-8">
+    <div class="mb-7 grid gap-7 md:grid-cols-3">
       <!-- Logo & About -->
       <div>
-        <a href="/" class="text-2xl font-bold gradient-text">JP</a>
-        <p class="mt-3 text-sm text-[rgb(var(--color-text-secondary))] leading-relaxed">
+        <a href="/" class="text-xl font-bold gradient-text">JP</a>
+        <p class="mt-3 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">
           Front-End Developer & QA Automation Engineer building tested, accessible web experiences.
         </p>
       </div>
 
       <!-- Navigation Links -->
       <div>
-        <h3 class="font-semibold mb-4 text-[rgb(var(--color-text-primary))]">Quick Links</h3>
+        <h3 class="mb-3 font-semibold text-[rgb(var(--color-text-primary))]">Quick Links</h3>
         <nav class="grid grid-cols-2 gap-2">
           {navLinks.map((link) => (
             <a
@@ -70,14 +70,14 @@ const socialLinks = [
 
       <!-- Social & Contact -->
       <div>
-        <h3 class="font-semibold mb-4 text-[rgb(var(--color-text-primary))]">Connect</h3>
+        <h3 class="mb-3 font-semibold text-[rgb(var(--color-text-primary))]">Connect</h3>
         <div class="flex items-center gap-3">
           {socialLinks.map((link) => (
             <a
               href={link.href}
               target={link.href.startsWith('http') ? '_blank' : undefined}
               rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-              class="p-2.5 rounded-lg bg-[rgb(var(--color-bg-tertiary))] text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-accent))] hover:bg-[rgb(var(--color-accent)/0.1)] transition-colors"
+              class="rounded-md bg-[rgb(var(--color-bg-tertiary))] p-2.5 text-[rgb(var(--color-text-secondary))] transition-colors hover:bg-[rgb(var(--color-accent)/0.1)] hover:text-[rgb(var(--color-accent))]"
               aria-label={link.name}
             >
               <Icon name={link.icon} size={20} />
@@ -88,8 +88,8 @@ const socialLinks = [
     </div>
 
     <!-- Divider -->
-    <div class="border-t border-[rgb(var(--color-border))] pt-8">
-      <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div class="border-t border-[rgb(var(--color-border))] pt-7">
+      <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
         <!-- Copyright -->
         <p class="text-sm text-[rgb(var(--color-text-muted))]">
           &copy; {currentYear} João Paulo Gonçalves Santos. All rights reserved.
@@ -98,27 +98,16 @@ const socialLinks = [
         <!-- Back to Top -->
         <a
           href="#"
-          class="inline-flex items-center gap-2 text-sm text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-accent))] transition-colors group"
+          class="group inline-flex items-center gap-2 text-sm text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-accent))]"
           aria-label={t['common.backToTop']}
         >
           {t['common.backToTop']}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-4 h-4 group-hover:-translate-y-0.5 transition-transform"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="m18 15-6-6-6 6"/>
-          </svg>
+          <Icon name="arrow-down" size={16} class="rotate-180 transition-transform group-hover:-translate-y-0.5" />
         </a>
       </div>
 
       <!-- Tech Stack -->
-      <p class="text-center text-sm text-[rgb(var(--color-text-muted))] mt-6">
+      <p class="mt-5 text-center text-sm text-[rgb(var(--color-text-muted))]">
         Built with
         <a
           href="https://astro.build"

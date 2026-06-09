@@ -4,7 +4,7 @@ description: "A dynamic text adventure set in the high fantasy world of Aerthos,
 tech: ["TypeScript", "Google Gemini", "AI", "Game Development"]
 github: "https://github.com/JPClow3/Resonant-Echoes"
 featured: true
-order: 3
+order: 5
 lang: en
 ---
 

@@ -6,6 +6,7 @@ import { defaultLang, type Lang, ui } from '@/lib/i18n';
 interface NavLink {
   label: string;
   href: string;
+  section: string;
 }
 
 const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
@@ -15,12 +16,12 @@ const isEnglish = currentLang === 'en';
 const isPortuguese = currentLang === 'pt';
 
 const navLinks: NavLink[] = [
-  { label: t['nav.about'], href: '/#about' },
-  { label: t['nav.projects'], href: '/#projects' },
-  { label: t['nav.experience'], href: '/#experience' },
-  { label: t['nav.activity'], href: '/#activity' },
-  { label: t['nav.blog'], href: '/blog' },
-  { label: t['nav.contact'], href: '/#contact' },
+  { label: t['nav.about'], href: '/#about', section: 'about' },
+  { label: t['nav.projects'], href: '/#projects', section: 'projects' },
+  { label: t['nav.experience'], href: '/#experience', section: 'experience' },
+  { label: t['nav.activity'], href: '/#activity', section: 'activity' },
+  { label: t['nav.blog'], href: '/blog', section: 'blog' },
+  { label: t['nav.contact'], href: '/#contact', section: 'contact' },
 ];
 
 // Resume link (separate since it has download behavior)
@@ -30,14 +31,17 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
 
 <header
   id="header"
-  class="fixed top-0 left-0 right-0 z-50 glass border-b border-[rgb(var(--color-border)/0.45)] transition-shadow duration-300"
+  class="fixed top-0 left-0 right-0 z-50 glass border-b border-[rgb(var(--color-border)/0.55)] transition-shadow duration-300"
 >
   <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16">
+    <div class="flex h-14 items-center justify-between">
       <!-- Logo -->
       <a
         href="/"
-        class="text-xl font-bold gradient-text hover:opacity-80 transition-opacity"
+        id="site-logo"
+        data-logo-signal
+        class="header-logo text-lg font-bold gradient-text transition-opacity hover:opacity-85 focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
+        aria-label="Joao Paulo home"
       >
         JP<span class="text-[rgb(var(--color-text-secondary))]">.</span>
       </a>
@@ -47,36 +51,38 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
         {navLinks.map((link) => (
           <a
             href={link.href}
-            class="nav-link px-4 py-2 text-sm font-medium text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] rounded-lg transition-colors relative group focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
+            data-nav-link
+            data-nav-section={link.section}
+            class="nav-link relative rounded-md px-3 py-1.5 text-sm font-medium text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-text-primary))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))] group"
           >
             {link.label}
-            <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-[rgb(var(--color-accent))] group-hover:w-4/5 transition-all duration-300" />
+            <span class="absolute bottom-0 left-1/2 h-px w-0 -translate-x-1/2 bg-[rgb(var(--color-accent))] transition-all duration-300 group-hover:w-4/5" />
           </a>
         ))}
       </div>
 
       <!-- Right Section -->
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
         <a
           href={resumeLink}
           download
-          class="hidden md:inline-flex items-center gap-1.5 rounded-full bg-[rgb(var(--color-accent))] px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(79,70,229,0.35)] transition hover:bg-[rgb(var(--color-accent-hover))]"
+          class="hidden items-center gap-1.5 rounded-md bg-[rgb(var(--color-accent))] px-3 py-1.5 text-sm font-semibold text-[rgb(var(--color-accent-contrast))] shadow-sm transition hover:bg-[rgb(var(--color-accent-hover))] md:inline-flex"
           aria-label={`${t['nav.resume']} PDF`}
         >
-          <i data-lucide="download" class="w-4 h-4" aria-hidden="true" focusable="false"></i>
+          <Icon name="download" size={16} />
           {t['nav.resume']}
         </a>
 
         <!-- Language Switcher (Desktop) -->
-        <div class="hidden md:flex items-center gap-0.5 rounded-full border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.5)] p-0.5" role="group" aria-label="Select language">
+        <div class="hidden items-center gap-0.5 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.58)] p-0.5 md:flex" role="group" aria-label="Select language">
           <a
             href="/"
             data-lang-link
             data-lang-base="/"
             class:list={[
-              'px-2.5 py-1 text-xs font-semibold rounded-full transition-colors',
+              'rounded px-2.5 py-1 text-xs font-semibold transition-colors',
               isEnglish
-                ? 'bg-[rgb(var(--color-accent))] text-white'
+                ? 'bg-[rgb(var(--color-accent))] text-[rgb(var(--color-accent-contrast))]'
                 : 'text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))]',
             ]}
             aria-label="Switch to English"
@@ -87,9 +93,9 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
             data-lang-link
             data-lang-base="/pt/"
             class:list={[
-              'px-2.5 py-1 text-xs font-semibold rounded-full transition-colors',
+              'rounded px-2.5 py-1 text-xs font-semibold transition-colors',
               isPortuguese
-                ? 'bg-[rgb(var(--color-accent))] text-white'
+                ? 'bg-[rgb(var(--color-accent))] text-[rgb(var(--color-accent-contrast))]'
                 : 'text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))]',
             ]}
             aria-label="Mudar para Português"
@@ -102,7 +108,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
         <!-- Mobile Menu Button -->
         <button
           type="button"
-          class="md:hidden p-2 rounded-lg hover:bg-[rgb(var(--color-bg-secondary))] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
+          class="rounded-md p-2 transition-colors hover:bg-[rgb(var(--color-bg-secondary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))] md:hidden"
           aria-label="Toggle navigation menu"
           aria-expanded="false"
           aria-controls="mobile-menu"
@@ -110,11 +116,11 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
         >
           <!-- Hamburger icon -->
           <span id="menu-icon-open" aria-hidden="true" class="flex items-center justify-center">
-            <i data-lucide="menu" class="w-6 h-6" focusable="false"></i>
+            <Icon name="menu" size={24} />
           </span>
           <!-- Close icon (hidden by default) -->
           <span id="menu-icon-close" aria-hidden="true" class="hidden flex items-center justify-center">
-            <i data-lucide="x" class="w-6 h-6" focusable="false"></i>
+            <Icon name="close" size={24} />
           </span>
         </button>
       </div>
@@ -125,15 +131,17 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
       id="mobile-menu"
       role="navigation"
       aria-label="Mobile navigation"
-      class="md:hidden overflow-hidden transition-all duration-300 ease-in-out rounded-xl bg-[rgb(var(--color-bg-primary))/0.92]"
+      class="overflow-hidden rounded-lg border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-primary))] shadow-[0_18px_50px_rgb(var(--glass-shadow)/0.14)] transition-all duration-300 ease-in-out md:hidden"
       style="max-height: 0; opacity: 0;"
     >
-      <div class="pb-4 border-t border-[rgb(var(--color-border))] mt-2 pt-4">
+      <div class="mt-2 border-t border-[rgb(var(--color-border))] p-2 pt-3">
         <div class="flex flex-col gap-1">
           {navLinks.map((link) => (
             <a
               href={link.href}
-              class="px-4 py-3 text-sm font-medium text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] hover:bg-[rgb(var(--color-bg-secondary))] rounded-lg transition-colors link-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
+              data-nav-link
+              data-nav-section={link.section}
+              class="nav-link link-underline rounded-md px-4 py-2.5 text-sm font-medium text-[rgb(var(--color-text-secondary))] transition-colors hover:bg-[rgb(var(--color-bg-secondary))] hover:text-[rgb(var(--color-text-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
             >
               {link.label}
             </a>
@@ -141,23 +149,23 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
           <a
             href={resumeLink}
             download
-            class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-[rgb(var(--color-accent))] hover:bg-[rgb(var(--color-accent)/0.1)] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
+            class="flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium text-[rgb(var(--color-accent))] transition-colors hover:bg-[rgb(var(--color-accent)/0.1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
           >
-            <i data-lucide="download" class="w-4 h-4" aria-hidden="true"></i>
+            <Icon name="download" size={16} />
             {t['nav.resume']}
           </a>
 
           <!-- Language Switcher (Mobile) -->
-          <div class="flex items-center gap-2 px-4 py-3 border-t border-[rgb(var(--color-border))] mt-1 pt-3" role="group" aria-label="Select language">
+          <div class="mt-1 flex items-center gap-2 border-t border-[rgb(var(--color-border))] px-4 py-2.5 pt-3" role="group" aria-label="Select language">
             <Icon name="globe" size={16} class="text-[rgb(var(--color-text-muted))]" />
             <a
               href="/"
               data-lang-link
               data-lang-base="/"
               class:list={[
-                'px-3 py-1.5 text-xs font-semibold rounded-full transition-colors',
+                'rounded px-3 py-1.5 text-xs font-semibold transition-colors',
                 isEnglish
-                  ? 'bg-[rgb(var(--color-accent))] text-white'
+                  ? 'bg-[rgb(var(--color-accent))] text-[rgb(var(--color-accent-contrast))]'
                   : 'text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] bg-[rgb(var(--color-bg-secondary))]',
               ]}
               aria-label="Switch to English"
@@ -168,9 +176,9 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
               data-lang-link
               data-lang-base="/pt/"
               class:list={[
-                'px-3 py-1.5 text-xs font-semibold rounded-full transition-colors',
+                'rounded px-3 py-1.5 text-xs font-semibold transition-colors',
                 isPortuguese
-                  ? 'bg-[rgb(var(--color-accent))] text-white'
+                  ? 'bg-[rgb(var(--color-accent))] text-[rgb(var(--color-accent-contrast))]'
                   : 'text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] bg-[rgb(var(--color-bg-secondary))]',
               ]}
               aria-label="Mudar para Português"
@@ -188,6 +196,8 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
   let globalEscapeHandler: ((e: KeyboardEvent) => void) | null = null;
   let globalClickHandler: ((e: MouseEvent) => void) | null = null;
   let globalResizeHandler: (() => void) | null = null;
+  let activeNavObserver: IntersectionObserver | null = null;
+  let activeNavScrollHandler: (() => void) | null = null;
 
   function initMobileMenu() {
     const menuButton = document.getElementById('mobile-menu-button');
@@ -367,26 +377,154 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
     });
   }
 
+  function dispatchSceneSection(section: string) {
+    window.dispatchEvent(new CustomEvent('portfolio:section-change', {
+      detail: { section },
+    }));
+  }
+
+  function setActiveNav(section: string) {
+    document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]').forEach((link) => {
+      const isActive = link.dataset.navSection === section;
+      link.dataset.active = String(isActive);
+
+      if (isActive) {
+        link.setAttribute('aria-current', 'location');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+
+    dispatchSceneSection(section);
+  }
+
+  function getRouteSection() {
+    const path = window.location.pathname;
+
+    if (path.startsWith('/blog')) return 'blog';
+    if (path.startsWith('/projects')) return 'projects';
+
+    return '';
+  }
+
+  function getHomepageSections() {
+    return ['about', 'projects', 'experience', 'activity', 'contact']
+      .map((id) => document.getElementById(id))
+      .filter((section): section is HTMLElement => Boolean(section));
+  }
+
+  function findCurrentHomepageSection(sections: HTMLElement[]) {
+    const anchorY = window.innerHeight * 0.38;
+    let bestSection = sections[0]?.id ?? 'about';
+    let bestDistance = Number.POSITIVE_INFINITY;
+
+    sections.forEach((section) => {
+      const rect = section.getBoundingClientRect();
+      const crossesAnchor = rect.top <= anchorY && rect.bottom >= anchorY;
+      const distance = crossesAnchor ? 0 : Math.min(Math.abs(rect.top - anchorY), Math.abs(rect.bottom - anchorY));
+
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        bestSection = section.id;
+      }
+    });
+
+    return bestSection;
+  }
+
+  function initActiveNav() {
+    if (activeNavObserver) {
+      activeNavObserver.disconnect();
+      activeNavObserver = null;
+    }
+
+    if (activeNavScrollHandler) {
+      window.removeEventListener('scroll', activeNavScrollHandler);
+      window.removeEventListener('resize', activeNavScrollHandler);
+      activeNavScrollHandler = null;
+    }
+
+    const routeSection = getRouteSection();
+
+    if (routeSection) {
+      setActiveNav(routeSection);
+      return;
+    }
+
+    const sections = getHomepageSections();
+    if (sections.length === 0) {
+      setActiveNav('about');
+      return;
+    }
+
+    let currentSection = '';
+    const syncActiveSection = () => {
+      const nextSection = findCurrentHomepageSection(sections);
+
+      if (nextSection !== currentSection) {
+        currentSection = nextSection;
+        setActiveNav(nextSection);
+      }
+    };
+
+    activeNavScrollHandler = syncActiveSection;
+
+    if ('IntersectionObserver' in window) {
+      activeNavObserver = new IntersectionObserver(syncActiveSection, {
+        rootMargin: '-28% 0px -58% 0px',
+        threshold: [0, 0.1, 0.35, 0.7],
+      });
+
+      sections.forEach((section) => activeNavObserver?.observe(section));
+    }
+
+    window.addEventListener('scroll', syncActiveSection, { passive: true });
+    window.addEventListener('resize', syncActiveSection);
+    syncActiveSection();
+  }
+
+  function initLogoSignal() {
+    const logo = document.querySelector<HTMLElement>('[data-logo-signal]');
+    if (!logo || logo.dataset.logoInitialized === 'true') return;
+
+    logo.dataset.logoInitialized = 'true';
+    const emit = (active: boolean) => {
+      window.dispatchEvent(new CustomEvent('portfolio:logo-focus', {
+        detail: { active },
+      }));
+    };
+
+    logo.addEventListener('pointerenter', () => emit(true), { passive: true });
+    logo.addEventListener('pointerleave', () => emit(false), { passive: true });
+    logo.addEventListener('focus', () => emit(true));
+    logo.addEventListener('blur', () => emit(false));
+  }
+
   // Initialize on load
   initMobileMenu();
   initHeaderScroll();
   initLangLinks();
+  initActiveNav();
+  initLogoSignal();
   window.addEventListener('hashchange', initLangLinks);
 
   // Re-initialize on Astro page transitions
   document.addEventListener('astro:page-load', () => {
     // Only re-initialize header scroll (listeners are already attached globally)
     initHeaderScroll();
+    initLangLinks();
+    initActiveNav();
+    initLogoSignal();
   });
 </script>
 
 <style>
   #header.scrolled {
-    box-shadow: 0 4px 20px rgb(0 0 0 / 0.05);
+    box-shadow: 0 8px 24px rgb(var(--glass-shadow) / 0.08);
   }
 
   :global(html.dark) #header.scrolled {
-    box-shadow: 0 4px 20px rgb(0 0 0 / 0.2);
+    box-shadow: 0 10px 28px rgb(var(--glass-shadow) / 0.24);
   }
 
   @media (prefers-reduced-motion: reduce) {

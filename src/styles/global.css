@@ -7,43 +7,44 @@
   color-scheme: light;
 
   /* Palette primitives */
-  --bg: 248 247 252;
-  --text: 30 27 55;
-  --muted: 100 106 125;
-  --primary: 75 43 238;
+  --bg: 247 250 252;
+  --text: 15 23 42;
+  --muted: 100 116 139;
+  --primary: 8 120 150;
 
   /* App tokens */
   --color-bg-primary: var(--bg);
-  --color-bg-secondary: 240 238 249;
-  --color-bg-tertiary: 230 226 244;
+  --color-bg-secondary: 241 245 249;
+  --color-bg-tertiary: 226 232 240;
 
   --color-text-primary: var(--text);
-  --color-text-secondary: 55 53 80;
+  --color-text-secondary: 51 65 85;
   --color-text-muted: var(--muted);
 
   --color-accent: var(--primary);
-  --color-accent-hover: 60 30 210;
+  --color-accent-hover: 14 116 144;
+  --color-accent-contrast: 255 255 255;
 
-  --color-border: 210 205 230;
-  --color-border-hover: 180 175 205;
+  --color-border: 203 213 225;
+  --color-border-hover: 148 163 184;
 
   /* Error states with proper contrast 4.5:1 for light theme */
   --color-error: 220 38 38;
   --color-error-light: 254 226 226;
   --color-error-text: 127 29 29;
 
-  /* Activity heatmap (purple scale – light) */
-  --activity-empty: 235 232 248;
-  --activity-low: 210 195 240;
-  --activity-mid: 168 130 230;
-  --activity-high: 130 75 215;
-  --activity-peak: 100 50 200;
+  /* Activity heatmap (cold scale - light) */
+  --activity-empty: 226 232 240;
+  --activity-low: 186 230 253;
+  --activity-mid: 125 211 252;
+  --activity-high: 14 165 233;
+  --activity-peak: 3 105 161;
 
   /* Glass overlays */
   --glass-tint: 255 255 255;
-  --glass-shadow: 0 0 0;
-  --glass-border-opacity: 0.18;
-  --glass-bg-opacity: 0.6;
+  --glass-shadow: 15 23 42;
+  --glass-border-opacity: 0.7;
+  --glass-bg-opacity: 0.72;
 
   /* Noise / grid dot colour */
   --dot-color: 0 0 0;
@@ -55,40 +56,41 @@
 html.dark {
   color-scheme: dark;
 
-  --bg: 19 16 34;
-  --text: 226 232 240;
+  --bg: 30 41 55;
+  --text: 241 245 249;
   --muted: 148 163 184;
-  --primary: 75 43 238;
+  --primary: 125 211 252;
 
   --color-bg-primary: var(--bg);
-  --color-bg-secondary: 30 24 54;
-  --color-bg-tertiary: 44 37 73;
+  --color-bg-secondary: 36 48 63;
+  --color-bg-tertiary: 51 65 85;
 
   --color-text-primary: var(--text);
   --color-text-secondary: 203 213 225;
   --color-text-muted: var(--muted);
 
   --color-accent: var(--primary);
-  --color-accent-hover: 99 66 255;
+  --color-accent-hover: 186 230 253;
+  --color-accent-contrast: 15 23 42;
 
-  --color-border: 77 68 118;
-  --color-border-hover: 103 93 148;
+  --color-border: 71 85 105;
+  --color-border-hover: 100 116 139;
 
   /* Error states with proper contrast 4.5:1 for dark theme */
   --color-error: 248 113 113;
   --color-error-light: 127 29 29;
   --color-error-text: 254 226 226;
 
-  --activity-empty: 30 27 75;
-  --activity-low: 59 7 100;
-  --activity-mid: 126 34 206;
-  --activity-high: 168 85 247;
-  --activity-peak: 167 139 250;
+  --activity-empty: 51 65 85;
+  --activity-low: 8 47 73;
+  --activity-mid: 7 89 133;
+  --activity-high: 14 165 233;
+  --activity-peak: 125 211 252;
 
-  --glass-tint: 255 255 255;
-  --glass-shadow: 0 0 0;
-  --glass-border-opacity: 0.12;
-  --glass-bg-opacity: 0.05;
+  --glass-tint: 226 244 255;
+  --glass-shadow: 2 6 23;
+  --glass-border-opacity: 0.18;
+  --glass-bg-opacity: 0.08;
 
   --dot-color: 255 255 255;
 }
@@ -120,15 +122,13 @@ body {
 
 body {
   min-height: 100vh;
-  background-image: radial-gradient(circle at 15% 10%, rgb(75 43 238 / 0.08), transparent 32%),
-    radial-gradient(circle at 70% 85%, rgb(99 102 241 / 0.06), transparent 35%),
-    linear-gradient(180deg, rgb(var(--bg)), rgb(var(--color-bg-secondary)));
+  background-image:
+    linear-gradient(180deg, rgb(var(--bg)) 0%, rgb(var(--color-bg-secondary)) 58%, rgb(var(--bg)) 100%);
 }
 
 html.dark body {
-  background-image: radial-gradient(circle at 15% 10%, rgb(75 43 238 / 0.16), transparent 32%),
-    radial-gradient(circle at 70% 85%, rgb(99 102 241 / 0.12), transparent 35%),
-    linear-gradient(180deg, rgb(var(--bg)), rgb(var(--color-bg-secondary)));
+  background-image:
+    linear-gradient(180deg, rgb(var(--bg)) 0%, rgb(36 48 63) 55%, rgb(25 35 48) 100%);
 }
 
 
@@ -167,45 +167,49 @@ html.dark body {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.05;
+  opacity: 0.035;
   z-index: 1;
   background-image: radial-gradient(rgb(var(--dot-color) / 0.25) 0.6px, transparent 0.6px);
   background-size: 4px 4px;
 }
 
 .bg-grid {
-  background-image: linear-gradient(to right, rgb(var(--primary) / 0.07) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(var(--primary) / 0.07) 1px, transparent 1px);
-  background-size: 64px 64px;
+  background-image: linear-gradient(to right, rgb(var(--primary) / 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--primary) / 0.055) 1px, transparent 1px);
+  background-size: 56px 56px;
 }
 
 html.dark .bg-grid {
-  background-image: linear-gradient(to right, rgb(var(--primary) / 0.11) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(var(--primary) / 0.11) 1px, transparent 1px);
-  background-size: 64px 64px;
+  background-image: linear-gradient(to right, rgb(var(--primary) / 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--primary) / 0.08) 1px, transparent 1px);
+  background-size: 56px 56px;
 }
 
 
 .glass {
-  background: rgb(var(--color-bg-primary) / 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgb(var(--color-bg-primary) / 0.82);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
 }
 
 .glass-panel {
-  background: linear-gradient(110deg, rgb(var(--glass-tint) / 0.13) 0%, rgb(var(--glass-tint) / 0.08) 40%, rgb(var(--glass-tint) / 0.14) 100%);
-  border: 1px solid rgb(var(--glass-tint) / var(--glass-border-opacity));
-  backdrop-filter: blur(16px);
-  box-shadow: 0 12px 40px rgb(var(--glass-shadow) / 0.1);
+  background:
+    linear-gradient(180deg, rgb(var(--glass-tint) / var(--glass-bg-opacity)) 0%, rgb(var(--color-bg-secondary) / 0.54) 100%);
+  border: 1px solid rgb(var(--color-border) / var(--glass-border-opacity));
+  backdrop-filter: blur(18px) saturate(118%);
+  -webkit-backdrop-filter: blur(18px) saturate(118%);
+  box-shadow: 0 12px 30px rgb(var(--glass-shadow) / 0.075);
 }
 
 html.dark .glass-panel {
-  box-shadow: 0 12px 40px rgb(var(--glass-shadow) / 0.25);
+  background:
+    linear-gradient(180deg, rgb(var(--glass-tint) / 0.08) 0%, rgb(var(--color-bg-secondary) / 0.66) 100%);
+  box-shadow: 0 14px 34px rgb(var(--glass-shadow) / 0.24);
 }
 
 .text-gradient,
 .gradient-text {
-  background: linear-gradient(to right, #7c3aed, #4b2bee);
+  background: linear-gradient(to right, #0e7490, #2563eb);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -213,7 +217,7 @@ html.dark .glass-panel {
 
 html.dark .text-gradient,
 html.dark .gradient-text {
-  background: linear-gradient(to right, #a78bfa, #4b2bee);
+  background: linear-gradient(to right, #7dd3fc, #93c5fd);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -231,13 +235,67 @@ html.dark .gradient-text {
 .bento-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1rem;
+  gap: 0.875rem;
+}
+
+.project-card {
+  --spot-x: 50%;
+  --spot-y: 22%;
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  isolation: isolate;
+  transform: perspective(950px) rotateX(var(--tilt-y)) rotateY(var(--tilt-x)) translateY(0);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.project-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(circle at var(--spot-x) var(--spot-y), rgb(125 211 252 / 0.2), transparent 34%),
+    linear-gradient(135deg, rgb(14 165 233 / 0.18), transparent 42%, rgb(37 99 235 / 0.12));
+  transition: opacity 180ms ease;
+}
+
+.project-card[data-pointer-active="true"],
+.project-card:hover,
+.project-card:focus-within {
+  transform: perspective(950px) rotateX(var(--tilt-y)) rotateY(var(--tilt-x)) translateY(-2px);
+  box-shadow: 0 18px 46px rgb(var(--glass-shadow) / 0.12);
+}
+
+.project-card[data-pointer-active="true"]::before,
+.project-card:hover::before,
+.project-card:focus-within::before {
+  opacity: 1;
+}
+
+.story-snippet {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.nav-link[data-active="true"] {
+  color: rgb(var(--color-text-primary));
+  background: rgb(var(--color-bg-secondary) / 0.64);
+}
+
+.nav-link[data-active="true"] > span {
+  width: 80%;
 }
 
 @media (min-width: 900px) {
   .bento-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-auto-rows: minmax(190px, auto);
+    grid-auto-rows: minmax(172px, auto);
   }
 
   .bento-span-2 { grid-column: span 2; }
@@ -312,7 +370,7 @@ html.dark .gradient-text {
   border-radius: 9999px;
 }
 
-/* Activity heatmap squares (purple scale) */
+/* Activity heatmap squares (cold scale) */
 .activity-heat-0 {
   background: rgb(var(--activity-empty));
   border: 1px solid rgb(var(--color-border) / 0.3);
@@ -334,7 +392,7 @@ html.dark .gradient-text {
   inset: -1px;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(120deg, rgb(34 211 238 / 0.7), rgb(167 139 250 / 0.7), rgb(251 113 133 / 0.75));
+  background: linear-gradient(120deg, rgb(14 165 233 / 0.72), rgb(45 212 191 / 0.58), rgb(96 165 250 / 0.7));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -396,7 +454,7 @@ html.dark .gradient-text {
   height: 100%;
   width: calc(var(--quality-score) * 1%);
   border-radius: inherit;
-  background: linear-gradient(90deg, rgb(14 165 233), rgb(139 92 246), rgb(236 72 153));
+  background: linear-gradient(90deg, rgb(8 145 178), rgb(14 165 233), rgb(96 165 250));
   position: relative;
   overflow: hidden;
   transform-origin: left;
@@ -469,6 +527,17 @@ html.dark .gradient-text {
     opacity: 1;
     transform: none;
   }
+
+  .project-card,
+  .project-card:hover,
+  .project-card:focus-within {
+    transform: none !important;
+  }
+
+  .project-card::before {
+    opacity: 0 !important;
+  }
+
   .marquee,
   .animate-marquee {
     animation: none !important;

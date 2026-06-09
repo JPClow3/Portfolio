@@ -1,0 +1,227 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
+import Icon from '@/components/common/Icon.astro';
+
+function getProjectSlug(project: CollectionEntry<'projects'>) {
+  return project.id.replace(/\.(md|mdx)$/i, '').replace(/\\/g, '/');
+}
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', ({ data }) => data.caseStudy);
+
+  return projects.map((project) => ({
+    params: { slug: project.id.replace(/\.(md|mdx)$/i, '').replace(/\\/g, '/') },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const siteUrl = Astro.site ?? new URL('https://jpclow.dev');
+const projectSlug = getProjectSlug(project);
+const caseStudyUrl = new URL(`/projects/${projectSlug}`, siteUrl).toString();
+
+const caseStudySchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: project.data.title,
+  description: project.data.description,
+  url: caseStudyUrl,
+  image: project.data.image ? new URL(project.data.image, siteUrl).toString() : undefined,
+  author: {
+    '@type': 'Person',
+    name: 'Joao Paulo Goncalves Santos',
+    url: siteUrl.toString(),
+  },
+  keywords: project.data.tech,
+  programmingLanguage: project.data.tech,
+  codeRepository: project.data.github,
+};
+---
+
+<BaseLayout
+  title={`${project.data.title} Case Study | João Paulo Santos`}
+  description={project.data.description}
+  ogType="article"
+  ogImage={project.data.image ?? '/og-image.svg'}
+  articleTags={project.data.tech}
+  schema={caseStudySchema}
+>
+  <Header />
+
+  <main id="main-content" tabindex="-1" class="noise-bg relative overflow-x-hidden px-4 pb-12 pt-[5.5rem] sm:px-6 lg:px-8">
+    <article class="mx-auto max-w-6xl" data-scene-section="projects">
+      <nav aria-label="Breadcrumb" class="mb-6">
+        <ol class="flex flex-wrap items-center gap-2 text-sm text-[rgb(var(--color-text-secondary))]">
+          <li>
+            <a
+              href="/"
+              class="rounded-sm transition-colors hover:text-[rgb(var(--primary))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
+            >
+              Home
+            </a>
+          </li>
+          <li aria-hidden="true" class="text-[rgb(var(--color-text-muted))]">/</li>
+          <li>
+            <a
+              href="/#projects"
+              class="rounded-sm transition-colors hover:text-[rgb(var(--primary))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
+            >
+              Projects
+            </a>
+          </li>
+          <li aria-hidden="true" class="text-[rgb(var(--color-text-muted))]">/</li>
+          <li aria-current="page" class="truncate font-semibold text-[rgb(var(--color-text-primary))]">
+            {project.data.title}
+          </li>
+        </ol>
+      </nav>
+
+      <header class="glass-panel overflow-hidden rounded-lg">
+        <div class="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
+          <div class="p-5 sm:p-7 lg:p-8">
+            <div class="mb-4 flex flex-wrap items-center gap-2">
+              <span class="rounded-md border border-[rgb(var(--primary)/0.35)] bg-[rgb(var(--primary)/0.1)] px-2.5 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--primary))]">
+                Case Study
+              </span>
+              {project.data.year && (
+                <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.66)] px-2.5 py-1 text-xs font-semibold text-[rgb(var(--color-text-secondary))]">
+                  {project.data.year}
+                </span>
+              )}
+            </div>
+
+            <h1 class="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-[rgb(var(--color-text-primary))] sm:text-5xl">
+              {project.data.title}
+            </h1>
+
+            <p class="mt-4 max-w-2xl text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg">
+              {project.data.description}
+            </p>
+
+            {project.data.role && (
+              <p class="mt-5 text-sm font-semibold text-[rgb(var(--color-text-primary))]">
+                <span class="text-[rgb(var(--color-text-muted))]">Role:</span> {project.data.role}
+              </p>
+            )}
+
+            <div class="mt-5 flex flex-wrap gap-1.5">
+              {project.data.tech.map((tech) => (
+                <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.72)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-[rgb(var(--color-text-secondary))]">
+                  {tech}
+                </span>
+              ))}
+            </div>
+
+            <div class="mt-7 flex flex-wrap gap-3 text-sm">
+              <a
+                href="/#projects"
+                class="inline-flex items-center gap-2 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.28)] px-4 py-2 font-semibold text-[rgb(var(--color-text-primary))] transition hover:border-[rgb(var(--color-border-hover))] hover:bg-[rgb(var(--color-bg-tertiary)/0.55)] focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
+              >
+                <Icon name="arrow-down" size={16} class="rotate-90" />
+                Back to projects
+              </a>
+              {project.data.github && (
+                <a
+                  href={project.data.github}
+                  target="_blank"
+                  rel="noreferrer"
+                  class="inline-flex items-center gap-2 rounded-md bg-[rgb(var(--primary))] px-4 py-2 font-semibold text-[rgb(var(--color-accent-contrast))] transition hover:bg-[rgb(var(--color-accent-hover))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
+                >
+                  Repository
+                  <Icon name="external-link" size={15} />
+                </a>
+              )}
+              {project.data.link && (
+                <a
+                  href={project.data.link}
+                  target="_blank"
+                  rel="noreferrer"
+                  class="inline-flex items-center gap-2 rounded-md bg-[rgb(var(--primary))] px-4 py-2 font-semibold text-[rgb(var(--color-accent-contrast))] transition hover:bg-[rgb(var(--color-accent-hover))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
+                >
+                  Live
+                  <Icon name="external-link" size={15} />
+                </a>
+              )}
+            </div>
+          </div>
+
+          {project.data.image && (
+            <div class="relative min-h-[260px] border-t border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.5)] lg:border-l lg:border-t-0">
+              <img
+                src={project.data.image}
+                alt={`${project.data.title} project preview`}
+                class="h-full min-h-[260px] w-full object-contain"
+                loading="eager"
+                decoding="async"
+              />
+            </div>
+          )}
+        </div>
+      </header>
+
+      <section class="mt-6 grid gap-3 md:grid-cols-3" aria-label="Case study summary">
+        {project.data.problem && (
+          <div class="glass-panel rounded-lg p-5">
+            <p class="text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--color-text-muted))]">Problem</p>
+            <p class="mt-3 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.problem}</p>
+          </div>
+        )}
+        {project.data.solution && (
+          <div class="glass-panel rounded-lg p-5">
+            <p class="text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--color-text-muted))]">Build</p>
+            <p class="mt-3 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.solution}</p>
+          </div>
+        )}
+        {project.data.impact && (
+          <div class="glass-panel rounded-lg p-5">
+            <p class="text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--color-text-muted))]">Result</p>
+            <p class="mt-3 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.impact}</p>
+          </div>
+        )}
+      </section>
+
+      {project.data.metrics.length > 0 && (
+        <section class="mt-6 grid gap-3 sm:grid-cols-3" aria-label="Project metrics">
+          {project.data.metrics.map((metric) => (
+            <div class="glass-panel rounded-lg p-5">
+              <p class="text-2xl font-extrabold text-[rgb(var(--primary))]">{metric.value}</p>
+              <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{metric.label}</p>
+            </div>
+          ))}
+        </section>
+      )}
+
+      <div class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
+        <div class="glass-panel rounded-lg p-5 sm:p-7">
+          <div class="prose prose-slate dark:prose-invert max-w-none">
+            <Content />
+          </div>
+        </div>
+
+        {project.data.highlights.length > 0 && (
+          <aside class="glass-panel h-fit rounded-lg p-5">
+            <h2 class="text-sm font-bold uppercase tracking-[0.18em] text-[rgb(var(--color-text-muted))]">Highlights</h2>
+            <ul class="mt-4 space-y-3 text-sm text-[rgb(var(--color-text-secondary))]">
+              {project.data.highlights.map((highlight) => (
+                <li class="flex gap-2">
+                  <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[rgb(var(--primary))]" aria-hidden="true"></span>
+                  <span>{highlight}</span>
+                </li>
+              ))}
+            </ul>
+          </aside>
+        )}
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>

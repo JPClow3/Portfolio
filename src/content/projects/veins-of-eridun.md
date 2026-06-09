@@ -4,7 +4,7 @@ description: "A dynamic text-based adventure game where the story is imagined in
 tech: ["TypeScript", "AI", "Game Development"]
 github: "https://github.com/JPClow3/Veins-of-Erid-n"
 featured: true
-order: 2
+order: 4
 lang: en
 ---
 

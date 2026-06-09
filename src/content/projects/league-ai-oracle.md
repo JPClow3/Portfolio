@@ -4,7 +4,7 @@ description: "AI-powered strategic co-pilot for League of Legends that provides 
 tech: ["TypeScript", "AI/ML", "Riot Games API"]
 github: "https://github.com/JPClow3/League-AI-Oracle"
 featured: true
-order: 1
+order: 3
 lang: en
 ---
 

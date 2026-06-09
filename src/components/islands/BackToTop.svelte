@@ -90,10 +90,10 @@
     right: 2rem;
     width: 3rem;
     height: 3rem;
-    border-radius: 9999px;
-    background: linear-gradient(135deg, rgb(var(--color-accent)), rgb(168 85 247));
-    color: white;
-    border: none;
+    border-radius: 0.625rem;
+    background: linear-gradient(135deg, rgb(var(--color-accent)), rgb(14 165 233));
+    color: rgb(var(--color-accent-contrast));
+    border: 1px solid rgb(var(--color-border) / 0.65);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -105,13 +105,13 @@
     transition:
       opacity 200ms ease,
       transform 200ms ease;
-    box-shadow: 0 4px 12px rgb(var(--color-accent) / 0.3);
+    box-shadow: 0 10px 24px rgb(var(--glass-shadow) / 0.16);
     z-index: 40;
   }
 
   .back-to-top-button:hover {
     transform: translateY(1rem) scale(1);
-    box-shadow: 0 8px 20px rgb(var(--color-accent) / 0.5);
+    box-shadow: 0 14px 30px rgb(var(--glass-shadow) / 0.22);
   }
 
   .back-to-top-button:focus-visible {

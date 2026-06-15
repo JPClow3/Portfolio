@@ -25,6 +25,19 @@
 
     showReducedMotion = prefersReducedMotion();
 
+    const normalizeSection = (section?: string): SceneSection =>
+      section && section in sceneProfiles ? (section as SceneSection) : 'default';
+
+    function getRouteSection(): SceneSection {
+      if (window.location.pathname.startsWith('/projects')) return 'projects';
+      if (window.location.pathname.startsWith('/blog')) return 'blog';
+
+      return 'default';
+    }
+
+    container.dataset.sceneSection = getRouteSection();
+    container.dataset.logoFocus = 'false';
+
     if (showReducedMotion) {
       isLoading = false;
       return;
@@ -255,24 +268,14 @@
         const pointer = { x: 0, y: 0, targetX: 0, targetY: 0 };
         const scroll = { current: 0, target: 0 };
         const logoFocus = { current: 0, target: 0 };
-        let activeSection: SceneSection = 'default';
-        const mood = { ...sceneProfiles.default };
+        let activeSection: SceneSection = getRouteSection();
+        const mood = { ...sceneProfiles[activeSection] };
         const particleAttribute = particlesGeometry.getAttribute('position');
         const lineAttribute = lineGeometry.getAttribute('position');
-
-        const normalizeSection = (section?: string): SceneSection =>
-          section && section in sceneProfiles ? (section as SceneSection) : 'default';
 
         function setSceneSection(section?: string) {
           activeSection = normalizeSection(section);
           container.dataset.sceneSection = activeSection;
-        }
-
-        function getRouteSection(): SceneSection {
-          if (window.location.pathname.startsWith('/projects')) return 'projects';
-          if (window.location.pathname.startsWith('/blog')) return 'blog';
-
-          return 'default';
         }
 
         function findNearestSceneSection(sections: HTMLElement[]) {
@@ -462,7 +465,7 @@
             container.dataset.scrollDepth = scroll.current.toFixed(3);
             container.dataset.pointerX = pointer.x.toFixed(3);
             container.dataset.sceneSection = activeSection;
-            container.dataset.logoFocus = logoFocus.current > 0.04 ? 'true' : 'false';
+            container.dataset.logoFocus = logoFocus.target > 0 ? 'true' : 'false';
           }
         }
 

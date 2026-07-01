@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
+import { getGithubActivity, getGithubProfile } from '@/lib/github';
+
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
+
+const profileEntries = await getCollection('profile', ({ data }) => data.lang === currentLang);
+const fallbackProfileEntries = await getCollection('profile', ({ data }) => data.lang === defaultLang);
+const profileEntry = profileEntries[0] ?? fallbackProfileEntries[0];
+
+const recentGithubActivity = await getGithubActivity(
+  profileEntry.data.customMetric.githubUsername,
+  profileEntry.data.customMetric.fallbackEvents,
+);
+
+const githubProfile = await getGithubProfile(profileEntry.data.customMetric.githubUsername);
+---
+
+{githubProfile && (
+  <section id="github-stats" data-scene-section="activity" aria-labelledby="github-stats-heading" class="mb-16">
+    <h2 id="github-stats-heading" class="mb-6 text-3xl font-bold tracking-tight">{t['stats.title']}</h2>
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div class="glass-panel rounded-lg p-5 text-center">
+        <p class="text-2xl font-bold text-[rgb(var(--color-accent))]">{githubProfile.publicRepos}</p>
+        <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{t['stats.repos']}</p>
+      </div>
+      <div class="glass-panel rounded-lg p-5 text-center">
+        <p class="text-2xl font-bold text-[rgb(var(--color-accent))]">{githubProfile.followers}</p>
+        <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{t['stats.followers']}</p>
+      </div>
+      <div class="glass-panel rounded-lg p-5 text-center">
+        <p class="text-2xl font-bold text-[rgb(var(--color-accent))]">{recentGithubActivity.length}</p>
+        <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{t['stats.contributions']}</p>
+      </div>
+      <div class="glass-panel rounded-lg p-5 text-center">
+        <p class="text-2xl font-bold text-[rgb(var(--color-accent))]">{githubProfile.yearsOnGithub}+</p>
+        <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{t['stats.years']}</p>
+      </div>
+    </div>
+    <p class="mt-4 text-center text-xs text-[rgb(var(--color-text-muted))]">{t['stats.memberSince']} {githubProfile.memberSince}</p>
+    <div class="mt-4 text-center">
+      <a
+        href={`https://github.com/${profileEntry.data.customMetric.githubUsername}`}
+        target="_blank"
+        rel="noreferrer"
+        class="text-sm text-[rgb(var(--color-text-muted))] transition-colors hover:text-[rgb(var(--color-text-primary))]"
+      >{t['stats.viewProfile']}</a>
+    </div>
+  </section>
+)}

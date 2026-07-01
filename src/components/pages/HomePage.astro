@@ -1,11 +1,14 @@
 ---
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
-import Icon from '@/components/common/Icon.astro';
 import ProjectCardEffects from '@/components/islands/ProjectCardEffects.svelte';
 import { defaultLang, type Lang, ui } from '@/lib/i18n';
-import { getGithubActivity, getGithubProfile, type EventType } from '@/lib/github';
+import HeroSection from '@/components/sections/HeroSection.astro';
+import ProjectsSection from '@/components/sections/ProjectsSection.astro';
+import GithubStatsSection from '@/components/sections/GithubStatsSection.astro';
+import ExperienceSection from '@/components/sections/ExperienceSection.astro';
+import ActivitySection from '@/components/sections/ActivitySection.astro';
 
 const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
 const t = ui[currentLang] ?? ui[defaultLang];
@@ -21,11 +24,9 @@ if (!profileEntry) {
 
 const profile = profileEntry.data.profile;
 
-const currentFocus = profileEntry.data.currentFocus;
-
 const techMarquee = ['HTML5', 'CSS3', 'JavaScript', 'TypeScript', 'Astro', 'React', 'Tailwind', 'Python'];
 
-async function getLocalizedCollection<C extends 'projects' | 'experience'>(collection: C): Promise<CollectionEntry<C>[]> {
+async function getLocalizedCollection(collection: 'projects') {
   const localizedEntries = await getCollection(collection, ({ data }) => data.lang === currentLang);
 
   if (localizedEntries.length > 0 || currentLang === defaultLang) {
@@ -39,42 +40,11 @@ const projects = (await getLocalizedCollection('projects'))
   .sort((a, b) => a.data.order - b.data.order)
   .slice(0, 4);
 
-const getProjectSlug = (project: CollectionEntry<'projects'>) =>
+const getProjectSlug = (project: any) =>
   project.id.replace(/\.(md|mdx)$/i, '').replace(/\\/g, '/');
 
-const getProjectUrl = (project: CollectionEntry<'projects'>) =>
+const getProjectUrl = (project: any) =>
   project.data.caseStudy ? `/projects/${getProjectSlug(project)}/` : project.data.link ?? project.data.github ?? '/#projects';
-
-const experience = (await getLocalizedCollection('experience'))
-  .sort((a, b) => a.data.order - b.data.order);
-
-const recentGithubActivity = await getGithubActivity(
-  profileEntry.data.customMetric.githubUsername,
-  profileEntry.data.customMetric.fallbackEvents,
-);
-
-const githubProfile = await getGithubProfile(profileEntry.data.customMetric.githubUsername);
-
-const EVENT_BADGE_LABELS_BY_LANG: Record<Lang, Record<EventType, string>> = {
-  en: { push: 'Push', pr: 'PR', create: 'Create' },
-  pt: { push: 'Commit', pr: 'PR', create: 'Criação' },
-};
-
-const EVENT_BADGE_LABELS = EVENT_BADGE_LABELS_BY_LANG[currentLang] ?? EVENT_BADGE_LABELS_BY_LANG[defaultLang];
-
-const currentFocusIconNames = {
-  'book-open': 'book-open',
-  headphones: 'headphones',
-} as const;
-
-const getCurrentFocusIcon = (name: string) =>
-  currentFocusIconNames[name as keyof typeof currentFocusIconNames] ?? 'code';
-
-const formatDate = (date: Date) =>
-  new Intl.DateTimeFormat(currentLang === 'pt' ? 'pt-BR' : 'en-US', {
-    month: 'short',
-    year: 'numeric',
-  }).format(date);
 
 const projectItemsSchema = {
   '@context': 'https://schema.org',
@@ -108,66 +78,9 @@ const projectItemsSchema = {
     </div>
 
     <div class="mx-auto max-w-6xl pt-20">
-      <section id="about" data-scene-section="about" class="relative isolate mb-16 grid min-h-[520px] grid-cols-1 items-center gap-8 overflow-hidden rounded-xl border border-[rgb(var(--color-border)/0.72)] bg-[rgb(var(--color-bg-primary)/0.44)] px-5 py-10 sm:px-7 lg:grid-cols-12 lg:px-9">
-        <div class="relative z-10 lg:col-span-7">
-          <h1 class="max-w-3xl text-4xl font-extrabold leading-[1.03] tracking-tight text-[rgb(var(--color-text-primary))] sm:text-5xl lg:text-6xl">
-            {t['home.hero.lead']}
-            <span class="text-gradient block">{t['home.hero.highlight']}</span>
-            {t['home.hero.tail']}
-          </h1>
+      <HeroSection />
 
-          <p class="mt-5 max-w-2xl text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg">{profile.subtitle}</p>
-
-          <div class="mt-7 flex flex-wrap gap-3">
-            <a href="#projects" class="rounded-md bg-[rgb(var(--primary))] px-5 py-2.5 text-sm font-semibold text-[rgb(var(--color-accent-contrast))] transition hover:-translate-y-0.5 hover:bg-[rgb(var(--color-accent-hover))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]">{t['home.viewWork']}</a>
-            <a href={profile.github} target="_blank" rel="noreferrer" class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.28)] px-5 py-2.5 text-sm font-semibold text-[rgb(var(--color-text-primary))] transition hover:border-[rgb(var(--color-border-hover))] hover:bg-[rgb(var(--color-bg-tertiary)/0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]">{t['home.githubProfile']}</a>
-          </div>
-        </div>
-
-        <div class="relative z-10 flex flex-col gap-4 lg:col-span-5">
-          <article class="glass-panel rounded-lg p-5 text-center">
-            <div class="mx-auto mb-3 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-[rgb(var(--primary))/0.48] shadow-sm">
-              <img
-                src={`https://2.gravatar.com/avatar/${profile.gravatarHash}?s=180&d=initials`}
-                alt={`${profile.shortName}, ${profile.role}`}
-                width="90"
-                height="90"
-                loading="eager"
-                fetchpriority="high"
-                decoding="async"
-                class="hovercard h-full w-full object-cover"
-              />
-            </div>
-            <h2 class="text-2xl font-bold">{profile.shortName}</h2>
-            <p class="text-sm font-medium text-[rgb(var(--primary))]">{profile.role}</p>
-            <div class="mt-3 flex justify-center gap-2 text-xs">
-              <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-tertiary)/0.5)] px-2.5 py-1">🇧🇷 {profile.location}</span>
-              <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-tertiary)/0.5)] px-2.5 py-1">{profile.timezone}</span>
-            </div>
-            <div class="mt-5 grid grid-cols-2 gap-2 border-t border-[rgb(var(--color-border))] pt-4 text-center">
-              <div><p class="text-lg font-bold">{githubProfile?.publicRepos ?? projects.length}</p><p class="text-[10px] uppercase text-[rgb(var(--color-text-muted))]">{t['home.repos']}</p></div>
-              <div><p class="text-lg font-bold">{experience.length}</p><p class="text-[10px] uppercase text-[rgb(var(--color-text-muted))]">{t['home.roles']}</p></div>
-            </div>
-          </article>
-
-          <article class="glass-panel rounded-lg p-5">
-            <p class="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--color-text-muted))]">{currentFocus.title || t['home.currentFocus']}</p>
-            <div class="space-y-3">
-              {currentFocus.items.map((item) => (
-                <div class="flex items-start gap-3">
-                  <span class="flex items-center justify-center rounded-md bg-[rgb(var(--color-bg-tertiary))] p-2 text-[rgb(var(--primary))]" aria-hidden="true"><Icon name={getCurrentFocusIcon(item.icon)} size={20} /></span>
-                  <div>
-                    <p class="text-[10px] uppercase tracking-[0.18em] text-[rgb(var(--color-text-muted))]">{item.label}</p>
-                    <p class="text-sm text-[rgb(var(--color-text-primary))]">{item.value}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section class="mb-14 overflow-hidden rounded-lg border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/var(--glass-bg-opacity))] px-3 py-3">
+      <section aria-label="Technologies" class="mb-14 overflow-hidden rounded-lg border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/var(--glass-bg-opacity))] px-3 py-3">
         <div class="marquee flex min-w-max gap-4 whitespace-nowrap py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[rgb(var(--color-text-secondary))]">
           {[...techMarquee, ...techMarquee].map((tech) => (
             <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary))] px-4 py-1.5">{tech}</span>
@@ -175,198 +88,24 @@ const projectItemsSchema = {
         </div>
       </section>
 
-      <section id="projects" data-scene-section="projects" class="mb-16">
-        <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
-          <h2 class="text-3xl font-bold tracking-tight">{t['home.buildTitle']}</h2>
-          <a href={`${profile.github}?tab=repositories`} target="_blank" rel="noreferrer" class="text-sm text-[rgb(var(--color-text-muted))] transition-colors hover:text-[rgb(var(--color-text-primary))]">{t['home.seeAllRepos']}</a>
-        </div>
+      <ProjectsSection />
+      
+      <GithubStatsSection />
 
-        <div class="bento-grid">
-          {projects.map((project, index) => {
-            const projectUrl = getProjectUrl(project);
-            const isExternalProjectUrl = projectUrl.startsWith('http');
-            const primaryLabel = project.data.caseStudy ? t['home.caseStudy'] : t['home.viewProject'];
+      <ExperienceSection />
 
-            return (
-              <article
-                data-tilt-card
-                data-testid="project-card"
-                class:list={[
-                  'project-card group glass-panel relative overflow-hidden rounded-lg p-5 transition-all hover:border-[rgb(var(--primary))]/40',
-                  index === 0 ? 'bento-span-2' : '',
-                  index === 1 ? 'bento-row-span-2' : '',
-                ]}
-              >
-                <div class="absolute inset-0 bg-linear-to-br from-cyan-500/10 via-transparent to-blue-500/10 opacity-70 transition-opacity group-hover:opacity-100"></div>
-                <div class="relative z-10">
-                  <div class="mb-2 flex items-center justify-between gap-3">
-                    <h3 class="text-xl font-bold">{project.data.title}</h3>
-                    {project.data.caseStudy && (
-                      <span class="shrink-0 rounded-md border border-[rgb(var(--primary)/0.32)] bg-[rgb(var(--primary)/0.1)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--primary))]">
-                        Story
-                      </span>
-                    )}
-                  </div>
-                  <p class="text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.description}</p>
+      <ActivitySection />
 
-                  {project.data.caseStudy && (
-                    <dl class="mt-4 grid gap-2">
-                      {project.data.problem && (
-                        <div class="story-row rounded-md border border-[rgb(var(--color-border)/0.72)] bg-[rgb(var(--color-bg-secondary)/0.5)] px-3 py-2">
-                          <dt class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">{t['home.problem']}</dt>
-                          <dd class="story-snippet mt-1 text-xs leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.problem}</dd>
-                        </div>
-                      )}
-                      {project.data.solution && (
-                        <div class="story-row rounded-md border border-[rgb(var(--color-border)/0.72)] bg-[rgb(var(--color-bg-secondary)/0.5)] px-3 py-2">
-                          <dt class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">{t['home.build']}</dt>
-                          <dd class="story-snippet mt-1 text-xs leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.solution}</dd>
-                        </div>
-                      )}
-                      {project.data.impact && (
-                        <div class="story-row rounded-md border border-[rgb(var(--color-border)/0.72)] bg-[rgb(var(--color-bg-secondary)/0.5)] px-3 py-2">
-                          <dt class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">{t['home.result']}</dt>
-                          <dd class="story-snippet mt-1 text-xs leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.impact}</dd>
-                        </div>
-                      )}
-                    </dl>
-                  )}
-
-                  <div class="mt-4 flex flex-wrap gap-1.5">
-                    {project.data.tech.slice(0, 4).map((tech) => (
-                      <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary))] px-2.5 py-1 text-[10px] uppercase tracking-wide text-[rgb(var(--color-text-secondary))]">{tech}</span>
-                    ))}
-                  </div>
-                  <div class="mt-4 flex flex-wrap gap-4 text-sm">
-                    <a
-                      href={projectUrl}
-                      target={isExternalProjectUrl ? '_blank' : undefined}
-                      rel={isExternalProjectUrl ? 'noreferrer' : undefined}
-                      class="font-semibold text-[rgb(var(--primary))] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
-                    >
-                      {primaryLabel}
-                    </a>
-                    {project.data.caseStudy && project.data.github && (
-                      <a href={project.data.github} target="_blank" rel="noreferrer" class="text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]">{t['home.code']}</a>
-                    )}
-                    {project.data.link && <a href={project.data.link} target="_blank" rel="noreferrer" class="text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]">{t['home.live']}</a>}
-                  </div>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* GitHub Stats Dashboard */}
-      {githubProfile && (
-        <section id="github-stats" data-scene-section="activity" aria-label={t['stats.title']} class="mb-16">
-          <h2 class="mb-6 text-3xl font-bold tracking-tight">{t['stats.title']}</h2>
-          <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div class="glass-panel rounded-lg p-5 text-center">
-              <p class="text-2xl font-bold text-[rgb(var(--primary))]">{githubProfile.publicRepos}</p>
-              <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{t['stats.repos']}</p>
-            </div>
-            <div class="glass-panel rounded-lg p-5 text-center">
-              <p class="text-2xl font-bold text-[rgb(var(--primary))]">{githubProfile.followers}</p>
-              <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{t['stats.followers']}</p>
-            </div>
-            <div class="glass-panel rounded-lg p-5 text-center">
-              <p class="text-2xl font-bold text-[rgb(var(--primary))]">{recentGithubActivity.length}</p>
-              <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{t['stats.contributions']}</p>
-            </div>
-            <div class="glass-panel rounded-lg p-5 text-center">
-              <p class="text-2xl font-bold text-[rgb(var(--primary))]">{githubProfile.yearsOnGithub}+</p>
-              <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{t['stats.years']}</p>
-            </div>
-          </div>
-          <p class="mt-4 text-center text-xs text-[rgb(var(--color-text-muted))]">{t['stats.memberSince']} {githubProfile.memberSince}</p>
-          <div class="mt-4 text-center">
-            <a
-              href={`https://github.com/${profileEntry.data.customMetric.githubUsername}`}
-              target="_blank"
-              rel="noreferrer"
-              class="text-sm text-[rgb(var(--color-text-muted))] transition-colors hover:text-[rgb(var(--color-text-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
-            >{t['stats.viewProfile']}</a>
-          </div>
-        </section>
-      )}
-
-      <section id="experience" data-scene-section="experience" class="mb-16">
-        <h2 class="mb-6 text-3xl font-bold tracking-tight">{t['home.journeyTitle']}</h2>
-        <div class="timeline relative space-y-4 pl-8">
-          {experience.map((job, idx) => (
-            <article class="glass-panel relative rounded-lg p-5 transition hover:border-[rgb(var(--primary))]/35">
-              <span class:list={[
-                'absolute -left-[1.9rem] top-7 h-5 w-5 rounded-full border-4 border-[rgb(var(--bg))] shadow-[0_0_0_2px_rgba(var(--color-border),0.2)]',
-                idx === 0 ? 'bg-[rgb(var(--primary))]' : 'bg-[rgb(var(--color-text-muted))]',
-              ]}></span>
-              <div class="mb-3 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
-                <div>
-                  <h3 class="text-xl font-bold">{job.data.role}</h3>
-                  <p class="text-[rgb(var(--primary))]">{job.data.company}</p>
-                </div>
-                <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-tertiary)/0.5)] px-2.5 py-1 text-xs text-[rgb(var(--color-text-secondary))]">{formatDate(job.data.startDate)} — {job.data.endDate ? formatDate(job.data.endDate) : t['home.present']}</span>
-              </div>
-              <ul class="list-disc space-y-1 pl-5 text-sm text-[rgb(var(--color-text-secondary))] marker:text-[rgb(var(--primary))]">
-                {job.data.tasks.slice(0, 2).map((task) => (
-                  <li>{task}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section id="activity" data-scene-section="activity" class="mb-14">
-        <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
-          <h2 class="text-3xl font-bold">{t['home.latestActivity']}</h2>
-          <a href={profile.github} target="_blank" rel="noreferrer" class="text-sm text-[rgb(var(--color-text-muted))] transition-colors hover:text-[rgb(var(--primary))]">{t['home.viewFullProfile']}</a>
-        </div>
-        <div class="space-y-3">
-          {recentGithubActivity.map((event) => {
-            const eventType = event.eventType ?? 'push';
-            return (
-              <article class="activity-card glass-panel overflow-hidden rounded-lg transition-all hover:border-[rgb(var(--primary))]/40">
-                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/var(--glass-bg-opacity))] px-4 py-2.5">
-                  <div class="flex min-w-0 items-center gap-3">
-                    <a
-                      href={event.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      class="truncate text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--primary))] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
-                    >{event.repo}</a>
-                    <span class={`rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${eventType === 'push' ? 'bg-[rgb(var(--primary)/0.15)] text-[rgb(var(--primary))]' : eventType === 'pr' ? 'bg-[rgb(var(--primary)/0.25)] text-[rgb(var(--primary))]' : 'bg-[rgb(var(--primary)/0.35)] text-[rgb(var(--primary))]'}`}>
-                      {EVENT_BADGE_LABELS[eventType]}
-                    </span>
-                  </div>
-                  <span class="text-xs text-[rgb(var(--color-text-muted))]">{event.date}</span>
-                </div>
-                <div class="flex flex-col gap-3 p-4 sm:flex-row sm:items-end sm:justify-between">
-                  <p class="text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{event.message}</p>
-                  <a
-                    href={event.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    class="shrink-0 text-xs text-[rgb(var(--color-text-muted))] transition-colors hover:text-[rgb(var(--primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
-                  >{t['home.viewOnGithub']}</a>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-
-      <footer id="contact" data-scene-section="contact" class="glass-panel mb-6 flex flex-col items-center justify-between gap-5 rounded-lg p-6 text-center md:flex-row md:text-left">
+      <section id="contact" data-scene-section="contact" aria-labelledby="contact-heading" class="glass-panel mb-6 flex flex-col items-center justify-between gap-5 rounded-lg p-6 text-center md:flex-row md:text-left">
         <div>
-          <h2 class="text-3xl font-bold">{t['home.contactTitle']}</h2>
+          <h2 id="contact-heading" class="text-3xl font-bold">{t['home.contactTitle']}</h2>
           <a class="mt-1.5 block text-lg text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-text-primary))]" href={`mailto:${profile.email}`}>{profile.email}</a>
         </div>
         <div class="flex flex-wrap gap-3">
-          <a href={`mailto:${profile.email}`} class="rounded-md bg-[rgb(var(--primary))] px-5 py-2.5 text-sm font-bold text-[rgb(var(--color-accent-contrast))] transition hover:bg-[rgb(var(--color-accent-hover))]">{t['home.sayHello']}</a>
-          <a href={profile.linkedin} target="_blank" rel="noreferrer" class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.2)] px-5 py-2.5 text-sm font-bold text-[rgb(var(--color-text-primary))] transition hover:border-[rgb(var(--color-border-hover))] hover:bg-[rgb(var(--color-bg-tertiary)/0.5)]">{t['home.linkedin']}</a>
+          <a href={`mailto:${profile.email}`} class="hover-lift rounded-md bg-[rgb(var(--color-accent))] px-5 py-2.5 text-sm font-bold text-[rgb(var(--color-accent-contrast))] transition-colors hover:bg-[rgb(var(--color-accent-hover))]">{t['home.sayHello']}</a>
+          <a href={profile.linkedin} target="_blank" rel="noreferrer" class="hover-lift rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.2)] px-5 py-2.5 text-sm font-bold text-[rgb(var(--color-text-primary))] transition-all hover:border-[rgb(var(--color-border-hover))] hover:bg-[rgb(var(--color-bg-tertiary)/0.5)]">{t['home.linkedin']}</a>
         </div>
-      </footer>
+      </section>
     </div>
   </main>
 </BaseLayout>

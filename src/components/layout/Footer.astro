@@ -56,7 +56,7 @@ const socialLinks = [
       <!-- Navigation Links -->
       <div>
         <h3 class="mb-3 font-semibold text-[rgb(var(--color-text-primary))]">Quick Links</h3>
-        <nav class="grid grid-cols-2 gap-2">
+        <nav aria-label="Footer navigation" class="grid grid-cols-2 gap-2">
           {navLinks.map((link) => (
             <a
               href={link.href}
@@ -71,7 +71,7 @@ const socialLinks = [
       <!-- Social & Contact -->
       <div>
         <h3 class="mb-3 font-semibold text-[rgb(var(--color-text-primary))]">Connect</h3>
-        <div class="flex items-center gap-3">
+        <nav aria-label="Social connections" class="flex items-center gap-3">
           {socialLinks.map((link) => (
             <a
               href={link.href}
@@ -83,7 +83,7 @@ const socialLinks = [
               <Icon name={link.icon} size={20} />
             </a>
           ))}
-        </div>
+        </nav>
       </div>
     </div>
 

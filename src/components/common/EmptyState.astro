@@ -1,0 +1,42 @@
+---
+import Icon from '@/components/common/Icon.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  iconName?: 'github' | 'linkedin' | 'email' | 'phone' | 'location' | 'external-link' | 'arrow-down' | 'menu' | 'close' | 'sun' | 'moon' | 'calendar' | 'briefcase' | 'graduation' | 'code' | 'check' | 'instagram' | 'globe' | 'download' | 'book-open' | 'headphones';
+  actionText?: string;
+  actionHref?: string;
+}
+
+const { 
+  title, 
+  description, 
+  iconName = 'book-open',
+  actionText,
+  actionHref 
+} = Astro.props;
+---
+
+<div class="glass-panel flex flex-col items-center justify-center rounded-lg p-10 text-center sm:p-14 transition-all duration-300">
+  <div class="mb-5 inline-flex h-16 w-16 items-center justify-center rounded-full bg-[rgb(var(--color-bg-tertiary))] text-[rgb(var(--color-text-muted))] shadow-inner">
+    <Icon name={iconName} size={32} class="opacity-70" />
+  </div>
+  
+  <h3 class="mb-2 text-xl font-bold text-[rgb(var(--color-text-primary))] sm:text-2xl">
+    {title}
+  </h3>
+  
+  <p class="mb-6 max-w-sm text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">
+    {description}
+  </p>
+
+  {actionText && actionHref && (
+    <a
+      href={actionHref}
+      class="inline-flex items-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-5 py-2.5 text-sm font-bold text-[rgb(var(--color-accent-contrast))] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-accent-glow)]"
+    >
+      {actionText}
+    </a>
+  )}
+</div>

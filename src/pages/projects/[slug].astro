@@ -56,14 +56,14 @@ const caseStudySchema = {
 >
   <Header />
 
-  <main id="main-content" tabindex="-1" class="noise-bg relative overflow-x-hidden px-4 pb-12 pt-[5.5rem] sm:px-6 lg:px-8">
+  <main id="main-content" tabindex="-1" class="noise-bg relative overflow-x-hidden px-4 pb-12 pt-[6.5rem] sm:px-6 lg:px-8">
     <article class="mx-auto max-w-6xl" data-scene-section="projects">
       <nav aria-label="Breadcrumb" class="mb-6">
         <ol class="flex flex-wrap items-center gap-2 text-sm text-[rgb(var(--color-text-secondary))]">
           <li>
             <a
               href="/"
-              class="rounded-sm transition-colors hover:text-[rgb(var(--primary))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
+              class="rounded-sm transition-colors hover:text-[rgb(var(--color-accent))]"
             >
               Home
             </a>
@@ -72,7 +72,7 @@ const caseStudySchema = {
           <li>
             <a
               href="/#projects"
-              class="rounded-sm transition-colors hover:text-[rgb(var(--primary))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
+              class="rounded-sm transition-colors hover:text-[rgb(var(--color-accent))]"
             >
               Projects
             </a>
@@ -88,7 +88,7 @@ const caseStudySchema = {
         <div class="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
           <div class="p-5 sm:p-7 lg:p-8">
             <div class="mb-4 flex flex-wrap items-center gap-2">
-              <span class="rounded-md border border-[rgb(var(--primary)/0.35)] bg-[rgb(var(--primary)/0.1)] px-2.5 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--primary))]">
+              <span class="rounded-md border border-[rgb(var(--color-accent)/0.35)] bg-[rgb(var(--color-accent)/0.1)] px-2.5 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--color-accent))]">
                 Case Study
               </span>
               {project.data.year && (
@@ -123,7 +123,7 @@ const caseStudySchema = {
             <div class="mt-7 flex flex-wrap gap-3 text-sm">
               <a
                 href="/#projects"
-                class="inline-flex items-center gap-2 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.28)] px-4 py-2 font-semibold text-[rgb(var(--color-text-primary))] transition hover:border-[rgb(var(--color-border-hover))] hover:bg-[rgb(var(--color-bg-tertiary)/0.55)] focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
+                class="hover-lift inline-flex items-center gap-2 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.28)] px-4 py-2 font-semibold text-[rgb(var(--color-text-primary))] transition-all hover:border-[rgb(var(--color-border-hover))] hover:bg-[rgb(var(--color-bg-tertiary)/0.55)]"
               >
                 <Icon name="arrow-down" size={16} class="rotate-90" />
                 Back to projects
@@ -133,7 +133,7 @@ const caseStudySchema = {
                   href={project.data.github}
                   target="_blank"
                   rel="noreferrer"
-                  class="inline-flex items-center gap-2 rounded-md bg-[rgb(var(--primary))] px-4 py-2 font-semibold text-[rgb(var(--color-accent-contrast))] transition hover:bg-[rgb(var(--color-accent-hover))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
+                  class="hover-lift inline-flex items-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-4 py-2 font-semibold text-[rgb(var(--color-accent-contrast))] transition-colors hover:bg-[rgb(var(--color-accent-hover))]"
                 >
                   Repository
                   <Icon name="external-link" size={15} />
@@ -144,7 +144,7 @@ const caseStudySchema = {
                   href={project.data.link}
                   target="_blank"
                   rel="noreferrer"
-                  class="inline-flex items-center gap-2 rounded-md bg-[rgb(var(--primary))] px-4 py-2 font-semibold text-[rgb(var(--color-accent-contrast))] transition hover:bg-[rgb(var(--color-accent-hover))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
+                  class="hover-lift inline-flex items-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-4 py-2 font-semibold text-[rgb(var(--color-accent-contrast))] transition-colors hover:bg-[rgb(var(--color-accent-hover))]"
                 >
                   Live
                   <Icon name="external-link" size={15} />
@@ -192,7 +192,7 @@ const caseStudySchema = {
         <section class="mt-6 grid gap-3 sm:grid-cols-3" aria-label="Project metrics">
           {project.data.metrics.map((metric) => (
             <div class="glass-panel rounded-lg p-5">
-              <p class="text-2xl font-extrabold text-[rgb(var(--primary))]">{metric.value}</p>
+              <p class="text-2xl font-extrabold text-[rgb(var(--color-accent))]">{metric.value}</p>
               <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{metric.label}</p>
             </div>
           ))}
@@ -212,7 +212,7 @@ const caseStudySchema = {
             <ul class="mt-4 space-y-3 text-sm text-[rgb(var(--color-text-secondary))]">
               {project.data.highlights.map((highlight) => (
                 <li class="flex gap-2">
-                  <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[rgb(var(--primary))]" aria-hidden="true"></span>
+                  <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[rgb(var(--color-accent))]" aria-hidden="true"></span>
                   <span>{highlight}</span>
                 </li>
               ))}

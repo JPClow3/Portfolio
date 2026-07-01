@@ -1,0 +1,810 @@
+diff --git a/src/components/islands/ThemeToggle.svelte b/src/components/islands/ThemeToggle.svelte
+index 22c839b..7461575 100644
+--- a/src/components/islands/ThemeToggle.svelte
++++ b/src/components/islands/ThemeToggle.svelte
+@@ -13,12 +13,31 @@
+     const handleChange = (e: MediaQueryListEvent) => {
+       if (!localStorage.getItem('theme')) {
+         isDark = e.matches;
+-        updateTheme();
++        if (isDark) {
++          document.documentElement.classList.add('dark');
++        } else {
++          document.documentElement.classList.remove('dark');
++        }
+       }
+     };
+     mediaQuery.addEventListener('change', handleChange);
+ 
+-    return () => mediaQuery.removeEventListener('change', handleChange);
++    const handleStorage = (e: StorageEvent) => {
++      if (e.key === 'theme') {
++        isDark = e.newValue === 'dark';
++        if (isDark) {
++          document.documentElement.classList.add('dark');
++        } else {
++          document.documentElement.classList.remove('dark');
++        }
++      }
++    };
++    window.addEventListener('storage', handleStorage);
++
++    return () => {
++      mediaQuery.removeEventListener('change', handleChange);
++      window.removeEventListener('storage', handleStorage);
++    };
+   });
+ 
+   function updateTheme() {
+diff --git a/src/components/layout/Header.astro b/src/components/layout/Header.astro
+index a643ffa..13bb453 100644
+--- a/src/components/layout/Header.astro
++++ b/src/components/layout/Header.astro
+@@ -370,10 +370,23 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
+ 
+   function initLangLinks() {
+     const hash = window.location.hash;
+-    if (!hash) return;
++    const pathname = window.location.pathname;
++    
++    const isPt = pathname.startsWith('/pt/') || pathname === '/pt';
++    let canonicalPath = isPt ? pathname.replace(/^\/pt/, '') : pathname;
++    if (!canonicalPath.startsWith('/')) {
++      canonicalPath = '/' + canonicalPath;
++    }
++    const cleanCanonical = canonicalPath === '/' ? '' : canonicalPath.slice(1);
++    
+     document.querySelectorAll<HTMLAnchorElement>('[data-lang-link]').forEach((link) => {
+       const base = link.dataset.langBase;
+-      if (base) link.href = base + hash;
++      if (base) {
++        link.href = base + cleanCanonical + hash;
++        link.addEventListener('click', () => {
++          localStorage.setItem('languagePreference', base === '/pt/' ? 'pt' : 'en');
++        });
++      }
+     });
+   }
+ 
+diff --git a/src/components/pages/HomePage.astro b/src/components/pages/HomePage.astro
+index df51744..5834d65 100644
+--- a/src/components/pages/HomePage.astro
++++ b/src/components/pages/HomePage.astro
+@@ -1,11 +1,14 @@
+ ---
+-import { getCollection, type CollectionEntry } from 'astro:content';
++import { getCollection } from 'astro:content';
+ import BaseLayout from '@/layouts/BaseLayout.astro';
+ import Header from '@/components/layout/Header.astro';
+-import Icon from '@/components/common/Icon.astro';
+ import ProjectCardEffects from '@/components/islands/ProjectCardEffects.svelte';
+ import { defaultLang, type Lang, ui } from '@/lib/i18n';
+-import { getGithubActivity, getGithubProfile, type EventType } from '@/lib/github';
++import HeroSection from '@/components/sections/HeroSection.astro';
++import ProjectsSection from '@/components/sections/ProjectsSection.astro';
++import GithubStatsSection from '@/components/sections/GithubStatsSection.astro';
++import ExperienceSection from '@/components/sections/ExperienceSection.astro';
++import ActivitySection from '@/components/sections/ActivitySection.astro';
+ 
+ const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+ const t = ui[currentLang] ?? ui[defaultLang];
+@@ -21,11 +24,9 @@ if (!profileEntry) {
+ 
+ const profile = profileEntry.data.profile;
+ 
+-const currentFocus = profileEntry.data.currentFocus;
+-
+ const techMarquee = ['HTML5', 'CSS3', 'JavaScript', 'TypeScript', 'Astro', 'React', 'Tailwind', 'Python'];
+ 
+-async function getLocalizedCollection<C extends 'projects' | 'experience'>(collection: C): Promise<CollectionEntry<C>[]> {
++async function getLocalizedCollection(collection: 'projects') {
+   const localizedEntries = await getCollection(collection, ({ data }) => data.lang === currentLang);
+ 
+   if (localizedEntries.length > 0 || currentLang === defaultLang) {
+@@ -39,43 +40,12 @@ const projects = (await getLocalizedCollection('projects'))
+   .sort((a, b) => a.data.order - b.data.order)
+   .slice(0, 4);
+ 
+-const getProjectSlug = (project: CollectionEntry<'projects'>) =>
++const getProjectSlug = (project: any) =>
+   project.id.replace(/\.(md|mdx)$/i, '').replace(/\\/g, '/');
+ 
+-const getProjectUrl = (project: CollectionEntry<'projects'>) =>
++const getProjectUrl = (project: any) =>
+   project.data.caseStudy ? `/projects/${getProjectSlug(project)}/` : project.data.link ?? project.data.github ?? '/#projects';
+ 
+-const experience = (await getLocalizedCollection('experience'))
+-  .sort((a, b) => a.data.order - b.data.order);
+-
+-const recentGithubActivity = await getGithubActivity(
+-  profileEntry.data.customMetric.githubUsername,
+-  profileEntry.data.customMetric.fallbackEvents,
+-);
+-
+-const githubProfile = await getGithubProfile(profileEntry.data.customMetric.githubUsername);
+-
+-const EVENT_BADGE_LABELS_BY_LANG: Record<Lang, Record<EventType, string>> = {
+-  en: { push: 'Push', pr: 'PR', create: 'Create' },
+-  pt: { push: 'Commit', pr: 'PR', create: 'Criação' },
+-};
+-
+-const EVENT_BADGE_LABELS = EVENT_BADGE_LABELS_BY_LANG[currentLang] ?? EVENT_BADGE_LABELS_BY_LANG[defaultLang];
+-
+-const currentFocusIconNames = {
+-  'book-open': 'book-open',
+-  headphones: 'headphones',
+-} as const;
+-
+-const getCurrentFocusIcon = (name: string) =>
+-  currentFocusIconNames[name as keyof typeof currentFocusIconNames] ?? 'code';
+-
+-const formatDate = (date: Date) =>
+-  new Intl.DateTimeFormat(currentLang === 'pt' ? 'pt-BR' : 'en-US', {
+-    month: 'short',
+-    year: 'numeric',
+-  }).format(date);
+-
+ const projectItemsSchema = {
+   '@context': 'https://schema.org',
+   '@type': 'ItemList',
+@@ -108,64 +78,7 @@ const projectItemsSchema = {
+     </div>
+ 
+     <div class="mx-auto max-w-6xl pt-20">
+-      <section id="about" data-scene-section="about" class="relative isolate mb-16 grid min-h-[520px] grid-cols-1 items-center gap-8 overflow-hidden rounded-xl border border-[rgb(var(--color-border)/0.72)] bg-[rgb(var(--color-bg-primary)/0.44)] px-5 py-10 sm:px-7 lg:grid-cols-12 lg:px-9">
+-        <div class="relative z-10 lg:col-span-7">
+-          <h1 class="max-w-3xl text-4xl font-extrabold leading-[1.03] tracking-tight text-[rgb(var(--color-text-primary))] sm:text-5xl lg:text-6xl">
+-            {t['home.hero.lead']}
+-            <span class="text-gradient block">{t['home.hero.highlight']}</span>
+-            {t['home.hero.tail']}
+-          </h1>
+-
+-          <p class="mt-5 max-w-2xl text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg">{profile.subtitle}</p>
+-
+-          <div class="mt-7 flex flex-wrap gap-3">
+-            <a href="#projects" class="rounded-md bg-[rgb(var(--primary))] px-5 py-2.5 text-sm font-semibold text-[rgb(var(--color-accent-contrast))] transition hover:-translate-y-0.5 hover:bg-[rgb(var(--color-accent-hover))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]">{t['home.viewWork']}</a>
+-            <a href={profile.github} target="_blank" rel="noreferrer" class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.28)] px-5 py-2.5 text-sm font-semibold text-[rgb(var(--color-text-primary))] transition hover:border-[rgb(var(--color-border-hover))] hover:bg-[rgb(var(--color-bg-tertiary)/0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]">{t['home.githubProfile']}</a>
+-          </div>
+-        </div>
+-
+-        <div class="relative z-10 flex flex-col gap-4 lg:col-span-5">
+-          <article class="glass-panel rounded-lg p-5 text-center">
+-            <div class="mx-auto mb-3 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-[rgb(var(--primary))/0.48] shadow-sm">
+-              <img
+-                src={`https://2.gravatar.com/avatar/${profile.gravatarHash}?s=180&d=initials`}
+-                alt={`${profile.shortName}, ${profile.role}`}
+-                width="90"
+-                height="90"
+-                loading="eager"
+-                fetchpriority="high"
+-                decoding="async"
+-                class="hovercard h-full w-full object-cover"
+-              />
+-            </div>
+-            <h2 class="text-2xl font-bold">{profile.shortName}</h2>
+-            <p class="text-sm font-medium text-[rgb(var(--primary))]">{profile.role}</p>
+-            <div class="mt-3 flex justify-center gap-2 text-xs">
+-              <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-tertiary)/0.5)] px-2.5 py-1">🇧🇷 {profile.location}</span>
+-              <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-tertiary)/0.5)] px-2.5 py-1">{profile.timezone}</span>
+-            </div>
+-            <div class="mt-5 grid grid-cols-2 gap-2 border-t border-[rgb(var(--color-border))] pt-4 text-center">
+-              <div><p class="text-lg font-bold">{githubProfile?.publicRepos ?? projects.length}</p><p class="text-[10px] uppercase text-[rgb(var(--color-text-muted))]">{t['home.repos']}</p></div>
+-              <div><p class="text-lg font-bold">{experience.length}</p><p class="text-[10px] uppercase text-[rgb(var(--color-text-muted))]">{t['home.roles']}</p></div>
+-            </div>
+-          </article>
+-
+-          <article class="glass-panel rounded-lg p-5">
+-            <p class="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--color-text-muted))]">{currentFocus.title || t['home.currentFocus']}</p>
+-            <div class="space-y-3">
+-              {currentFocus.items.map((item) => (
+-                <div class="flex items-start gap-3">
+-                  <span class="flex items-center justify-center rounded-md bg-[rgb(var(--color-bg-tertiary))] p-2 text-[rgb(var(--primary))]" aria-hidden="true"><Icon name={getCurrentFocusIcon(item.icon)} size={20} /></span>
+-                  <div>
+-                    <p class="text-[10px] uppercase tracking-[0.18em] text-[rgb(var(--color-text-muted))]">{item.label}</p>
+-                    <p class="text-sm text-[rgb(var(--color-text-primary))]">{item.value}</p>
+-                  </div>
+-                </div>
+-              ))}
+-            </div>
+-          </article>
+-        </div>
+-      </section>
++      <HeroSection />
+ 
+       <section class="mb-14 overflow-hidden rounded-lg border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/var(--glass-bg-opacity))] px-3 py-3">
+         <div class="marquee flex min-w-max gap-4 whitespace-nowrap py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[rgb(var(--color-text-secondary))]">
+@@ -175,187 +88,13 @@ const projectItemsSchema = {
+         </div>
+       </section>
+ 
+-      <section id="projects" data-scene-section="projects" class="mb-16">
+-        <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
+-          <h2 class="text-3xl font-bold tracking-tight">{t['home.buildTitle']}</h2>
+-          <a href={`${profile.github}?tab=repositories`} target="_blank" rel="noreferrer" class="text-sm text-[rgb(var(--color-text-muted))] transition-colors hover:text-[rgb(var(--color-text-primary))]">{t['home.seeAllRepos']}</a>
+-        </div>
+-
+-        <div class="bento-grid">
+-          {projects.map((project, index) => {
+-            const projectUrl = getProjectUrl(project);
+-            const isExternalProjectUrl = projectUrl.startsWith('http');
+-            const primaryLabel = project.data.caseStudy ? t['home.caseStudy'] : t['home.viewProject'];
+-
+-            return (
+-              <article
+-                data-tilt-card
+-                data-testid="project-card"
+-                class:list={[
+-                  'project-card group glass-panel relative overflow-hidden rounded-lg p-5 transition-all hover:border-[rgb(var(--primary))]/40',
+-                  index === 0 ? 'bento-span-2' : '',
+-                  index === 1 ? 'bento-row-span-2' : '',
+-                ]}
+-              >
+-                <div class="absolute inset-0 bg-linear-to-br from-cyan-500/10 via-transparent to-blue-500/10 opacity-70 transition-opacity group-hover:opacity-100"></div>
+-                <div class="relative z-10">
+-                  <div class="mb-2 flex items-center justify-between gap-3">
+-                    <h3 class="text-xl font-bold">{project.data.title}</h3>
+-                    {project.data.caseStudy && (
+-                      <span class="shrink-0 rounded-md border border-[rgb(var(--primary)/0.32)] bg-[rgb(var(--primary)/0.1)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--primary))]">
+-                        Story
+-                      </span>
+-                    )}
+-                  </div>
+-                  <p class="text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.description}</p>
+-
+-                  {project.data.caseStudy && (
+-                    <dl class="mt-4 grid gap-2">
+-                      {project.data.problem && (
+-                        <div class="story-row rounded-md border border-[rgb(var(--color-border)/0.72)] bg-[rgb(var(--color-bg-secondary)/0.5)] px-3 py-2">
+-                          <dt class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">{t['home.problem']}</dt>
+-                          <dd class="story-snippet mt-1 text-xs leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.problem}</dd>
+-                        </div>
+-                      )}
+-                      {project.data.solution && (
+-                        <div class="story-row rounded-md border border-[rgb(var(--color-border)/0.72)] bg-[rgb(var(--color-bg-secondary)/0.5)] px-3 py-2">
+-                          <dt class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">{t['home.build']}</dt>
+-                          <dd class="story-snippet mt-1 text-xs leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.solution}</dd>
+-                        </div>
+-                      )}
+-                      {project.data.impact && (
+-                        <div class="story-row rounded-md border border-[rgb(var(--color-border)/0.72)] bg-[rgb(var(--color-bg-secondary)/0.5)] px-3 py-2">
+-                          <dt class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">{t['home.result']}</dt>
+-                          <dd class="story-snippet mt-1 text-xs leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.impact}</dd>
+-                        </div>
+-                      )}
+-                    </dl>
+-                  )}
+-
+-                  <div class="mt-4 flex flex-wrap gap-1.5">
+-                    {project.data.tech.slice(0, 4).map((tech) => (
+-                      <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary))] px-2.5 py-1 text-[10px] uppercase tracking-wide text-[rgb(var(--color-text-secondary))]">{tech}</span>
+-                    ))}
+-                  </div>
+-                  <div class="mt-4 flex flex-wrap gap-4 text-sm">
+-                    <a
+-                      href={projectUrl}
+-                      target={isExternalProjectUrl ? '_blank' : undefined}
+-                      rel={isExternalProjectUrl ? 'noreferrer' : undefined}
+-                      class="font-semibold text-[rgb(var(--primary))] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
+-                    >
+-                      {primaryLabel}
+-                    </a>
+-                    {project.data.caseStudy && project.data.github && (
+-                      <a href={project.data.github} target="_blank" rel="noreferrer" class="text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]">{t['home.code']}</a>
+-                    )}
+-                    {project.data.link && <a href={project.data.link} target="_blank" rel="noreferrer" class="text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]">{t['home.live']}</a>}
+-                  </div>
+-                </div>
+-              </article>
+-            );
+-          })}
+-        </div>
+-      </section>
++      <ProjectsSection />
++      
++      <GithubStatsSection />
+ 
+-      {/* GitHub Stats Dashboard */}
+-      {githubProfile && (
+-        <section id="github-stats" data-scene-section="activity" aria-label={t['stats.title']} class="mb-16">
+-          <h2 class="mb-6 text-3xl font-bold tracking-tight">{t['stats.title']}</h2>
+-          <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+-            <div class="glass-panel rounded-lg p-5 text-center">
+-              <p class="text-2xl font-bold text-[rgb(var(--primary))]">{githubProfile.publicRepos}</p>
+-              <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{t['stats.repos']}</p>
+-            </div>
+-            <div class="glass-panel rounded-lg p-5 text-center">
+-              <p class="text-2xl font-bold text-[rgb(var(--primary))]">{githubProfile.followers}</p>
+-              <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{t['stats.followers']}</p>
+-            </div>
+-            <div class="glass-panel rounded-lg p-5 text-center">
+-              <p class="text-2xl font-bold text-[rgb(var(--primary))]">{recentGithubActivity.length}</p>
+-              <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{t['stats.contributions']}</p>
+-            </div>
+-            <div class="glass-panel rounded-lg p-5 text-center">
+-              <p class="text-2xl font-bold text-[rgb(var(--primary))]">{githubProfile.yearsOnGithub}+</p>
+-              <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{t['stats.years']}</p>
+-            </div>
+-          </div>
+-          <p class="mt-4 text-center text-xs text-[rgb(var(--color-text-muted))]">{t['stats.memberSince']} {githubProfile.memberSince}</p>
+-          <div class="mt-4 text-center">
+-            <a
+-              href={`https://github.com/${profileEntry.data.customMetric.githubUsername}`}
+-              target="_blank"
+-              rel="noreferrer"
+-              class="text-sm text-[rgb(var(--color-text-muted))] transition-colors hover:text-[rgb(var(--color-text-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
+-            >{t['stats.viewProfile']}</a>
+-          </div>
+-        </section>
+-      )}
++      <ExperienceSection />
+ 
+-      <section id="experience" data-scene-section="experience" class="mb-16">
+-        <h2 class="mb-6 text-3xl font-bold tracking-tight">{t['home.journeyTitle']}</h2>
+-        <div class="timeline relative space-y-4 pl-8">
+-          {experience.map((job, idx) => (
+-            <article class="glass-panel relative rounded-lg p-5 transition hover:border-[rgb(var(--primary))]/35">
+-              <span class:list={[
+-                'absolute -left-[1.9rem] top-7 h-5 w-5 rounded-full border-4 border-[rgb(var(--bg))] shadow-[0_0_0_2px_rgba(var(--color-border),0.2)]',
+-                idx === 0 ? 'bg-[rgb(var(--primary))]' : 'bg-[rgb(var(--color-text-muted))]',
+-              ]}></span>
+-              <div class="mb-3 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+-                <div>
+-                  <h3 class="text-xl font-bold">{job.data.role}</h3>
+-                  <p class="text-[rgb(var(--primary))]">{job.data.company}</p>
+-                </div>
+-                <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-tertiary)/0.5)] px-2.5 py-1 text-xs text-[rgb(var(--color-text-secondary))]">{formatDate(job.data.startDate)} — {job.data.endDate ? formatDate(job.data.endDate) : t['home.present']}</span>
+-              </div>
+-              <ul class="list-disc space-y-1 pl-5 text-sm text-[rgb(var(--color-text-secondary))] marker:text-[rgb(var(--primary))]">
+-                {job.data.tasks.slice(0, 2).map((task) => (
+-                  <li>{task}</li>
+-                ))}
+-              </ul>
+-            </article>
+-          ))}
+-        </div>
+-      </section>
+-
+-      <section id="activity" data-scene-section="activity" class="mb-14">
+-        <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
+-          <h2 class="text-3xl font-bold">{t['home.latestActivity']}</h2>
+-          <a href={profile.github} target="_blank" rel="noreferrer" class="text-sm text-[rgb(var(--color-text-muted))] transition-colors hover:text-[rgb(var(--primary))]">{t['home.viewFullProfile']}</a>
+-        </div>
+-        <div class="space-y-3">
+-          {recentGithubActivity.map((event) => {
+-            const eventType = event.eventType ?? 'push';
+-            return (
+-              <article class="activity-card glass-panel overflow-hidden rounded-lg transition-all hover:border-[rgb(var(--primary))]/40">
+-                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/var(--glass-bg-opacity))] px-4 py-2.5">
+-                  <div class="flex min-w-0 items-center gap-3">
+-                    <a
+-                      href={event.url}
+-                      target="_blank"
+-                      rel="noreferrer"
+-                      class="truncate text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--primary))] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
+-                    >{event.repo}</a>
+-                    <span class={`rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${eventType === 'push' ? 'bg-[rgb(var(--primary)/0.15)] text-[rgb(var(--primary))]' : eventType === 'pr' ? 'bg-[rgb(var(--primary)/0.25)] text-[rgb(var(--primary))]' : 'bg-[rgb(var(--primary)/0.35)] text-[rgb(var(--primary))]'}`}>
+-                      {EVENT_BADGE_LABELS[eventType]}
+-                    </span>
+-                  </div>
+-                  <span class="text-xs text-[rgb(var(--color-text-muted))]">{event.date}</span>
+-                </div>
+-                <div class="flex flex-col gap-3 p-4 sm:flex-row sm:items-end sm:justify-between">
+-                  <p class="text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{event.message}</p>
+-                  <a
+-                    href={event.url}
+-                    target="_blank"
+-                    rel="noreferrer"
+-                    class="shrink-0 text-xs text-[rgb(var(--color-text-muted))] transition-colors hover:text-[rgb(var(--primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
+-                  >{t['home.viewOnGithub']}</a>
+-                </div>
+-              </article>
+-            );
+-          })}
+-        </div>
+-      </section>
++      <ActivitySection />
+ 
+       <footer id="contact" data-scene-section="contact" class="glass-panel mb-6 flex flex-col items-center justify-between gap-5 rounded-lg p-6 text-center md:flex-row md:text-left">
+         <div>
+@@ -363,8 +102,8 @@ const projectItemsSchema = {
+           <a class="mt-1.5 block text-lg text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-text-primary))]" href={`mailto:${profile.email}`}>{profile.email}</a>
+         </div>
+         <div class="flex flex-wrap gap-3">
+-          <a href={`mailto:${profile.email}`} class="rounded-md bg-[rgb(var(--primary))] px-5 py-2.5 text-sm font-bold text-[rgb(var(--color-accent-contrast))] transition hover:bg-[rgb(var(--color-accent-hover))]">{t['home.sayHello']}</a>
+-          <a href={profile.linkedin} target="_blank" rel="noreferrer" class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.2)] px-5 py-2.5 text-sm font-bold text-[rgb(var(--color-text-primary))] transition hover:border-[rgb(var(--color-border-hover))] hover:bg-[rgb(var(--color-bg-tertiary)/0.5)]">{t['home.linkedin']}</a>
++          <a href={`mailto:${profile.email}`} class="hover-lift rounded-md bg-[rgb(var(--color-accent))] px-5 py-2.5 text-sm font-bold text-[rgb(var(--color-accent-contrast))] transition-colors hover:bg-[rgb(var(--color-accent-hover))]">{t['home.sayHello']}</a>
++          <a href={profile.linkedin} target="_blank" rel="noreferrer" class="hover-lift rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.2)] px-5 py-2.5 text-sm font-bold text-[rgb(var(--color-text-primary))] transition-all hover:border-[rgb(var(--color-border-hover))] hover:bg-[rgb(var(--color-bg-tertiary)/0.5)]">{t['home.linkedin']}</a>
+         </div>
+       </footer>
+     </div>
+diff --git a/src/layouts/BaseLayout.astro b/src/layouts/BaseLayout.astro
+index 64ed6db..c069992 100644
+--- a/src/layouts/BaseLayout.astro
++++ b/src/layouts/BaseLayout.astro
+@@ -68,7 +68,9 @@ const allSchema = [...defaultSchema, ...customSchema];
+     <title>{title}</title>
+     <meta name="description" content={description} />
+     <link rel="canonical" href={canonicalUrl} />
+-    <meta name="theme-color" content="#087896" />
++    <meta name="robots" content="index, follow" />
++    <meta name="theme-color" content="#087896" media="(prefers-color-scheme: light)" />
++    <meta name="theme-color" content="#7dd3fc" media="(prefers-color-scheme: dark)" />
+ 
+     <meta property="og:type" content={ogType} />
+     <meta property="og:title" content={title} />
+@@ -135,6 +137,19 @@ const allSchema = [...defaultSchema, ...customSchema];
+       })();
+     </script>
+ 
++    <script is:inline>
++      (() => {
++        if (window.location.pathname === '/') {
++          const hasPref = localStorage.getItem('languagePreference');
++          const wantsPt = (navigator.language || '').toLowerCase().startsWith('pt');
++          
++          if (hasPref === 'pt' || (!hasPref && wantsPt)) {
++            window.location.replace('/pt/');
++          }
++        }
++      })();
++    </script>
++
+     <script define:vars={{ observabilityEndpoint }} is:inline>
+       (() => {
+         const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+diff --git a/src/layouts/BlogLayout.astro b/src/layouts/BlogLayout.astro
+index 0208cd5..0d1fe20 100644
+--- a/src/layouts/BlogLayout.astro
++++ b/src/layouts/BlogLayout.astro
+@@ -56,7 +56,7 @@ function formatDate(date: Date): string {
+ >
+   <Header />
+ 
+-  <main id="main-content" class="pb-14 pt-[5.5rem]" tabindex="-1">
++  <main id="main-content" class="pb-14 pt-[6.5rem]" tabindex="-1">
+     <article class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+       <!-- Header -->
+       <header class="mb-9">
+@@ -93,7 +93,7 @@ function formatDate(date: Date): string {
+           <li>
+             <a
+               href="/"
+-              class="rounded-sm hover:text-[rgb(var(--color-accent))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))] transition-colors"
++              class="rounded-sm hover:text-[rgb(var(--color-accent))] transition-colors"
+             >
+               Home
+             </a>
+@@ -102,7 +102,7 @@ function formatDate(date: Date): string {
+           <li>
+             <a
+               href="/blog"
+-              class="rounded-sm hover:text-[rgb(var(--color-accent))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))] transition-colors"
++              class="rounded-sm hover:text-[rgb(var(--color-accent))] transition-colors"
+             >
+               Blog
+             </a>
+@@ -136,7 +136,7 @@ function formatDate(date: Date): string {
+       <div class="mt-12 border-t border-[rgb(var(--color-border))] pt-7">
+         <a
+           href="/blog"
+-          class="group inline-flex items-center gap-2 rounded-md px-3 py-2 text-[rgb(var(--color-accent))] transition-colors hover:bg-[rgb(var(--color-accent)/0.1)] focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
++          class="group inline-flex items-center gap-2 rounded-md px-3 py-2 text-[rgb(var(--color-accent))] transition-colors hover:bg-[rgb(var(--color-accent)/0.1)]"
+         >
+           <span class="group-hover:-translate-x-1 transition-transform">
+             <Icon name="arrow-down" size={16} class="rotate-90" />
+diff --git a/src/pages/404.astro b/src/pages/404.astro
+index 33b126b..710a619 100644
+--- a/src/pages/404.astro
++++ b/src/pages/404.astro
+@@ -1,5 +1,7 @@
+ ---
+ import BaseLayout from '@/layouts/BaseLayout.astro';
++import Header from '@/components/layout/Header.astro';
++import Footer from '@/components/layout/Footer.astro';
+ import Icon from '@/components/common/Icon.astro';
+ 
+ const title = '404 - Page Not Found';
+@@ -7,11 +9,13 @@ const description = 'The page you are looking for does not exist.';
+ ---
+ 
+ <BaseLayout title={title} description={description}>
+-  <main id="main-content" tabindex="-1" class="flex min-h-screen items-center justify-center px-4 py-20 sm:px-6 lg:px-8">
+-    <div class="text-center max-w-md w-full">
++  <Header />
++
++  <main id="main-content" tabindex="-1" class="flex min-h-[80vh] items-center justify-center px-4 py-12 pt-[6.5rem] sm:px-6 lg:px-8 animate-fade-in">
++    <div class="w-full max-w-md text-center">
+       <!-- 404 Icon/Illustration -->
+       <div class="mb-6">
+-        <h1 class="bg-gradient-to-r from-[rgb(var(--color-accent))] via-sky-500 to-blue-500 bg-clip-text text-7xl font-extrabold text-transparent sm:text-8xl">
++        <h1 class="gradient-text text-7xl font-extrabold sm:text-8xl">
+           404
+         </h1>
+       </div>
+@@ -29,14 +33,14 @@ const description = 'The page you are looking for does not exist.';
+       <div class="flex flex-col items-center justify-center gap-3 sm:flex-row">
+         <a
+           href="/"
+-          class="inline-flex items-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-5 py-2.5 font-semibold text-[rgb(var(--color-accent-contrast))] transition-all duration-200 hover:-translate-y-0.5"
++          class="hover-lift inline-flex items-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-5 py-2.5 font-semibold text-[rgb(var(--color-accent-contrast))] transition-colors hover:bg-[rgb(var(--color-accent-hover))]"
+         >
+           Back to Home
+         </a>
+ 
+         <a
+           href="/blog"
+-          class="inline-flex items-center gap-2 rounded-md border border-[rgb(var(--color-accent))] px-5 py-2.5 font-semibold text-[rgb(var(--color-accent))] transition-all duration-200 hover:bg-[rgb(var(--color-accent)/0.1)]"
++          class="inline-flex items-center gap-2 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.28)] px-5 py-2.5 font-semibold text-[rgb(var(--color-text-primary))] transition-all hover:border-[rgb(var(--color-border-hover))] hover:bg-[rgb(var(--color-bg-tertiary)/0.55)]"
+         >
+           <Icon name="code" size={20} />
+           Blog
+@@ -54,27 +58,6 @@ const description = 'The page you are looking for does not exist.';
+       </div>
+     </div>
+   </main>
+-</BaseLayout>
+-
+-<style>
+-  main {
+-    animation: fade-in 300ms ease-out;
+-  }
+ 
+-  @keyframes fade-in {
+-    from {
+-      opacity: 0;
+-      transform: translateY(10px);
+-    }
+-    to {
+-      opacity: 1;
+-      transform: translateY(0);
+-    }
+-  }
+-
+-  @media (prefers-reduced-motion: reduce) {
+-    main {
+-      animation: none;
+-    }
+-  }
+-</style>
++  <Footer />
++</BaseLayout>
+diff --git a/src/pages/blog/index.astro b/src/pages/blog/index.astro
+index f82f414..3c2e522 100644
+--- a/src/pages/blog/index.astro
++++ b/src/pages/blog/index.astro
+@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
+ import BaseLayout from '@/layouts/BaseLayout.astro';
+ import Header from '@/components/layout/Header.astro';
+ import Footer from '@/components/layout/Footer.astro';
++import EmptyState from '@/components/common/EmptyState.astro';
+ import { ui } from '@/lib/i18n';
+ 
+ const t = ui.en;
+@@ -43,7 +44,7 @@ function formatDate(date: Date): string {
+ >
+   <Header />
+ 
+-  <main id="main-content" class="pb-14 pt-[5.5rem]" tabindex="-1">
++  <main id="main-content" class="pb-14 pt-[6.5rem]" tabindex="-1">
+     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+       <!-- Header -->
+       <div class="mb-10 text-center">
+@@ -57,7 +58,7 @@ function formatDate(date: Date): string {
+       {sortedPosts.length > 0 ? (
+         <div class="space-y-4">
+           {sortedPosts.map((post) => (
+-            <article class="glass-panel group rounded-lg p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[rgb(var(--color-accent)/0.5)]">
++            <article class="glass-panel hover-lift group rounded-lg p-5 transition-all duration-300 hover:border-[rgb(var(--color-accent)/0.5)]">
+               <a href={`/blog/${post.id}`} class="block">
+                 <div class="mb-3 flex flex-wrap gap-2">
+                   {post.data.tags.map((tag) => (
+@@ -92,11 +93,13 @@ function formatDate(date: Date): string {
+           ))}
+         </div>
+       ) : (
+-        <div class="py-14 text-center">
+-          <p class="text-[rgb(var(--color-text-muted))]">
+-            No posts yet. Check back soon!
+-          </p>
+-        </div>
++        <EmptyState 
++          iconName="book-open" 
++          title="No Posts Yet" 
++          description="It seems I haven't published any articles yet. Check back soon!" 
++          actionText="Go back Home" 
++          actionHref="/" 
++        />
+       )}
+     </div>
+   </main>
+diff --git a/src/pages/projects/[slug].astro b/src/pages/projects/[slug].astro
+index 579fea0..403e792 100644
+--- a/src/pages/projects/[slug].astro
++++ b/src/pages/projects/[slug].astro
+@@ -56,14 +56,14 @@ const caseStudySchema = {
+ >
+   <Header />
+ 
+-  <main id="main-content" tabindex="-1" class="noise-bg relative overflow-x-hidden px-4 pb-12 pt-[5.5rem] sm:px-6 lg:px-8">
++  <main id="main-content" tabindex="-1" class="noise-bg relative overflow-x-hidden px-4 pb-12 pt-[6.5rem] sm:px-6 lg:px-8">
+     <article class="mx-auto max-w-6xl" data-scene-section="projects">
+       <nav aria-label="Breadcrumb" class="mb-6">
+         <ol class="flex flex-wrap items-center gap-2 text-sm text-[rgb(var(--color-text-secondary))]">
+           <li>
+             <a
+               href="/"
+-              class="rounded-sm transition-colors hover:text-[rgb(var(--primary))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
++              class="rounded-sm transition-colors hover:text-[rgb(var(--color-accent))]"
+             >
+               Home
+             </a>
+@@ -72,7 +72,7 @@ const caseStudySchema = {
+           <li>
+             <a
+               href="/#projects"
+-              class="rounded-sm transition-colors hover:text-[rgb(var(--primary))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
++              class="rounded-sm transition-colors hover:text-[rgb(var(--color-accent))]"
+             >
+               Projects
+             </a>
+@@ -88,7 +88,7 @@ const caseStudySchema = {
+         <div class="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
+           <div class="p-5 sm:p-7 lg:p-8">
+             <div class="mb-4 flex flex-wrap items-center gap-2">
+-              <span class="rounded-md border border-[rgb(var(--primary)/0.35)] bg-[rgb(var(--primary)/0.1)] px-2.5 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--primary))]">
++              <span class="rounded-md border border-[rgb(var(--color-accent)/0.35)] bg-[rgb(var(--color-accent)/0.1)] px-2.5 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--color-accent))]">
+                 Case Study
+               </span>
+               {project.data.year && (
+@@ -123,7 +123,7 @@ const caseStudySchema = {
+             <div class="mt-7 flex flex-wrap gap-3 text-sm">
+               <a
+                 href="/#projects"
+-                class="inline-flex items-center gap-2 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.28)] px-4 py-2 font-semibold text-[rgb(var(--color-text-primary))] transition hover:border-[rgb(var(--color-border-hover))] hover:bg-[rgb(var(--color-bg-tertiary)/0.55)] focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
++                class="hover-lift inline-flex items-center gap-2 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.28)] px-4 py-2 font-semibold text-[rgb(var(--color-text-primary))] transition-all hover:border-[rgb(var(--color-border-hover))] hover:bg-[rgb(var(--color-bg-tertiary)/0.55)]"
+               >
+                 <Icon name="arrow-down" size={16} class="rotate-90" />
+                 Back to projects
+@@ -133,7 +133,7 @@ const caseStudySchema = {
+                   href={project.data.github}
+                   target="_blank"
+                   rel="noreferrer"
+-                  class="inline-flex items-center gap-2 rounded-md bg-[rgb(var(--primary))] px-4 py-2 font-semibold text-[rgb(var(--color-accent-contrast))] transition hover:bg-[rgb(var(--color-accent-hover))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
++                  class="hover-lift inline-flex items-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-4 py-2 font-semibold text-[rgb(var(--color-accent-contrast))] transition-colors hover:bg-[rgb(var(--color-accent-hover))]"
+                 >
+                   Repository
+                   <Icon name="external-link" size={15} />
+@@ -144,7 +144,7 @@ const caseStudySchema = {
+                   href={project.data.link}
+                   target="_blank"
+                   rel="noreferrer"
+-                  class="inline-flex items-center gap-2 rounded-md bg-[rgb(var(--primary))] px-4 py-2 font-semibold text-[rgb(var(--color-accent-contrast))] transition hover:bg-[rgb(var(--color-accent-hover))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
++                  class="hover-lift inline-flex items-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-4 py-2 font-semibold text-[rgb(var(--color-accent-contrast))] transition-colors hover:bg-[rgb(var(--color-accent-hover))]"
+                 >
+                   Live
+                   <Icon name="external-link" size={15} />
+@@ -192,7 +192,7 @@ const caseStudySchema = {
+         <section class="mt-6 grid gap-3 sm:grid-cols-3" aria-label="Project metrics">
+           {project.data.metrics.map((metric) => (
+             <div class="glass-panel rounded-lg p-5">
+-              <p class="text-2xl font-extrabold text-[rgb(var(--primary))]">{metric.value}</p>
++              <p class="text-2xl font-extrabold text-[rgb(var(--color-accent))]">{metric.value}</p>
+               <p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{metric.label}</p>
+             </div>
+           ))}
+@@ -212,7 +212,7 @@ const caseStudySchema = {
+             <ul class="mt-4 space-y-3 text-sm text-[rgb(var(--color-text-secondary))]">
+               {project.data.highlights.map((highlight) => (
+                 <li class="flex gap-2">
+-                  <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[rgb(var(--primary))]" aria-hidden="true"></span>
++                  <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[rgb(var(--color-accent))]" aria-hidden="true"></span>
+                   <span>{highlight}</span>
+                 </li>
+               ))}
+diff --git a/src/styles/global.css b/src/styles/global.css
+index ba8fc17..44afd19 100644
+--- a/src/styles/global.css
++++ b/src/styles/global.css
+@@ -207,6 +207,86 @@ html.dark .glass-panel {
+   box-shadow: 0 14px 34px rgb(var(--glass-shadow) / 0.24);
+ }
+ 
++.glass-card {
++  background: rgb(var(--color-bg-primary) / 0.6);
++  backdrop-filter: blur(16px) saturate(120%);
++  -webkit-backdrop-filter: blur(16px) saturate(120%);
++  border: 1px solid rgb(var(--color-border) / var(--glass-border-opacity));
++  box-shadow: 0 16px 36px rgb(var(--glass-shadow) / 0.1);
++}
++
++html.dark .glass-card {
++  background: rgb(var(--color-bg-secondary) / 0.4);
++}
++
++.hover-lift {
++  transition: transform 0.2s ease, box-shadow 0.2s ease;
++}
++
++.hover-lift:hover,
++.hover-lift:focus-visible {
++  transform: translateY(-4px);
++  box-shadow: 0 10px 25px rgb(var(--glass-shadow) / 0.15);
++}
++
++.hover-glow {
++  transition: box-shadow 0.2s ease;
++}
++
++.hover-glow:hover,
++.hover-glow:focus-visible {
++  box-shadow: 0 0 15px rgb(var(--color-accent) / 0.5);
++}
++
++.link-underline {
++  position: relative;
++  text-decoration: none;
++}
++
++.link-underline::after {
++  content: '';
++  position: absolute;
++  width: 100%;
++  transform: scaleX(0);
++  height: 2px;
++  bottom: -2px;
++  left: 0;
++  background-color: rgb(var(--color-accent));
++  transform-origin: bottom right;
++  transition: transform 0.25s ease-out;
++}
++
++.link-underline:hover::after,
++.link-underline:focus-visible::after {
++  transform: scaleX(1);
++  transform-origin: bottom left;
++}
++
++.animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
++.animate-slide-up { animation: slide-up 0.4s ease-out forwards; }
++.animate-slide-down { animation: slide-down 0.4s ease-out forwards; }
++.animate-scale-in { animation: scale-in 0.3s ease-out forwards; }
++
++@keyframes fade-in {
++  from { opacity: 0; }
++  to { opacity: 1; }
++}
++
++@keyframes slide-up {
++  from { opacity: 0; transform: translateY(20px); }
++  to { opacity: 1; transform: translateY(0); }
++}
++
++@keyframes slide-down {
++  from { opacity: 0; transform: translateY(-20px); }
++  to { opacity: 1; transform: translateY(0); }
++}
++
++@keyframes scale-in {
++  from { opacity: 0; transform: scale(0.95); }
++  to { opacity: 1; transform: scale(1); }
++}
++
+ .text-gradient,
+ .gradient-text {
+   background: linear-gradient(to right, #0e7490, #2563eb);
+@@ -544,9 +624,14 @@ html.dark .gradient-text {
+     transform: none !important;
+   }
+ 
+-  .animate-ping {
++  .animate-ping,
++  .animate-fade-in,
++  .animate-slide-up,
++  .animate-slide-down,
++  .animate-scale-in {
+     animation: none !important;
+     opacity: 1 !important;
++    transform: none !important;
+   }
+ 
+ }

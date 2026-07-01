@@ -18,6 +18,8 @@
     "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@astrojs/markdown-satteri": "^0.3.2",
     "@astrojs/mdx": "^7.0.0",
     "@astrojs/sitemap": "^3.7.3",
     "@astrojs/svelte": "^9.0.0",
@@ -26,7 +28,8 @@
     "astro": "^7.0.3",
     "svelte": "^5.56.3",
     "tailwindcss": "^4.3.1",
-    "three": "^0.185.1"
+    "three": "^0.185.1",
+    "typescript": "^6.0.3"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.0",

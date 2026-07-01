@@ -1,0 +1,50 @@
+---
+import { getCollection } from 'astro:content';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
+
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
+
+async function getLocalizedCollection(collection: 'experience') {
+  const localizedEntries = await getCollection(collection, ({ data }) => data.lang === currentLang);
+  if (localizedEntries.length > 0 || currentLang === defaultLang) {
+    return localizedEntries;
+  }
+  return getCollection(collection, ({ data }) => data.lang === defaultLang);
+}
+
+const experience = (await getLocalizedCollection('experience'))
+  .sort((a, b) => a.data.order - b.data.order);
+
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat(currentLang === 'pt' ? 'pt-BR' : 'en-US', {
+    month: 'short',
+    year: 'numeric',
+  }).format(date);
+---
+
+<section id="experience" data-scene-section="experience" aria-labelledby="experience-heading" class="mb-16">
+  <h2 id="experience-heading" class="mb-6 text-3xl font-bold tracking-tight">{t['home.journeyTitle']}</h2>
+  <div class="timeline relative space-y-4 pl-8">
+    {experience.map((job, idx) => (
+      <article class="glass-panel relative rounded-lg p-5 transition hover:border-[rgb(var(--color-accent))]/35">
+        <span class:list={[
+          'absolute -left-[1.9rem] top-7 h-5 w-5 rounded-full border-4 border-[rgb(var(--bg))] shadow-[0_0_0_2px_rgba(var(--color-border),0.2)]',
+          idx === 0 ? 'bg-[rgb(var(--color-accent))]' : 'bg-[rgb(var(--color-text-muted))]',
+        ]}></span>
+        <div class="mb-3 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+          <div>
+            <h3 class="text-xl font-bold">{job.data.role}</h3>
+            <p class="text-[rgb(var(--color-accent))]">{job.data.company}</p>
+          </div>
+          <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-tertiary)/0.5)] px-2.5 py-1 text-xs text-[rgb(var(--color-text-secondary))]">{formatDate(job.data.startDate)} — {job.data.endDate ? formatDate(job.data.endDate) : t['home.present']}</span>
+        </div>
+        <ul class="list-disc space-y-1 pl-5 text-sm text-[rgb(var(--color-text-secondary))] marker:text-[rgb(var(--color-accent))]">
+          {job.data.tasks.slice(0, 2).map((task: string) => (
+            <li>{task}</li>
+          ))}
+        </ul>
+      </article>
+    ))}
+  </div>
+</section>

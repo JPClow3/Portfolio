@@ -370,10 +370,23 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
 
   function initLangLinks() {
     const hash = window.location.hash;
-    if (!hash) return;
+    const pathname = window.location.pathname;
+    
+    const isPt = pathname.startsWith('/pt/') || pathname === '/pt';
+    let canonicalPath = isPt ? pathname.replace(/^\/pt/, '') : pathname;
+    if (!canonicalPath.startsWith('/')) {
+      canonicalPath = '/' + canonicalPath;
+    }
+    const cleanCanonical = canonicalPath === '/' ? '' : canonicalPath.slice(1);
+    
     document.querySelectorAll<HTMLAnchorElement>('[data-lang-link]').forEach((link) => {
       const base = link.dataset.langBase;
-      if (base) link.href = base + hash;
+      if (base) {
+        link.href = base + cleanCanonical + hash;
+        link.addEventListener('click', () => {
+          localStorage.setItem('languagePreference', base === '/pt/' ? 'pt' : 'en');
+        });
+      }
     });
   }
 

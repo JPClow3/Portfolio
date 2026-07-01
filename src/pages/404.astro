@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
 import Icon from '@/components/common/Icon.astro';
 
 const title = '404 - Page Not Found';
@@ -7,11 +9,13 @@ const description = 'The page you are looking for does not exist.';
 ---
 
 <BaseLayout title={title} description={description}>
-  <main id="main-content" tabindex="-1" class="flex min-h-screen items-center justify-center px-4 py-20 sm:px-6 lg:px-8">
-    <div class="text-center max-w-md w-full">
+  <Header />
+
+  <main id="main-content" tabindex="-1" class="flex min-h-[80vh] items-center justify-center px-4 py-12 pt-[6.5rem] sm:px-6 lg:px-8 animate-fade-in">
+    <div class="w-full max-w-md text-center">
       <!-- 404 Icon/Illustration -->
       <div class="mb-6">
-        <h1 class="bg-gradient-to-r from-[rgb(var(--color-accent))] via-sky-500 to-blue-500 bg-clip-text text-7xl font-extrabold text-transparent sm:text-8xl">
+        <h1 class="gradient-text text-7xl font-extrabold sm:text-8xl">
           404
         </h1>
       </div>
@@ -29,14 +33,14 @@ const description = 'The page you are looking for does not exist.';
       <div class="flex flex-col items-center justify-center gap-3 sm:flex-row">
         <a
           href="/"
-          class="inline-flex items-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-5 py-2.5 font-semibold text-[rgb(var(--color-accent-contrast))] transition-all duration-200 hover:-translate-y-0.5"
+          class="hover-lift inline-flex items-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-5 py-2.5 font-semibold text-[rgb(var(--color-accent-contrast))] transition-colors hover:bg-[rgb(var(--color-accent-hover))]"
         >
           Back to Home
         </a>
 
         <a
           href="/blog"
-          class="inline-flex items-center gap-2 rounded-md border border-[rgb(var(--color-accent))] px-5 py-2.5 font-semibold text-[rgb(var(--color-accent))] transition-all duration-200 hover:bg-[rgb(var(--color-accent)/0.1)]"
+          class="inline-flex items-center gap-2 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.28)] px-5 py-2.5 font-semibold text-[rgb(var(--color-text-primary))] transition-all hover:border-[rgb(var(--color-border-hover))] hover:bg-[rgb(var(--color-bg-tertiary)/0.55)]"
         >
           <Icon name="code" size={20} />
           Blog
@@ -54,27 +58,6 @@ const description = 'The page you are looking for does not exist.';
       </div>
     </div>
   </main>
+
+  <Footer />
 </BaseLayout>
-
-<style>
-  main {
-    animation: fade-in 300ms ease-out;
-  }
-
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    main {
-      animation: none;
-    }
-  }
-</style>

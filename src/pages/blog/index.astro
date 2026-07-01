@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
 import Footer from '@/components/layout/Footer.astro';
+import EmptyState from '@/components/common/EmptyState.astro';
 import { ui } from '@/lib/i18n';
 
 const t = ui.en;
@@ -22,7 +23,7 @@ const blogSchema = {
     headline: post.data.title,
     datePublished: post.data.pubDate.toISOString(),
     dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
-    url: new URL(`/blog/${post.id}`, siteUrl).toString(),
+    url: new URL(`/blog/${post.id.replace(/\.(md|mdx)$/i, '').replace(/\\/g, '/')}`, siteUrl).toString(),
   })),
 };
 
@@ -43,7 +44,7 @@ function formatDate(date: Date): string {
 >
   <Header />
 
-  <main id="main-content" class="pb-14 pt-[5.5rem]" tabindex="-1">
+  <main id="main-content" class="pb-14 pt-[6.5rem]" tabindex="-1">
     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
       <!-- Header -->
       <div class="mb-10 text-center">
@@ -57,8 +58,8 @@ function formatDate(date: Date): string {
       {sortedPosts.length > 0 ? (
         <div class="space-y-4">
           {sortedPosts.map((post) => (
-            <article class="glass-panel group rounded-lg p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[rgb(var(--color-accent)/0.5)]">
-              <a href={`/blog/${post.id}`} class="block">
+            <article class="glass-panel hover-lift group rounded-lg p-5 transition-all duration-300 hover:border-[rgb(var(--color-accent)/0.5)]">
+              <a href={`/blog/${post.id.replace(/\.(md|mdx)$/i, '').replace(/\\/g, '/')}`} class="block">
                 <div class="mb-3 flex flex-wrap gap-2">
                   {post.data.tags.map((tag) => (
                     <span class="rounded px-2 py-0.5 text-xs font-medium text-[rgb(var(--color-text-muted))] bg-[rgb(var(--color-bg-tertiary))]">
@@ -92,11 +93,13 @@ function formatDate(date: Date): string {
           ))}
         </div>
       ) : (
-        <div class="py-14 text-center">
-          <p class="text-[rgb(var(--color-text-muted))]">
-            No posts yet. Check back soon!
-          </p>
-        </div>
+        <EmptyState 
+          iconName="book-open" 
+          title="No Posts Yet" 
+          description="It seems I haven't published any articles yet. Check back soon!" 
+          actionText="Go back Home" 
+          actionHref="/" 
+        />
       )}
     </div>
   </main>

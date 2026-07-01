@@ -207,6 +207,86 @@ html.dark .glass-panel {
   box-shadow: 0 14px 34px rgb(var(--glass-shadow) / 0.24);
 }
 
+.glass-card {
+  background: rgb(var(--color-bg-primary) / 0.6);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  border: 1px solid rgb(var(--color-border) / var(--glass-border-opacity));
+  box-shadow: 0 16px 36px rgb(var(--glass-shadow) / 0.1);
+}
+
+html.dark .glass-card {
+  background: rgb(var(--color-bg-secondary) / 0.4);
+}
+
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover,
+.hover-lift:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgb(var(--glass-shadow) / 0.15);
+}
+
+.hover-glow {
+  transition: box-shadow 0.2s ease;
+}
+
+.hover-glow:hover,
+.hover-glow:focus-visible {
+  box-shadow: 0 0 15px rgb(var(--color-accent) / 0.5);
+}
+
+.link-underline {
+  position: relative;
+  text-decoration: none;
+}
+
+.link-underline::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: rgb(var(--color-accent));
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.link-underline:hover::after,
+.link-underline:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+.animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
+.animate-slide-up { animation: slide-up 0.4s ease-out forwards; }
+.animate-slide-down { animation: slide-down 0.4s ease-out forwards; }
+.animate-scale-in { animation: scale-in 0.3s ease-out forwards; }
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 .text-gradient,
 .gradient-text {
   background: linear-gradient(to right, #0e7490, #2563eb);
@@ -544,9 +624,14 @@ html.dark .gradient-text {
     transform: none !important;
   }
 
-  .animate-ping {
+  .animate-ping,
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-slide-down,
+  .animate-scale-in {
     animation: none !important;
     opacity: 1 !important;
+    transform: none !important;
   }
 
 }

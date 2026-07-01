@@ -1,0 +1,66 @@
+---
+import { getCollection } from 'astro:content';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
+import { getGithubActivity } from '@/lib/github';
+import type { EventType } from '@/lib/github';
+
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
+
+const profileEntries = await getCollection('profile', ({ data }) => data.lang === currentLang);
+const fallbackProfileEntries = await getCollection('profile', ({ data }) => data.lang === defaultLang);
+const profileEntry = profileEntries[0] ?? fallbackProfileEntries[0];
+const profile = profileEntry.data.profile;
+
+const recentGithubActivity = await getGithubActivity(
+  profileEntry.data.customMetric.githubUsername,
+  profileEntry.data.customMetric.fallbackEvents,
+);
+
+const EVENT_BADGE_LABELS_BY_LANG: Record<Lang, Record<EventType, string>> = {
+  en: { push: 'Push', pr: 'PR', create: 'Create' },
+  pt: { push: 'Commit', pr: 'PR', create: 'Criação' },
+};
+
+const EVENT_BADGE_LABELS = EVENT_BADGE_LABELS_BY_LANG[currentLang] ?? EVENT_BADGE_LABELS_BY_LANG[defaultLang];
+---
+
+<section id="activity" data-scene-section="activity" aria-labelledby="activity-heading" class="mb-14">
+  <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
+    <h2 id="activity-heading" class="text-3xl font-bold">{t['home.latestActivity']}</h2>
+    <a href={profile.github} target="_blank" rel="noreferrer" class="text-sm text-[rgb(var(--color-text-muted))] transition-colors hover:text-[rgb(var(--color-accent))]">{t['home.viewFullProfile']}</a>
+  </div>
+  <div class="space-y-3">
+    {recentGithubActivity.map((event) => {
+      const eventType = event.eventType ?? 'push';
+      return (
+        <article class="activity-card glass-panel overflow-hidden rounded-lg transition-all hover:border-[rgb(var(--color-accent))]/40">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/var(--glass-bg-opacity))] px-4 py-2.5">
+            <div class="flex min-w-0 items-center gap-3">
+              <a
+                href={event.url}
+                target="_blank"
+                rel="noreferrer"
+                class="truncate text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--color-accent))] hover:underline"
+              >{event.repo}</a>
+              <span class={`rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${eventType === 'push' ? 'bg-[rgb(var(--color-accent)/0.15)] text-[rgb(var(--color-accent))]' : eventType === 'pr' ? 'bg-[rgb(var(--color-accent)/0.25)] text-[rgb(var(--color-accent))]' : 'bg-[rgb(var(--color-accent)/0.35)] text-[rgb(var(--color-accent))]'}`}>
+                {EVENT_BADGE_LABELS[eventType]}
+              </span>
+            </div>
+            <span class="text-xs text-[rgb(var(--color-text-muted))]">{event.date}</span>
+          </div>
+          <div class="flex flex-col gap-3 p-4 sm:flex-row sm:items-end sm:justify-between">
+            <p class="text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{event.message}</p>
+            <a
+              href={event.url}
+              target="_blank"
+              rel="noreferrer"
+              class="shrink-0 text-xs text-[rgb(var(--color-text-muted))] transition-colors hover:text-[rgb(var(--color-accent))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
+              aria-label={`View event in repository ${event.repo} on GitHub`}
+            >{t['home.viewOnGithub']}</a>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</section>

@@ -68,7 +68,9 @@ const allSchema = [...defaultSchema, ...customSchema];
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
-    <meta name="theme-color" content="#087896" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#087896" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#7dd3fc" media="(prefers-color-scheme: dark)" />
 
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
@@ -132,6 +134,19 @@ const allSchema = [...defaultSchema, ...customSchema];
         const shouldUseDark = theme === 'dark' || (!theme && prefersDark);
 
         document.documentElement.classList.toggle('dark', shouldUseDark);
+      })();
+    </script>
+
+    <script is:inline>
+      (() => {
+        if (window.location.pathname === '/') {
+          const hasPref = localStorage.getItem('languagePreference');
+          const wantsPt = (navigator.language || '').toLowerCase().startsWith('pt');
+          
+          if (hasPref === 'pt' || (!hasPref && wantsPt)) {
+            window.location.replace('/pt/' + window.location.search + window.location.hash);
+          }
+        }
       })();
     </script>
 

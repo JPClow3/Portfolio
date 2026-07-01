@@ -1,0 +1,123 @@
+---
+import { getCollection } from 'astro:content';
+import EmptyState from '@/components/common/EmptyState.astro';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
+
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
+
+const profileEntries = await getCollection('profile', ({ data }) => data.lang === currentLang);
+const fallbackProfileEntries = await getCollection('profile', ({ data }) => data.lang === defaultLang);
+const profileEntry = profileEntries[0] ?? fallbackProfileEntries[0];
+const profile = profileEntry.data.profile;
+
+async function getLocalizedCollection(collection: 'projects') {
+  const localizedEntries = await getCollection(collection, ({ data }) => data.lang === currentLang);
+  if (localizedEntries.length > 0 || currentLang === defaultLang) {
+    return localizedEntries;
+  }
+  return getCollection(collection, ({ data }) => data.lang === defaultLang);
+}
+
+const projects = (await getLocalizedCollection('projects'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 4);
+
+const getProjectSlug = (project: any) =>
+  project.id.replace(/\.(md|mdx)$/i, '').replace(/\\/g, '/');
+
+const getProjectUrl = (project: any) =>
+  project.data.caseStudy ? `/projects/${getProjectSlug(project)}/` : project.data.link ?? project.data.github ?? '/#projects';
+---
+
+<section id="projects" data-scene-section="projects" aria-labelledby="projects-heading" class="mb-16">
+  <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
+    <h2 id="projects-heading" class="text-3xl font-bold tracking-tight">{t['home.buildTitle']}</h2>
+    <a href={`${profile.github}?tab=repositories`} target="_blank" rel="noreferrer" class="text-sm text-[rgb(var(--color-text-muted))] transition-colors hover:text-[rgb(var(--color-text-primary))]">{t['home.seeAllRepos']}</a>
+  </div>
+
+  <div class="bento-grid">
+    {projects.length > 0 ? projects.map((project, index) => {
+      const projectUrl = getProjectUrl(project);
+      const isExternalProjectUrl = projectUrl.startsWith('http');
+      const primaryLabel = project.data.caseStudy ? t['home.caseStudy'] : t['home.viewProject'];
+
+      return (
+        <article
+          data-tilt-card
+          data-testid="project-card"
+          class:list={[
+            'project-card group glass-panel relative overflow-hidden rounded-lg p-5 transition-all hover:border-[rgb(var(--color-accent))]/40',
+            index === 0 ? 'bento-span-2' : '',
+            index === 1 ? 'bento-row-span-2' : '',
+          ]}
+        >
+          <div class="absolute inset-0 bg-linear-to-br from-cyan-500/10 via-transparent to-blue-500/10 opacity-70 transition-opacity group-hover:opacity-100"></div>
+          <div class="relative z-10">
+            <div class="mb-2 flex items-center justify-between gap-3">
+              <h3 class="text-xl font-bold">{project.data.title}</h3>
+              {project.data.caseStudy && (
+                <span class="shrink-0 rounded-md border border-[rgb(var(--color-accent)/0.32)] bg-[rgb(var(--color-accent)/0.1)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-accent))]">
+                  Story
+                </span>
+              )}
+            </div>
+            <p class="text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.description}</p>
+
+            {project.data.caseStudy && (
+              <dl class="mt-4 grid gap-2">
+                {project.data.problem && (
+                  <div class="story-row rounded-md border border-[rgb(var(--color-border)/0.72)] bg-[rgb(var(--color-bg-secondary)/0.5)] px-3 py-2">
+                    <dt class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">{t['home.problem']}</dt>
+                    <dd class="story-snippet mt-1 text-xs leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.problem}</dd>
+                  </div>
+                )}
+                {project.data.solution && (
+                  <div class="story-row rounded-md border border-[rgb(var(--color-border)/0.72)] bg-[rgb(var(--color-bg-secondary)/0.5)] px-3 py-2">
+                    <dt class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">{t['home.build']}</dt>
+                    <dd class="story-snippet mt-1 text-xs leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.solution}</dd>
+                  </div>
+                )}
+                {project.data.impact && (
+                  <div class="story-row rounded-md border border-[rgb(var(--color-border)/0.72)] bg-[rgb(var(--color-bg-secondary)/0.5)] px-3 py-2">
+                    <dt class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">{t['home.result']}</dt>
+                    <dd class="story-snippet mt-1 text-xs leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.impact}</dd>
+                  </div>
+                )}
+              </dl>
+            )}
+
+            <div class="mt-4 flex flex-wrap gap-1.5">
+              {project.data.tech.slice(0, 4).map((tech: string) => (
+                <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary))] px-2.5 py-1 text-[10px] uppercase tracking-wide text-[rgb(var(--color-text-secondary))]">{tech}</span>
+              ))}
+            </div>
+            <div class="mt-4 flex flex-wrap gap-4 text-sm">
+              <a
+                href={projectUrl}
+                target={isExternalProjectUrl ? '_blank' : undefined}
+                rel={isExternalProjectUrl ? 'noreferrer' : undefined}
+                class="font-semibold text-[rgb(var(--color-accent))] hover:underline"
+                aria-label={`${primaryLabel} - ${project.data.title}`}
+              >
+                {primaryLabel}
+              </a>
+              {project.data.caseStudy && project.data.github && (
+                <a href={project.data.github} target="_blank" rel="noreferrer" class="text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-text-primary))]" aria-label={`View code for ${project.data.title} on GitHub`}>{t['home.code']}</a>
+              )}
+              {project.data.link && <a href={project.data.link} target="_blank" rel="noreferrer" class="text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-text-primary))]" aria-label={`View live site for ${project.data.title}`}>{t['home.live']}</a>}
+            </div>
+          </div>
+        </article>
+      );
+    }) : (
+      <div class="col-span-full">
+        <EmptyState 
+          iconName="code" 
+          title="No Projects Yet" 
+          description="I'm currently working on some exciting things. They will appear here soon!" 
+        />
+      </div>
+    )}
+  </div>
+</section>

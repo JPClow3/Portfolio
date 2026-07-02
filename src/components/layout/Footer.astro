@@ -1,15 +1,16 @@
 ---
 import Icon from '@/components/common/Icon.astro';
-import { ui } from '@/lib/i18n';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
 
-const t = ui.en;
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
 const currentYear = new Date().getFullYear();
 
 const navLinks = [
-  { name: 'About', href: '/#about' },
-  { name: 'Projects', href: '/#projects' },
-  { name: 'Blog', href: '/blog' },
-  { name: 'Contact', href: '/#contact' },
+  { name: t['nav.about'], href: '/#about' },
+  { name: t['nav.projects'], href: '/#projects' },
+  { name: t['nav.blog'], href: '/blog' },
+  { name: t['nav.contact'], href: '/#contact' },
 ];
 
 const socialLinks = [
@@ -49,13 +50,13 @@ const socialLinks = [
       <div>
         <a href="/" class="text-xl font-bold gradient-text">JP</a>
         <p class="mt-3 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">
-          Front-End Developer & QA Automation Engineer building tested, accessible web experiences.
+          {t['footer.aboutText']}
         </p>
       </div>
 
       <!-- Navigation Links -->
       <div>
-        <h3 class="mb-3 font-semibold text-[rgb(var(--color-text-primary))]">Quick Links</h3>
+        <h3 class="mb-3 font-semibold text-[rgb(var(--color-text-primary))]">{t['footer.quickLinks']}</h3>
         <nav aria-label="Footer navigation" class="grid grid-cols-2 gap-2">
           {navLinks.map((link) => (
             <a
@@ -70,7 +71,7 @@ const socialLinks = [
 
       <!-- Social & Contact -->
       <div>
-        <h3 class="mb-3 font-semibold text-[rgb(var(--color-text-primary))]">Connect</h3>
+        <h3 class="mb-3 font-semibold text-[rgb(var(--color-text-primary))]">{t['footer.connect']}</h3>
         <nav aria-label="Social connections" class="flex items-center gap-3">
           {socialLinks.map((link) => (
             <a
@@ -92,7 +93,7 @@ const socialLinks = [
       <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
         <!-- Copyright -->
         <p class="text-sm text-[rgb(var(--color-text-muted))]">
-          &copy; {currentYear} João Paulo Gonçalves Santos. All rights reserved.
+          &copy; {currentYear} João Paulo Gonçalves Santos. {t['footer.rights']}
         </p>
 
         <!-- Back to Top -->
@@ -108,7 +109,7 @@ const socialLinks = [
 
       <!-- Tech Stack -->
       <p class="mt-5 text-center text-sm text-[rgb(var(--color-text-muted))]">
-        Built with
+        {t['footer.builtWith']}
         <a
           href="https://astro.build"
           target="_blank"

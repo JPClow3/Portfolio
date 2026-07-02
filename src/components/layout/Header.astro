@@ -56,7 +56,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
             class="nav-link relative rounded-md px-3 py-1.5 text-sm font-medium text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-text-primary))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))] group"
           >
             {link.label}
-            <span class="absolute bottom-0 left-1/2 h-px w-0 -translate-x-1/2 bg-[rgb(var(--color-accent))] transition-all duration-300 group-hover:w-4/5" />
+            <span class="absolute bottom-0 left-1/2 h-[2px] w-0 -translate-x-1/2 rounded-t-sm bg-[rgb(var(--color-accent))] transition-all duration-300 group-hover:w-4/5" />
           </a>
         ))}
       </div>
@@ -533,11 +533,17 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
 
 <style>
   #header.scrolled {
-    box-shadow: 0 8px 24px rgb(var(--glass-shadow) / 0.08);
+    background: rgb(var(--color-bg-primary) / 0.72);
+    backdrop-filter: blur(24px) saturate(120%);
+    -webkit-backdrop-filter: blur(24px) saturate(120%);
+    box-shadow: 0 8px 32px rgb(var(--glass-shadow) / 0.12);
+    border-bottom: 1px solid rgb(var(--color-accent) / 0.1);
   }
 
   :global(html.dark) #header.scrolled {
-    box-shadow: 0 10px 28px rgb(var(--glass-shadow) / 0.24);
+    background: rgb(var(--color-bg-primary) / 0.5);
+    box-shadow: 0 10px 32px rgb(var(--glass-shadow) / 0.35);
+    border-bottom: 1px solid rgb(var(--color-accent) / 0.15);
   }
 
   @media (prefers-reduced-motion: reduce) {

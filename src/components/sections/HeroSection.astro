@@ -40,6 +40,11 @@ const gravatarUrl2x = `https://2.gravatar.com/avatar/${profile.gravatarHash}?s=1
 ---
 
 <section id="about" data-scene-section="about" aria-labelledby="about-heading" class="relative isolate mb-16 grid min-h-[520px] grid-cols-1 items-center gap-8 overflow-hidden rounded-xl border border-[rgb(var(--color-border)/0.72)] bg-[rgb(var(--color-bg-primary)/0.44)] px-5 py-10 sm:px-7 lg:grid-cols-12 lg:px-9">
+  <!-- Dynamic radial gradient backdrop -->
+  <div class="pointer-events-none absolute -inset-px -z-10 bg-linear-to-b from-[rgb(var(--color-accent)/0.04)] to-transparent dark:from-[rgb(var(--color-accent)/0.08)]"></div>
+  <div class="pointer-events-none absolute -top-40 -right-40 -z-10 h-96 w-96 rounded-full bg-[rgb(var(--color-accent))] opacity-10 blur-[100px] dark:opacity-20"></div>
+  <div class="pointer-events-none absolute -bottom-40 -left-40 -z-10 h-96 w-96 rounded-full bg-[rgb(var(--color-accent))] opacity-10 blur-[100px] dark:opacity-20"></div>
+  
   <div class="relative z-10 lg:col-span-7">
     <h1 id="about-heading" class="max-w-3xl text-4xl font-extrabold leading-[1.03] tracking-tight text-[rgb(var(--color-text-primary))] sm:text-5xl lg:text-6xl animate-fade-in opacity-0 [animation-fill-mode:forwards]">
       {t['home.hero.lead']}
@@ -57,18 +62,20 @@ const gravatarUrl2x = `https://2.gravatar.com/avatar/${profile.gravatarHash}?s=1
 
   <div class="relative z-10 flex flex-col gap-4 lg:col-span-5">
     <article class="glass-panel rounded-lg p-5 text-center">
-      <div class="hover-glow mx-auto mb-3 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-[rgb(var(--color-accent))/0.48] shadow-sm transition-shadow duration-300">
-        <img
-          src={gravatarUrl1x}
-          srcset={`${gravatarUrl1x} 1x, ${gravatarUrl2x} 2x`}
-          alt={`${profile.shortName}, ${profile.role}`}
-          width="90"
-          height="90"
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-          class="hovercard h-full w-full object-cover"
-        />
+      <div class="group hover-glow relative mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-br from-[rgb(var(--color-accent)/0.5)] to-[rgb(var(--color-accent)/0.1)] p-[2px] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgb(var(--color-accent)/0.3)]">
+        <div class="relative h-full w-full overflow-hidden rounded-full border-2 border-[rgb(var(--color-bg-primary))] bg-[rgb(var(--color-bg-primary))]">
+          <img
+            src={gravatarUrl1x}
+            srcset={`${gravatarUrl1x} 1x, ${gravatarUrl2x} 2x`}
+            alt={`${profile.shortName}, ${profile.role}`}
+            width="90"
+            height="90"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+            class="h-full w-full object-cover"
+          />
+        </div>
       </div>
       <h2 class="text-2xl font-bold">{profile.shortName}</h2>
       <p class="text-sm font-medium text-[rgb(var(--color-accent))]">{profile.role}</p>

@@ -1,4 +1,4 @@
-﻿export const languages = {
+export const languages = {
   en: 'English',
   pt: 'Português',
 } as const;
@@ -59,6 +59,9 @@ export const ui = {
     'projects.featured': 'Featured',
     'projects.more': 'more',
     'projects.previewAlt': 'preview',
+    'projects.story': 'Story',
+    'projects.emptyTitle': 'No Projects Yet',
+    'projects.emptyDesc': "I'm currently working on some exciting things. They will appear here soon!",
     // Home
     'home.availability': 'Available for opportunities',
     'home.viewWork': 'View Work',
@@ -140,6 +143,13 @@ export const ui = {
     'blog.allPosts': 'View All Posts',
     'blog.subtitle': 'Thoughts on development, automation, and building for the web',
 
+    // Footer
+    'footer.aboutText': 'Front-End Developer & QA Automation Engineer building tested, accessible web experiences.',
+    'footer.quickLinks': 'Quick Links',
+    'footer.connect': 'Connect',
+    'footer.builtWith': 'Built with',
+    'footer.rights': 'All rights reserved.',
+
     // Common
     'common.loading': 'Loading...',
     'common.error': 'Something went wrong',
@@ -196,6 +206,9 @@ export const ui = {
     'projects.featured': 'Destaque',
     'projects.more': 'a mais',
     'projects.previewAlt': 'prévia',
+    'projects.story': 'História',
+    'projects.emptyTitle': 'Nenhum Projeto Ainda',
+    'projects.emptyDesc': 'Estou trabalhando em coisas empolgantes no momento. Elas aparecerão aqui em breve!',
     // Home
     'home.availability': 'Disponível para oportunidades',
     'home.viewWork': 'Ver trabalhos',
@@ -276,6 +289,13 @@ export const ui = {
     'blog.readMore': 'Leia Mais',
     'blog.allPosts': 'Ver Todos os Posts',
     'blog.subtitle': 'Reflexões sobre desenvolvimento, automação e construção para a web',
+
+    // Footer
+    'footer.aboutText': 'Desenvolvedor Front-End & Engenheiro de Automação QA criando experiências web testadas e acessíveis.',
+    'footer.quickLinks': 'Links Rápidos',
+    'footer.connect': 'Conectar',
+    'footer.builtWith': 'Feito com',
+    'footer.rights': 'Todos os direitos reservados.',
 
     // Common
     'common.loading': 'Carregando...',

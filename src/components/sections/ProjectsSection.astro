@@ -54,13 +54,13 @@ const getProjectUrl = (project: any) =>
             data-testid="project-card"
             class="project-card group glass-panel relative overflow-hidden rounded-lg p-5 transition-all hover:border-[rgb(var(--color-accent))]/40 h-full"
           >
-          <div class="absolute inset-0 bg-linear-to-br from-cyan-500/10 via-transparent to-blue-500/10 opacity-70 transition-opacity group-hover:opacity-100"></div>
+          <div class="absolute inset-0 bg-linear-to-br from-[rgb(var(--color-accent)/0.12)] via-transparent to-[rgb(var(--color-accent-hover)/0.12)] opacity-60 transition-opacity duration-500 group-hover:opacity-100"></div>
           <div class="relative z-10">
             <div class="mb-2 flex items-center justify-between gap-3">
               <h3 class="text-xl font-bold">{project.data.title}</h3>
               {project.data.caseStudy && (
                 <span class="shrink-0 rounded-md border border-[rgb(var(--color-accent)/0.32)] bg-[rgb(var(--color-accent)/0.1)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-accent))]">
-                  Story
+                  {t['projects.story']}
                 </span>
               )}
             </div>
@@ -91,7 +91,7 @@ const getProjectUrl = (project: any) =>
 
             <div class="mt-4 flex flex-wrap gap-1.5">
               {project.data.tech.slice(0, 4).map((tech: string) => (
-                <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary))] px-2.5 py-1 text-[10px] uppercase tracking-wide text-[rgb(var(--color-text-secondary))]">{tech}</span>
+                <span class="rounded-md border border-[rgb(var(--color-border)/0.6)] bg-[rgb(var(--color-bg-secondary)/0.5)] px-2.5 py-1 text-[10px] uppercase tracking-wide text-[rgb(var(--color-text-secondary))] backdrop-blur-md">{tech}</span>
               ))}
             </div>
             <div class="mt-4 flex flex-wrap gap-4 text-sm">
@@ -117,8 +117,8 @@ const getProjectUrl = (project: any) =>
       <div class="col-span-full">
         <EmptyState 
           iconName="code" 
-          title="No Projects Yet" 
-          description="I'm currently working on some exciting things. They will appear here soon!" 
+          title={t['projects.emptyTitle']} 
+          description={t['projects.emptyDesc']} 
         />
       </div>
     )}

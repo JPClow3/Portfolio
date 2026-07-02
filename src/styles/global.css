@@ -7,10 +7,10 @@
   color-scheme: light;
 
   /* Palette primitives */
-  --bg: 247 250 252;
+  --bg: 250 250 252;
   --text: 15 23 42;
   --muted: 100 116 139;
-  --primary: 8 120 150;
+  --primary: 79 70 229;
 
   /* App tokens */
   --color-bg-primary: var(--bg);
@@ -22,7 +22,7 @@
   --color-text-muted: var(--muted);
 
   --color-accent: var(--primary);
-  --color-accent-hover: 14 116 144;
+  --color-accent-hover: 67 56 202;
   --color-accent-contrast: 255 255 255;
 
   --color-border: 203 213 225;
@@ -56,25 +56,25 @@
 html.dark {
   color-scheme: dark;
 
-  --bg: 12 17 28;
+  --bg: 9 9 11;
   --text: 241 245 249;
   --muted: 148 163 184;
-  --primary: 56 189 248;
+  --primary: 99 102 241;
 
   --color-bg-primary: var(--bg);
-  --color-bg-secondary: 22 30 46;
-  --color-bg-tertiary: 30 41 59;
+  --color-bg-secondary: 24 24 27;
+  --color-bg-tertiary: 39 39 42;
 
   --color-text-primary: var(--text);
   --color-text-secondary: 203 213 225;
   --color-text-muted: var(--muted);
 
   --color-accent: var(--primary);
-  --color-accent-hover: 186 230 253;
-  --color-accent-contrast: 15 23 42;
+  --color-accent-hover: 129 140 248;
+  --color-accent-contrast: 255 255 255;
 
-  --color-border: 71 85 105;
-  --color-border-hover: 100 116 139;
+  --color-border: 63 63 70;
+  --color-border-hover: 82 82 91;
 
   /* Error states with proper contrast 4.5:1 for dark theme */
   --color-error: 248 113 113;
@@ -114,6 +114,10 @@ body {
   color: rgb(var(--text));
 }
 
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.02em;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -128,7 +132,7 @@ body {
 
 html.dark body {
   background-image:
-    linear-gradient(180deg, rgb(var(--bg)) 0%, rgb(22 30 46) 55%, rgb(15 23 35) 100%);
+    linear-gradient(180deg, rgb(var(--bg)) 0%, rgb(24 24 27) 55%, rgb(9 9 11) 100%);
 }
 
 
@@ -196,27 +200,28 @@ html.dark .bg-grid {
   background:
     linear-gradient(180deg, rgb(var(--glass-tint) / var(--glass-bg-opacity)) 0%, rgb(var(--color-bg-secondary) / 0.54) 100%);
   border: 1px solid rgb(var(--color-border) / var(--glass-border-opacity));
-  backdrop-filter: blur(18px) saturate(118%);
-  -webkit-backdrop-filter: blur(18px) saturate(118%);
-  box-shadow: 0 12px 30px rgb(var(--glass-shadow) / 0.075);
+  backdrop-filter: blur(24px) saturate(118%);
+  -webkit-backdrop-filter: blur(24px) saturate(118%);
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 0.15), 0 12px 30px rgb(var(--glass-shadow) / 0.075);
 }
 
 html.dark .glass-panel {
   background:
     linear-gradient(180deg, rgb(var(--glass-tint) / 0.08) 0%, rgb(var(--color-bg-secondary) / 0.66) 100%);
-  box-shadow: 0 14px 34px rgb(var(--glass-shadow) / 0.24);
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 0.05), 0 14px 34px rgb(var(--glass-shadow) / 0.24);
 }
 
 .glass-card {
   background: rgb(var(--color-bg-primary) / 0.6);
-  backdrop-filter: blur(16px) saturate(120%);
-  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  backdrop-filter: blur(24px) saturate(120%);
+  -webkit-backdrop-filter: blur(24px) saturate(120%);
   border: 1px solid rgb(var(--color-border) / var(--glass-border-opacity));
-  box-shadow: 0 16px 36px rgb(var(--glass-shadow) / 0.1);
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 0.15), 0 16px 36px rgb(var(--glass-shadow) / 0.1);
 }
 
 html.dark .glass-card {
   background: rgb(var(--color-bg-secondary) / 0.4);
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 0.05), 0 16px 36px rgb(var(--glass-shadow) / 0.2);
 }
 
 .hover-lift {
@@ -301,7 +306,7 @@ html.dark .hover-lift:focus-visible {
 
 .text-gradient,
 .gradient-text {
-  background: linear-gradient(to right, #0891b2, #3b82f6);
+  background: linear-gradient(to right, #4f46e5, #0ea5e9);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -309,7 +314,7 @@ html.dark .hover-lift:focus-visible {
 
 html.dark .text-gradient,
 html.dark .gradient-text {
-  background: linear-gradient(to right, #38bdf8, #818cf8);
+  background: linear-gradient(to right, #818cf8, #38bdf8);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

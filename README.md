@@ -14,16 +14,24 @@ Personal portfolio for João Paulo Gonçalves Santos — Astro 5, Svelte 5, Type
 | `npm run preview` | Preview production build locally    |
 | `npm start`       | Alias for `npm run preview`         |
 
-## Deploy with Docker / Dokploy on AWS EC2
+## Deploy with Cloudflare Pages
 
-1. **Docker:** The project includes a multi-stage `Dockerfile` (`node:22-alpine` for building, `nginx:alpine` for serving) and `nginx.conf` for static file serving.
-2. **Dokploy:** Create an App service, point to this GitHub repo, and select Dockerfile deployment.
-3. **Build Arguments:** Set `PUBLIC_WEB3FORMS_ACCESS_KEY` as a build argument in Dokploy so it's embedded at build time.
-4. **Networking:** Expose port 80 and attach your custom domain in Dokploy.
+Production runs on Cloudflare Pages with GitHub integration from `JPClow3/Portfolio`.
+
+| Setting | Value |
+| :------ | :---- |
+| Project | `portfolio` |
+| Production branch | `master` |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Root directory | `/` |
+| Node version | `22.16.0` |
+
+The `wrangler.jsonc` file mirrors the Pages output directory for local Wrangler workflows, and `.node-version` pins the Node version used by Cloudflare's build image.
 
 ## Contact form
 
-The contact form uses [Web3Forms](https://web3forms.com). Locally: copy `.env.example` to `.env` and set `PUBLIC_WEB3FORMS_ACCESS_KEY`. In production (Dokploy), set `PUBLIC_WEB3FORMS_ACCESS_KEY` as a Docker build argument.
+The contact form uses [Web3Forms](https://web3forms.com). Locally: copy `.env.example` to `.env` and set `PUBLIC_WEB3FORMS_ACCESS_KEY`. In production, set `PUBLIC_WEB3FORMS_ACCESS_KEY` in Cloudflare Pages build environment variables.
 
 ## Project structure
 

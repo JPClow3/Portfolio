@@ -31,7 +31,7 @@ Modern portfolio website for João Paulo Gonçalves Santos built with Astro 5, S
 | 3D/WebGL | Three.js | Hero visual effects (floating icosahedron + particles) |
 | Content | Content Collections + MDX | Type-safe markdown content |
 | Contact | Web3Forms | Serverless form submissions |
-| Deployment | Railway | Static site: build → serve `dist/` |
+| Deployment | Cloudflare Pages | GitHub integration builds static `dist/` |
 
 ## Directory Structure
 ```
@@ -197,7 +197,7 @@ Respects `prefers-reduced-motion`. Re-initializes on Astro page transitions via 
 - Real-time validation on blur
 - Loading state: disabled button + spinner
 - Success/error messages via `aria-live="polite"` region
-- **Setup:** Set `PUBLIC_WEB3FORMS_ACCESS_KEY` in `.env` (local) or in Railway service variables (build-time)
+- **Setup:** Set `PUBLIC_WEB3FORMS_ACCESS_KEY` in `.env` (local) or in Cloudflare Pages build environment variables
 
 ### Content Collections
 Located in `src/content/`, schemas in `config.ts`:
@@ -261,10 +261,12 @@ Configured in `tsconfig.json`:
 
 ## Deployment
 - Static output (`output: 'static'`). No platform adapter.
-- **Production:** Docker + Dokploy on AWS EC2. Multi-stage build: `node:22-alpine` builds `dist/`, `nginx:alpine` serves it.
-  - `Dockerfile` — two-stage build (see file for details)
-  - `nginx.conf` — static file serving, SSG routing (`try_files`), security headers, gzip, asset caching
-  - `.dockerignore` — excludes `node_modules`, `dist`, `.git`, tests
-  - Set `PUBLIC_WEB3FORMS_ACCESS_KEY` as a Docker build arg in Dokploy's service settings (it's embedded at build time).
-  - In Dokploy: create an App service, point to this repo, select Dockerfile. Set build arg `PUBLIC_WEB3FORMS_ACCESS_KEY`. Expose port 80.
+- **Production:** Cloudflare Pages project `portfolio`, connected to GitHub repo `JPClow3/Portfolio`.
+  - Production branch: `master`
+  - Build command: `npm run build`
+  - Build output directory: `dist`
+  - Root directory: `/`
+  - Node version: `22.16.0` via `.node-version` and Pages `NODE_VERSION`
+  - `wrangler.jsonc` sets `pages_build_output_dir` to `./dist` for local Wrangler workflows.
+  - Set `PUBLIC_WEB3FORMS_ACCESS_KEY` in Cloudflare Pages build environment variables so Astro can embed it at build time.
 - **Local preview:** `npm run preview` (Astro's built-in preview server on port 4321)

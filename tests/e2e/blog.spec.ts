@@ -63,10 +63,9 @@ test('blog post has metadata', async ({ page }) => {
   
   if (postCount > 0) {
     await links.first().click();
-    
+
     // Look for date, author, or post metadata
     const metadata = page.locator('[data-testid*="date"], [data-testid*="meta"], time, .post-meta');
-    // At minimum, page should load
-    expect(true).toBe(true);
+    await expect(metadata.first()).toBeVisible();
   }
 });

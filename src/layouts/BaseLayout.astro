@@ -32,6 +32,10 @@ const siteUrl = Astro.site ?? new URL('https://jpclow.dev');
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
 const ogImageUrl = new URL(ogImage, siteUrl);
 const observabilityEndpoint = import.meta.env.PUBLIC_OBSERVABILITY_ENDPOINT ?? '';
+const shouldRenderScene =
+  Astro.url.pathname === '/' ||
+  Astro.url.pathname === '/pt/' ||
+  Astro.url.pathname.startsWith('/projects/');
 
 const defaultSchema: Array<Record<string, unknown>> = [
   {
@@ -100,15 +104,8 @@ const allSchema = [...defaultSchema, ...customSchema];
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
-    />
-    <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
-      media="print"
-      onload="this.media='all'"
     />
     <noscript>
       <link
@@ -118,7 +115,7 @@ const allSchema = [...defaultSchema, ...customSchema];
     </noscript>
 
     {allSchema.map((schemaBlock) => (
-      <script type="application/ld+json" set:html={JSON.stringify(schemaBlock)}></script>
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(schemaBlock)}></script>
     ))}
 
     <script is:inline>
@@ -262,7 +259,7 @@ const allSchema = [...defaultSchema, ...customSchema];
     </script>
   </head>
   <body class="min-h-screen bg-[rgb(var(--color-bg-primary))] text-[rgb(var(--color-text-primary))] antialiased transition-colors duration-200">
-    <HeroScene client:load />
+    {shouldRenderScene && <HeroScene client:idle />}
 
     <a
       href="#main-content"

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi, resetModules } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 describe('Accessibility Utilities', () => {
   beforeEach(() => {

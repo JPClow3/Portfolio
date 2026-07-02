@@ -31,7 +31,9 @@ The `wrangler.jsonc` file mirrors the Pages output directory for local Wrangler 
 
 ## Contact form
 
-The contact form uses [Web3Forms](https://web3forms.com). Locally: copy `.env.example` to `.env` and set `PUBLIC_WEB3FORMS_ACCESS_KEY`. In production, set `PUBLIC_WEB3FORMS_ACCESS_KEY` in Cloudflare Pages build environment variables.
+The contact form uses [Web3Forms](https://web3forms.com) gated by Cloudflare Turnstile. Locally: copy `.env.example` to `.env` and set `PUBLIC_WEB3FORMS_ACCESS_KEY`, `PUBLIC_TURNSTILE_SITEKEY`, and `PUBLIC_TURNSTILE_WORKER_URL`. In production, set the same variables in Cloudflare Pages build environment variables.
+
+Register the Turnstile widget for `jpclow.dev`, `localhost`, and `127.0.0.1`. The Worker URL should point to the Turnstile siteverify Worker; the browser verifies Turnstile there first, then submits the existing Web3Forms payload.
 
 ## Project structure
 

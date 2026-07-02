@@ -170,8 +170,9 @@ describe('i18n Utilities', () => {
       // Both language versions should have the same keys
       const enKeys = Object.keys(ui.en).sort();
       const ptKeys = Object.keys(ui.pt).sort();
-      
+
       expect(enKeys.length).toBeGreaterThan(0);
+      expect(ptKeys.length).toBeGreaterThan(0);
       // Note: Keys might not be exactly the same if some keys are language-specific
       // This test ensures both have translations
     });
@@ -179,12 +180,12 @@ describe('i18n Utilities', () => {
 
   describe('Translation content validation', () => {
     it('should not have empty translation strings', () => {
-      Object.entries(ui.en).forEach(([key, value]) => {
+      Object.values(ui.en).forEach((value) => {
         expect(value).not.toBe('');
         expect(value.length).toBeGreaterThan(0);
       });
 
-      Object.entries(ui.pt).forEach(([key, value]) => {
+      Object.values(ui.pt).forEach((value) => {
         expect(value).not.toBe('');
         expect(value.length).toBeGreaterThan(0);
       });

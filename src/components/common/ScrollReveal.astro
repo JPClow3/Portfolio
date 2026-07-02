@@ -92,22 +92,23 @@ const Tag = tag;
       return;
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        rootMargin: '0px 0px -50px 0px',
-      }
-    );
-
     elements.forEach((el) => {
       const threshold = parseFloat(el.getAttribute('data-threshold') || '0.1');
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('revealed');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          rootMargin: '0px 0px -50px 0px',
+          threshold,
+        }
+      );
+
       observer.observe(el);
     });
   }

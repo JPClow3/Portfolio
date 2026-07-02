@@ -1,0 +1,4 @@
+Contact: mailto:joaopaulo.grv4@gmail.com
+Preferred-Languages: en, pt
+Canonical: https://jpclow.dev/.well-known/security.txt
+Expires: 2027-07-02T00:00:00Z

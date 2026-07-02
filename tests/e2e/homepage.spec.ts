@@ -94,7 +94,7 @@ test('homepage loads and displays main sections', async ({ page }) => {
   await expect(mainHeading).toBeVisible();
   
   // Check navigation exists
-  const nav = page.locator('nav');
+  const nav = page.locator('header nav, [role="banner"] nav').first();
   await expect(nav).toBeVisible();
   
   // Check footer exists
@@ -253,14 +253,7 @@ test('page meets accessibility standards', async ({ page }) => {
   
   // Check for skip link (accessibility)
   const skipLink = page.locator('a[href="#main-content"]');
-  if (await skipLink.isVisible({ timeout: 1000 }).catch(() => false)) {
-    // Skip link exists
-  } else {
-    // Alternative check for screen reader only content
-    const screenReaderOnly = page.locator('.sr-only, [aria-label*="skip" i]');
-    // At least check that we're trying to be accessible
-    expect(true).toBe(true);
-  }
+  await expect(skipLink).toHaveCount(1);
 });
 
 test('images load correctly', async ({ page }) => {

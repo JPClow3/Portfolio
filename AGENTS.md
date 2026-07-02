@@ -30,7 +30,7 @@ Modern portfolio website for João Paulo Gonçalves Santos built with Astro 5, S
 | Styling | Tailwind CSS v4 | Utility-first CSS via `@tailwindcss/vite` |
 | 3D/WebGL | Three.js | Hero visual effects (floating icosahedron + particles) |
 | Content | Content Collections + MDX | Type-safe markdown content |
-| Contact | Web3Forms | Serverless form submissions |
+| Contact | Web3Forms + Cloudflare Turnstile | Serverless form submissions with bot protection |
 | Deployment | Cloudflare Pages | GitHub integration builds static `dist/` |
 
 ## Directory Structure
@@ -192,12 +192,13 @@ Respects `prefers-reduced-motion`. Re-initializes on Astro page transitions via 
 
 ### Contact Form
 - Web3Forms API (`https://api.web3forms.com/submit`)
+- Cloudflare Turnstile widget verifies through `PUBLIC_TURNSTILE_WORKER_URL` before Web3Forms submission
 - Honeypot spam protection (`botcheck` hidden checkbox)
 - Client-side validation: required fields, email regex, min message length
 - Real-time validation on blur
 - Loading state: disabled button + spinner
 - Success/error messages via `aria-live="polite"` region
-- **Setup:** Set `PUBLIC_WEB3FORMS_ACCESS_KEY` in `.env` (local) or in Cloudflare Pages build environment variables
+- **Setup:** Set `PUBLIC_WEB3FORMS_ACCESS_KEY`, `PUBLIC_TURNSTILE_SITEKEY`, and `PUBLIC_TURNSTILE_WORKER_URL` in `.env` (local) or in Cloudflare Pages build environment variables. Register Turnstile domains for `jpclow.dev`, `localhost`, and `127.0.0.1`.
 
 ### Content Collections
 Located in `src/content/`, schemas in `config.ts`:
@@ -268,5 +269,5 @@ Configured in `tsconfig.json`:
   - Root directory: `/`
   - Node version: `22.16.0` via `.node-version` and Pages `NODE_VERSION`
   - `wrangler.jsonc` sets `pages_build_output_dir` to `./dist` for local Wrangler workflows.
-  - Set `PUBLIC_WEB3FORMS_ACCESS_KEY` in Cloudflare Pages build environment variables so Astro can embed it at build time.
+  - Set `PUBLIC_WEB3FORMS_ACCESS_KEY`, `PUBLIC_TURNSTILE_SITEKEY`, and `PUBLIC_TURNSTILE_WORKER_URL` in Cloudflare Pages build environment variables so Astro can embed them at build time.
 - **Local preview:** `npm run preview` (Astro's built-in preview server on port 4321)

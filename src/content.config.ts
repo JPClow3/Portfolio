@@ -1,5 +1,6 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { z } from 'astro/zod';
 
 // Projects Collection
 const projectsCollection = defineCollection({
@@ -8,8 +9,8 @@ const projectsCollection = defineCollection({
     title: z.string(),
     description: z.string(),
     tech: z.array(z.string()),
-    link: z.string().url().optional(),
-    github: z.string().url().optional(),
+    link: z.url().optional(),
+    github: z.url().optional(),
     image: z.string().optional(),
     featured: z.boolean().default(false),
     order: z.number().default(0),
@@ -70,9 +71,9 @@ const profileCollection = defineCollection({
       subtitle: z.string(),
       location: z.string(),
       timezone: z.string(),
-      github: z.string().url(),
-      linkedin: z.string().url(),
-      email: z.string().email(),
+      github: z.url(),
+      linkedin: z.url(),
+      email: z.email(),
       gravatarHash: z.string(),
     }),
     currentFocus: z.object({

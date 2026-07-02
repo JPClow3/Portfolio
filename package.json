@@ -11,9 +11,11 @@
     "preview": "astro preview",
     "start": "astro preview",
     "astro": "astro",
-    "test": "npm run test:unit && npm run test:e2e",
+    "test": "npm run test:unit && npm run test:e2e:chromium",
     "test:unit": "vitest --run",
     "test:e2e": "playwright test",
+    "test:e2e:chromium": "playwright test --project=chromium",
+    "test:e2e:all": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug"
   },
@@ -38,6 +40,9 @@
     "vitest": "^4.1.9"
   },
   "overrides": {
-    "esbuild": "0.28.1"
+    "esbuild": "0.28.1",
+    "yaml-language-server": {
+      "yaml": "2.9.0"
+    }
   }
 }

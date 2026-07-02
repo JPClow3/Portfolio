@@ -15,7 +15,10 @@ export default defineConfig({
     sitemap()
   ],
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    build: {
+      chunkSizeWarningLimit: 800
+    }
   },
   markdown: {
     shikiConfig: {

@@ -62,8 +62,13 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: `npm run build && npx serve dist -l ${pwPort}`,
+    command: `npm run build && npx astro preview --host 127.0.0.1 --port ${pwPort}`,
     url: pwBaseUrl,
+    env: {
+      PUBLIC_WEB3FORMS_ACCESS_KEY: 'test-web3forms-key',
+      PUBLIC_TURNSTILE_SITEKEY: '1x00000000000000000000AA',
+      PUBLIC_TURNSTILE_WORKER_URL: 'https://turnstile.example.test',
+    },
     reuseExistingServer: false,
     timeout: 120 * 1000,
   },

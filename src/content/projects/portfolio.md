@@ -30,4 +30,4 @@ A modern, performant portfolio website showcasing my work as a Front-End Develop
 - **TypeScript** - Type safety throughout
 - **Tailwind CSS v4** - Utility-first styling
 - **Three.js** - 3D WebGL effects
-- **Railway** - Static deployment
+- **Cloudflare Pages** - Static deployment

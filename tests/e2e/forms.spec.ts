@@ -4,6 +4,39 @@ async function hasContactForm(page: Page) {
   return (await page.locator('#contact-form').count()) > 0;
 }
 
+async function mockTurnstile(page: Page, success = true) {
+  await page.route(/https:\/\/turnstile\.example\.test\/?.*/, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success }),
+    });
+  });
+}
+
+async function completeTurnstile(page: Page) {
+  await page.locator('#contact-form').evaluate((form) => {
+    let input = form.querySelector<HTMLInputElement>('input[name="cf-turnstile-response"]');
+    if (!input) {
+      input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'cf-turnstile-response';
+      form.append(input);
+    }
+    input.value = 'test-turnstile-token';
+  });
+}
+
+test.beforeEach(async ({ page }) => {
+  await page.route('https://challenges.cloudflare.com/turnstile/v0/api.js', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/javascript',
+      body: 'window.turnstile = { reset() {} };',
+    });
+  });
+});
+
 test('contact form is visible on homepage', async ({ page }) => {
   await page.goto('/');
 
@@ -15,6 +48,7 @@ test('contact form is visible on homepage', async ({ page }) => {
     await expect(page.locator('#name')).toBeVisible();
     await expect(page.locator('#email')).toBeVisible();
     await expect(page.locator('#message')).toBeVisible();
+    await expect(page.locator('.cf-turnstile')).toHaveAttribute('data-action', 'turnstile-spin-v1');
     await expect(page.locator('#submit-btn')).toBeVisible();
     return;
   }
@@ -60,6 +94,7 @@ test('form validation rejects invalid email', async ({ page }) => {
 });
 
 test('form accepts valid input with mocked submission', async ({ page }) => {
+  await mockTurnstile(page);
   await page.route('https://api.web3forms.com/submit', async (route) => {
     await route.fulfill({
       status: 200,
@@ -78,6 +113,7 @@ test('form accepts valid input with mocked submission', async ({ page }) => {
   await page.locator('#name').fill('Test User');
   await page.locator('#email').fill('test@example.com');
   await page.locator('#message').fill('This is a valid test message with enough length.');
+  await completeTurnstile(page);
   await page.locator('#submit-btn').click();
 
   await expect(page.locator('#form-status')).toBeVisible();
@@ -85,7 +121,52 @@ test('form accepts valid input with mocked submission', async ({ page }) => {
   await expect(page.locator('#error-message')).toBeHidden();
 });
 
+test('form requires Turnstile before Web3Forms submission', async ({ page }) => {
+  let web3FormsCalled = false;
+  await page.route('https://api.web3forms.com/submit', async (route) => {
+    web3FormsCalled = true;
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true }) });
+  });
+
+  await page.goto('/');
+
+  if (!(await hasContactForm(page))) {
+    await expect(page.locator('#contact a[href^="mailto:"]').first()).toBeVisible();
+    return;
+  }
+
+  await page.locator('#name').fill('Test User');
+  await page.locator('#email').fill('test@example.com');
+  await page.locator('#message').fill('This is a valid test message with enough length.');
+  await page.locator('#submit-btn').click();
+
+  await expect(page.locator('#turnstile-error')).toBeVisible();
+  await expect(page.locator('#error-message')).toBeVisible();
+  expect(web3FormsCalled).toBe(false);
+});
+
+test('form shows localized Turnstile failure message', async ({ page }) => {
+  await mockTurnstile(page, false);
+
+  await page.goto('/pt/');
+
+  if (!(await hasContactForm(page))) {
+    await expect(page.locator('#contact')).toBeVisible();
+    return;
+  }
+
+  await page.locator('#name').fill('Test User');
+  await page.locator('#email').fill('test@example.com');
+  await page.locator('#message').fill('Mensagem valida para verificar falha de seguranca.');
+  await completeTurnstile(page);
+  await page.locator('#submit-btn').click();
+
+  await expect(page.locator('#turnstile-error')).toContainText('seguranca');
+  await expect(page.locator('#error-message')).toContainText('seguranca');
+});
+
 test('form shows network error state when request fails', async ({ page }) => {
+  await mockTurnstile(page);
   await page.route('https://api.web3forms.com/submit', async (route) => {
     await route.abort('failed');
   });
@@ -100,6 +181,7 @@ test('form shows network error state when request fails', async ({ page }) => {
   await page.locator('#name').fill('Test User');
   await page.locator('#email').fill('test@example.com');
   await page.locator('#message').fill('Mensagem valida para verificar erro de rede.');
+  await completeTurnstile(page);
   await page.locator('#submit-btn').click();
 
   await expect(page.locator('#form-status')).toBeVisible();

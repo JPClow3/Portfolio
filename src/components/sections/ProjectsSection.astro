@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import EmptyState from '@/components/common/EmptyState.astro';
 import { defaultLang, type Lang, ui } from '@/lib/i18n';
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
 
 const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
 const t = ui[currentLang] ?? ui[defaultLang];
@@ -43,15 +44,16 @@ const getProjectUrl = (project: any) =>
       const primaryLabel = project.data.caseStudy ? t['home.caseStudy'] : t['home.viewProject'];
 
       return (
-        <article
-          data-tilt-card
-          data-testid="project-card"
-          class:list={[
-            'project-card group glass-panel relative overflow-hidden rounded-lg p-5 transition-all hover:border-[rgb(var(--color-accent))]/40',
-            index === 0 ? 'bento-span-2' : '',
-            index === 1 ? 'bento-row-span-2' : '',
-          ]}
-        >
+        <ScrollReveal animation="fade-up" delay={index * 100} tag="div" class:list={[
+          'h-full',
+          index === 0 ? 'bento-span-2' : '',
+          index === 1 ? 'bento-row-span-2' : '',
+        ]}>
+          <article
+            data-tilt-card
+            data-testid="project-card"
+            class="project-card group glass-panel relative overflow-hidden rounded-lg p-5 transition-all hover:border-[rgb(var(--color-accent))]/40 h-full"
+          >
           <div class="absolute inset-0 bg-linear-to-br from-cyan-500/10 via-transparent to-blue-500/10 opacity-70 transition-opacity group-hover:opacity-100"></div>
           <div class="relative z-10">
             <div class="mb-2 flex items-center justify-between gap-3">
@@ -65,21 +67,21 @@ const getProjectUrl = (project: any) =>
             <p class="text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.description}</p>
 
             {project.data.caseStudy && (
-              <dl class="mt-4 grid gap-2">
+              <dl class="mt-4 grid gap-3">
                 {project.data.problem && (
-                  <div class="story-row rounded-md border border-[rgb(var(--color-border)/0.72)] bg-[rgb(var(--color-bg-secondary)/0.5)] px-3 py-2">
+                  <div class="story-row border-l-2 border-[rgb(var(--color-border)/0.5)] pl-3 transition-colors group-hover:border-[rgb(var(--color-accent)/0.5)]">
                     <dt class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">{t['home.problem']}</dt>
                     <dd class="story-snippet mt-1 text-xs leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.problem}</dd>
                   </div>
                 )}
                 {project.data.solution && (
-                  <div class="story-row rounded-md border border-[rgb(var(--color-border)/0.72)] bg-[rgb(var(--color-bg-secondary)/0.5)] px-3 py-2">
+                  <div class="story-row border-l-2 border-[rgb(var(--color-border)/0.5)] pl-3 transition-colors group-hover:border-[rgb(var(--color-accent)/0.5)]">
                     <dt class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">{t['home.build']}</dt>
                     <dd class="story-snippet mt-1 text-xs leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.solution}</dd>
                   </div>
                 )}
                 {project.data.impact && (
-                  <div class="story-row rounded-md border border-[rgb(var(--color-border)/0.72)] bg-[rgb(var(--color-bg-secondary)/0.5)] px-3 py-2">
+                  <div class="story-row border-l-2 border-[rgb(var(--color-border)/0.5)] pl-3 transition-colors group-hover:border-[rgb(var(--color-accent)/0.5)]">
                     <dt class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">{t['home.result']}</dt>
                     <dd class="story-snippet mt-1 text-xs leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.impact}</dd>
                   </div>
@@ -109,6 +111,7 @@ const getProjectUrl = (project: any) =>
             </div>
           </div>
         </article>
+        </ScrollReveal>
       );
     }) : (
       <div class="col-span-full">

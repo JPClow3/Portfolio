@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import { defaultLang, type Lang, ui } from '@/lib/i18n';
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
 
 const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
 const t = ui[currentLang] ?? ui[defaultLang];
@@ -27,10 +28,11 @@ const formatDate = (date: Date) =>
   <h2 id="experience-heading" class="mb-6 text-3xl font-bold tracking-tight">{t['home.journeyTitle']}</h2>
   <div class="timeline relative space-y-4 pl-8">
     {experience.map((job, idx) => (
-      <article class="glass-panel relative rounded-lg p-5 transition hover:border-[rgb(var(--color-accent))]/35">
+      <ScrollReveal animation="fade-right" delay={idx * 150} tag="div">
+      <article class="group glass-panel relative rounded-lg p-5 transition hover:border-[rgb(var(--color-accent))]/35">
         <span class:list={[
-          'absolute -left-[1.9rem] top-7 h-5 w-5 rounded-full border-4 border-[rgb(var(--bg))] shadow-[0_0_0_2px_rgba(var(--color-border),0.2)]',
-          idx === 0 ? 'bg-[rgb(var(--color-accent))]' : 'bg-[rgb(var(--color-text-muted))]',
+          'absolute -left-[1.9rem] top-7 h-5 w-5 rounded-full border-4 border-[rgb(var(--bg))] shadow-[0_0_0_2px_rgba(var(--color-border),0.2)] transition-all duration-300 group-hover:scale-125 group-hover:shadow-[0_0_10px_rgb(var(--color-accent)/0.5)]',
+          idx === 0 ? 'bg-[rgb(var(--color-accent))] group-hover:border-[rgb(var(--color-accent)/0.3)]' : 'bg-[rgb(var(--color-text-muted))] group-hover:bg-[rgb(var(--color-accent))] group-hover:border-[rgb(var(--color-accent)/0.3)]',
         ]}></span>
         <div class="mb-3 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
           <div>
@@ -45,6 +47,7 @@ const formatDate = (date: Date) =>
           ))}
         </ul>
       </article>
+      </ScrollReveal>
     ))}
   </div>
 </section>

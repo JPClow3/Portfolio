@@ -56,14 +56,14 @@
 html.dark {
   color-scheme: dark;
 
-  --bg: 30 41 55;
+  --bg: 12 17 28;
   --text: 241 245 249;
   --muted: 148 163 184;
-  --primary: 125 211 252;
+  --primary: 56 189 248;
 
   --color-bg-primary: var(--bg);
-  --color-bg-secondary: 36 48 63;
-  --color-bg-tertiary: 51 65 85;
+  --color-bg-secondary: 22 30 46;
+  --color-bg-tertiary: 30 41 59;
 
   --color-text-primary: var(--text);
   --color-text-secondary: 203 213 225;
@@ -128,7 +128,7 @@ body {
 
 html.dark body {
   background-image:
-    linear-gradient(180deg, rgb(var(--bg)) 0%, rgb(36 48 63) 55%, rgb(25 35 48) 100%);
+    linear-gradient(180deg, rgb(var(--bg)) 0%, rgb(22 30 46) 55%, rgb(15 23 35) 100%);
 }
 
 
@@ -229,6 +229,11 @@ html.dark .glass-card {
   box-shadow: 0 10px 25px rgb(var(--glass-shadow) / 0.15);
 }
 
+html.dark .hover-lift:hover,
+html.dark .hover-lift:focus-visible {
+  box-shadow: 0 10px 25px rgb(var(--glass-shadow) / 0.4), 0 0 20px rgb(var(--color-accent) / 0.15);
+}
+
 .hover-glow {
   transition: box-shadow 0.2s ease;
 }
@@ -287,9 +292,16 @@ html.dark .glass-card {
   to { opacity: 1; transform: scale(1); }
 }
 
+.stagger-1 { animation-delay: 100ms; }
+.stagger-2 { animation-delay: 200ms; }
+.stagger-3 { animation-delay: 300ms; }
+.stagger-4 { animation-delay: 400ms; }
+.stagger-5 { animation-delay: 500ms; }
+.stagger-6 { animation-delay: 600ms; }
+
 .text-gradient,
 .gradient-text {
-  background: linear-gradient(to right, #0e7490, #2563eb);
+  background: linear-gradient(to right, #0891b2, #3b82f6);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -297,10 +309,15 @@ html.dark .glass-card {
 
 html.dark .text-gradient,
 html.dark .gradient-text {
-  background: linear-gradient(to right, #7dd3fc, #93c5fd);
+  background: linear-gradient(to right, #38bdf8, #818cf8);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+.marquee-container {
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
 .marquee {

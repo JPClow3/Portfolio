@@ -80,7 +80,7 @@ const projectItemsSchema = {
     <div class="mx-auto max-w-6xl pt-20">
       <HeroSection />
 
-      <section aria-label="Technologies" class="mb-14 overflow-hidden rounded-lg border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/var(--glass-bg-opacity))] px-3 py-3">
+      <section aria-label="Technologies" class="marquee-container mb-14 overflow-hidden rounded-lg border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/var(--glass-bg-opacity))] px-3 py-3">
         <div class="marquee flex min-w-max gap-4 whitespace-nowrap py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[rgb(var(--color-text-secondary))]">
           {[...techMarquee, ...techMarquee].map((tech) => (
             <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary))] px-4 py-1.5">{tech}</span>

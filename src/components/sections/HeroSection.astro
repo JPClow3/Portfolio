@@ -41,15 +41,15 @@ const gravatarUrl2x = `https://2.gravatar.com/avatar/${profile.gravatarHash}?s=1
 
 <section id="about" data-scene-section="about" aria-labelledby="about-heading" class="relative isolate mb-16 grid min-h-[520px] grid-cols-1 items-center gap-8 overflow-hidden rounded-xl border border-[rgb(var(--color-border)/0.72)] bg-[rgb(var(--color-bg-primary)/0.44)] px-5 py-10 sm:px-7 lg:grid-cols-12 lg:px-9">
   <div class="relative z-10 lg:col-span-7">
-    <h1 id="about-heading" class="max-w-3xl text-4xl font-extrabold leading-[1.03] tracking-tight text-[rgb(var(--color-text-primary))] sm:text-5xl lg:text-6xl">
+    <h1 id="about-heading" class="max-w-3xl text-4xl font-extrabold leading-[1.03] tracking-tight text-[rgb(var(--color-text-primary))] sm:text-5xl lg:text-6xl animate-fade-in opacity-0 [animation-fill-mode:forwards]">
       {t['home.hero.lead']}
       <span class="text-gradient block">{t['home.hero.highlight']}</span>
       {t['home.hero.tail']}
     </h1>
 
-    <p class="mt-5 max-w-2xl text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg">{profile.subtitle}</p>
+    <p class="mt-5 max-w-2xl text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg animate-slide-up stagger-1 opacity-0 [animation-fill-mode:forwards]">{profile.subtitle}</p>
 
-    <div class="mt-7 flex flex-wrap gap-3">
+    <div class="mt-7 flex flex-wrap gap-3 animate-slide-up stagger-2 opacity-0 [animation-fill-mode:forwards]">
       <a href="#projects" class="hover-lift rounded-md bg-[rgb(var(--color-accent))] px-5 py-2.5 text-sm font-semibold text-[rgb(var(--color-accent-contrast))] transition-colors hover:bg-[rgb(var(--color-accent-hover))]">{t['home.viewWork']}</a>
       <a href={profile.github} target="_blank" rel="noreferrer" class="hover-lift rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.28)] px-5 py-2.5 text-sm font-semibold text-[rgb(var(--color-text-primary))] transition-all hover:border-[rgb(var(--color-border-hover))] hover:bg-[rgb(var(--color-bg-tertiary)/0.55)]">{t['home.githubProfile']}</a>
     </div>
@@ -57,7 +57,7 @@ const gravatarUrl2x = `https://2.gravatar.com/avatar/${profile.gravatarHash}?s=1
 
   <div class="relative z-10 flex flex-col gap-4 lg:col-span-5">
     <article class="glass-panel rounded-lg p-5 text-center">
-      <div class="mx-auto mb-3 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-[rgb(var(--color-accent))/0.48] shadow-sm">
+      <div class="hover-glow mx-auto mb-3 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-[rgb(var(--color-accent))/0.48] shadow-sm transition-shadow duration-300">
         <img
           src={gravatarUrl1x}
           srcset={`${gravatarUrl1x} 1x, ${gravatarUrl2x} 2x`}

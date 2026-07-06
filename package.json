@@ -24,7 +24,7 @@
     "@astrojs/markdown-satteri": "^0.3.2",
     "@astrojs/mdx": "^7.0.0",
     "@astrojs/sitemap": "^3.7.3",
-    "@astrojs/svelte": "^9.0.0",
+    "@astrojs/svelte": "^9.0.1",
     "@tailwindcss/vite": "^4.3.1",
     "@types/three": "^0.185.0",
     "astro": "^7.0.3",

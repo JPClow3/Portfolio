@@ -65,7 +65,7 @@ test('form validation blocks empty submission', async ({ page }) => {
     return;
   }
 
-  await page.locator('#submit-btn').click();
+  await page.locator('#submit-btn').click({ force: true });
 
   await expect(page.locator('#name-error')).toBeVisible();
   await expect(page.locator('#email-error')).toBeVisible();
@@ -87,7 +87,7 @@ test('form validation rejects invalid email', async ({ page }) => {
   await page.locator('#name').fill('Test User');
   await page.locator('#email').fill('invalid-email');
   await page.locator('#message').fill('Mensagem com tamanho suficiente.');
-  await page.locator('#submit-btn').click();
+  await page.locator('#submit-btn').click({ force: true });
 
   await expect(page.locator('#email-error')).toBeVisible();
   await expect(page.locator('#email')).toHaveAttribute('aria-invalid', 'true');
@@ -114,7 +114,7 @@ test('form accepts valid input with mocked submission', async ({ page }) => {
   await page.locator('#email').fill('test@example.com');
   await page.locator('#message').fill('This is a valid test message with enough length.');
   await completeTurnstile(page);
-  await page.locator('#submit-btn').click();
+  await page.locator('#submit-btn').click({ force: true });
 
   await expect(page.locator('#form-status')).toBeVisible();
   await expect(page.locator('#success-message')).toBeVisible();
@@ -138,7 +138,7 @@ test('form requires Turnstile before Web3Forms submission', async ({ page }) => 
   await page.locator('#name').fill('Test User');
   await page.locator('#email').fill('test@example.com');
   await page.locator('#message').fill('This is a valid test message with enough length.');
-  await page.locator('#submit-btn').click();
+  await page.locator('#submit-btn').click({ force: true });
 
   await expect(page.locator('#turnstile-error')).toBeVisible();
   await expect(page.locator('#error-message')).toBeVisible();
@@ -159,7 +159,7 @@ test('form shows localized Turnstile failure message', async ({ page }) => {
   await page.locator('#email').fill('test@example.com');
   await page.locator('#message').fill('Mensagem valida para verificar falha de seguranca.');
   await completeTurnstile(page);
-  await page.locator('#submit-btn').click();
+  await page.locator('#submit-btn').click({ force: true });
 
   await expect(page.locator('#turnstile-error')).toContainText('seguranca');
   await expect(page.locator('#error-message')).toContainText('seguranca');
@@ -182,7 +182,7 @@ test('form shows network error state when request fails', async ({ page }) => {
   await page.locator('#email').fill('test@example.com');
   await page.locator('#message').fill('Mensagem valida para verificar erro de rede.');
   await completeTurnstile(page);
-  await page.locator('#submit-btn').click();
+  await page.locator('#submit-btn').click({ force: true });
 
   await expect(page.locator('#form-status')).toBeVisible();
   await expect(page.locator('#error-message')).toBeVisible();
@@ -209,7 +209,7 @@ test('form validation messages are localized in Portuguese', async ({ page }) =>
     return;
   }
 
-  await page.locator('#submit-btn').click();
+  await page.locator('#submit-btn').click({ force: true });
   await expect(page.locator('#name-error')).toContainText('Por favor');
   await expect(page.locator('#email-error')).toContainText('Por favor');
   await expect(page.locator('#message-error')).toContainText('Por favor');

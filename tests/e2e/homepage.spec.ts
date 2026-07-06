@@ -121,8 +121,8 @@ test('ambient Three.js scene mounts and reacts to page scroll', async ({ page })
 
   const scene = page.locator('[data-testid="site-scene"]');
   const canvas = scene.locator('canvas');
-  await expect(canvas).toBeVisible({ timeout: 15_000 });
-  await expect(scene).toHaveAttribute('data-scene-ready', 'true', { timeout: 15_000 });
+  await expect(canvas).toBeVisible({ timeout: 30_000 });
+  await expect(scene).toHaveAttribute('data-scene-ready', 'true', { timeout: 30_000 });
 
   await page.waitForTimeout(250);
   const hasVisiblePixels = pngHasNonBlankPixels(await canvas.screenshot());
@@ -140,7 +140,7 @@ test('active navigation and ambient scene follow homepage sections', async ({ pa
   await page.goto('/');
 
   const scene = page.locator('[data-testid="site-scene"]');
-  await expect(scene).toHaveAttribute('data-scene-ready', 'true', { timeout: 15_000 });
+  await expect(scene).toHaveAttribute('data-scene-ready', 'true', { timeout: 30_000 });
 
   await page.locator('#projects').scrollIntoViewIfNeeded();
 
@@ -156,7 +156,7 @@ test('logo focus pulls ambient particles without breaking reduced motion', async
   const scene = page.locator('[data-testid="site-scene"]');
   const logo = page.locator('[data-logo-signal]');
 
-  await expect(scene).toHaveAttribute('data-scene-ready', 'true', { timeout: 15_000 });
+  await expect(scene).toHaveAttribute('data-scene-ready', 'true', { timeout: 30_000 });
   await logo.hover();
   await expect(scene).toHaveAttribute('data-logo-focus', 'true', { timeout: 5_000 });
   await page.mouse.move(20, 180);

@@ -28,7 +28,7 @@
     "@tailwindcss/vite": "^4.3.1",
     "@types/three": "^0.185.0",
     "astro": "^7.0.3",
-    "svelte": "^5.56.3",
+    "svelte": "^5.56.4",
     "tailwindcss": "^4.3.1",
     "three": "^0.185.1",
     "typescript": "^6.0.3"

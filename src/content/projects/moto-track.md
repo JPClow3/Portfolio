@@ -1,13 +1,20 @@
 ---
 title: "Moto Track"
+slug: "moto-track"
 description: "A motorcycle command center for fuel economy, maintenance, tires, documents, parts, and cost intelligence."
 tech: ["Django", "HTMX", "Tailwind CSS", "PostgreSQL", "Docker"]
 github: "https://github.com/JPClow3/moto_track"
 image: "/projects/moto-track-og.png"
 featured: true
-order: 1
+order: 3
 lang: "en"
 caseStudy: true
+status: "live"
+decisionLog:
+  problem: "Riders track fuel, maintenance, documents, tires, and costs across scattered notes, apps, and spreadsheets."
+  constraint: "The product needs app-like feedback without making the operational dashboard difficult to maintain or deploy."
+  decision: "Keep Django in charge of the domain and server-rendered UX, then use HTMX for focused interactions and Docker for a repeatable runtime."
+  outcome: "One operating surface now connects upkeep, cost visibility, reminders, and a future profitability workflow for professional riders."
 role: "Product engineering, backend, UI, and deployment strategy"
 year: "2026"
 problem: "Riders and work-vehicle owners track fuel, maintenance, documents, tires, and costs across scattered notes, apps, and spreadsheets."

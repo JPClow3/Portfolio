@@ -1,9 +1,10 @@
 ---
 title: "League AI Oracle"
+slug: "league-ai-oracle"
 description: "AI-powered strategic co-pilot for League of Legends that provides real-time insights and strategy recommendations using the Riot Games API."
 tech: ["TypeScript", "AI/ML", "Riot Games API"]
 github: "https://github.com/JPClow3/League-AI-Oracle"
-featured: true
+featured: false
 order: 3
 lang: en
 ---

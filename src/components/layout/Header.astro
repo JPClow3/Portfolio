@@ -1,7 +1,10 @@
 ---
 import ThemeToggle from '@components/islands/ThemeToggle.svelte';
+import CommandPalette from '@components/islands/CommandPalette.svelte';
 import Icon from '@components/common/Icon.astro';
+import { getCollection } from 'astro:content';
 import { defaultLang, type Lang, ui } from '@/lib/i18n';
+import { buildCommandPaletteItems } from '@/lib/command-palette';
 
 interface NavLink {
   label: string;
@@ -14,14 +17,39 @@ const t = ui[currentLang] ?? ui[defaultLang];
 
 const isEnglish = currentLang === 'en';
 const isPortuguese = currentLang === 'pt';
+const localePrefix = isPortuguese ? '/pt' : '';
+
+const profileEntries = await getCollection('profile', ({ data }) => data.lang === currentLang);
+const fallbackProfileEntries = await getCollection('profile', ({ data }) => data.lang === defaultLang);
+const profile = (profileEntries[0] ?? fallbackProfileEntries[0]).data.profile;
+
+const localizedProjects = await getCollection('projects', ({ data }) => data.lang === currentLang && data.featured);
+const fallbackProjects = await getCollection('projects', ({ data }) => data.lang === defaultLang && data.featured);
+const paletteProjects = (localizedProjects.length > 0 ? localizedProjects : fallbackProjects)
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((project) => ({ title: project.data.title, slug: project.data.slug, status: project.data.status }));
+const paletteItems = buildCommandPaletteItems({ lang: currentLang, profile, projects: paletteProjects });
+const paletteStrings = {
+  title: t['palette.title'],
+  trigger: t['palette.trigger'],
+  placeholder: t['palette.placeholder'],
+  empty: t['palette.empty'],
+  hint: t['palette.hint'],
+};
+
+const unprefixedPath = isPortuguese
+  ? Astro.url.pathname.replace(/^\/pt(?=\/|$)/, '') || '/'
+  : Astro.url.pathname;
+const englishPath = unprefixedPath.startsWith('/projects/') ? unprefixedPath : '/';
+const portuguesePath = englishPath.startsWith('/projects/') ? `/pt${englishPath}` : '/pt/';
 
 const navLinks: NavLink[] = [
-  { label: t['nav.about'], href: '/#about', section: 'about' },
-  { label: t['nav.projects'], href: '/#projects', section: 'projects' },
-  { label: t['nav.experience'], href: '/#experience', section: 'experience' },
-  { label: t['nav.activity'], href: '/#activity', section: 'activity' },
+  { label: t['nav.about'], href: `${localePrefix}/#about`, section: 'about' },
+  { label: t['nav.projects'], href: `${localePrefix}/#projects`, section: 'projects' },
+  { label: t['nav.experience'], href: `${localePrefix}/#experience`, section: 'experience' },
+  { label: t['nav.activity'], href: `${localePrefix}/#activity`, section: 'activity' },
   { label: t['nav.blog'], href: '/blog', section: 'blog' },
-  { label: t['nav.contact'], href: '/#contact', section: 'contact' },
+  { label: t['nav.contact'], href: `${localePrefix}/#contact`, section: 'contact' },
 ];
 
 // Resume link (separate since it has download behavior)
@@ -76,7 +104,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
         <!-- Language Switcher (Desktop) -->
         <div class="hidden items-center gap-0.5 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.58)] p-0.5 md:flex" role="group" aria-label="Select language">
           <a
-            href="/"
+            href={englishPath}
             data-lang-link
             data-lang-base="/"
             class:list={[
@@ -89,7 +117,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
             aria-current={isEnglish ? 'true' : undefined}
           >EN</a>
           <a
-            href="/pt/"
+            href={portuguesePath}
             data-lang-link
             data-lang-base="/pt/"
             class:list={[
@@ -103,6 +131,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
           >PT</a>
         </div>
 
+        <CommandPalette items={paletteItems} strings={paletteStrings} client:load />
         <ThemeToggle client:load />
 
         <!-- Mobile Menu Button -->
@@ -159,7 +188,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
           <div class="mt-1 flex items-center gap-2 border-t border-[rgb(var(--color-border))] px-4 py-2.5 pt-3" role="group" aria-label="Select language">
             <Icon name="globe" size={16} class="text-[rgb(var(--color-text-muted))]" />
             <a
-              href="/"
+            href={englishPath}
               data-lang-link
               data-lang-base="/"
               class:list={[
@@ -172,7 +201,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
               aria-current={isEnglish ? 'true' : undefined}
             >EN</a>
             <a
-              href="/pt/"
+            href={portuguesePath}
               data-lang-link
               data-lang-base="/pt/"
               class:list={[

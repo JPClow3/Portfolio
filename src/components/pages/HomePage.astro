@@ -10,6 +10,7 @@ import ProjectsSection from '@/components/sections/ProjectsSection.astro';
 import GithubStatsSection from '@/components/sections/GithubStatsSection.astro';
 import ExperienceSection from '@/components/sections/ExperienceSection.astro';
 import ActivitySection from '@/components/sections/ActivitySection.astro';
+import OptimizationSection from '@/components/sections/OptimizationSection.astro';
 
 const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
 const t = ui[currentLang] ?? ui[defaultLang];
@@ -43,14 +44,12 @@ async function getLocalizedCollection(collection: 'projects') {
 }
 
 const projects = (await getLocalizedCollection('projects'))
+  .filter((project) => project.data.featured)
   .sort((a, b) => a.data.order - b.data.order)
   .slice(0, 4);
 
-const getProjectSlug = (project: any) =>
-  project.id.replace(/\.(md|mdx)$/i, '').replace(/\\/g, '/');
-
 const getProjectUrl = (project: any) =>
-  project.data.caseStudy ? `/projects/${getProjectSlug(project)}/` : project.data.link ?? project.data.github ?? '/#projects';
+  project.data.caseStudy ? `${currentLang === 'pt' ? '/pt' : ''}/projects/${project.data.slug}/` : project.data.link ?? project.data.github ?? '/#projects';
 
 const projectItemsSchema = {
   '@context': 'https://schema.org',
@@ -85,6 +84,8 @@ const projectItemsSchema = {
 
     <div class="mx-auto max-w-6xl pt-20">
       <HeroSection />
+
+      <OptimizationSection />
 
       <section aria-label="Technologies" class="marquee-container mb-14 overflow-hidden rounded-lg border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/var(--glass-bg-opacity))] px-3 py-3">
         <div class="marquee flex min-w-max gap-4 whitespace-nowrap py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[rgb(var(--color-text-secondary))]">

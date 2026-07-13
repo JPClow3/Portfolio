@@ -21,14 +21,12 @@ async function getLocalizedCollection(collection: 'projects') {
 }
 
 const projects = (await getLocalizedCollection('projects'))
+  .filter((project) => project.data.featured)
   .sort((a, b) => a.data.order - b.data.order)
   .slice(0, 4);
 
-const getProjectSlug = (project: any) =>
-  project.id.replace(/\.(md|mdx)$/i, '').replace(/\\/g, '/');
-
 const getProjectUrl = (project: any) =>
-  project.data.caseStudy ? `/projects/${getProjectSlug(project)}/` : project.data.link ?? project.data.github ?? '/#projects';
+  project.data.caseStudy ? `${currentLang === 'pt' ? '/pt' : ''}/projects/${project.data.slug}/` : project.data.link ?? project.data.github ?? '/#projects';
 ---
 
 <section id="projects" data-scene-section="projects" aria-labelledby="projects-heading" class="mb-16">
@@ -63,29 +61,27 @@ const getProjectUrl = (project: any) =>
                   {t['projects.story']}
                 </span>
               )}
+              {project.data.status === 'in-development' && (
+                <span class="shrink-0 rounded-md border border-[rgb(var(--color-accent)/0.32)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-accent))]">
+                  {t['project.inDevelopment']}
+                </span>
+              )}
             </div>
             <p class="text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.description}</p>
 
-            {project.data.caseStudy && (
-              <dl class="mt-4 grid gap-3">
-                {project.data.problem && (
+            {project.data.decisionLog && (
+              <dl class="mt-4 grid gap-2">
+                {[
+                  [t['home.problem'], project.data.decisionLog.problem],
+                  [t['home.constraint'], project.data.decisionLog.constraint],
+                  [t['home.decision'], project.data.decisionLog.decision],
+                  [t['home.outcome'], project.data.decisionLog.outcome],
+                ].map(([label, value]) => (
                   <div class="story-row border-l-2 border-[rgb(var(--color-border)/0.5)] pl-3 transition-colors group-hover:border-[rgb(var(--color-accent)/0.5)]">
-                    <dt class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">{t['home.problem']}</dt>
-                    <dd class="story-snippet mt-1 text-xs leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.problem}</dd>
+                    <dt class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">{label}</dt>
+                    <dd class="story-snippet mt-1 text-xs leading-relaxed text-[rgb(var(--color-text-secondary))]">{value}</dd>
                   </div>
-                )}
-                {project.data.solution && (
-                  <div class="story-row border-l-2 border-[rgb(var(--color-border)/0.5)] pl-3 transition-colors group-hover:border-[rgb(var(--color-accent)/0.5)]">
-                    <dt class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">{t['home.build']}</dt>
-                    <dd class="story-snippet mt-1 text-xs leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.solution}</dd>
-                  </div>
-                )}
-                {project.data.impact && (
-                  <div class="story-row border-l-2 border-[rgb(var(--color-border)/0.5)] pl-3 transition-colors group-hover:border-[rgb(var(--color-accent)/0.5)]">
-                    <dt class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">{t['home.result']}</dt>
-                    <dd class="story-snippet mt-1 text-xs leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.impact}</dd>
-                  </div>
-                )}
+                ))}
               </dl>
             )}
 
@@ -104,7 +100,7 @@ const getProjectUrl = (project: any) =>
               >
                 {primaryLabel}
               </a>
-              {project.data.caseStudy && project.data.github && (
+              {project.data.caseStudy && project.data.github && project.data.status !== 'in-development' && (
                 <a href={project.data.github} target="_blank" rel="noreferrer" class="text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-text-primary))]" aria-label={`View code for ${project.data.title} on GitHub`}>{t['home.code']}</a>
               )}
               {project.data.link && <a href={project.data.link} target="_blank" rel="noreferrer" class="text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-text-primary))]" aria-label={`View live site for ${project.data.title}`}>{t['home.live']}</a>}

@@ -3,7 +3,7 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 import ProjectCaseStudy from '@/components/pages/ProjectCaseStudy.astro';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects', ({ data }) => data.caseStudy && data.lang === 'en');
+  const projects = await getCollection('projects', ({ data }) => data.caseStudy && data.lang === 'pt');
   return projects.map((project) => ({ params: { slug: project.data.slug }, props: { project } }));
 }
 

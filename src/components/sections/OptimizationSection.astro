@@ -1,0 +1,32 @@
+---
+import { getCollection } from 'astro:content';
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
+
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
+const localizedProfiles = await getCollection('profile', ({ data }) => data.lang === currentLang);
+const fallbackProfiles = await getCollection('profile', ({ data }) => data.lang === defaultLang);
+const profile = (localizedProfiles[0] ?? fallbackProfiles[0]).data;
+---
+
+<section id="approach" data-scene-section="about" aria-labelledby="approach-heading" class="mb-16">
+  <div class="mb-6 max-w-2xl">
+    <p class="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-accent))]">{t['home.approachBadge']}</p>
+    <h2 id="approach-heading" class="text-3xl font-bold tracking-tight">{t['home.approachTitle']}</h2>
+  </div>
+  <div class="grid gap-3 lg:grid-cols-3">
+    {profile.optimizations.map((principle, index) => (
+      <ScrollReveal animation="fade-up" delay={index * 100} tag="div" class="h-full">
+        <article class="glass-panel h-full rounded-lg p-5">
+          <p class="text-xs font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-accent))]">0{index + 1}</p>
+          <h3 class="mt-4 text-lg font-bold">{principle.title}</h3>
+          <p class="mt-3 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{principle.description}</p>
+          <a href={principle.href} target={principle.href.startsWith('http') ? '_blank' : undefined} rel={principle.href.startsWith('http') ? 'noreferrer' : undefined} class="mt-5 inline-flex text-sm font-semibold text-[rgb(var(--color-accent))] hover:underline">
+            {principle.project} ↗
+          </a>
+        </article>
+      </ScrollReveal>
+    ))}
+  </div>
+</section>

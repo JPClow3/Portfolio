@@ -1,9 +1,10 @@
 ---
 title: "Resonant Echoes"
+slug: "resonant-echoes"
 description: "A dynamic text adventure set in the high fantasy world of Aerthos, powered by Google Gemini AI. Players shape the story through choices and Echo Weaving—interacting with remnants of past events."
 tech: ["TypeScript", "Google Gemini", "AI", "Game Development"]
 github: "https://github.com/JPClow3/Resonant-Echoes"
-featured: true
+featured: false
 order: 5
 lang: en
 ---

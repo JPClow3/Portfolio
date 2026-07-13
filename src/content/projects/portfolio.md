@@ -1,10 +1,11 @@
 ---
 title: "Developer Portfolio"
+slug: "portfolio"
 description: "My personal portfolio website built with Astro 5, Svelte 5, and Tailwind CSS. Features islands architecture, Three.js 3D effects, dark mode, scroll animations, and full accessibility support."
 tech: ["Astro", "Svelte", "TypeScript", "Tailwind CSS", "Three.js"]
 link: "https://jpclow.dev"
 github: "https://github.com/JPClow3/Portfolio"
-featured: true
+featured: false
 order: 6
 lang: en
 ---

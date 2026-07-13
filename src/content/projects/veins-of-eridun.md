@@ -1,9 +1,10 @@
 ---
 title: "Veins of Eridûn"
+slug: "veins-of-eridun"
 description: "A dynamic text-based adventure game where the story is imagined in real-time by AI. Features branching narratives and procedural storytelling in a rich fantasy world."
 tech: ["TypeScript", "AI", "Game Development"]
 github: "https://github.com/JPClow3/Veins-of-Erid-n"
-featured: true
+featured: false
 order: 4
 lang: en
 ---

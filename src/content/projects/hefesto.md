@@ -1,12 +1,19 @@
 ---
 title: "Hefesto"
+slug: "hefesto"
 description: "A daily wildfire ignition-risk modeling system for Goias, Brazil, built around versioned data, climate signals, and reproducible evaluation."
 tech: ["Python", "XGBoost", "Geospatial Data", "Climate Data", "ML Ops"]
 image: "/projects/hefesto-risk-grid.svg"
 featured: true
-order: 2
+order: 4
 lang: "en"
 caseStudy: true
+status: "live"
+decisionLog:
+  problem: "Daily wildfire ignition risk needs comparable results across climate, dryness, vegetation, and historical conditions."
+  constraint: "A model improvement is not useful if its data, assumptions, and evaluation cannot be reproduced or explained."
+  decision: "Treat the research pipeline as a product with schema contracts, manifests, experiment profiles, registry entries, and diagnostics."
+  outcome: "The materialized climate and MODIS line improved PR-AUC from 0.407 to 0.456 while preserving an auditable path forward."
 role: "Data modeling, pipeline design, validation, and documentation"
 year: "2026"
 problem: "Wildfire ignition risk needs a reproducible daily model over a 1 km grid, with climate, dryness, vegetation, and historical comparability handled carefully."

@@ -4,9 +4,14 @@ import { z } from 'astro/zod';
 
 // Projects Collection
 const projectsCollection = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
+  loader: glob({
+    pattern: '**/*.md',
+    base: './src/content/projects',
+    generateId: ({ entry }) => entry.replace(/\.md$/i, ''),
+  }),
   schema: z.object({
     title: z.string(),
+    slug: z.string(),
     description: z.string(),
     tech: z.array(z.string()),
     link: z.url().optional(),
@@ -16,6 +21,13 @@ const projectsCollection = defineCollection({
     order: z.number().default(0),
     lang: z.enum(['en', 'pt']).default('en'),
     caseStudy: z.boolean().default(false),
+    status: z.enum(['live', 'in-development']).default('live'),
+    decisionLog: z.object({
+      problem: z.string(),
+      constraint: z.string(),
+      decision: z.string(),
+      outcome: z.string(),
+    }).optional(),
     problem: z.string().optional(),
     solution: z.string().optional(),
     impact: z.string().optional(),
@@ -92,6 +104,12 @@ const profileCollection = defineCollection({
         date: z.coerce.date(),
       })).default([]),
     }),
+    optimizations: z.array(z.object({
+      title: z.string(),
+      description: z.string(),
+      project: z.string(),
+      href: z.string(),
+    })).length(3).default([]),
   }),
 });
 

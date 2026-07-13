@@ -32,5 +32,18 @@ customMetric:
       date: "2026-01-10"
     - repo: "JPClow3/Veins-of-Erid-n"
       date: "2026-01-07"
+optimizations:
+  - title: "AI must improve the task"
+    description: "I use models to extend an authored experience, with memory, cost controls, and real player choices instead of a generic chat surface."
+    project: "Lorebound"
+    href: "/projects/lorebound/"
+  - title: "Fallbacks are a feature"
+    description: "Useful AI products plan for unstable inputs: multiple sources, structured tools, cached results, and a clear answer when a dependency fails."
+    project: "FURIOSO"
+    href: "https://github.com/JPClow3/Furia-Chat-Challenge"
+  - title: "User trust shapes architecture"
+    description: "Offline capability, encrypted sync, and deliberately redacted notifications make privacy a product behavior rather than a promise."
+    project: "Throughline"
+    href: "/projects/throughline/"
 ---
 This file centralizes editable profile content so profile details and the current focus card can be updated without changing page code.

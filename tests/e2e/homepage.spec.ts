@@ -176,12 +176,27 @@ test('project card interaction keeps case study links clickable', async ({ page 
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/');
 
-  const motoTrackCard = page.locator('[data-testid="project-card"]').filter({ hasText: 'Moto Track' }).first();
-  await expect(motoTrackCard).toBeVisible();
-  await motoTrackCard.hover();
-  await expect(motoTrackCard).toHaveAttribute('data-pointer-active', 'true', { timeout: 5_000 });
-  await motoTrackCard.locator('a[href="/projects/moto-track/"]').click();
-  await expect(page).toHaveURL(/\/projects\/moto-track\/?$/);
+  const throughlineCard = page.locator('[data-testid="project-card"]').filter({ hasText: 'Throughline' }).first();
+  await expect(throughlineCard).toBeVisible();
+  await expect(page.locator('[data-testid="project-card"]').first()).toContainText('Throughline');
+  await throughlineCard.hover();
+  await expect(throughlineCard).toHaveAttribute('data-pointer-active', 'true', { timeout: 5_000 });
+  await throughlineCard.locator('a[href="/projects/throughline/"]').click();
+  await expect(page).toHaveURL(/\/projects\/throughline\/?$/);
+});
+
+test('homepage presents the AI experimentation principles and protects the Lorebound source', async ({ page }) => {
+  await page.goto('/');
+
+  const approach = page.locator('#approach');
+  await expect(approach.getByRole('heading', { name: 'What I optimize for' })).toBeVisible();
+  await expect(approach.getByText('AI must improve the task')).toBeVisible();
+  await expect(approach.getByText('Fallbacks are a feature')).toBeVisible();
+  await expect(approach.getByText('User trust shapes architecture')).toBeVisible();
+
+  const loreboundCard = page.locator('[data-testid="project-card"]').filter({ hasText: 'Lorebound' }).first();
+  await expect(loreboundCard.getByText('In development', { exact: true })).toBeVisible();
+  await expect(loreboundCard.getByRole('link', { name: /view code/i })).toHaveCount(0);
 });
 
 test('mobile menu toggles correctly', async ({ page }) => {

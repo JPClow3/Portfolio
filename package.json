@@ -37,7 +37,7 @@
     "@playwright/test": "^1.61.1",
     "@vitest/ui": "^4.1.9",
     "happy-dom": "^20.10.6",
-    "vitest": "^4.1.9"
+    "vitest": "^4.1.10"
   },
   "overrides": {
     "esbuild": "0.28.1",

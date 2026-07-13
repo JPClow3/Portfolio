@@ -21,7 +21,7 @@ Production runs on Cloudflare Pages with GitHub integration from `JPClow3/Portfo
 | Setting | Value |
 | :------ | :---- |
 | Project | `portfolio` |
-| Production branch | `master` |
+| Production branch | `main` |
 | Build command | `npm run build` |
 | Build output directory | `dist` |
 | Root directory | `/` |

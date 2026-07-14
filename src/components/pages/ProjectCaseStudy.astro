@@ -5,6 +5,7 @@ import Header from '@/components/layout/Header.astro';
 import Footer from '@/components/layout/Footer.astro';
 import Icon from '@/components/common/Icon.astro';
 import { defaultLang, type Lang, ui } from '@/lib/i18n';
+import { formatPageTitle } from '@/lib/seo';
 
 interface Props {
   project: CollectionEntry<'projects'>;
@@ -32,7 +33,15 @@ const caseStudySchema = {
 };
 ---
 
-<BaseLayout title={`${project.data.title} | João Paulo Santos`} description={project.data.description} ogType="article" ogImage={project.data.image ?? '/og-image.svg'} articleTags={project.data.tech} schema={caseStudySchema}>
+<BaseLayout
+  title={formatPageTitle(project.data.title, currentLang)}
+  description={project.data.description}
+  keywords={project.data.tech}
+  ogType="article"
+  ogImage={project.data.image ?? '/og-image.svg'}
+  articleTags={project.data.tech}
+  schema={caseStudySchema}
+>
   <Header />
   <main id="main-content" tabindex="-1" class="noise-bg relative overflow-x-hidden px-4 pb-12 pt-[6.5rem] sm:px-6 lg:px-8">
     <article class="mx-auto max-w-6xl" data-scene-section="projects">

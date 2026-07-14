@@ -48,8 +48,8 @@
         const THREE = await import('three');
 
         const isMobile = window.innerWidth < 768;
-        const particlesCount = isMobile ? 95 : 190;
-        const lineCount = isMobile ? 22 : 42;
+        const particlesCount = isMobile ? 72 : 140;
+        const lineCount = isMobile ? 18 : 32;
         const disposables: Array<{ dispose: () => void }> = [];
         const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 
@@ -64,7 +64,7 @@
         });
         renderer.outputColorSpace = THREE.SRGBColorSpace;
         renderer.setClearColor(0x000000, 0);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.35 : 1.85));
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.25 : 1.5));
         renderer.domElement.setAttribute('aria-hidden', 'true');
         container.appendChild(renderer.domElement);
 
@@ -135,8 +135,8 @@
           opacity: isMobile ? 0.07 : 0.11,
           depthWrite: false,
         });
-        const outerRingGeometry = new THREE.TorusGeometry(isMobile ? 1.22 : 1.72, 0.0045, 8, 128);
-        const innerRingGeometry = new THREE.TorusGeometry(isMobile ? 0.74 : 1.05, 0.0035, 8, 96);
+        const outerRingGeometry = new THREE.TorusGeometry(isMobile ? 1.22 : 1.72, 0.0045, 8, 96);
+        const innerRingGeometry = new THREE.TorusGeometry(isMobile ? 0.74 : 1.05, 0.0035, 8, 72);
         disposables.push(ringMaterial, outerRingGeometry, innerRingGeometry);
 
         const outerRing = new THREE.Mesh(outerRingGeometry, ringMaterial);
@@ -225,8 +225,8 @@
           const amplitude = 0.38 + ribbonIndex * 0.08;
           const yBase = -2.3 + ribbonIndex * 1.9;
 
-          for (let pointIndex = 0; pointIndex < 44; pointIndex += 1) {
-            const progress = pointIndex / 43;
+          for (let pointIndex = 0; pointIndex < 32; pointIndex += 1) {
+            const progress = pointIndex / 31;
             points.push(
               new THREE.Vector3(
                 -6 + progress * 12,
@@ -358,17 +358,24 @@
         }
 
         let animationId = 0;
-        const clock = new THREE.Clock();
+        let lastRenderAt = 0;
+        let lastClockUpdateAt = 0;
+        let elapsedTime = 0;
+        const targetFrameDuration = 1000 / (isMobile ? 24 : 30);
         let isTabVisible = true;
         let frame = 0;
 
-        function animate() {
+        function animate(timestamp: number) {
           animationId = requestAnimationFrame(animate);
 
-          if (!isTabVisible) return;
+          if (!isTabVisible || timestamp - lastRenderAt < targetFrameDuration) return;
+          lastRenderAt = timestamp;
 
           frame += 1;
-          const elapsedTime = clock.getElapsedTime();
+          if (lastClockUpdateAt !== 0) {
+            elapsedTime += Math.min((timestamp - lastClockUpdateAt) / 1000, 0.1);
+          }
+          lastClockUpdateAt = timestamp;
           pointer.x += (pointer.targetX - pointer.x) * 0.055;
           pointer.y += (pointer.targetY - pointer.y) * 0.055;
           scroll.current += (scroll.target - scroll.current) * 0.045;
@@ -472,7 +479,7 @@
         function handleVisibilityChange() {
           isTabVisible = !document.hidden;
           if (isTabVisible) {
-            clock.start();
+            lastClockUpdateAt = 0;
           }
         }
 
@@ -526,9 +533,14 @@
       }
     };
 
-    initScene();
+    const sceneStartTimer = window.setTimeout(() => {
+      void initScene();
+    }, 3_000);
 
-    return () => cleanup();
+    return () => {
+      window.clearTimeout(sceneStartTimer);
+      cleanup();
+    };
   });
 </script>
 

@@ -23,9 +23,9 @@ export const ui = {
     // Hero
     'hero.greeting': "Hello, I'm",
     'hero.name': 'João Paulo Santos',
-    'hero.title': 'Software Developer | Python · Django · React',
-    'hero.tagline': 'Building web applications, automation pipelines, and data solutions. Turning real-world demands into functional, well-crafted software.',
-    'hero.availability': 'Available for Projects',
+    'hero.title': 'Freelance Software Developer | Python · Django · React',
+    'hero.tagline': 'Available for freelance and contract work — web apps, APIs, automation pipelines, and data solutions. I turn real-world demands into software that ships.',
+    'hero.availability': 'Available for Freelance Projects',
     'hero.cta.work': 'View My Work',
     'hero.cta.contact': 'Get in Touch',
     'hero.cta.github': 'My GitHub',
@@ -33,7 +33,7 @@ export const ui = {
 
     // Profile
     'profile.title': 'My Profile',
-    'profile.status': 'Available for new opportunities',
+    'profile.status': 'Available for freelance work',
     'profile.contactText': 'LinkedIn',
 
     // Summary
@@ -63,16 +63,16 @@ export const ui = {
     'projects.emptyTitle': 'No Projects Yet',
     'projects.emptyDesc': "I'm currently working on some exciting things. They will appear here soon!",
     // Home
-    'home.availability': 'Available for opportunities',
+    'home.availability': 'Freelance developer · open to projects',
     'home.viewWork': 'View Work',
     'home.githubProfile': 'GitHub Profile',
     'home.years': 'Years',
     'home.projects': 'Projects',
     'home.commitment': 'Commitment',
     'home.technologies': 'Technologies I work with',
-    'home.hero.lead': 'I\'m João - crafting',
-    'home.hero.highlight': 'beautiful, reliable',
-    'home.hero.tail': 'digital experiences.',
+    'home.hero.lead': 'Freelance developer building',
+    'home.hero.highlight': 'web apps, APIs & automation',
+    'home.hero.tail': 'for teams that need reliable delivery.',
     'home.profileStats': 'Profile Stats',
     'home.currentFocus': 'Current Focus',
     'home.buildTitle': "Things I've been building",
@@ -113,7 +113,7 @@ export const ui = {
     'home.roles': 'Roles',
     'home.viewOnGithub': 'View on GitHub ↗',
     'home.contactBadge': "Let's Connect",
-    'home.contactTitle': 'Want to work together?',
+    'home.contactTitle': 'Need a freelance developer?',
     'home.sayHello': 'Say hello',
     'home.linkedin': 'LinkedIn ↗',
 
@@ -165,7 +165,7 @@ export const ui = {
     'blog.subtitle': 'Thoughts on development, automation, and building for the web',
 
     // Footer
-    'footer.aboutText': 'Front-End Developer & QA Automation Engineer building tested, accessible web experiences.',
+    'footer.aboutText': 'Freelance software developer building web apps, APIs, and automation with Python, Django, and React. Available for contract work worldwide.',
     'footer.quickLinks': 'Quick Links',
     'footer.connect': 'Connect',
     'footer.builtWith': 'Built with',
@@ -191,9 +191,9 @@ export const ui = {
     // Hero
     'hero.greeting': 'Olá, eu sou',
     'hero.name': 'João Paulo Santos',
-    'hero.title': 'Desenvolvedor de Software | Python · Django · React',
-    'hero.tagline': 'Construindo aplicações web, pipelines de automação e soluções de dados. Transformando demandas reais em software funcional e bem estruturado.',
-    'hero.availability': 'Disponível para Projetos',
+    'hero.title': 'Desenvolvedor Freelancer | Python · Django · React',
+    'hero.tagline': 'Disponível para projetos freelance e contratos — aplicações web, APIs, automações e soluções de dados. Transformo demandas reais em software que entrega valor.',
+    'hero.availability': 'Disponível para Projetos Freelance',
     'hero.cta.work': 'Ver Meus Trabalhos',
     'hero.cta.contact': 'Entre em Contato',
     'hero.cta.github': 'Meu GitHub',
@@ -201,7 +201,7 @@ export const ui = {
 
     // Profile
     'profile.title': 'Meu Perfil',
-    'profile.status': 'Disponível para novas oportunidades',
+    'profile.status': 'Disponível para trabalho freelance',
     'profile.contactText': 'LinkedIn',
 
     // Summary
@@ -231,16 +231,16 @@ export const ui = {
     'projects.emptyTitle': 'Nenhum Projeto Ainda',
     'projects.emptyDesc': 'Estou trabalhando em coisas empolgantes no momento. Elas aparecerão aqui em breve!',
     // Home
-    'home.availability': 'Disponível para oportunidades',
+    'home.availability': 'Desenvolvedor freelancer · aberto a projetos',
     'home.viewWork': 'Ver trabalhos',
     'home.githubProfile': 'Perfil no GitHub',
     'home.years': 'Anos',
     'home.projects': 'Projetos',
     'home.commitment': 'Compromisso',
     'home.technologies': 'Tecnologias com as quais trabalho',
-    'home.hero.lead': 'Sou João - criando',
-    'home.hero.highlight': 'experiencias bonitas e confiaveis',
-    'home.hero.tail': 'na web.',
+    'home.hero.lead': 'Desenvolvedor freelancer criando',
+    'home.hero.highlight': 'apps web, APIs e automações',
+    'home.hero.tail': 'para quem precisa entregar com confiança.',
     'home.profileStats': 'Resumo do perfil',
     'home.currentFocus': 'Foco atual',
     'home.buildTitle': 'Coisas que venho construindo',
@@ -281,7 +281,7 @@ export const ui = {
     'home.roles': 'Posições',
     'home.viewOnGithub': 'Ver no GitHub ↗',
     'home.contactBadge': 'Vamos nos conectar',
-    'home.contactTitle': 'Quer trabalhar juntos?',
+    'home.contactTitle': 'Precisa de um desenvolvedor freelancer?',
     'home.sayHello': 'Diga olá',
     'home.linkedin': 'LinkedIn ↗',
 
@@ -333,7 +333,7 @@ export const ui = {
     'blog.subtitle': 'Reflexões sobre desenvolvimento, automação e construção para a web',
 
     // Footer
-    'footer.aboutText': 'Desenvolvedor Front-End & Engenheiro de Automação QA criando experiências web testadas e acessíveis.',
+    'footer.aboutText': 'Desenvolvedor freelancer de software — apps web, APIs e automações com Python, Django e React. Disponível para contratos remotos.',
     'footer.quickLinks': 'Links Rápidos',
     'footer.connect': 'Conectar',
     'footer.builtWith': 'Feito com',

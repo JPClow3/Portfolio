@@ -11,10 +11,12 @@ import GithubStatsSection from '@/components/sections/GithubStatsSection.astro';
 import ExperienceSection from '@/components/sections/ExperienceSection.astro';
 import ActivitySection from '@/components/sections/ActivitySection.astro';
 import OptimizationSection from '@/components/sections/OptimizationSection.astro';
+import { buildHomeFaqSchema, getHomeSeo } from '@/lib/seo';
 
 const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
 const t = ui[currentLang] ?? ui[defaultLang];
 const siteUrl = Astro.site ?? new URL('https://jpclow.dev');
+const homeSeo = getHomeSeo(currentLang);
 
 const profileEntries = await getCollection('profile', ({ data }) => data.lang === currentLang);
 const fallbackProfileEntries = await getCollection('profile', ({ data }) => data.lang === defaultLang);
@@ -54,7 +56,7 @@ const getProjectUrl = (project: any) =>
 const projectItemsSchema = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
-  name: 'Featured Projects',
+  name: currentLang === 'pt' ? 'Projetos em destaque' : 'Featured Projects',
   itemListElement: projects.map((project, index) => ({
     '@type': 'ListItem',
     position: index + 1,
@@ -68,12 +70,15 @@ const projectItemsSchema = {
     },
   })),
 };
+
+const homeSchemas = [buildHomeFaqSchema(currentLang), projectItemsSchema];
 ---
 
 <BaseLayout
-  title="João Paulo Gonçalves Santos - Portfolio"
-  description="Personal portfolio of João Paulo with projects, journey and GitHub updates."
-  schema={projectItemsSchema}
+  title={homeSeo.title}
+  description={homeSeo.description}
+  keywords={homeSeo.keywords}
+  schema={homeSchemas}
 >
   <Header />
   <ProjectCardEffects client:idle />

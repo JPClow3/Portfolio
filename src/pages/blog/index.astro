@@ -5,8 +5,10 @@ import Header from '@/components/layout/Header.astro';
 import Footer from '@/components/layout/Footer.astro';
 import EmptyState from '@/components/common/EmptyState.astro';
 import { ui } from '@/lib/i18n';
+import { getBlogIndexSeo } from '@/lib/seo';
 
 const t = ui.en;
+const blogSeo = getBlogIndexSeo();
 
 const posts = await getCollection('blog', ({ data }) => !data.draft && data.lang === 'en');
 const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
@@ -37,8 +39,9 @@ function formatDate(date: Date): string {
 ---
 
 <BaseLayout
-  title="Blog | João Paulo Santos"
-  description="Thoughts on software development, front-end technologies, and my learning journey."
+  title={blogSeo.title}
+  description={blogSeo.description}
+  keywords={blogSeo.keywords}
   ogImage="/favicon.svg"
   schema={blogSchema}
 >
@@ -50,7 +53,7 @@ function formatDate(date: Date): string {
       <div class="mb-10 text-center">
         <h1 class="mb-3 text-3xl font-bold sm:text-4xl">{t['blog.title']}</h1>
         <p class="text-base text-[rgb(var(--color-text-muted))]">
-          Thoughts on software development, front-end technologies, and my learning journey.
+          {blogSeo.description}
         </p>
       </div>
 

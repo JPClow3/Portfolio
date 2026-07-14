@@ -35,8 +35,7 @@ const currentFocusIconNames = {
 const getCurrentFocusIcon = (name: string) =>
   currentFocusIconNames[name as keyof typeof currentFocusIconNames] ?? 'code';
 
-const gravatarUrl1x = `https://2.gravatar.com/avatar/${profile.gravatarHash}?s=160&d=initials`;
-const gravatarUrl2x = `https://2.gravatar.com/avatar/${profile.gravatarHash}?s=320&d=initials`;
+const gravatarUrl = `https://2.gravatar.com/avatar/${profile.gravatarHash}?s=212&d=initials`;
 ---
 
 <section id="about" data-scene-section="about" aria-labelledby="about-heading" class="relative isolate mb-16 grid min-h-[520px] grid-cols-1 items-center gap-8 overflow-hidden rounded-xl border border-[rgb(var(--color-border)/0.72)] bg-[rgb(var(--color-bg-primary)/0.44)] px-5 py-10 sm:px-7 lg:grid-cols-12 lg:px-9">
@@ -71,11 +70,10 @@ const gravatarUrl2x = `https://2.gravatar.com/avatar/${profile.gravatarHash}?s=3
         <div class="profile-avatar-wrap">
           <div class="profile-avatar-ring">
             <img
-              src={gravatarUrl1x}
-              srcset={`${gravatarUrl1x} 1x, ${gravatarUrl2x} 2x`}
+              src={gravatarUrl}
               alt={`${profile.shortName}, ${profile.role}`}
-              width="160"
-              height="160"
+              width="212"
+              height="212"
               loading="eager"
               fetchpriority="high"
               decoding="async"

@@ -3,8 +3,8 @@ lang: en
 profile:
   name: "João Paulo Gonçalves Santos"
   shortName: "João Paulo"
-  role: "Software Developer"
-  subtitle: "Software Engineering student building web applications, automation pipelines, and data solutions with Python, Django, and React."
+  role: "Freelance Software Developer"
+  subtitle: "Freelance software developer available for web apps, APIs, and automation. I build with Python, Django, React, and TypeScript — from MVPs to production systems."
   location: "Brazil"
   timezone: "UTC-3"
   github: "https://github.com/JPClow3"

@@ -81,7 +81,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
             href={link.href}
             data-nav-link
             data-nav-section={link.section}
-            class="nav-link relative rounded-md px-3 py-1.5 text-sm font-medium text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-text-primary))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))] group"
+      class="nav-link relative rounded-md px-3 py-1.5 text-sm font-medium text-[rgb(var(--color-text-secondary))] transition-[background-color,border-color,box-shadow] hover:text-[rgb(var(--color-text-primary))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))] group"
           >
             {link.label}
             <span class="absolute bottom-0 left-1/2 h-[2px] w-0 -translate-x-1/2 rounded-t-sm bg-[rgb(var(--color-accent))] transition-all duration-300 group-hover:w-4/5" />
@@ -170,7 +170,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
               href={link.href}
               data-nav-link
               data-nav-section={link.section}
-              class="nav-link link-underline rounded-md px-4 py-2.5 text-sm font-medium text-[rgb(var(--color-text-secondary))] transition-colors hover:bg-[rgb(var(--color-bg-secondary))] hover:text-[rgb(var(--color-text-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
+              class="nav-link link-underline rounded-md px-4 py-2.5 text-sm font-medium text-[rgb(var(--color-text-secondary))] transition-[background-color,border-color,box-shadow] hover:bg-[rgb(var(--color-bg-secondary))] hover:text-[rgb(var(--color-text-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
             >
               {link.label}
             </a>
@@ -518,9 +518,10 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
       });
 
       sections.forEach((section) => activeNavObserver?.observe(section));
+    } else {
+      window.addEventListener('scroll', syncActiveSection, { passive: true });
     }
 
-    window.addEventListener('scroll', syncActiveSection, { passive: true });
     window.addEventListener('resize', syncActiveSection);
     syncActiveSection();
   }

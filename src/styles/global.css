@@ -580,9 +580,26 @@ html.dark .profile-identity-surface {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     grid-auto-rows: minmax(172px, auto);
   }
+}
 
-  .bento-span-2 { grid-column: span 2; }
-  .bento-row-span-2 { grid-row: span 2; }
+.project-shot-frame {
+  border-bottom: 1px solid rgb(var(--color-border) / 0.6);
+  background: rgb(var(--color-bg-tertiary) / 0.6);
+}
+
+.project-shot-chrome {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid rgb(var(--color-border) / 0.4);
+}
+
+.project-shot-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: rgb(var(--color-text-muted) / 0.35);
 }
 
 .timeline::before {

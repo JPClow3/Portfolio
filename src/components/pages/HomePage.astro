@@ -48,7 +48,7 @@ async function getLocalizedCollection(collection: 'projects') {
 const projects = (await getLocalizedCollection('projects'))
   .filter((project) => project.data.featured)
   .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 4);
+  .slice(0, 6);
 
 const getProjectUrl = (project: any) =>
   project.data.caseStudy ? `${currentLang === 'pt' ? '/pt' : ''}/projects/${project.data.slug}/` : project.data.link ?? project.data.github ?? '/#projects';

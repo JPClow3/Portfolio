@@ -4,7 +4,8 @@ slug: "moto-track"
 description: "Um centro de comando para motocicletas que reúne consumo, manutenção, pneus, documentos, peças e inteligência de custos."
 tech: ["Django", "HTMX", "Tailwind CSS", "PostgreSQL", "Docker"]
 github: "https://github.com/JPClow3/moto_track"
-image: "/projects/moto-track-og.png"
+link: "https://moto-track.net/"
+image: "/projects/moto-track.png"
 featured: true
 order: 3
 lang: "pt"

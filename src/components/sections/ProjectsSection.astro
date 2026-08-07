@@ -23,7 +23,7 @@ async function getLocalizedCollection(collection: 'projects') {
 const projects = (await getLocalizedCollection('projects'))
   .filter((project) => project.data.featured)
   .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 4);
+  .slice(0, 6);
 
 const getProjectUrl = (project: any) =>
   project.data.caseStudy ? `${currentLang === 'pt' ? '/pt' : ''}/projects/${project.data.slug}/` : project.data.link ?? project.data.github ?? '/#projects';
@@ -42,18 +42,34 @@ const getProjectUrl = (project: any) =>
       const primaryLabel = project.data.caseStudy ? t['home.caseStudy'] : t['home.viewProject'];
 
       return (
-        <ScrollReveal animation="fade-up" delay={index * 100} tag="div" class:list={[
-          'h-full',
-          index === 0 ? 'bento-span-2' : '',
-          index === 1 ? 'bento-row-span-2' : '',
-        ]}>
+        <ScrollReveal animation="fade-up" delay={index * 100} tag="div" class="h-full">
           <article
             data-tilt-card
             data-testid="project-card"
-            class="project-card group glass-panel relative overflow-hidden rounded-lg p-5 transition-all hover:border-[rgb(var(--color-accent))]/40 h-full"
+            class="project-card group glass-panel relative flex h-full flex-col overflow-hidden rounded-lg transition-all hover:border-[rgb(var(--color-accent))]/40"
           >
           <div class="absolute inset-0 bg-linear-to-br from-[rgb(var(--color-accent)/0.12)] via-transparent to-[rgb(var(--color-accent-hover)/0.12)] opacity-60 transition-opacity duration-500 group-hover:opacity-100"></div>
-          <div class="relative z-10">
+          {project.data.image && (
+            <div class="project-shot-frame relative z-10">
+              <div class="project-shot-chrome" aria-hidden="true">
+                <span class="project-shot-dot"></span>
+                <span class="project-shot-dot"></span>
+                <span class="project-shot-dot"></span>
+              </div>
+              <div class="aspect-video overflow-hidden">
+                <img
+                  src={project.data.image}
+                  alt={`${project.data.title} website preview`}
+                  class="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  width="1440"
+                  height="900"
+                />
+              </div>
+            </div>
+          )}
+          <div class="relative z-10 flex flex-1 flex-col p-5">
             <div class="mb-2 flex items-center justify-between gap-3">
               <h3 class="text-xl font-bold">{project.data.title}</h3>
               {project.data.caseStudy && (

@@ -3,7 +3,7 @@ title: "Lorebound"
 slug: "lorebound"
 description: "A reader-first interactive-fiction platform that pairs curated story worlds with controlled AI turns, persistent memory, and transparent usage."
 tech: ["TypeScript", "React", "Cloudflare Workers", "Supabase", "AI", "Stripe"]
-image: "/projects/lorebound-cover.svg"
+image: "/projects/lorebound.png"
 featured: true
 order: 2
 lang: "en"

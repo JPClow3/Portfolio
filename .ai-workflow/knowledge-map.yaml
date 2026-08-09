@@ -1,0 +1,26 @@
+sources:
+  architecture: []
+  domain:
+    - AGENTS.md
+    - CLAUDE.md
+    - README.md
+    - docs/superpowers/plans/2026-07-14-dual-market-seo.md
+    - docs/superpowers/specs/2026-07-14-dual-market-seo-design.md
+  product: []
+  coding_conventions: []
+  testing: []
+  deployment: []
+  security: []
+  database: []
+  ui_design: []
+  historical_notes: []
+exclude:
+  - .git/**
+  - build/**
+  - dist/**
+  - docs/archive/**
+  - generated/**
+  - node_modules/**
+  - vendor/**
+conflicts: []
+generatedAt: 2026-08-08T03:45:15.293Z

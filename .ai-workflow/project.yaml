@@ -1,0 +1,27 @@
+version: 1
+
+project:
+  id: portfolio
+
+base_branch: main
+
+validation:
+  commands:
+    test:
+      command: npm run test:unit
+      required: true
+    build:
+      command: npm run build
+      required: true
+
+risk:
+  high:
+    paths:
+      - .github/workflows/**
+
+knowledge:
+  map: .ai-workflow/knowledge-map.yaml
+
+# Unresolved during bootstrap:
+#   - No `lint` script found (looked for: lint).
+#   - No `typecheck` script found (looked for: typecheck, check, tsc).

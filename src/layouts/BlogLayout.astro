@@ -3,6 +3,7 @@ import BaseLayout from './BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
 import Footer from '@/components/layout/Footer.astro';
 import Icon from '@/components/common/Icon.astro';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
 
 interface Props {
   title: string;
@@ -11,9 +12,14 @@ interface Props {
   updatedDate?: Date;
   heroImage?: string;
   tags?: string[];
+  lang?: Lang;
 }
 
-const { title, description, pubDate, updatedDate, heroImage, tags = [] } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags = [], lang } = Astro.props;
+const currentLang = (lang ?? Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
+const localePrefix = currentLang === 'pt' ? '/pt' : '';
+
 const canonicalPath = Astro.url.pathname;
 const siteUrl = Astro.site ?? new URL('https://jpclow.dev');
 const articleUrl = new URL(canonicalPath, siteUrl).toString();
@@ -36,7 +42,7 @@ const articleSchema = {
 };
 
 function formatDate(date: Date): string {
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString(currentLang === 'pt' ? 'pt-BR' : 'en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -51,7 +57,7 @@ function formatDate(date: Date): string {
   articlePublishedTime={pubDate.toISOString()}
   articleModifiedTime={(updatedDate ?? pubDate).toISOString()}
   articleTags={tags}
-  ogImage={heroImage ?? '/favicon.svg'}
+  ogImage={heroImage ?? '/og-image.png'}
   schema={articleSchema}
 >
   <Header />
@@ -82,7 +88,7 @@ function formatDate(date: Date): string {
           {updatedDate && (
             <>
               <span>•</span>
-              <span>Updated: {formatDate(updatedDate)}</span>
+              <span>{currentLang === 'pt' ? 'Atualizado em:' : 'Updated:'} {formatDate(updatedDate)}</span>
             </>
           )}
         </div>
@@ -92,10 +98,10 @@ function formatDate(date: Date): string {
         <ol class="flex items-center gap-2 text-sm text-[rgb(var(--color-text-secondary))]">
           <li>
             <a
-              href="/"
+              href={`${localePrefix}/`}
               class="rounded-sm hover:text-[rgb(var(--color-accent))] transition-colors"
             >
-              Home
+              {t['project.breadcrumbHome']}
             </a>
           </li>
           <li aria-hidden="true" class="text-[rgb(var(--color-text-muted))]">/</li>
@@ -104,7 +110,7 @@ function formatDate(date: Date): string {
               href="/blog"
               class="rounded-sm hover:text-[rgb(var(--color-accent))] transition-colors"
             >
-              Blog
+              {t['nav.blog']}
             </a>
           </li>
           <li aria-hidden="true" class="text-[rgb(var(--color-text-muted))]">/</li>
@@ -141,7 +147,7 @@ function formatDate(date: Date): string {
           <span class="group-hover:-translate-x-1 transition-transform">
             <Icon name="arrow-down" size={16} class="rotate-90" />
           </span>
-          Back to all posts
+          {t['blog.allPosts']}
         </a>
       </div>
     </article>

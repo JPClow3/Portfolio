@@ -175,6 +175,7 @@ export const ui = {
     'common.loading': 'Loading...',
     'common.error': 'Something went wrong',
     'common.backToTop': 'Back to top',
+    'common.skipToContent': 'Skip to main content',
   },
   pt: {
     // Navigation
@@ -343,6 +344,7 @@ export const ui = {
     'common.loading': 'Carregando...',
     'common.error': 'Algo deu errado',
     'common.backToTop': 'Voltar ao topo',
+    'common.skipToContent': 'Ir para o conteúdo principal',
   },
 } as const;
 

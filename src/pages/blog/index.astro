@@ -4,13 +4,14 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
 import Footer from '@/components/layout/Footer.astro';
 import EmptyState from '@/components/common/EmptyState.astro';
-import { ui } from '@/lib/i18n';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
 import { getBlogIndexSeo } from '@/lib/seo';
 
-const t = ui.en;
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
 const blogSeo = getBlogIndexSeo();
 
-const posts = await getCollection('blog', ({ data }) => !data.draft && data.lang === 'en');
+const posts = await getCollection('blog', ({ data }) => !data.draft && data.lang === currentLang);
 const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 const siteUrl = Astro.site ?? new URL('https://jpclow.dev');
@@ -30,7 +31,7 @@ const blogSchema = {
 };
 
 function formatDate(date: Date): string {
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString(currentLang === 'pt' ? 'pt-BR' : 'en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -42,7 +43,7 @@ function formatDate(date: Date): string {
   title={blogSeo.title}
   description={blogSeo.description}
   keywords={blogSeo.keywords}
-  ogImage="/favicon.svg"
+  ogImage="/og-image.png"
   schema={blogSchema}
 >
   <Header />
@@ -98,10 +99,10 @@ function formatDate(date: Date): string {
       ) : (
         <EmptyState 
           iconName="book-open" 
-          title="No Posts Yet" 
-          description="It seems I haven't published any articles yet. Check back soon!" 
-          actionText="Go back Home" 
-          actionHref="/" 
+          title={currentLang === 'pt' ? 'Nenhum Post Ainda' : 'No Posts Yet'} 
+          description={currentLang === 'pt' ? 'Ainda não publiquei artigos. Volte em breve!' : "It seems I haven't published any articles yet. Check back soon!"} 
+          actionText={currentLang === 'pt' ? 'Voltar ao Início' : 'Go back Home'} 
+          actionHref={currentLang === 'pt' ? '/pt/' : '/'} 
         />
       )}
     </div>

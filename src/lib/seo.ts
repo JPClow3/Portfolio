@@ -184,7 +184,7 @@ export function buildPersonSchema({ lang, siteUrl, description }: SchemaOptions)
     alternateName: ['João Paulo Santos', 'Joao Paulo Goncalves Santos'],
     url: siteUrl.toString(),
     email: SITE.email,
-    image: new URL('/og-image.svg', siteUrl).toString(),
+    image: new URL('/og-image.png', siteUrl).toString(),
     jobTitle: lang === 'pt' ? 'Desenvolvedor de Software Freelancer' : 'Freelance Software Developer',
     description,
     nationality: {
@@ -218,7 +218,7 @@ export function buildProfessionalServiceSchema({ lang, siteUrl, description }: S
     name: lang === 'pt' ? 'João Paulo Santos — Desenvolvimento Freelancer' : 'João Paulo Santos — Freelance Development',
     url: siteUrl.toString(),
     description,
-    image: new URL('/og-image.svg', siteUrl).toString(),
+    image: new URL('/og-image.png', siteUrl).toString(),
     areaServed: [
       { '@type': 'Country', name: 'Brazil' },
       { '@type': 'Place', name: 'Worldwide' },

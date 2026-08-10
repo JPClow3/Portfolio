@@ -2,7 +2,7 @@
 import '@/styles/global.css';
 import BackToTop from '@/components/islands/BackToTop.svelte';
 import HeroScene from '@/components/islands/HeroScene.svelte';
-import { defaultLang, type Lang } from '@/lib/i18n';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
 import {
   SITE,
   getAlternateOgLocales,
@@ -29,7 +29,7 @@ const {
   title,
   description = 'Freelance software developer portfolio of João Paulo Santos — web apps, APIs, and automation with Python, Django, and React.',
   keywords = [],
-  ogImage = '/og-image.svg',
+  ogImage = '/og-image.png',
   ogType = 'website',
   twitterCard = 'summary_large_image',
   articlePublishedTime,
@@ -40,6 +40,7 @@ const {
 } = Astro.props;
 
 const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
 const siteUrl = Astro.site ?? new URL(SITE.url);
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
 const ogImageUrl = new URL(ogImage, siteUrl);
@@ -106,6 +107,7 @@ const allSchema = [...defaultSchema, ...customSchema.filter(Boolean)];
     <meta name="twitter:image" content={ogImageUrl} />
     <meta name="twitter:image:alt" content={title} />
 
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png" />
@@ -282,7 +284,7 @@ const allSchema = [...defaultSchema, ...customSchema.filter(Boolean)];
       href="#main-content"
       class="skip-link focus-visible:top-4 focus-visible:left-4"
     >
-      Skip to main content
+      {t['common.skipToContent']}
     </a>
 
     <div class="relative z-10">

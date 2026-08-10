@@ -65,7 +65,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
     <div class="flex h-14 items-center justify-between">
       <!-- Logo -->
       <a
-        href="/"
+        href={`${localePrefix}/`}
         id="site-logo"
         data-logo-signal
         class="header-logo text-lg font-bold gradient-text transition-opacity hover:opacity-85 focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
@@ -81,7 +81,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
             href={link.href}
             data-nav-link
             data-nav-section={link.section}
-      class="nav-link relative rounded-md px-3 py-1.5 text-sm font-medium text-[rgb(var(--color-text-secondary))] transition-[background-color,border-color,box-shadow] hover:text-[rgb(var(--color-text-primary))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))] group"
+            class="nav-link relative rounded-md px-3 py-1.5 text-sm font-medium text-[rgb(var(--color-text-secondary))] transition-[background-color,border-color,box-shadow] hover:text-[rgb(var(--color-text-primary))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))] group"
           >
             {link.label}
             <span class="absolute bottom-0 left-1/2 h-[2px] w-0 -translate-x-1/2 rounded-t-sm bg-[rgb(var(--color-accent))] transition-all duration-300 group-hover:w-4/5" />
@@ -188,7 +188,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
           <div class="mt-1 flex items-center gap-2 border-t border-[rgb(var(--color-border))] px-4 py-2.5 pt-3" role="group" aria-label="Select language">
             <Icon name="globe" size={16} class="text-[rgb(var(--color-text-muted))]" />
             <a
-            href={englishPath}
+              href={englishPath}
               data-lang-link
               data-lang-base="/"
               class:list={[
@@ -201,7 +201,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
               aria-current={isEnglish ? 'true' : undefined}
             >EN</a>
             <a
-            href={portuguesePath}
+              href={portuguesePath}
               data-lang-link
               data-lang-base="/pt/"
               class:list={[
@@ -444,7 +444,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
     const path = window.location.pathname;
 
     if (path.startsWith('/blog')) return 'blog';
-    if (path.startsWith('/projects')) return 'projects';
+    if (path.startsWith('/projects') || path.startsWith('/pt/projects')) return 'projects';
 
     return '';
   }
@@ -511,7 +511,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
 
     activeNavScrollHandler = syncActiveSection;
 
-    if ('IntersectionObserver' in window) {
+    if (typeof IntersectionObserver !== 'undefined') {
       activeNavObserver = new IntersectionObserver(syncActiveSection, {
         rootMargin: '-28% 0px -58% 0px',
         threshold: [0, 0.1, 0.35, 0.7],

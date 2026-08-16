@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+# Portfolio pre-commit hook
+
+branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+if [ "$branch" = "main" ]; then
+  echo "[ERROR] Direct commits to main branch are forbidden. Work in a feature or ai/* branch."
+  exit 1
+fi
+
+for file in $(git diff --cached --name-only); do
+  case "$file" in
+    *.env|.env.*)
+      if [ "$file" != ".env.example" ]; then
+        echo "[ERROR] Attempting to commit environment secret file: $file"
+        exit 1
+      fi
+      ;;
+  esac
+done
+
+echo "[OK] Pre-commit checks passed for Portfolio."
+exit 0

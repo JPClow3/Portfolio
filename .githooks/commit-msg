@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+# Portfolio commit-msg hook
+msg_file="$1"
+msg=$(head -n 1 "$msg_file")
+
+pattern="^(feat|fix|docs|style|refactor|perf|test|chore|build|ci|revert)(\(.+\))?: .{1,80}|^(Merge|Revert|\[[A-Z]+-[0-9]+\].+)"
+
+if ! echo "$msg" | grep -qE "$pattern"; then
+  echo "[ERROR] Invalid commit message format: \"$msg\""
+  echo "Expected conventional format: feat(blog): add new post OR style(nav): update mobile header"
+  exit 1
+fi
+
+exit 0

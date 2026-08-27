@@ -163,6 +163,35 @@ export const ui = {
     'blog.readMore': 'Read More',
     'blog.allPosts': 'View All Posts',
     'blog.subtitle': 'Thoughts on development, automation, and building for the web',
+    'blog.readingTime': '{min} min read',
+    'blog.copyCode': 'Copy',
+    'blog.copied': 'Copied!',
+    'blog.langBadge.en': 'English',
+    'blog.langBadge.pt': 'Português',
+    'blog.availableInEn': 'Article available in English',
+    'blog.fallbackNotice': 'This article is currently available only in English.',
+    'blog.emptyTitle': 'No Posts Yet',
+    'blog.emptyDesc': "I haven't published any articles in this language yet. Check back soon!",
+    'blog.backToHome': 'Back to Home',
+    'blog.updatedAt': 'Updated:',
+
+    // 404 Error
+    'error404.title': '404 - Page Not Found',
+    'error404.heading': 'Page Not Found',
+    'error404.message': "Sorry, the page you're looking for doesn't exist. Let's get you back on track.",
+    'error404.backHome': 'Back to Home',
+    'error404.blog': 'Blog',
+    'error404.suggestionsTitle': 'Lost in the digital void? Here are some suggestions:',
+    'error404.suggestion1': 'Check the URL for typos',
+    'error404.suggestion2': 'Return to the homepage',
+    'error404.suggestion3': 'Browse the blog',
+
+    // 500 Error
+    'error500.title': '500 - Server Error',
+    'error500.heading': 'Internal Server Error',
+    'error500.message': "Oops! Something went wrong on our servers. We're working on fixing it.",
+    'error500.backHome': 'Back to Home',
+    'error500.reload': 'Reload Page',
 
     // Footer
     'footer.aboutText': 'Freelance software developer building web apps, APIs, and automation with Python, Django, and React. Available for contract work worldwide.',
@@ -332,6 +361,35 @@ export const ui = {
     'blog.readMore': 'Leia Mais',
     'blog.allPosts': 'Ver Todos os Posts',
     'blog.subtitle': 'Reflexões sobre desenvolvimento, automação e construção para a web',
+    'blog.readingTime': '{min} min de leitura',
+    'blog.copyCode': 'Copiar',
+    'blog.copied': 'Copiado!',
+    'blog.langBadge.en': 'Inglês',
+    'blog.langBadge.pt': 'Português',
+    'blog.availableInEn': 'Artigo disponível em inglês',
+    'blog.fallbackNotice': 'Este artigo está disponível apenas em inglês.',
+    'blog.emptyTitle': 'Nenhum Post Ainda',
+    'blog.emptyDesc': 'Ainda não publiquei artigos neste idioma. Volte em breve!',
+    'blog.backToHome': 'Voltar ao Início',
+    'blog.updatedAt': 'Atualizado em:',
+
+    // 404 Error
+    'error404.title': '404 - Página Não Encontrada',
+    'error404.heading': 'Página Não Encontrada',
+    'error404.message': 'Desculpe, a página que você está procurando não existe. Vamos te colocar no caminho certo.',
+    'error404.backHome': 'Voltar ao Início',
+    'error404.blog': 'Blog',
+    'error404.suggestionsTitle': 'Perdido no espaço digital? Aqui estão algumas sugestões:',
+    'error404.suggestion1': 'Verifique se há erros de digitação na URL',
+    'error404.suggestion2': 'Retorne à página inicial',
+    'error404.suggestion3': 'Explore o blog',
+
+    // 500 Error
+    'error500.title': '500 - Erro no Servidor',
+    'error500.heading': 'Erro Interno do Servidor',
+    'error500.message': 'Ops! Algo deu errado em nossos servidores. Estamos trabalhando para resolver.',
+    'error500.backHome': 'Voltar ao Início',
+    'error500.reload': 'Recarregar Página',
 
     // Footer
     'footer.aboutText': 'Desenvolvedor freelancer de software — apps web, APIs e automações com Python, Django e React. Disponível para contratos remotos.',

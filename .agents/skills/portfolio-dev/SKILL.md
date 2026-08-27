@@ -11,7 +11,7 @@ This skill provides procedures and guidelines for developing and verifying the p
 
 ## 1. Project Architecture & Stack
 
-- **Framework**: Astro 4.x / TypeScript
+- **Framework**: Astro / TypeScript
 - **Styling**: TailwindCSS
 - **Deployment**: Cloudflare Pages / Docker Nginx static hosting
 - **Testing**: Vitest + Playwright

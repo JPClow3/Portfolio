@@ -1,7 +1,7 @@
 ---
 title: "Developer Portfolio"
 slug: "portfolio"
-description: "My personal portfolio website built with Astro 5, Svelte 5, and Tailwind CSS. Features islands architecture, Three.js 3D effects, dark mode, scroll animations, and full accessibility support."
+description: "My personal portfolio website built with Astro, Svelte 5, and Tailwind CSS. Features islands architecture, Three.js 3D effects, dark mode, scroll animations, and full accessibility support."
 tech: ["Astro", "Svelte", "TypeScript", "Tailwind CSS", "Three.js"]
 link: "https://jpclow.dev"
 github: "https://github.com/JPClow3/Portfolio"
@@ -26,7 +26,7 @@ A modern, performant portfolio website showcasing my work as a Front-End Develop
 
 ## Tech Stack
 
-- **Astro 5** - Static site generation with islands
+- **Astro 7** - Static site generation with islands
 - **Svelte 5** - Interactive UI components (runes syntax)
 - **TypeScript** - Type safety throughout
 - **Tailwind CSS v4** - Utility-first styling

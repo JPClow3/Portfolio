@@ -3,7 +3,7 @@
 **For AI assistants (Cursor/Claude):** This file is the single source of truth for this portfolio codebase (Astro project at repo root). Use it for context, conventions, and file locations when editing this project.
 
 ## Project Overview
-Modern portfolio website for João Paulo Gonçalves Santos built with Astro 5, Svelte 5, and TypeScript. Uses islands architecture for optimal performance with a comprehensive design system.
+Modern portfolio website for João Paulo Gonçalves Santos built with Astro 7, Svelte 5, and TypeScript. Uses islands architecture for optimal performance with a comprehensive design system.
 
 **Live Site:** https://jpclow.dev
 
@@ -11,20 +11,26 @@ Modern portfolio website for João Paulo Gonçalves Santos built with Astro 5, S
 - **GitHub:** https://github.com/JPClow3
 - **LinkedIn:** https://linkedin.com/in/joaopaulosantosgo
 - **Instagram:** https://www.instagram.com/_joao.paulo_sa/
-- **Email:** joaopaulo.grv4@gmail.com
+- **Email:** joao@jpclow.dev
 
 ### Current Projects (src/content/projects/)
 | File | Project | Tech |
 |------|---------|------|
+| throughline.md | Throughline | React, TypeScript, IndexedDB, PWA, End-to-End Encryption |
+| lorebound.md | Lorebound | TypeScript, React, Cloudflare Workers, Supabase, AI, Stripe |
+| moto-track.md | Moto Track | Django, HTMX, Tailwind CSS, PostgreSQL, Docker |
+| hefesto.md | Hefesto | Python, XGBoost, Geospatial Data, Climate Data, ML Ops |
+| agrohub.md | AgroHub UniRV | Python, Django, HTMX, Tailwind CSS, Alpine.js, Docker Swarm, Portainer |
+| inova-rio-verde.md | Inova Rio Verde | Next.js, Tailwind CSS, Mapbox, MapTiler, deck.gl, Cloudflare Hyperdrive, Neon Postgres |
+| portfolio.md | Developer Portfolio | Astro, Svelte, TypeScript, Tailwind CSS, Three.js |
+| resonant-echoes.md | Resonant Echoes | TypeScript, Google Gemini, AI |
 | league-ai-oracle.md | League AI Oracle | TypeScript, AI/ML, Riot Games API |
 | veins-of-eridun.md | Veins of Eridûn | TypeScript, AI |
-| resonant-echoes.md | Resonant Echoes | TypeScript, Google Gemini, AI |
-| portfolio.md | Developer Portfolio | Astro, Svelte, TypeScript, Tailwind |
 
 ## Tech Stack
 | Layer | Technology | Purpose |
 |-------|------------|---------|
-| Framework | Astro 5 | Static site generation with islands |
+| Framework | Astro 7 | Static site generation with islands |
 | Language | TypeScript | Type safety (strict mode) |
 | UI Islands | Svelte 5 | Interactive components (runes syntax: `$state`, `onMount`) |
 | Styling | Tailwind CSS v4 | Utility-first CSS via `@tailwindcss/vite` |
@@ -32,9 +38,6 @@ Modern portfolio website for João Paulo Gonçalves Santos built with Astro 5, S
 | Content | Content Collections + MDX | Type-safe markdown content |
 | Contact | Web3Forms + Cloudflare Turnstile | Serverless form submissions with bot protection |
 | Deployment | Cloudflare Pages | GitHub integration builds static `dist/` |
-
-## Directory Structure
-```
 src/
 ├── components/
 │   ├── common/              # Reusable UI components (Astro)
@@ -210,7 +213,7 @@ Located in `src/content/`, schemas in `config.ts`:
 ### SEO & Performance
 - JSON-LD Person structured data in BaseLayout
 - OG + Twitter Card meta tags
-- Google Fonts preloading with async load + `<noscript>` fallback
+- Self-hosted fonts via `@fontsource/plus-jakarta-sans` (zero external font CDNs)
 - Skip link for keyboard navigation
 - Auto-generated sitemap via `@astrojs/sitemap`
 - Static output (SSG) — all HTML generated at build time

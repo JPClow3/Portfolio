@@ -58,7 +58,11 @@ const experienceCollection = defineCollection({
 
 // Blog Collection
 const blogCollection = defineCollection({
-  loader: glob({ pattern: '**/*.mdx', base: './src/content/blog' }),
+  loader: glob({
+    pattern: '**/*.{md,mdx}',
+    base: './src/content/blog',
+    generateId: ({ entry }) => entry.replace(/\.(md|mdx)$/i, '').replace(/\\/g, '/'),
+  }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
@@ -68,6 +72,7 @@ const blogCollection = defineCollection({
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
     lang: z.enum(['en', 'pt']).default('en'),
+    slug: z.string().optional(),
   }),
 });
 

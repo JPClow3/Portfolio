@@ -1,19 +1,25 @@
 import { test, expect } from '@playwright/test';
 
-test('homepage keeps CDN font loading and the ambient scene out of the initial critical path', async ({ page }) => {
+test('homepage uses self-hosted fonts without external Google Fonts and keeps the ambient scene out of the initial critical path', async ({ page }) => {
   let threeRequestedAt: number | undefined;
+  const externalFontRequests: string[] = [];
 
   page.on('request', (request) => {
-    if (request.url().includes('three.module')) {
+    const url = request.url();
+    if (url.includes('three.module')) {
       threeRequestedAt = Date.now();
+    }
+    if (url.includes('fonts.googleapis.com') || url.includes('fonts.gstatic.com')) {
+      externalFontRequests.push(url);
     }
   });
 
   const navigationStartedAt = Date.now();
   await page.goto('/');
 
-  const fontStylesheet = page.locator('link[href*="fonts.googleapis.com"][rel="stylesheet"]');
-  await expect(fontStylesheet).toHaveAttribute('onload', /this\.media='all'/);
+  const googleFontLinks = page.locator('link[href*="fonts.googleapis.com"], link[href*="fonts.gstatic.com"]');
+  await expect(googleFontLinks).toHaveCount(0);
+  expect(externalFontRequests).toHaveLength(0);
 
   await page.waitForTimeout(1_000);
   expect(threeRequestedAt).toBeUndefined();

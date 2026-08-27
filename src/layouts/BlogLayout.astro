@@ -3,7 +3,9 @@ import BaseLayout from './BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
 import Footer from '@/components/layout/Footer.astro';
 import Icon from '@/components/common/Icon.astro';
+import CodeCopy from '@/components/common/CodeCopy.astro';
 import { defaultLang, type Lang, ui } from '@/lib/i18n';
+import { buildBlogBreadcrumbSchema, getBlogOgImageUrl } from '@/lib/seo';
 
 interface Props {
   title: string;
@@ -13,9 +15,24 @@ interface Props {
   heroImage?: string;
   tags?: string[];
   lang?: Lang;
+  slug?: string;
+  readingTime?: string;
+  isFallback?: boolean;
 }
 
-const { title, description, pubDate, updatedDate, heroImage, tags = [], lang } = Astro.props;
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  heroImage,
+  tags = [],
+  lang,
+  slug,
+  readingTime,
+  isFallback = false,
+} = Astro.props;
+
 const currentLang = (lang ?? Astro.currentLocale ?? defaultLang) as Lang;
 const t = ui[currentLang] ?? ui[defaultLang];
 const localePrefix = currentLang === 'pt' ? '/pt' : '';
@@ -24,6 +41,13 @@ const canonicalPath = Astro.url.pathname;
 const siteUrl = Astro.site ?? new URL('https://jpclow.dev');
 const articleUrl = new URL(canonicalPath, siteUrl).toString();
 
+const resolvedSlug = slug ?? canonicalPath.replace(/^\/(?:pt\/)?blog\//, '').replace(/\/$/, '');
+const ogImageUrl = resolvedSlug
+  ? getBlogOgImageUrl(resolvedSlug, currentLang, siteUrl)
+  : heroImage
+    ? new URL(heroImage, siteUrl).toString()
+    : new URL('/og-image.png', siteUrl).toString();
+
 const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
@@ -31,7 +55,7 @@ const articleSchema = {
   description,
   datePublished: pubDate.toISOString(),
   dateModified: (updatedDate ?? pubDate).toISOString(),
-  image: heroImage ? [new URL(heroImage, siteUrl).toString()] : undefined,
+  image: [ogImageUrl],
   mainEntityOfPage: articleUrl,
   author: {
     '@type': 'Person',
@@ -40,6 +64,13 @@ const articleSchema = {
   },
   keywords: tags,
 };
+
+const breadcrumbSchema = buildBlogBreadcrumbSchema({
+  lang: currentLang,
+  siteUrl,
+  title,
+  slug: resolvedSlug,
+});
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString(currentLang === 'pt' ? 'pt-BR' : 'en-US', {
@@ -57,43 +88,14 @@ function formatDate(date: Date): string {
   articlePublishedTime={pubDate.toISOString()}
   articleModifiedTime={(updatedDate ?? pubDate).toISOString()}
   articleTags={tags}
-  ogImage={heroImage ?? '/og-image.png'}
-  schema={articleSchema}
+  ogImage={ogImageUrl}
+  schema={[articleSchema, breadcrumbSchema]}
 >
   <Header />
 
   <main id="main-content" class="pb-14 pt-[6.5rem]" tabindex="-1">
     <article class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-      <!-- Header -->
-      <header class="mb-9">
-        <div class="mb-4 flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <span class="rounded px-2.5 py-1 text-xs font-medium bg-[rgb(var(--color-accent)/0.1)] text-[rgb(var(--color-accent))]">
-              {tag}
-            </span>
-          ))}
-        </div>
-
-        <h1 class="mb-4 text-3xl font-bold sm:text-4xl">{title}</h1>
-
-        <p class="mb-5 text-base leading-relaxed text-[rgb(var(--color-text-secondary))]">
-          {description}
-        </p>
-
-        <div class="flex items-center gap-4 text-sm text-[rgb(var(--color-text-muted))]">
-          <time datetime={pubDate.toISOString()} class="flex items-center gap-1.5">
-            <Icon name="calendar" size={14} />
-            {formatDate(pubDate)}
-          </time>
-          {updatedDate && (
-            <>
-              <span>•</span>
-              <span>{currentLang === 'pt' ? 'Atualizado em:' : 'Updated:'} {formatDate(updatedDate)}</span>
-            </>
-          )}
-        </div>
-      </header>
-
+      <!-- Breadcrumb Navigation -->
       <nav aria-label="Breadcrumb" class="mb-7">
         <ol class="flex items-center gap-2 text-sm text-[rgb(var(--color-text-secondary))]">
           <li>
@@ -107,7 +109,7 @@ function formatDate(date: Date): string {
           <li aria-hidden="true" class="text-[rgb(var(--color-text-muted))]">/</li>
           <li>
             <a
-              href="/blog"
+              href={`${localePrefix}/blog`}
               class="rounded-sm hover:text-[rgb(var(--color-accent))] transition-colors"
             >
               {t['nav.blog']}
@@ -119,6 +121,56 @@ function formatDate(date: Date): string {
           </li>
         </ol>
       </nav>
+
+      <!-- Fallback Language Notice -->
+      {isFallback && (
+        <div class="mb-6 flex items-center gap-3 rounded-lg border border-[rgb(var(--color-accent)/0.3)] bg-[rgb(var(--color-accent)/0.08)] p-4 text-sm text-[rgb(var(--color-text-secondary))]">
+          <Icon name="globe" size={18} class="shrink-0 text-[rgb(var(--color-accent))]" />
+          <p>{t['blog.fallbackNotice']}</p>
+        </div>
+      )}
+
+      <!-- Header -->
+      <header class="mb-9">
+        <div class="mb-4 flex flex-wrap items-center gap-2">
+          {tags.map((tag) => (
+            <span class="rounded px-2.5 py-1 text-xs font-medium bg-[rgb(var(--color-accent)/0.1)] text-[rgb(var(--color-accent))]">
+              {tag}
+            </span>
+          ))}
+          <span class="rounded px-2 py-0.5 text-xs font-semibold bg-[rgb(var(--color-bg-secondary))] text-[rgb(var(--color-text-muted))]">
+            {currentLang === 'pt' ? 'Português' : 'English'}
+          </span>
+        </div>
+
+        <h1 class="mb-4 text-3xl font-bold sm:text-4xl">{title}</h1>
+
+        <p class="mb-5 text-base leading-relaxed text-[rgb(var(--color-text-secondary))]">
+          {description}
+        </p>
+
+        <div class="flex flex-wrap items-center gap-3 text-sm text-[rgb(var(--color-text-muted))]">
+          <time datetime={pubDate.toISOString()} class="flex items-center gap-1.5">
+            <Icon name="calendar" size={14} />
+            {formatDate(pubDate)}
+          </time>
+          {readingTime && (
+            <>
+              <span>•</span>
+              <span class="flex items-center gap-1.5">
+                <Icon name="clock" size={14} />
+                {readingTime}
+              </span>
+            </>
+          )}
+          {updatedDate && (
+            <>
+              <span>•</span>
+              <span>{t['blog.updatedAt']} {formatDate(updatedDate)}</span>
+            </>
+          )}
+        </div>
+      </header>
 
       <!-- Hero Image -->
       {heroImage && (
@@ -141,7 +193,7 @@ function formatDate(date: Date): string {
       <!-- Back to blog -->
       <div class="mt-12 border-t border-[rgb(var(--color-border))] pt-7">
         <a
-          href="/blog"
+          href={`${localePrefix}/blog`}
           class="group inline-flex items-center gap-2 rounded-md px-3 py-2 text-[rgb(var(--color-accent))] transition-colors hover:bg-[rgb(var(--color-accent)/0.1)]"
         >
           <span class="group-hover:-translate-x-1 transition-transform">
@@ -153,5 +205,6 @@ function formatDate(date: Date): string {
     </article>
   </main>
 
+  <CodeCopy lang={currentLang} />
   <Footer />
 </BaseLayout>

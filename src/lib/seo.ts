@@ -5,7 +5,7 @@ export const SITE = {
   url: 'https://jpclow.dev',
   author: 'João Paulo Gonçalves Santos',
   shortAuthor: 'João Paulo Santos',
-  email: 'joaopaulo.grv4@gmail.com',
+  email: 'joao@jpclow.dev',
   localeMap: {
     en: 'en-US',
     pt: 'pt-BR',
@@ -65,24 +65,37 @@ const HOME_SEO: Record<Lang, PageSeo> = {
   },
 };
 
-const BLOG_INDEX_SEO: PageSeo = {
-  title: 'Blog | João Paulo Santos — Freelance Developer',
-  description:
-    'Notes on web development, automation, and building reliable software from a freelance developer working with Python, Django, and React.',
-  keywords: [
-    'freelance developer blog',
-    'web development blog',
-    'Python Django tutorials',
-    'software engineering notes',
-  ],
+const BLOG_INDEX_SEO: Record<Lang, PageSeo> = {
+  en: {
+    title: 'Blog | João Paulo Santos — Freelance Developer',
+    description:
+      'Notes on web development, automation, and building reliable software from a freelance developer working with Python, Django, and React.',
+    keywords: [
+      'freelance developer blog',
+      'web development blog',
+      'Python Django tutorials',
+      'software engineering notes',
+    ],
+  },
+  pt: {
+    title: 'Blog | João Paulo Santos — Desenvolvedor Freelancer',
+    description:
+      'Artigos e reflexões sobre desenvolvimento web, automações e construção de software por um desenvolvedor freelancer com Python, Django e React.',
+    keywords: [
+      'blog desenvolvedor freelancer',
+      'blog desenvolvimento web',
+      'tutoriais Python Django',
+      'engenharia de software',
+    ],
+  },
 };
 
 export function getHomeSeo(lang: Lang): PageSeo {
   return HOME_SEO[lang];
 }
 
-export function getBlogIndexSeo(): PageSeo {
-  return BLOG_INDEX_SEO;
+export function getBlogIndexSeo(lang: Lang = 'en'): PageSeo {
+  return BLOG_INDEX_SEO[lang] ?? BLOG_INDEX_SEO.en;
 }
 
 export function formatPageTitle(pageTitle: string, lang: Lang = 'en'): string {
@@ -126,6 +139,24 @@ export function getPathAlternates(pathname: string, siteUrl: URL): AlternateLink
     ];
   }
 
+  if (normalized === '/blog/' || normalized === '/pt/blog/') {
+    return [
+      { hreflang: SITE.localeMap.en, url: absoluteUrl('/blog/', siteUrl) },
+      { hreflang: SITE.localeMap.pt, url: absoluteUrl('/pt/blog/', siteUrl) },
+      { hreflang: 'x-default', url: absoluteUrl('/blog/', siteUrl) },
+    ];
+  }
+
+  const blogMatch = normalized.match(/^\/(?:pt\/)?blog\/([^/]+)\/$/);
+  if (blogMatch) {
+    const slug = blogMatch[1];
+    return [
+      { hreflang: SITE.localeMap.en, url: absoluteUrl(`/blog/${slug}/`, siteUrl) },
+      { hreflang: SITE.localeMap.pt, url: absoluteUrl(`/pt/blog/${slug}/`, siteUrl) },
+      { hreflang: 'x-default', url: absoluteUrl(`/blog/${slug}/`, siteUrl) },
+    ];
+  }
+
   const projectMatch = normalized.match(/^\/(?:pt\/)?projects\/([^/]+)\/$/);
   if (projectMatch) {
     const slug = projectMatch[1];
@@ -133,14 +164,6 @@ export function getPathAlternates(pathname: string, siteUrl: URL): AlternateLink
       { hreflang: SITE.localeMap.en, url: absoluteUrl(`/projects/${slug}/`, siteUrl) },
       { hreflang: SITE.localeMap.pt, url: absoluteUrl(`/pt/projects/${slug}/`, siteUrl) },
       { hreflang: 'x-default', url: absoluteUrl(`/projects/${slug}/`, siteUrl) },
-    ];
-  }
-
-  if (normalized.startsWith('/blog')) {
-    const url = absoluteUrl(normalized, siteUrl);
-    return [
-      { hreflang: SITE.localeMap.en, url },
-      { hreflang: 'x-default', url },
     ];
   }
 
@@ -335,4 +358,120 @@ export function buildDefaultSchemas(options: SchemaOptions) {
 
 export function buildHomeSchemas(options: SchemaOptions) {
   return [...buildDefaultSchemas(options), buildHomeFaqSchema(options.lang)];
+}
+
+export interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
+export function buildBreadcrumbSchema(items: BreadcrumbItem[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+}
+
+export function buildProjectBreadcrumbSchema({
+  lang,
+  siteUrl,
+  title,
+  slug,
+}: {
+  lang: Lang;
+  siteUrl: URL;
+  title: string;
+  slug: string;
+}) {
+  const isPt = lang === 'pt';
+  const prefix = isPt ? '/pt' : '';
+  const baseUrl = siteUrl.origin || 'https://jpclow.dev';
+  const homeUrl = new URL(isPt ? '/pt/' : '/', baseUrl).toString();
+  const projectsUrl = new URL(`${prefix}/#projects`, baseUrl).toString();
+  const caseUrl = new URL(`${prefix}/projects/${slug}/`, baseUrl).toString();
+
+  return buildBreadcrumbSchema([
+    {
+      name: isPt ? 'Início' : 'Home',
+      url: homeUrl,
+    },
+    {
+      name: isPt ? 'Projetos' : 'Projects',
+      url: projectsUrl,
+    },
+    {
+      name: title,
+      url: caseUrl,
+    },
+  ]);
+}
+
+export function buildBlogBreadcrumbSchema({
+  lang = 'en',
+  siteUrl,
+  title,
+  slug,
+}: {
+  lang?: Lang;
+  siteUrl: URL;
+  title: string;
+  slug: string;
+}) {
+  const isPt = lang === 'pt';
+  const prefix = isPt ? '/pt' : '';
+  const baseUrl = siteUrl.origin || 'https://jpclow.dev';
+  const homeUrl = new URL(isPt ? '/pt/' : '/', baseUrl).toString();
+  const blogUrl = new URL(`${prefix}/blog/`, baseUrl).toString();
+  const postUrl = new URL(`${prefix}/blog/${slug}/`, baseUrl).toString();
+
+  return buildBreadcrumbSchema([
+    {
+      name: isPt ? 'Início' : 'Home',
+      url: homeUrl,
+    },
+    {
+      name: 'Blog',
+      url: blogUrl,
+    },
+    {
+      name: title,
+      url: postUrl,
+    },
+  ]);
+}
+
+export function getProjectOgImageUrl(slug: string, langOrSiteUrl?: Lang | URL, siteUrl?: URL): string {
+  let lang: Lang = 'en';
+  let url: URL | undefined = siteUrl;
+
+  if (langOrSiteUrl instanceof URL) {
+    url = langOrSiteUrl;
+  } else if (langOrSiteUrl) {
+    lang = langOrSiteUrl;
+  }
+
+  const isPt = lang === 'pt';
+  const path = isPt ? `/open-graph/pt/projects/${slug}.png` : `/open-graph/projects/${slug}.png`;
+  return url ? new URL(path, url).toString() : path;
+}
+
+export function getBlogOgImageUrl(slug: string, langOrSiteUrl?: Lang | URL, siteUrl?: URL): string {
+  let lang: Lang = 'en';
+  let url: URL | undefined = siteUrl;
+
+  if (langOrSiteUrl instanceof URL) {
+    url = langOrSiteUrl;
+  } else if (langOrSiteUrl) {
+    lang = langOrSiteUrl;
+  }
+
+  const isPt = lang === 'pt';
+  const path = isPt ? `/open-graph/pt/blog/${slug}.png` : `/open-graph/blog/${slug}.png`;
+  return url ? new URL(path, url).toString() : path;
 }

@@ -11,6 +11,11 @@ import {
   getOgLocale,
   getAlternateOgLocales,
   buildHomeFaqSchema,
+  buildBreadcrumbSchema,
+  buildProjectBreadcrumbSchema,
+  buildBlogBreadcrumbSchema,
+  getProjectOgImageUrl,
+  getBlogOgImageUrl,
 } from '../../src/lib/seo';
 
 describe('seo utilities', () => {
@@ -34,11 +39,15 @@ describe('seo utilities', () => {
   });
 
   describe('getBlogIndexSeo()', () => {
-    it('includes freelance positioning in blog metadata', () => {
-      const seo = getBlogIndexSeo();
+    it('includes freelance positioning in blog metadata for both locales', () => {
+      const enSeo = getBlogIndexSeo('en');
+      const ptSeo = getBlogIndexSeo('pt');
 
-      expect(seo.title.toLowerCase()).toContain('freelance');
-      expect(seo.description.length).toBeGreaterThan(40);
+      expect(enSeo.title.toLowerCase()).toContain('freelance');
+      expect(enSeo.description.length).toBeGreaterThan(40);
+
+      expect(ptSeo.title.toLowerCase()).toContain('freelancer');
+      expect(ptSeo.description.length).toBeGreaterThan(40);
     });
   });
 
@@ -67,6 +76,18 @@ describe('seo utilities', () => {
 
       expect(alternates.some((item) => item.url.endsWith('/projects/lorebound/'))).toBe(true);
       expect(alternates.some((item) => item.url.endsWith('/pt/projects/lorebound/'))).toBe(true);
+    });
+
+    it('returns localized blog alternates for index and posts', () => {
+      const indexAlternates = getPathAlternates('/blog/', siteUrl);
+      expect(indexAlternates.map((item) => item.hreflang)).toEqual(['en-US', 'pt-BR', 'x-default']);
+      expect(indexAlternates.some((item) => item.url.endsWith('/blog/'))).toBe(true);
+      expect(indexAlternates.some((item) => item.url.endsWith('/pt/blog/'))).toBe(true);
+
+      const postAlternates = getPathAlternates('/blog/hello-world/', siteUrl);
+      expect(postAlternates.map((item) => item.hreflang)).toEqual(['en-US', 'pt-BR', 'x-default']);
+      expect(postAlternates.some((item) => item.url.endsWith('/blog/hello-world/'))).toBe(true);
+      expect(postAlternates.some((item) => item.url.endsWith('/pt/blog/hello-world/'))).toBe(true);
     });
   });
 
@@ -102,6 +123,87 @@ describe('seo utilities', () => {
     });
   });
 
+  describe('buildBreadcrumbSchema()', () => {
+    it('generates standard Schema.org BreadcrumbList with correct positions', () => {
+      const schema = buildBreadcrumbSchema([
+        { name: 'Home', url: 'https://jpclow.dev/' },
+        { name: 'Projects', url: 'https://jpclow.dev/#projects' },
+        { name: 'Lorebound', url: 'https://jpclow.dev/projects/lorebound/' },
+      ]);
+
+      expect(schema['@context']).toBe('https://schema.org');
+      expect(schema['@type']).toBe('BreadcrumbList');
+      expect(schema.itemListElement).toHaveLength(3);
+      expect(schema.itemListElement[0]).toEqual({
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://jpclow.dev/',
+      });
+      expect(schema.itemListElement[2]).toEqual({
+        '@type': 'ListItem',
+        position: 3,
+        name: 'Lorebound',
+        item: 'https://jpclow.dev/projects/lorebound/',
+      });
+    });
+
+    it('generates project case study breadcrumbs for English and Portuguese', () => {
+      const enBreadcrumb = buildProjectBreadcrumbSchema({
+        lang: 'en',
+        siteUrl,
+        title: 'Throughline',
+        slug: 'throughline',
+      });
+
+      expect(enBreadcrumb.itemListElement[0].name).toBe('Home');
+      expect(enBreadcrumb.itemListElement[0].item).toBe('https://jpclow.dev/');
+      expect(enBreadcrumb.itemListElement[1].name).toBe('Projects');
+      expect(enBreadcrumb.itemListElement[2].name).toBe('Throughline');
+      expect(enBreadcrumb.itemListElement[2].item).toBe('https://jpclow.dev/projects/throughline/');
+
+      const ptBreadcrumb = buildProjectBreadcrumbSchema({
+        lang: 'pt',
+        siteUrl,
+        title: 'Throughline',
+        slug: 'throughline',
+      });
+
+      expect(ptBreadcrumb.itemListElement[0].name).toBe('Início');
+      expect(ptBreadcrumb.itemListElement[0].item).toBe('https://jpclow.dev/pt/');
+      expect(ptBreadcrumb.itemListElement[1].name).toBe('Projetos');
+      expect(ptBreadcrumb.itemListElement[2].item).toBe('https://jpclow.dev/pt/projects/throughline/');
+    });
+
+    it('generates blog breadcrumbs with correct URLs', () => {
+      const blogBreadcrumb = buildBlogBreadcrumbSchema({
+        lang: 'en',
+        siteUrl,
+        title: 'Hello World',
+        slug: 'hello-world',
+      });
+
+      expect(blogBreadcrumb.itemListElement).toHaveLength(3);
+      expect(blogBreadcrumb.itemListElement[1].name).toBe('Blog');
+      expect(blogBreadcrumb.itemListElement[1].item).toBe('https://jpclow.dev/blog/');
+      expect(blogBreadcrumb.itemListElement[2].name).toBe('Hello World');
+      expect(blogBreadcrumb.itemListElement[2].item).toBe('https://jpclow.dev/blog/hello-world/');
+    });
+  });
+
+  describe('OG image URL helpers', () => {
+    it('returns correct paths for project case study OG images', () => {
+      expect(getProjectOgImageUrl('lorebound', 'en')).toBe('/open-graph/projects/lorebound.png');
+      expect(getProjectOgImageUrl('lorebound', 'pt')).toBe('/open-graph/pt/projects/lorebound.png');
+      expect(getProjectOgImageUrl('lorebound', 'en', siteUrl)).toBe('https://jpclow.dev/open-graph/projects/lorebound.png');
+    });
+
+    it('returns correct paths for blog post OG images', () => {
+      expect(getBlogOgImageUrl('hello-world')).toBe('/open-graph/blog/hello-world.png');
+      expect(getBlogOgImageUrl('hello-world', siteUrl)).toBe('https://jpclow.dev/open-graph/blog/hello-world.png');
+    });
+  });
+
   describe('robots.txt', () => {
     it('publishes a sitemap without an unsupported Host directive', () => {
       const robots = readFileSync(resolve(process.cwd(), 'public/robots.txt'), 'utf8');
@@ -111,3 +213,4 @@ describe('seo utilities', () => {
     });
   });
 });
+

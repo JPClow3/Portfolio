@@ -83,6 +83,13 @@ function pngHasNonBlankPixels(buffer: Buffer) {
   return false;
 }
 
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('languagePreference', 'en');
+    localStorage.removeItem('reducedMotion');
+  });
+});
+
 test('homepage loads and displays main sections', async ({ page }) => {
   await page.goto('/');
   
@@ -219,6 +226,7 @@ test('mobile menu toggles correctly', async ({ page }) => {
     const newMenuState = await menuButton.getAttribute('aria-expanded');
     expect(newMenuState).not.toBe(menuOpen);
     
+
     // Close menu
     await menuButton.click();
   }
@@ -246,7 +254,7 @@ test('links are functional', async ({ page }) => {
   await page.goto('/');
 
   // Check navigation links exist
-  const navLinks = page.locator('nav a[href]');
+  const navLinks = page.locator('header a[href], nav a[href]');
   const linkCount = await navLinks.count();
   expect(linkCount).toBeGreaterThan(0);
   

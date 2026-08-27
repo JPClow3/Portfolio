@@ -9,7 +9,7 @@ profile:
   timezone: "UTC-3"
   github: "https://github.com/JPClow3"
   linkedin: "https://www.linkedin.com/in/joaopaulosantosgo/"
-  email: "joaopaulo.grv4@proton.me"
+  email: "joao@jpclow.dev"
   gravatarHash: "272aea5ad66497c40ffb664e876e5d83bd91572d82d77a7aabcb0beab1271614"
 currentFocus:
   title: "Foco atual"

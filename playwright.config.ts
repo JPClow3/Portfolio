@@ -1,58 +1,33 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const pwPort = process.env.PLAYWRIGHT_PORT ?? '4410';
-const pwBaseUrl = `http://localhost:${pwPort}`;
+const pwBaseUrl = `http://127.0.0.1:${pwPort}`;
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// require('dotenv').config();
-
-/**
- * See https://playwright.dev/docs/test-configuration.
- */
 export default defineConfig({
   testDir: './tests/e2e',
-  /* Run tests in files in parallel */
   fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env['CI'],
-  /* Retry on CI only */
   retries: process.env['CI'] ? 2 : 0,
-  /*
-   * The homepage keeps a live WebGL scene mounted. A small worker cap avoids
-   * starving Chromium's GPU process while still exercising parallel pages.
-   */
-  workers: process.env['CI'] ? 1 : 2,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+  workers: 1,
   reporter: 'html',
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: pwBaseUrl,
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    locale: 'en-US',
     trace: 'on-first-retry',
   },
-
-  /* Configure projects for major browsers */
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
     },
-
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
     },
-
-    /* Test against mobile viewports. */
     {
       name: 'Mobile Chrome',
       use: { ...devices['Pixel 5'] },
@@ -62,17 +37,18 @@ export default defineConfig({
       use: { ...devices['iPhone 13'] },
     },
   ],
-
-  /* Run your local dev server before starting the tests */
   webServer: {
-    command: `npm run build && npx astro preview --host 127.0.0.1 --port ${pwPort}`,
+    command: `node scripts/serve.mjs`,
     url: pwBaseUrl,
     env: {
+      ...(process.env as Record<string, string>),
       PUBLIC_WEB3FORMS_ACCESS_KEY: 'test-web3forms-key',
       PUBLIC_TURNSTILE_SITEKEY: '1x00000000000000000000AA',
       PUBLIC_TURNSTILE_WORKER_URL: 'https://turnstile.example.test',
     },
-    reuseExistingServer: false,
+    reuseExistingServer: true,
     timeout: 120 * 1000,
   },
 });
+
+

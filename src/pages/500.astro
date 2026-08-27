@@ -1,18 +1,18 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Icon from '@/components/common/Icon.astro';
+import { ui } from '@/lib/i18n';
 
 interface Props {
   error?: unknown;
 }
 
 const { error } = Astro.props;
-
-const title = '500 - Server Error';
-const description = 'Something went wrong on our end.';
+const en = ui.en;
+const pt = ui.pt;
 ---
 
-<BaseLayout title={title} description={description} noindex>
+<BaseLayout title={en['error500.title']} description={en['error500.message']} noindex>
   <main id="main-content" tabindex="-1" class="noise-bg relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-20 sm:px-6 lg:px-8">
     <div class="pointer-events-none fixed inset-0 -z-10">
       <div class="bg-grid absolute inset-0 opacity-45 dark:opacity-20"></div>
@@ -27,12 +27,12 @@ const description = 'Something went wrong on our end.';
       </div>
 
       <!-- Error Message -->
-      <h2 class="mb-4 text-2xl font-bold text-[rgb(var(--color-text-primary))] sm:text-4xl">
-        Internal Server Error
+      <h2 id="error-500-heading" class="mb-4 text-2xl font-bold text-[rgb(var(--color-text-primary))] sm:text-4xl">
+        {en['error500.heading']}
       </h2>
 
-      <p class="mb-8 text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg">
-        Oops! Something went wrong on our servers. We're working on fixing it. 
+      <p id="error-500-message" class="mb-8 text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg">
+        {en['error500.message']}
       </p>
 
       {import.meta.env.DEV && error && (
@@ -44,24 +44,63 @@ const description = 'Something went wrong on our end.';
       <!-- Action Buttons -->
       <div class="flex flex-col items-center justify-center gap-4 w-full sm:w-auto sm:flex-row">
         <a
+          id="btn-500-home"
           href="/"
           class="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-6 py-3 font-semibold text-[rgb(var(--color-accent-contrast))] shadow-lg shadow-[rgb(var(--color-accent)/0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-accent-glow)]"
         >
           <Icon name="globe" size={20} />
-          Back to Home
+          <span id="label-500-home">{en['error500.backHome']}</span>
         </a>
         
         <button
+          id="btn-500-reload"
+          type="button"
           onclick="window.location.reload()"
           class="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.2)] px-6 py-3 font-semibold text-[rgb(var(--color-text-primary))] transition-all duration-300 hover:-translate-y-1 hover:border-[rgb(var(--color-accent)/0.5)] hover:bg-[rgb(var(--color-bg-tertiary)/0.5)] hover:text-[rgb(var(--color-accent))]"
         >
           <Icon name="code" size={20} />
-          Reload Page
+          <span id="label-500-reload">{en['error500.reload']}</span>
         </button>
       </div>
     </div>
   </main>
 </BaseLayout>
+
+<script define:vars={{ en, pt }} is:inline>
+  function applyLanguage() {
+    const pathname = window.location.pathname;
+    const storedLang = localStorage.getItem('languagePreference');
+    const browserLang = (navigator.language || '').toLowerCase();
+    
+    const isPortuguese =
+      pathname.startsWith('/pt') ||
+      storedLang === 'pt' ||
+      (!storedLang && (browserLang.startsWith('pt') || browserLang === 'pt-br'));
+
+    const dict = isPortuguese ? pt : en;
+    const homeHref = isPortuguese ? '/pt/' : '/';
+
+    document.title = `${dict['error500.title']} | João Paulo Santos`;
+
+    const headingEl = document.getElementById('error-500-heading');
+    if (headingEl) headingEl.textContent = dict['error500.heading'];
+
+    const messageEl = document.getElementById('error-500-message');
+    if (messageEl) messageEl.textContent = dict['error500.message'];
+
+    const homeBtn = document.getElementById('btn-500-home');
+    if (homeBtn) homeBtn.setAttribute('href', homeHref);
+
+    const homeLabel = document.getElementById('label-500-home');
+    if (homeLabel) homeLabel.textContent = dict['error500.backHome'];
+
+    const reloadLabel = document.getElementById('label-500-reload');
+    if (reloadLabel) reloadLabel.textContent = dict['error500.reload'];
+  }
+
+  applyLanguage();
+  document.addEventListener('astro:page-load', applyLanguage);
+</script>
 
 <style>
   main {

@@ -1,6 +1,6 @@
 ---
 interface Props {
-  name: 'github' | 'linkedin' | 'email' | 'phone' | 'location' | 'external-link' | 'arrow-down' | 'menu' | 'close' | 'sun' | 'moon' | 'calendar' | 'briefcase' | 'graduation' | 'code' | 'check' | 'instagram' | 'globe' | 'download' | 'book-open' | 'headphones';
+  name: 'github' | 'linkedin' | 'email' | 'phone' | 'location' | 'external-link' | 'arrow-down' | 'menu' | 'close' | 'sun' | 'moon' | 'calendar' | 'briefcase' | 'graduation' | 'code' | 'check' | 'instagram' | 'globe' | 'download' | 'book-open' | 'headphones' | 'copy' | 'clock' | 'rss';
   size?: number;
   class?: string;
 }
@@ -32,6 +32,9 @@ const icons: Record<string, string> = {
   download: `<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>`,
   'book-open': `<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>`,
   headphones: `<path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/>`,
+  copy: `<rect width="13" height="13" x="9" y="9" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>`,
+  clock: `<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>`,
+  rss: `<path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/>`,
 };
 
 const iconPath = icons[name] || '';

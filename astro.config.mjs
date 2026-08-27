@@ -9,6 +9,9 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://jpclow.dev',
   output: 'static',
+  build: {
+    concurrency: 1
+  },
   integrations: [
     svelte(),
     mdx(),
@@ -23,6 +26,7 @@ export default defineConfig({
       filter: (page) =>
         !page.includes('/404') &&
         !page.includes('/500') &&
+        !page.includes('/offline') &&
         !page.includes('/.cache/'),
       serialize(item) {
         const url = item.url;
@@ -46,8 +50,8 @@ export default defineConfig({
         }
 
         if (url.includes('/blog/')) {
-          item.priority = url.endsWith('/blog/') ? 0.75 : 0.7;
-          item.changefreq = url.endsWith('/blog/') ? ChangeFreqEnum.WEEKLY : ChangeFreqEnum.MONTHLY;
+          item.priority = (url.endsWith('/blog/') || url.endsWith('/pt/blog/')) ? 0.75 : 0.7;
+          item.changefreq = (url.endsWith('/blog/') || url.endsWith('/pt/blog/')) ? ChangeFreqEnum.WEEKLY : ChangeFreqEnum.MONTHLY;
           return item;
         }
 

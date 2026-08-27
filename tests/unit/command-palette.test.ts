@@ -4,7 +4,7 @@ import { buildCommandPaletteItems } from '../../src/lib/command-palette';
 const profile = {
   github: 'https://github.com/JPClow3',
   linkedin: 'https://linkedin.com/in/joaopaulosantosgo',
-  email: 'joaopaulo.grv4@gmail.com',
+  email: 'joao@jpclow.dev',
 };
 
 const projects = [

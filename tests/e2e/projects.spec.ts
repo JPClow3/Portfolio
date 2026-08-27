@@ -56,3 +56,43 @@ test('Portuguese case studies use localized decision logs and preserve the proje
   await expect(page.getByRole('link', { name: 'Switch to English' })).toHaveAttribute('href', '/projects/lorebound/');
   await expect(page.getByRole('link', { name: /repositório/i })).toHaveCount(0);
 });
+
+test('case studies include dynamic OpenGraph image and BreadcrumbList JSON-LD schema', async ({ page, request }) => {
+  await page.goto('/projects/lorebound/');
+
+  const ogImageMeta = page.locator('meta[property="og:image"]');
+  await expect(ogImageMeta).toHaveAttribute('content', /https?:\/\/[^/]+\/open-graph\/projects\/lorebound\.png/);
+
+  const twitterImageMeta = page.locator('meta[name="twitter:image"]');
+  await expect(twitterImageMeta).toHaveAttribute('content', /https?:\/\/[^/]+\/open-graph\/projects\/lorebound\.png/);
+
+  // Verify that the generated OG image endpoint returns 200 and image/png
+  const ogImageUrl = await ogImageMeta.getAttribute('content');
+  expect(ogImageUrl).toBeTruthy();
+  if (ogImageUrl) {
+    const url = new URL(ogImageUrl);
+    const res = await request.get(url.pathname);
+    expect(res.status()).toBe(200);
+    expect(res.headers()['content-type']).toContain('image/png');
+  }
+
+
+  // Verify BreadcrumbList schema in page
+  const scripts = await page.locator('script[type="application/ld+json"]').allTextContents();
+  const breadcrumb = scripts
+    .map((s) => {
+      try {
+        return JSON.parse(s);
+      } catch {
+        return null;
+      }
+    })
+    .find((s) => s && s['@type'] === 'BreadcrumbList');
+
+  expect(breadcrumb).toBeDefined();
+  expect(breadcrumb.itemListElement).toHaveLength(3);
+  expect(breadcrumb.itemListElement[0].name).toBe('Home');
+  expect(breadcrumb.itemListElement[1].name).toBe('Projects');
+  expect(breadcrumb.itemListElement[2].name).toBe('Lorebound');
+});
+

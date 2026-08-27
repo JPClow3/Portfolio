@@ -1,21 +1,51 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BlogLayout from '@/layouts/BlogLayout.astro';
+import { calculateReadingTime } from '@/lib/blog';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => !data.draft);
-  return posts.map((post) => ({
-    params: { slug: post.id.replace(/\.(md|mdx)$/i, '').replace(/\\/g, '/') },
-    props: { post },
-  }));
+  const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+  const enPosts = allPosts.filter((p) => p.data.lang === 'en');
+  const ptPosts = allPosts.filter((p) => p.data.lang === 'pt');
+
+  // Map of unique slugs
+  const paths: Array<{ params: { slug: string }; props: { post: CollectionEntry<'blog'>; isFallback: boolean } }> = [];
+  const seenSlugs = new Set<string>();
+
+  // Primary: English posts
+  for (const post of enPosts) {
+    const slug = post.data.slug ?? post.id.replace(/^pt\//, '').replace(/\.(md|mdx)$/i, '');
+    seenSlugs.add(slug);
+    paths.push({
+      params: { slug },
+      props: { post, isFallback: false },
+    });
+  }
+
+  // Fallback: Portuguese posts that do not have an English version
+  for (const post of ptPosts) {
+    const slug = post.data.slug ?? post.id.replace(/^pt\//, '').replace(/\.(md|mdx)$/i, '');
+    if (!seenSlugs.has(slug)) {
+      seenSlugs.add(slug);
+      paths.push({
+        params: { slug },
+        props: { post, isFallback: true },
+      });
+    }
+  }
+
+  return paths;
 }
 
 interface Props {
   post: CollectionEntry<'blog'>;
+  isFallback: boolean;
 }
 
-const { post } = Astro.props;
+const { post, isFallback } = Astro.props;
 const { Content } = await render(post);
+const postSlug = post.data.slug ?? post.id.replace(/^pt\//, '').replace(/\.(md|mdx)$/i, '');
+const readingTime = calculateReadingTime(post.body, 'en');
 ---
 
 <BlogLayout
@@ -25,7 +55,10 @@ const { Content } = await render(post);
   updatedDate={post.data.updatedDate}
   heroImage={post.data.heroImage}
   tags={post.data.tags}
-  lang={post.data.lang}
+  lang="en"
+  slug={postSlug}
+  readingTime={readingTime.text}
+  isFallback={isFallback}
 >
   <Content />
 </BlogLayout>

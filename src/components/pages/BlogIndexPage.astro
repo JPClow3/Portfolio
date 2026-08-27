@@ -1,0 +1,157 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
+import EmptyState from '@/components/common/EmptyState.astro';
+import Icon from '@/components/common/Icon.astro';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
+import { getBlogIndexSeo } from '@/lib/seo';
+import { calculateReadingTime } from '@/lib/blog';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang } = Astro.props;
+const currentLang = (lang ?? Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
+const blogSeo = getBlogIndexSeo(currentLang);
+const isPt = currentLang === 'pt';
+
+const langPosts = await getCollection('blog', ({ data }) => !data.draft && data.lang === currentLang);
+const fallbackPosts = await getCollection('blog', ({ data }) => !data.draft && data.lang !== currentLang);
+
+const postsToShow = langPosts.length > 0 ? langPosts : fallbackPosts;
+const sortedPosts = postsToShow.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const siteUrl = Astro.site ?? new URL('https://jpclow.dev');
+const blogPath = isPt ? '/pt/blog/' : '/blog/';
+const blogSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: isPt ? 'Blog de João Paulo Santos' : 'João Paulo Santos Blog',
+  description: t['blog.subtitle'],
+  url: new URL(blogPath, siteUrl).toString(),
+  blogPost: sortedPosts.map((post) => {
+    const slug = post.data.slug ?? post.id.replace(/^pt\//, '');
+    const postUrl = isPt ? `/pt/blog/${slug}/` : `/blog/${slug}/`;
+    return {
+      '@type': 'BlogPosting',
+      headline: post.data.title,
+      datePublished: post.data.pubDate.toISOString(),
+      dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+      url: new URL(postUrl, siteUrl).toString(),
+    };
+  }),
+};
+
+function formatDate(date: Date): string {
+  return date.toLocaleDateString(isPt ? 'pt-BR' : 'en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+---
+
+<BaseLayout
+  title={blogSeo.title}
+  description={blogSeo.description}
+  keywords={blogSeo.keywords}
+  ogImage="/og-image.png"
+  schema={blogSchema}
+>
+  <Header />
+
+  <main id="main-content" class="pb-14 pt-[6.5rem]" tabindex="-1">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <!-- Header -->
+      <div class="mb-10 text-center">
+        <div class="flex items-center justify-center gap-3">
+          <h1 class="text-3xl font-bold sm:text-4xl">{t['blog.title']}</h1>
+          <a
+            href={isPt ? '/pt/rss.xml' : '/rss.xml'}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1.5 rounded-full border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary))] px-3 py-1 text-xs font-medium text-[rgb(var(--color-text-secondary))] transition-colors hover:border-[rgb(var(--color-accent))] hover:text-[rgb(var(--color-accent))]"
+            title="RSS Feed"
+            aria-label="RSS Feed"
+          >
+            <Icon name="rss" size={13} class="text-[#f97316]" />
+            <span>RSS</span>
+          </a>
+        </div>
+        <p class="mt-3 text-base text-[rgb(var(--color-text-muted))]">
+          {blogSeo.description}
+        </p>
+      </div>
+
+      <!-- Posts -->
+      {sortedPosts.length > 0 ? (
+        <div class="space-y-4">
+          {sortedPosts.map((post) => {
+            const slug = post.data.slug ?? post.id.replace(/^pt\//, '');
+            const readingTime = calculateReadingTime(post.body, currentLang);
+            const isFallback = post.data.lang !== currentLang;
+            const postHref = isPt ? `/pt/blog/${slug}/` : `/blog/${slug}/`;
+
+            return (
+              <article class="glass-panel hover-lift group rounded-lg p-5 transition-all duration-300 hover:border-[rgb(var(--color-accent)/0.5)]">
+                <a href={postHref} class="block">
+                  <div class="mb-3 flex flex-wrap items-center gap-2">
+                    {post.data.tags.map((tag) => (
+                      <span class="rounded px-2 py-0.5 text-xs font-medium text-[rgb(var(--color-text-muted))] bg-[rgb(var(--color-bg-tertiary))]">
+                        {tag}
+                      </span>
+                    ))}
+                    {isFallback && (
+                      <span class="rounded px-2 py-0.5 text-xs font-semibold bg-[rgb(var(--color-accent)/0.15)] text-[rgb(var(--color-accent))]">
+                        {isPt ? 'Inglês (Original)' : post.data.lang.toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+
+                  <h2 class="mb-2 text-xl font-semibold transition-colors group-hover:text-[rgb(var(--color-accent))]">
+                    {post.data.title}
+                  </h2>
+
+                  <p class="mb-4 line-clamp-2 text-[rgb(var(--color-text-secondary))]">
+                    {post.data.description}
+                  </p>
+
+                  <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 text-sm text-[rgb(var(--color-text-muted))]">
+                      <time datetime={post.data.pubDate.toISOString()}>
+                        {formatDate(post.data.pubDate)}
+                      </time>
+                      <span>•</span>
+                      <span class="inline-flex items-center gap-1">
+                        <Icon name="clock" size={14} />
+                        {readingTime.text}
+                      </span>
+                    </div>
+
+                    <span class="text-sm font-medium text-[rgb(var(--color-accent))] group-hover:underline">
+                      {t['blog.readMore']} →
+                    </span>
+                  </div>
+                </a>
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <EmptyState 
+          iconName="book-open" 
+          title={t['blog.emptyTitle']} 
+          description={t['blog.emptyDesc']} 
+          actionText={t['blog.backToHome']} 
+          actionHref={isPt ? "/pt/" : "/"} 
+        />
+      )}
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

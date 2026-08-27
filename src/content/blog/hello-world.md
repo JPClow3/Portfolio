@@ -5,9 +5,10 @@ pubDate: 2025-01-15
 tags: ["introduction", "astro", "web development"]
 draft: false
 lang: en
+slug: hello-world
 ---
 
-# Hello World!
+## Welcome!
 
 Welcome to my new blog! I'm excited to launch this space where I'll be sharing my thoughts, learnings, and experiences in software development.
 
@@ -26,11 +27,11 @@ This blog is built using:
 
 ```typescript
 const stack = {
-  framework: 'Astro 5',
+  framework: 'Astro 7',
   ui: 'Svelte 5',
   styling: 'Tailwind CSS v4',
   content: 'MDX',
-  deployment: 'Vercel'
+  deployment: 'Cloudflare Pages'
 };
 ```
 

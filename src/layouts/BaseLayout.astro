@@ -111,27 +111,16 @@ const allSchema = [...defaultSchema, ...customSchema.filter(Boolean)];
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="João Paulo" />
 
+    <link rel="alternate" type="application/rss+xml" title="João Paulo Santos — Blog RSS Feed" href={new URL('/rss.xml', siteUrl).toString()} />
+    <link rel="alternate" type="application/rss+xml" title="João Paulo Santos — Blog RSS Feed (Português)" href={new URL('/pt/rss.xml', siteUrl).toString()} />
+
     <link rel="dns-prefetch" href="https://2.gravatar.com" />
     <link rel="preconnect" href="https://2.gravatar.com" crossorigin />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet"
-      />
-    </noscript>
 
     {allSchema.map((schemaBlock) => (
       <script is:inline type="application/ld+json" set:html={JSON.stringify(schemaBlock)}></script>
@@ -166,12 +155,26 @@ const allSchema = [...defaultSchema, ...customSchema.filter(Boolean)];
       })();
     </script>
 
+    <script is:inline>
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {
+            // Service worker registration failure is non-fatal
+          });
+        });
+      }
+    </script>
+
     <script define:vars={{ observabilityEndpoint }} is:inline>
       (() => {
         const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
         if (!isProduction) return;
 
+        // Respect Do Not Track
+        if (navigator.doNotTrack === '1' || window.doNotTrack === '1') return;
+
         const endpoint = observabilityEndpoint;
+        if (!endpoint) return;
 
         const sendPayload = (type, payload) => {
           const body = JSON.stringify({
@@ -180,10 +183,6 @@ const allSchema = [...defaultSchema, ...customSchema.filter(Boolean)];
             path: window.location.pathname,
             ...payload,
           });
-
-          if (!endpoint) {
-            return;
-          }
 
           if (navigator.sendBeacon) {
             const blob = new Blob([body], { type: 'application/json' });
@@ -203,9 +202,22 @@ const allSchema = [...defaultSchema, ...customSchema.filter(Boolean)];
 
         let clsValue = 0;
         let lcpValue = null;
+        let inpValue = null;
+        let fcpValue = null;
+        let ttfbValue = null;
         let isVitalsReported = false;
 
         try {
+          // Navigation Timing (TTFB)
+          const navEntries = performance.getEntriesByType('navigation');
+          if (navEntries.length > 0) {
+            const nav = navEntries[0];
+            if (nav.responseStart) {
+              ttfbValue = Math.round(nav.responseStart);
+            }
+          }
+
+          // Cumulative Layout Shift (CLS)
           const clsObserver = new PerformanceObserver((entryList) => {
             for (const entry of entryList.getEntries()) {
               if (!entry.hadRecentInput) {
@@ -215,6 +227,7 @@ const allSchema = [...defaultSchema, ...customSchema.filter(Boolean)];
           });
           clsObserver.observe({ type: 'layout-shift', buffered: true });
 
+          // Largest Contentful Paint (LCP)
           const lcpObserver = new PerformanceObserver((entryList) => {
             const entries = entryList.getEntries();
             const lastEntry = entries[entries.length - 1];
@@ -224,12 +237,47 @@ const allSchema = [...defaultSchema, ...customSchema.filter(Boolean)];
           });
           lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
 
+          // First Contentful Paint (FCP)
+          const paintObserver = new PerformanceObserver((entryList) => {
+            for (const entry of entryList.getEntries()) {
+              if (entry.name === 'first-contentful-paint') {
+                fcpValue = Math.round(entry.startTime);
+              }
+            }
+          });
+          paintObserver.observe({ type: 'paint', buffered: true });
+
+          // Interaction to Next Paint (INP)
+          const inpObserver = new PerformanceObserver((entryList) => {
+            for (const entry of entryList.getEntries()) {
+              if (entry.duration) {
+                const duration = Math.round(entry.duration);
+                if (inpValue === null || duration > inpValue) {
+                  inpValue = duration;
+                }
+              }
+            }
+          });
+          inpObserver.observe({ type: 'event', durationThreshold: 40, buffered: true });
+
           const reportVitals = () => {
             if (isVitalsReported) return;
             isVitalsReported = true;
 
             if (lcpValue !== null) {
               sendPayload('web-vital', { name: 'LCP', value: lcpValue });
+            }
+
+            if (fcpValue !== null) {
+              sendPayload('web-vital', { name: 'FCP', value: fcpValue });
+            }
+
+            if (ttfbValue !== null) {
+              sendPayload('web-vital', { name: 'TTFB', value: ttfbValue });
+            }
+
+            if (inpValue !== null) {
+              sendPayload('web-vital', { name: 'INP', value: inpValue });
             }
 
             sendPayload('web-vital', {
@@ -239,6 +287,8 @@ const allSchema = [...defaultSchema, ...customSchema.filter(Boolean)];
 
             clsObserver.disconnect();
             lcpObserver.disconnect();
+            paintObserver.disconnect();
+            inpObserver.disconnect();
           };
 
           document.addEventListener(

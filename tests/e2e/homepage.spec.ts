@@ -116,7 +116,7 @@ test('homepage prioritizes the client-facing project showcase', async ({ page })
     'Moto Track',
     'AgroHub UniRV',
     'Inova Rio Verde',
-    'FATEC Digital Platform',
+    'Lorebound',
     'ClimAgro',
     'Throughline',
   ];
@@ -230,10 +230,10 @@ test('homepage presents the engineering principles and keeps private client sour
   await expect(approach.getByText('Fallbacks are a feature')).toBeVisible();
   await expect(approach.getByText('User trust shapes architecture')).toBeVisible();
 
-  const fatecCard = page.locator('[data-testid="project-card"]').filter({ hasText: 'FATEC Digital Platform' }).first();
-  await expect(fatecCard.getByText('Private source', { exact: true })).toBeVisible();
-  await expect(fatecCard.getByRole('link', { name: /view code/i })).toHaveCount(0);
-  await expect(page.locator('[data-testid="project-card"]').filter({ hasText: 'Lorebound' })).toHaveCount(0);
+  const loreboundCard = page.locator('[data-testid="project-card"]').filter({ hasText: 'Lorebound' }).first();
+  await expect(loreboundCard.getByText('In development', { exact: true })).toBeVisible();
+  await expect(loreboundCard.getByRole('link', { name: /view code/i })).toHaveCount(0);
+  await expect(page.locator('[data-testid="project-card"]').filter({ hasText: 'FATEC Digital Platform' })).toHaveCount(0);
 });
 
 test('mobile menu toggles correctly', async ({ page }) => {
@@ -259,6 +259,58 @@ test('mobile menu toggles correctly', async ({ page }) => {
 
     // Close menu
     await menuButton.click();
+  }
+});
+
+test('homepage keeps project geometry and touch targets usable across responsive widths', async ({ page }) => {
+  const viewports = [
+    { width: 320, height: 780 },
+    { width: 375, height: 812 },
+    { width: 768, height: 1024 },
+    { width: 1440, height: 900 },
+  ];
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    await page.goto('/');
+
+    const geometry = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }));
+    expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.clientWidth);
+
+    const cards = page.locator('[data-testid="project-card"]');
+    await expect(cards).toHaveCount(6);
+    await cards.first().scrollIntoViewIfNeeded();
+
+    for (const card of await cards.all()) {
+      await card.scrollIntoViewIfNeeded();
+      const box = await card.boundingBox();
+      expect(box).not.toBeNull();
+      expect(box!.x).toBeGreaterThanOrEqual(0);
+      expect(box!.x + box!.width).toBeLessThanOrEqual(viewport.width + 1);
+
+      const image = card.locator('img');
+      await expect(image).toHaveCount(1);
+      await expect.poll(async () => image.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+    }
+
+    if (viewport.width <= 768) {
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight / 2));
+      await expect(page.locator('#back-to-top-btn')).toBeHidden();
+
+      for (const control of await page.locator('#mobile-menu-button, .theme-swap').all()) {
+        const box = await control.boundingBox();
+        expect(box?.width).toBeGreaterThanOrEqual(44);
+        expect(box?.height).toBeGreaterThanOrEqual(44);
+      }
+
+      for (const link of await cards.first().locator('a').all()) {
+        const box = await link.boundingBox();
+        expect(box?.height).toBeGreaterThanOrEqual(44);
+      }
+    }
   }
 });
 

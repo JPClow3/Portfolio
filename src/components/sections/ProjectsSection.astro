@@ -34,7 +34,7 @@ const getProjectUrl = (project: any) =>
 ---
 
 <section id="projects" data-scene-section="projects" aria-labelledby="projects-heading" class="mb-16">
-  <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
+  <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
     <h2 id="projects-heading" class="text-3xl font-bold tracking-tight">{t['home.buildTitle']}</h2>
     <a href={`${localePrefix}/projects/`} class="text-sm text-[rgb(var(--color-text-muted))] transition-colors hover:text-[rgb(var(--color-text-primary))]">{t['home.seeAllProjects']}</a>
   </div>
@@ -75,28 +75,30 @@ const getProjectUrl = (project: any) =>
               </div>
             </div>
           )}
-          <div class="relative z-10 flex flex-1 flex-col p-5">
-            <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
-              <h3 class="text-xl font-bold">{project.data.title}</h3>
-              {project.data.caseStudy && (
-                <span class="shrink-0 rounded-md border border-[rgb(var(--color-accent)/0.32)] bg-[rgb(var(--color-accent)/0.1)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-accent))]">
-                  {t['projects.story']}
-                </span>
-              )}
-              {statusLabel && (
-                <span class="shrink-0 rounded-md border border-[rgb(var(--color-accent)/0.32)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-accent))]">
-                  {statusLabel}
-                </span>
-              )}
+          <div class="relative z-10 flex min-w-0 flex-1 flex-col p-5">
+            <div class="mb-3 flex flex-col items-start gap-2">
+              <h3 class="min-w-0 text-xl font-bold leading-tight text-balance">{project.data.title}</h3>
+              <div class="flex flex-wrap justify-start gap-1.5">
+                {project.data.caseStudy && (
+                  <span class="shrink-0 rounded-md border border-[rgb(var(--color-accent)/0.32)] bg-[rgb(var(--color-accent)/0.1)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-accent))]">
+                    {t['projects.story']}
+                  </span>
+                )}
+                {statusLabel && (
+                  <span class="shrink-0 rounded-md border border-[rgb(var(--color-accent)/0.32)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-accent))]">
+                    {statusLabel}
+                  </span>
+                )}
+              </div>
             </div>
-            <p data-testid="project-outcome" class="text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.description}</p>
+            <p data-testid="project-outcome" class="text-pretty text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.description}</p>
 
-            <div class="mt-4 grid gap-3 sm:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+            <div data-testid="project-details" class="mt-4 grid content-start gap-3 sm:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
               {proofPoint && (
-                <div data-testid="project-proof" class="rounded-md border border-[rgb(var(--color-accent)/0.22)] bg-[rgb(var(--color-accent)/0.07)] px-3 py-2.5">
+                <div data-testid="project-proof" class="min-w-0 rounded-md border border-[rgb(var(--color-accent)/0.22)] bg-[rgb(var(--color-accent)/0.07)] px-3 py-2.5">
                   <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">{t['home.proofPoint']}</p>
                   <p class="mt-1 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-sm text-[rgb(var(--color-text-secondary))]">
-                    <strong class="text-lg font-bold text-[rgb(var(--color-accent))]">{proofPoint.value}</strong>
+                    <strong class="min-w-0 text-lg font-bold leading-tight text-[rgb(var(--color-accent))] text-balance">{proofPoint.value}</strong>
                     <span>{proofPoint.label}</span>
                   </p>
                 </div>
@@ -122,20 +124,20 @@ const getProjectUrl = (project: any) =>
                 <span class="rounded-md border border-[rgb(var(--color-border)/0.6)] bg-[rgb(var(--color-bg-secondary)/0.5)] px-2.5 py-1 text-[10px] uppercase tracking-wide text-[rgb(var(--color-text-secondary))] backdrop-blur-md">{tech}</span>
               ))}
             </div>
-            <div class="mt-4 flex flex-wrap gap-4 text-sm">
+            <div class="mt-auto flex flex-wrap gap-x-4 gap-y-1 pt-4 text-sm">
               <a
                 href={projectUrl}
                 target={isExternalProjectUrl ? '_blank' : undefined}
                 rel={isExternalProjectUrl ? 'noreferrer' : undefined}
-                class="font-semibold text-[rgb(var(--color-accent))] hover:underline"
+                class="inline-flex min-h-11 items-center font-semibold text-[rgb(var(--color-accent))] hover:underline"
                 aria-label={`${primaryLabel} - ${project.data.title}`}
               >
                 {primaryLabel}
               </a>
               {project.data.caseStudy && project.data.github && project.data.status !== 'in-development' && (
-                <a href={project.data.github} target="_blank" rel="noreferrer" class="text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-text-primary))]" aria-label={`View code for ${project.data.title} on GitHub`}>{t['home.code']}</a>
+                <a href={project.data.github} target="_blank" rel="noreferrer" class="inline-flex min-h-11 items-center text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-text-primary))]" aria-label={`View code for ${project.data.title} on GitHub`}>{t['home.code']}</a>
               )}
-              {project.data.link && <a href={project.data.link} target="_blank" rel="noreferrer" class="text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-text-primary))]" aria-label={`View live site for ${project.data.title}`}>{t['home.live']}</a>}
+              {project.data.link && <a href={project.data.link} target="_blank" rel="noreferrer" class="inline-flex min-h-11 items-center text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-text-primary))]" aria-label={`View live site for ${project.data.title}`}>{t['home.live']}</a>}
             </div>
           </div>
         </article>

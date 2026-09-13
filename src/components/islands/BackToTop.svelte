@@ -125,17 +125,9 @@
     transform: translateY(0) scale(1);
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 768px) {
     .back-to-top-button {
-      bottom: 1rem;
-      right: 1rem;
-      width: 2.5rem;
-      height: 2.5rem;
-    }
-
-    .back-to-top-button svg {
-      width: 1.25rem;
-      height: 1.25rem;
+      display: none;
     }
   }
 

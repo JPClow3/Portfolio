@@ -4,8 +4,8 @@ slug: "fatec"
 description: "A production education platform that unifies institutional content, admissions, public-service registration, candidate administration, and direct boleto access."
 tech: ["Python", "Django", "HTMX", "Alpine.js", "Tailwind CSS", "PostgreSQL", "Banco do Brasil"]
 link: "https://www.fateccacu.edu.br/"
-featured: true
-order: 4
+featured: false
+order: 16
 lang: "en"
 caseStudy: true
 status: "private-source"

@@ -45,7 +45,7 @@ const gravatarUrl = `https://2.gravatar.com/avatar/${profile.gravatarHash}?s=212
   <div class="pointer-events-none absolute -bottom-40 -left-40 -z-10 h-96 w-96 rounded-full bg-[rgb(var(--color-accent))] opacity-10 blur-[100px] dark:opacity-20"></div>
   
   <div class="relative z-10 lg:col-span-7">
-    <h1 id="about-heading" class="max-w-3xl text-4xl font-extrabold leading-[1.03] tracking-tight text-[rgb(var(--color-text-primary))] sm:text-5xl lg:text-6xl animate-fade-in opacity-0 [animation-fill-mode:forwards]">
+    <h1 id="about-heading" class="max-w-3xl text-[clamp(2rem,10vw,2.25rem)] font-extrabold leading-[1.03] tracking-tight text-[rgb(var(--color-text-primary))] sm:text-5xl lg:text-6xl animate-fade-in opacity-0 [animation-fill-mode:forwards]">
       {t['home.hero.lead']}
       <span class="text-gradient block">{t['home.hero.highlight']}</span>
       {t['home.hero.tail']}
@@ -86,7 +86,7 @@ const gravatarUrl = `https://2.gravatar.com/avatar/${profile.gravatarHash}?s=212
         <p class="mt-1 text-sm font-semibold text-[rgb(var(--color-accent))]">{profile.role}</p>
 
         <div class="mt-4 flex flex-wrap justify-center gap-2 text-xs">
-          <span class="profile-chip">BR {profile.location}</span>
+          <span class="profile-chip inline-flex items-center gap-1.5"><span aria-hidden="true">BR</span><span aria-hidden="true">·</span><span>{profile.location}</span></span>
           <span class="profile-chip">{profile.timezone}</span>
         </div>
 

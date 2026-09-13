@@ -79,7 +79,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
       </a>
 
       <!-- Desktop Navigation -->
-      <div class="hidden md:flex items-center gap-1">
+      <div class="hidden lg:flex items-center gap-1">
         {navLinks.map((link) => (
           <a
             href={link.href}
@@ -98,7 +98,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
         <a
           href={resumeLink}
           download
-          class="hidden items-center gap-1.5 rounded-md bg-[rgb(var(--color-accent))] px-3 py-1.5 text-sm font-semibold text-[rgb(var(--color-accent-contrast))] shadow-sm transition hover:bg-[rgb(var(--color-accent-hover))] md:inline-flex"
+          class="hidden items-center gap-1.5 rounded-md bg-[rgb(var(--color-accent))] px-3 py-1.5 text-sm font-semibold text-[rgb(var(--color-accent-contrast))] shadow-sm transition hover:bg-[rgb(var(--color-accent-hover))] lg:inline-flex"
           aria-label={`${t['nav.resume']} PDF`}
         >
           <Icon name="download" size={16} />
@@ -106,7 +106,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
         </a>
 
         <!-- Language Switcher (Desktop) -->
-        <div class="hidden items-center gap-0.5 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.58)] p-0.5 md:flex" role="group" aria-label="Select language">
+        <div class="hidden items-center gap-0.5 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.58)] p-0.5 lg:flex" role="group" aria-label="Select language">
           <a
             href={englishPath}
             data-lang-link
@@ -141,7 +141,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
         <!-- Mobile Menu Button -->
         <button
           type="button"
-          class="rounded-md p-2 transition-colors hover:bg-[rgb(var(--color-bg-secondary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))] md:hidden"
+          class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md p-2 transition-colors hover:bg-[rgb(var(--color-bg-secondary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))] lg:hidden"
           aria-label="Toggle navigation menu"
           aria-expanded="false"
           aria-controls="mobile-menu"
@@ -164,7 +164,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
       id="mobile-menu"
       role="navigation"
       aria-label="Mobile navigation"
-      class="overflow-hidden rounded-lg border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-primary))] shadow-[0_18px_50px_rgb(var(--glass-shadow)/0.14)] transition-all duration-300 ease-in-out md:hidden"
+      class="overflow-hidden rounded-lg border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-primary))] shadow-[0_18px_50px_rgb(var(--glass-shadow)/0.14)] transition-all duration-300 ease-in-out lg:hidden"
       style="max-height: 0; opacity: 0;"
     >
       <div class="mt-2 border-t border-[rgb(var(--color-border))] p-2 pt-3">
@@ -174,7 +174,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
               href={link.href}
               data-nav-link
               data-nav-section={link.section}
-              class="nav-link link-underline rounded-md px-4 py-2.5 text-sm font-medium text-[rgb(var(--color-text-secondary))] transition-[background-color,border-color,box-shadow] hover:bg-[rgb(var(--color-bg-secondary))] hover:text-[rgb(var(--color-text-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
+              class="nav-link link-underline flex min-h-11 items-center rounded-md px-4 py-2.5 text-sm font-medium text-[rgb(var(--color-text-secondary))] transition-[background-color,border-color,box-shadow] hover:bg-[rgb(var(--color-bg-secondary))] hover:text-[rgb(var(--color-text-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
             >
               {link.label}
             </a>
@@ -182,7 +182,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
           <a
             href={resumeLink}
             download
-            class="flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium text-[rgb(var(--color-accent))] transition-colors hover:bg-[rgb(var(--color-accent)/0.1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
+            class="flex min-h-11 items-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium text-[rgb(var(--color-accent))] transition-colors hover:bg-[rgb(var(--color-accent)/0.1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
           >
             <Icon name="download" size={16} />
             {t['nav.resume']}
@@ -196,7 +196,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
               data-lang-link
               data-lang-base="/"
               class:list={[
-                'rounded px-3 py-1.5 text-xs font-semibold transition-colors',
+                'inline-flex min-h-11 min-w-11 items-center justify-center rounded px-3 py-1.5 text-xs font-semibold transition-colors',
                 isEnglish
                   ? 'bg-[rgb(var(--color-accent))] text-[rgb(var(--color-accent-contrast))]'
                   : 'text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] bg-[rgb(var(--color-bg-secondary))]',
@@ -209,7 +209,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
               data-lang-link
               data-lang-base="/pt/"
               class:list={[
-                'rounded px-3 py-1.5 text-xs font-semibold transition-colors',
+                'inline-flex min-h-11 min-w-11 items-center justify-center rounded px-3 py-1.5 text-xs font-semibold transition-colors',
                 isPortuguese
                   ? 'bg-[rgb(var(--color-accent))] text-[rgb(var(--color-accent-contrast))]'
                   : 'text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] bg-[rgb(var(--color-bg-secondary))]',

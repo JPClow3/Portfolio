@@ -587,6 +587,14 @@ html.dark .profile-identity-surface {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     grid-auto-rows: minmax(172px, auto);
   }
+
+  .project-card [data-testid="project-outcome"] {
+    min-height: 5.75rem;
+  }
+
+  .project-card [data-testid="project-details"] {
+    min-height: 10rem;
+  }
 }
 
 .project-shot-frame {

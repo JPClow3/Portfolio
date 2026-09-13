@@ -65,7 +65,7 @@ test('project catalog presents current work, private-source studies, and the arc
     'Moto Track',
     'AgroHub UniRV',
     'Inova Rio Verde',
-    'FATEC Digital Platform',
+    'Lorebound',
     'ClimAgro',
     'Throughline',
   ];

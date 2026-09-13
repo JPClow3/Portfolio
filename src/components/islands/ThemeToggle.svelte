@@ -93,8 +93,8 @@
   .theme-swap {
     position: relative;
     display: inline-grid;
-    width: 2.45rem;
-    height: 2.45rem;
+    width: 2.75rem;
+    height: 2.75rem;
     place-items: center;
     overflow: hidden;
     border: 1px solid rgb(var(--color-border));

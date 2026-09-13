@@ -4,8 +4,8 @@ slug: "lorebound"
 description: "Uma plataforma de ficção interativa focada no leitor, que combina mundos curados com turnos de IA controlados, memória persistente e uso transparente."
 tech: ["TypeScript", "React", "Neon Postgres", "Drizzle", "Cloudflare Workers", "IA", "Stripe"]
 image: "/projects/lorebound.webp"
-featured: false
-order: 10
+featured: true
+order: 4
 lang: "pt"
 caseStudy: true
 status: "in-development"

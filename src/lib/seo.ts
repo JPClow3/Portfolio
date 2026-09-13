@@ -212,11 +212,11 @@ export function buildPersonSchema({ lang, siteUrl, description }: SchemaOptions)
     description,
     nationality: {
       '@type': 'Country',
-      name: 'Rio Verde, GO, Brazil',
+      name: 'Brazil',
     },
     homeLocation: {
       '@type': 'Place',
-      name: 'Brazil',
+      name: 'Rio Verde, GO, Brazil',
     },
     knowsAbout: [
       'Python',

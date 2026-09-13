@@ -1,12 +1,12 @@
 ---
 title: "AgroHub UniRV"
 slug: "agrohub"
-description: "Um portal de hub de inovação para o ecossistema de empreendedorismo da UniRV, reunindo startups incubadas, eventos e serviços institucionais em um só lugar."
+description: "Um portal institucional em produção que reúne startups, eventos, serviços e canais de acesso público da UniRV em uma experiência rápida e sustentável."
 tech: ["Python", "Django", "HTMX", "Tailwind CSS", "Alpine.js", "Docker Swarm", "Portainer"]
 link: "https://agrohub.unirv.edu.br/"
-image: "/projects/agrohub.png"
+image: "/projects/agrohub.webp"
 featured: true
-order: 5
+order: 2
 lang: "pt"
 caseStudy: true
 status: "live"

@@ -1,25 +1,26 @@
 ---
 title: "Resonant Echoes"
 slug: "resonant-echoes"
-description: "A dynamic text adventure set in the high fantasy world of Aerthos, powered by Google Gemini AI. Players shape the story through choices and Echo Weaving—interacting with remnants of past events."
+description: "An archived text-adventure prototype set in the high-fantasy world of Aerthos, exploring Google Gemini-powered narrative adaptation."
 tech: ["TypeScript", "Google Gemini", "AI", "Game Development"]
 github: "https://github.com/JPClow3/Resonant-Echoes"
 featured: false
-order: 5
-lang: en
+order: 91
+lang: "en"
+status: "archived"
 ---
 
 ## Overview
 
-Resonant Echoes is an immersive text adventure game set in the high fantasy world of Aerthos. The game is powered by Google Gemini AI, allowing for dynamic storytelling that adapts to player choices.
+Resonant Echoes was an immersive text-adventure prototype set in the high-fantasy world of Aerthos. It explored how Google Gemini could adapt narrative material to player choices. The project is archived and is kept as an experiment rather than a currently maintained game.
 
-## Features
+## Explored Features
 
-- **Echo Weaving** - Unique mechanic for interacting with past events
-- **AI-Powered Narrative** - Dynamic story generation with Google Gemini
-- **Rich Lore** - Explore the mysterious world of Aerthos
-- **Player Agency** - Your choices shape the fate of the realm
+- **Echo Weaving** — A mechanic for interacting with traces of past events
+- **AI-assisted narrative** — Gemini-generated variations around authored story material
+- **Rich lore** — A setting built around the mystery of Aerthos
+- **Player agency** — Choices that influenced the direction of the prototype
 
 ## The World
 
-The realm of Aerthos faces an existential threat known as the "Dissonance" - a force that threatens to unravel the very fabric of existence. Players must navigate this world, uncover its secrets, and potentially save it from destruction.
+The realm of Aerthos faced an existential threat known as the Dissonance, a force that threatened to unravel reality. The setting provided the narrative laboratory for testing memory, choice, and AI-assisted storytelling.

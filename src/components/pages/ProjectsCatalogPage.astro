@@ -1,0 +1,159 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
+import EmptyState from '@/components/common/EmptyState.astro';
+import Icon from '@/components/common/Icon.astro';
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
+import { formatPageTitle } from '@/lib/seo';
+
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
+const localePrefix = currentLang === 'pt' ? '/pt' : '';
+
+const localizedProjects = await getCollection('projects', ({ data }) => data.lang === currentLang);
+const fallbackProjects = await getCollection('projects', ({ data }) => data.lang === defaultLang);
+const projects = (localizedProjects.length > 0 ? localizedProjects : fallbackProjects)
+  .sort((a, b) => a.data.order - b.data.order || a.data.title.localeCompare(b.data.title));
+
+type Project = CollectionEntry<'projects'>;
+type ProjectStatus = Project['data']['status'];
+
+const statusLabels: Record<ProjectStatus, string> = currentLang === 'pt'
+  ? {
+      live: 'Em produção',
+      'in-development': 'Em desenvolvimento',
+      research: 'Pesquisa',
+      prototype: 'Protótipo',
+      'private-source': 'Código privado',
+      archived: 'Arquivado',
+    }
+  : {
+      live: 'Live',
+      'in-development': 'In development',
+      research: 'Research',
+      prototype: 'Prototype',
+      'private-source': 'Private source',
+      archived: 'Archived',
+    };
+
+const pageDescription = currentLang === 'pt'
+  ? 'Um catálogo de produtos web, sistemas operacionais, plataformas de dados e experimentos de pesquisa — com o estado de cada trabalho apresentado com clareza.'
+  : 'A catalog of web products, operational systems, data platforms, and research experiments — with the state of each project presented clearly.';
+
+const projectHref = (project: Project) => project.data.caseStudy
+  ? `${localePrefix}/projects/${project.data.slug}/`
+  : project.data.link ?? project.data.github ?? `${localePrefix}/projects/`;
+---
+
+<BaseLayout title={formatPageTitle(t['projects.title'], currentLang)} description={pageDescription}>
+  <Header />
+  <main id="main-content" tabindex="-1" class="noise-bg relative min-h-screen overflow-x-hidden px-4 pb-16 pt-[6.5rem] sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-6xl" data-scene-section="projects">
+      <nav aria-label="Breadcrumb" class="mb-6 text-sm text-[rgb(var(--color-text-secondary))]">
+        <a href={`${localePrefix}/`} class="rounded-sm transition-colors hover:text-[rgb(var(--color-accent))]">{t['project.breadcrumbHome']}</a>
+        <span class="mx-2" aria-hidden="true">/</span>
+        <span aria-current="page" class="font-semibold text-[rgb(var(--color-text-primary))]">{t['projects.title']}</span>
+      </nav>
+
+      <header class="mb-10 max-w-3xl">
+        <p class="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[rgb(var(--color-accent))]">
+          {currentLang === 'pt' ? 'Trabalho selecionado e arquivo' : 'Selected work and archive'}
+        </p>
+        <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">{t['projects.title']}</h1>
+        <p class="mt-4 text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg">{pageDescription}</p>
+      </header>
+
+      {projects.length > 0 ? (
+        <div class="grid gap-5 md:grid-cols-2">
+          {projects.map((project, index) => {
+            const href = projectHref(project);
+            const isExternal = href.startsWith('http');
+            const proof = project.data.metrics[0];
+            const capabilities = project.data.highlights.slice(0, 2);
+
+            return (
+              <ScrollReveal animation="fade-up" delay={Math.min(index, 5) * 70} tag="div" class="h-full">
+                <article class="glass-panel group flex h-full flex-col overflow-hidden rounded-lg transition-all hover:border-[rgb(var(--color-accent)/0.42)]">
+                  {project.data.image && (
+                    <div class="aspect-[16/8] overflow-hidden border-b border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.5)]">
+                      <img
+                        src={project.data.image}
+                        alt={`${project.data.title} ${t['projects.previewAlt']}`}
+                        class="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
+                        loading={index < 2 ? 'eager' : 'lazy'}
+                        decoding="async"
+                        width="1440"
+                        height="900"
+                      />
+                    </div>
+                  )}
+                  <div class="flex flex-1 flex-col p-5 sm:p-6">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">
+                          {project.data.featured ? t['projects.featured'] : project.data.year ?? '—'}
+                        </p>
+                        <h2 class="mt-1 text-2xl font-bold tracking-tight">{project.data.title}</h2>
+                      </div>
+                      <span class="rounded-md border border-[rgb(var(--color-accent)/0.3)] bg-[rgb(var(--color-accent)/0.08)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[rgb(var(--color-accent))]">
+                        {statusLabels[project.data.status]}
+                      </span>
+                    </div>
+
+                    <p class="mt-3 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.description}</p>
+
+                    {proof && (
+                      <div class="mt-5 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.45)] px-3.5 py-3">
+                        <p class="text-[10px] font-bold uppercase tracking-[0.14em] text-[rgb(var(--color-text-muted))]">{proof.label}</p>
+                        <p class="mt-1 text-sm font-semibold text-[rgb(var(--color-text-primary))]">{proof.value}</p>
+                      </div>
+                    )}
+
+                    {capabilities.length > 0 && (
+                      <ul class="mt-4 space-y-2 text-sm text-[rgb(var(--color-text-secondary))]">
+                        {capabilities.map((capability) => (
+                          <li class="flex gap-2">
+                            <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[rgb(var(--color-accent))]" aria-hidden="true"></span>
+                            <span>{capability}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    <div class="mt-auto flex flex-wrap gap-4 pt-6 text-sm">
+                      <a
+                        href={href}
+                        target={isExternal ? '_blank' : undefined}
+                        rel={isExternal ? 'noreferrer' : undefined}
+                        class="inline-flex items-center gap-1.5 font-semibold text-[rgb(var(--color-accent))] hover:underline"
+                      >
+                        {project.data.caseStudy ? t['project.caseStudy'] : t['projects.viewProject']}
+                        {isExternal && <Icon name="external-link" size={14} />}
+                      </a>
+                      {project.data.github && project.data.status !== 'private-source' && (
+                        <a href={project.data.github} target="_blank" rel="noreferrer" class="text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))]">
+                          {t['project.repository']}
+                        </a>
+                      )}
+                      {project.data.link && (
+                        <a href={project.data.link} target="_blank" rel="noreferrer" class="text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))]">
+                          {t['project.live']}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              </ScrollReveal>
+            );
+          })}
+        </div>
+      ) : (
+        <EmptyState iconName="code" title={t['projects.emptyTitle']} description={t['projects.emptyDesc']} />
+      )}
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>

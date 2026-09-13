@@ -31,9 +31,9 @@ export interface PageSeo {
 
 const HOME_SEO: Record<Lang, PageSeo> = {
   en: {
-    title: 'João Paulo Santos | Freelance Software Developer — Python, Django & React',
+    title: 'João Paulo Santos | Full-Stack Product Engineer',
     description:
-      'Freelance software developer in Brazil. I build web apps, APIs, and automation with Python, Django, React, and TypeScript. Available for contract work — view projects and get in touch.',
+      'Full-stack product engineer in Brazil shipping web apps, automation, data systems, and AI products with TypeScript, Python, Cloudflare, and Neon. Available for contract work.',
     keywords: [
       'freelance software developer',
       'freelance web developer',
@@ -48,9 +48,9 @@ const HOME_SEO: Record<Lang, PageSeo> = {
     ],
   },
   pt: {
-    title: 'João Paulo Santos | Desenvolvedor Freelancer — Python, Django e React',
+    title: 'João Paulo Santos | Engenheiro de Produto Full Stack',
     description:
-      'Desenvolvedor freelancer no Brasil. Crio aplicações web, APIs e automações com Python, Django, React e TypeScript. Disponível para projetos e contratos — veja o portfólio e entre em contato.',
+      'Engenheiro de produto full stack no Brasil. Entrego aplicações web, automação, sistemas de dados e produtos de IA com TypeScript, Python, Cloudflare e Neon.',
     keywords: [
       'desenvolvedor freelancer',
       'desenvolvedor de software freelancer',
@@ -69,7 +69,7 @@ const BLOG_INDEX_SEO: Record<Lang, PageSeo> = {
   en: {
     title: 'Blog | João Paulo Santos — Freelance Developer',
     description:
-      'Notes on web development, automation, and building reliable software from a freelance developer working with Python, Django, and React.',
+      'Notes on product engineering, web development, automation, data systems, and building reliable software.',
     keywords: [
       'freelance developer blog',
       'web development blog',
@@ -80,7 +80,7 @@ const BLOG_INDEX_SEO: Record<Lang, PageSeo> = {
   pt: {
     title: 'Blog | João Paulo Santos — Desenvolvedor Freelancer',
     description:
-      'Artigos e reflexões sobre desenvolvimento web, automações e construção de software por um desenvolvedor freelancer com Python, Django e React.',
+      'Artigos sobre engenharia de produto, desenvolvimento web, automação, sistemas de dados e construção de software confiável.',
     keywords: [
       'blog desenvolvedor freelancer',
       'blog desenvolvimento web',
@@ -208,11 +208,11 @@ export function buildPersonSchema({ lang, siteUrl, description }: SchemaOptions)
     url: siteUrl.toString(),
     email: SITE.email,
     image: new URL('/og-image.png', siteUrl).toString(),
-    jobTitle: lang === 'pt' ? 'Desenvolvedor de Software Freelancer' : 'Freelance Software Developer',
+    jobTitle: lang === 'pt' ? 'Engenheiro de Produto Full Stack' : 'Full-Stack Product Engineer',
     description,
     nationality: {
       '@type': 'Country',
-      name: 'Brazil',
+      name: 'Rio Verde, GO, Brazil',
     },
     homeLocation: {
       '@type': 'Place',
@@ -256,7 +256,7 @@ export function buildProfessionalServiceSchema({ lang, siteUrl, description }: S
       'Automation Engineering',
       'Full Stack Development',
     ],
-    knowsAbout: ['Python', 'Django', 'React', 'TypeScript', 'Astro', 'Tailwind CSS'],
+    knowsAbout: ['TypeScript', 'Python', 'SvelteKit', 'React', 'Cloudflare', 'Neon Postgres', 'Astro'],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'sales',
@@ -293,7 +293,7 @@ export function buildHomeFaqSchema(lang: Lang) {
           {
             question: 'Você trabalha como desenvolvedor freelancer?',
             answer:
-              'Sim. Trabalho como desenvolvedor freelancer em projetos de aplicações web, APIs, automação e integrações com Python, Django, React e TypeScript.',
+              'Sim. Trabalho como engenheiro de produto em aplicações web, APIs, automação, dados e integrações com TypeScript, Python e Cloudflare.',
           },
           {
             question: 'Quais serviços você oferece?',
@@ -315,7 +315,7 @@ export function buildHomeFaqSchema(lang: Lang) {
           {
             question: 'Do you work as a freelance software developer?',
             answer:
-              'Yes. I take on freelance projects building web applications, APIs, automation pipelines, and integrations with Python, Django, React, and TypeScript.',
+              'Yes. I take on product engineering work across web applications, APIs, automation, data systems, and integrations with TypeScript, Python, and Cloudflare.',
           },
           {
             question: 'What freelance development services do you offer?',
@@ -393,7 +393,7 @@ export function buildProjectBreadcrumbSchema({
   const prefix = isPt ? '/pt' : '';
   const baseUrl = siteUrl.origin || 'https://jpclow.dev';
   const homeUrl = new URL(isPt ? '/pt/' : '/', baseUrl).toString();
-  const projectsUrl = new URL(`${prefix}/#projects`, baseUrl).toString();
+  const projectsUrl = new URL(`${prefix}/projects/`, baseUrl).toString();
   const caseUrl = new URL(`${prefix}/projects/${slug}/`, baseUrl).toString();
 
   return buildBreadcrumbSchema([

@@ -23,8 +23,8 @@ const profileEntries = await getCollection('profile', ({ data }) => data.lang ==
 const fallbackProfileEntries = await getCollection('profile', ({ data }) => data.lang === defaultLang);
 const profile = (profileEntries[0] ?? fallbackProfileEntries[0]).data.profile;
 
-const localizedProjects = await getCollection('projects', ({ data }) => data.lang === currentLang && data.featured);
-const fallbackProjects = await getCollection('projects', ({ data }) => data.lang === defaultLang && data.featured);
+const localizedProjects = await getCollection('projects', ({ data }) => data.lang === currentLang && data.caseStudy);
+const fallbackProjects = await getCollection('projects', ({ data }) => data.lang === defaultLang && data.caseStudy);
 const paletteProjects = (localizedProjects.length > 0 ? localizedProjects : fallbackProjects)
   .sort((a, b) => a.data.order - b.data.order)
   .map((project) => ({ title: project.data.title, slug: project.data.slug, status: project.data.status }));
@@ -40,16 +40,19 @@ const paletteStrings = {
 const unprefixedPath = isPortuguese
   ? Astro.url.pathname.replace(/^\/pt(?=\/|$)/, '') || '/'
   : Astro.url.pathname;
-const isSubpage = unprefixedPath.startsWith('/projects/') || unprefixedPath.startsWith('/blog');
+const isSubpage =
+  unprefixedPath === '/projects' ||
+  unprefixedPath.startsWith('/projects/') ||
+  unprefixedPath === '/blog' ||
+  unprefixedPath.startsWith('/blog/');
 const englishPath = isSubpage ? unprefixedPath : '/';
 const portuguesePath = isSubpage ? `/pt${englishPath}` : '/pt/';
 
 const navLinks: NavLink[] = [
   { label: t['nav.about'], href: `${localePrefix}/#about`, section: 'about' },
-  { label: t['nav.projects'], href: `${localePrefix}/#projects`, section: 'projects' },
+  { label: t['nav.projects'], href: `${localePrefix}/projects/`, section: 'projects' },
   { label: t['nav.experience'], href: `${localePrefix}/#experience`, section: 'experience' },
   { label: t['nav.activity'], href: `${localePrefix}/#activity`, section: 'activity' },
-  { label: t['nav.blog'], href: `${localePrefix}/blog`, section: 'blog' },
   { label: t['nav.contact'], href: `${localePrefix}/#contact`, section: 'contact' },
 ];
 

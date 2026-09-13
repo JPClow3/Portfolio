@@ -1,12 +1,12 @@
 ---
 title: "Throughline"
 slug: "throughline"
-description: "Um planejador calmo e local-first que mantém metas, tarefas, notas, quadros e linhas do tempo úteis mesmo sem internet."
+description: "Um planejador focado em privacidade que mantém metas, tarefas, notas, quadros e linhas do tempo disponíveis offline, com sincronização criptografada opcional."
 tech: ["React", "TypeScript", "IndexedDB", "PWA", "Criptografia ponta a ponta"]
 github: "https://github.com/JPClow3/Throughline"
-image: "https://raw.githubusercontent.com/JPClow3/Throughline/main/apps/web/public/screenshot-1.png"
+image: "/projects/throughline.webp"
 featured: true
-order: 1
+order: 6
 lang: "pt"
 caseStudy: true
 status: "live"
@@ -18,11 +18,11 @@ decisionLog:
   decision: "Usar IndexedDB como fonte de verdade, criptografar registros de sincronização no dispositivo e reduzir propositalmente os dados das notificações."
   outcome: "Um planejador instalável funciona primeiro no dispositivo, enquanto a sincronização opcional preserva privacidade sem mudar o fluxo diário."
 metrics:
-  - label: "Persistência"
-    value: "Offline-first"
-  - label: "Sincronização"
-    value: "Criptografada"
-  - label: "Visões"
+  - label: "Uso offline"
+    value: "Dados locais continuam disponíveis"
+  - label: "Prova de privacidade"
+    value: "Sincronização ponta a ponta"
+  - label: "Visões de planejamento"
     value: "Metas · quadro · linha do tempo"
 highlights:
   - "Metas agrupam o progresso das tarefas"

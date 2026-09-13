@@ -21,6 +21,16 @@ const siteUrl = Astro.site ?? new URL('https://jpclow.dev');
 const caseStudyUrl = new URL(`${localePrefix}/projects/${project.data.slug}/`, siteUrl).toString();
 const ogImageUrl = getProjectOgImageUrl(project.data.slug, currentLang, siteUrl);
 const decisionLog = project.data.decisionLog;
+const statusLabels: Record<string, string> = {
+  'in-development': t['project.inDevelopment'],
+  research: t['project.research'],
+  prototype: t['project.prototype'],
+  'private-source': t['project.privateSource'],
+  archived: t['project.archived'],
+};
+const statusLabel = project.data.status !== 'live' ? statusLabels[project.data.status] : undefined;
+const hasPublicRepository = Boolean(project.data.github) && !['in-development', 'private-source'].includes(project.data.status);
+const publicRepositoryUrl = hasPublicRepository ? project.data.github : undefined;
 const caseStudySchema = {
   '@context': 'https://schema.org',
   '@type': 'CreativeWork',
@@ -31,7 +41,7 @@ const caseStudySchema = {
   author: { '@type': 'Person', name: 'Joao Paulo Goncalves Santos', url: siteUrl.toString() },
   keywords: project.data.tech,
   programmingLanguage: project.data.tech,
-  codeRepository: project.data.status === 'in-development' ? undefined : project.data.github,
+  codeRepository: publicRepositoryUrl,
 };
 const breadcrumbSchema = buildProjectBreadcrumbSchema({
   lang: currentLang,
@@ -57,7 +67,7 @@ const breadcrumbSchema = buildProjectBreadcrumbSchema({
         <ol class="flex flex-wrap items-center gap-2 text-sm text-[rgb(var(--color-text-secondary))]">
           <li><a href={`${localePrefix}/`} class="rounded-sm transition-colors hover:text-[rgb(var(--color-accent))]">{t['project.breadcrumbHome']}</a></li>
           <li aria-hidden="true">/</li>
-          <li><a href={`${localePrefix}/#projects`} class="rounded-sm transition-colors hover:text-[rgb(var(--color-accent))]">{t['project.breadcrumbProjects']}</a></li>
+          <li><a href={`${localePrefix}/projects/`} class="rounded-sm transition-colors hover:text-[rgb(var(--color-accent))]">{t['project.breadcrumbProjects']}</a></li>
           <li aria-hidden="true">/</li>
           <li aria-current="page" class="truncate font-semibold text-[rgb(var(--color-text-primary))]">{project.data.title}</li>
         </ol>
@@ -68,7 +78,7 @@ const breadcrumbSchema = buildProjectBreadcrumbSchema({
           <div class="p-5 sm:p-7 lg:p-8">
             <div class="mb-4 flex flex-wrap items-center gap-2">
               <span class="rounded-md border border-[rgb(var(--color-accent)/0.35)] bg-[rgb(var(--color-accent)/0.1)] px-2.5 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--color-accent))]">{t['project.caseStudy']}</span>
-              {project.data.status === 'in-development' && <span class="rounded-md border border-[rgb(var(--color-accent)/0.35)] px-2.5 py-1 text-xs font-semibold text-[rgb(var(--color-accent))]">{t['project.inDevelopment']}</span>}
+              {statusLabel && <span class="rounded-md border border-[rgb(var(--color-accent)/0.35)] px-2.5 py-1 text-xs font-semibold text-[rgb(var(--color-accent))]">{statusLabel}</span>}
               {project.data.year && <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.66)] px-2.5 py-1 text-xs font-semibold text-[rgb(var(--color-text-secondary))]">{project.data.year}</span>}
             </div>
             <h1 class="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">{project.data.title}</h1>
@@ -76,12 +86,12 @@ const breadcrumbSchema = buildProjectBreadcrumbSchema({
             {project.data.role && <p class="mt-5 text-sm font-semibold"><span class="text-[rgb(var(--color-text-muted))]">{t['project.role']}</span> {project.data.role}</p>}
             <div class="mt-5 flex flex-wrap gap-1.5">{project.data.tech.map((tech) => <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.72)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-[rgb(var(--color-text-secondary))]">{tech}</span>)}</div>
             <div class="mt-7 flex flex-wrap gap-3 text-sm">
-              <a href={`${localePrefix}/#projects`} class="hover-lift inline-flex items-center gap-2 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.28)] px-4 py-2 font-semibold transition-all"><Icon name="arrow-down" size={16} class="rotate-90" />{t['project.backToProjects']}</a>
-              {project.data.github && project.data.status !== 'in-development' && <a href={project.data.github} target="_blank" rel="noreferrer" class="hover-lift inline-flex items-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-4 py-2 font-semibold text-[rgb(var(--color-accent-contrast))]"><span>{t['project.repository']}</span><Icon name="external-link" size={15} /></a>}
+              <a href={`${localePrefix}/projects/`} class="hover-lift inline-flex items-center gap-2 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.28)] px-4 py-2 font-semibold transition-all"><Icon name="arrow-down" size={16} class="rotate-90" />{t['project.backToProjects']}</a>
+              {publicRepositoryUrl && <a href={publicRepositoryUrl} target="_blank" rel="noreferrer" class="hover-lift inline-flex items-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-4 py-2 font-semibold text-[rgb(var(--color-accent-contrast))]"><span>{t['project.repository']}</span><Icon name="external-link" size={15} /></a>}
               {project.data.link && <a href={project.data.link} target="_blank" rel="noreferrer" class="hover-lift inline-flex items-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-4 py-2 font-semibold text-[rgb(var(--color-accent-contrast))]"><span>{t['project.live']}</span><Icon name="external-link" size={15} /></a>}
             </div>
           </div>
-          {project.data.image && <div class="relative min-h-[260px] border-t border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.5)] lg:border-l lg:border-t-0"><img src={project.data.image} alt={`${project.data.title} project preview`} class="h-full min-h-[260px] w-full object-contain" loading="eager" decoding="async" /></div>}
+          {project.data.image && <div class="relative min-h-[260px] border-t border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.5)] lg:border-l lg:border-t-0"><img src={project.data.image} alt={`${project.data.title} ${t['projects.previewAlt']}`} class="h-full min-h-[260px] w-full object-contain" loading="eager" decoding="async" /></div>}
         </div>
       </header>
 

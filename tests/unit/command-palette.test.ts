@@ -10,6 +10,7 @@ const profile = {
 const projects = [
   { title: 'Throughline', slug: 'throughline', status: 'live' as const },
   { title: 'Lorebound', slug: 'lorebound', status: 'in-development' as const },
+  { title: 'Hefesto', slug: 'hefesto', status: 'research' as const },
 ];
 
 describe('buildCommandPaletteItems', () => {
@@ -18,7 +19,7 @@ describe('buildCommandPaletteItems', () => {
 
     expect(items.find((item) => item.id === 'section-projects')).toMatchObject({
       label: 'Projects',
-      href: '/#projects',
+      href: '/projects/',
       kind: 'navigate',
     });
     expect(items.find((item) => item.id === 'project-throughline')).toMatchObject({
@@ -41,12 +42,15 @@ describe('buildCommandPaletteItems', () => {
 
     expect(items.find((item) => item.id === 'section-projects')).toMatchObject({
       label: 'Projetos',
-      href: '/pt/#projects',
+      href: '/pt/projects/',
     });
     expect(items.find((item) => item.id === 'project-lorebound')).toMatchObject({
       label: 'Lorebound',
       href: '/pt/projects/lorebound/',
       status: 'Em desenvolvimento',
+    });
+    expect(items.find((item) => item.id === 'project-hefesto')).toMatchObject({
+      status: 'Pesquisa',
     });
     expect(items.find((item) => item.id === 'resume')).toMatchObject({
       href: '/resume-pt.pdf',

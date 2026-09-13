@@ -11,7 +11,7 @@ export const GET: APIRoute = async (context) => {
   return rss({
     title: 'João Paulo Santos — Blog',
     description:
-      'Notes on web development, automation, APIs, and software engineering from a freelance developer working with Python, Django, and React.',
+      'Notes on product engineering, web development, automation, data systems, and reliable software delivery.',
     site,
     items: sortedPosts.map((post) => {
       const slug = post.data.slug ?? post.id.replace(/^pt\//, '').replace(/\.(md|mdx)$/i, '');

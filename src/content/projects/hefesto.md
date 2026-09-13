@@ -1,57 +1,59 @@
 ---
 title: "Hefesto"
 slug: "hefesto"
-description: "A daily wildfire ignition-risk modeling system for Goias, Brazil, built around versioned data, climate signals, and reproducible evaluation."
+description: "A research and re-architecture project for wildfire ignition-risk modeling in Goias, Brazil. Historical experiments are retained for reproducibility; the current direction is real-time-first."
 tech: ["Python", "XGBoost", "Geospatial Data", "Climate Data", "ML Ops"]
 image: "/projects/hefesto-risk-grid.svg"
-featured: true
-order: 4
+featured: false
+order: 11
 lang: "en"
 caseStudy: true
-status: "live"
+status: "research"
 decisionLog:
-  problem: "Daily wildfire ignition risk needs comparable results across climate, dryness, vegetation, and historical conditions."
-  constraint: "A model improvement is not useful if its data, assumptions, and evaluation cannot be reproduced or explained."
-  decision: "Treat the research pipeline as a product with schema contracts, manifests, experiment profiles, registry entries, and diagnostics."
-  outcome: "The materialized climate and MODIS line improved PR-AUC from 0.407 to 0.456 while preserving an auditable path forward."
-role: "Data modeling, pipeline design, validation, and documentation"
+  problem: "Build a defensible path toward daily wildfire ignition-risk modeling over Goias without confusing historical benchmarks with an operational prediction service."
+  constraint: "The retired v1-v5 lines used historical batch CSVs and sources whose real operational latency was not suitable for a live product."
+  decision: "Retire the previous lines, preserve their contracts and reports, and redesign around real-time-first source contracts before new dataset features enter the pipeline."
+  outcome: "Hefesto is now research and re-architecture work; PR-AUC 0.4565 is retained only as the historical v5_0 benchmark, not as live-model performance."
+role: "Data modeling, research-pipeline design, validation, and documentation"
 year: "2026"
-problem: "Wildfire ignition risk needs a reproducible daily model over a 1 km grid, with climate, dryness, vegetation, and historical comparability handled carefully."
-solution: "A versioned research pipeline with schema contracts, dataset manifests, experiment profiles, model registry entries, diagnostics, and cross-version metrics."
-impact: "Materialized climate and MODIS lines improved model ordering quality from v3.0 PR-AUC 0.407 to v5.0 PR-AUC 0.456 while keeping the work auditable."
+problem: "Wildfire ignition-risk research needs a reproducible daily model over a 1 km grid, with climate, dryness, vegetation, and historical comparability handled honestly."
+solution: "A re-architecture workspace with schema contracts, dataset manifests, experiment history, diagnostics, and an explicit real-time-first source audit."
+impact: "The repository keeps a reproducible historical benchmark while making the missing operational data path visible before any new model is presented as live."
 metrics:
   - label: "Grid"
     value: "1 km"
-  - label: "Best PR-AUC"
-    value: "0.456"
-  - label: "Roadmap"
-    value: "v2-v8"
+  - label: "Historical PR-AUC"
+    value: "0.4565 (v5_0)"
+  - label: "Current state"
+    value: "Real-time-first redesign"
 highlights:
-  - "Versioned configs, manifests, metrics, and registry entries"
-  - "XGBoost climate, dryness, and MODIS feature line"
-  - "Calibration diagnostics by time, season, and subregion"
-  - "Clear split between executable work and future backlog"
+  - "v1-v5_0 history preserved as retired research, not a live service"
+  - "Operational-latency audit for fire, climate, and vegetation sources"
+  - "Dataset contracts, manifests, diagnostics, and experiment records"
+  - "Clear boundary between historical evidence and the next research phase"
 ---
 
 ## Overview
 
-Hefesto is a wildfire ignition-risk modeling project focused on Goias, Brazil. The work is less about a single model artifact and more about building a disciplined research system: repeatable datasets, versioned experiments, meaningful diagnostics, and a clean record of what changed.
+Hefesto is a research and re-architecture project for wildfire ignition risk in Goias, Brazil. It is not currently a live prediction system. The repository is in transition toward a real-time-first design, with the data contract and source latency treated as prerequisites for any future operational model.
 
-The public-facing story stays intentionally safe. It explains the modeling architecture and impact without exposing private operational paths, credentials, or deployment details.
+## Current State
 
-## Modeling Shape
+The v1 through v5_0 experiment lines were retired after an audit found that their inputs were historical CSV batches rather than operationally live feeds. GPM Final has roughly 3.5 months of latency, ERA5T roughly five days, and MODIS composites weeks of real latency. The repository had no live data puller, so the old lines are not presented as current service capability.
 
-The project works on a daily 1 km grid and compares experiment lines across fixed evaluation rules. The strongest materialized line adds climate antecedents, dry-window signals, nearest-station assignments, and MODIS-derived information.
+The current work preserves the useful research structure—schemas, manifests, validation, reports, and experiment history—while the next line is designed around documented sources with known operational latency.
 
-The main quality gain came from treating the pipeline as a product: schema contracts, manifests, named versions, frozen baselines, registry entries, and diagnostics that make every result explainable.
+## Historical Benchmark
+
+The best historical result is v5_0: PR-AUC **0.4565**, F1 **0.4157**, and ROC-AUC **0.7344** on the repository's historical evaluation. This number is kept for reproducibility and comparison only. It is not a live score, a deployed model claim, or evidence that the real-time-first redesign is complete.
 
 ## What I Built
 
-- Versioned experiment profiles from baseline through climate and MODIS feature lines.
-- Dataset manifests and validation checks to keep results comparable.
-- XGBoost modeling workflows with PR-AUC tracking across versions.
-- Calibration and diagnostic reporting for temporal and regional behavior.
+- Versioned experiment records and dataset contracts for comparing research lines.
+- Manifests, validation checks, diagnostics, and reports that preserve why a result changed.
+- XGBoost and feature-engineering history across temporal, spatial, climate, dryness, and MODIS experiments.
+- A clear re-architecture boundary that requires an operationally documented source before new features enter a future pipeline.
 
-## Outcome
+## Next Research Phase
 
-The model line improved from a v3.0 PR-AUC of 0.407 to a v5.0 PR-AUC of 0.456. More importantly, the project now has enough structure to keep improving without losing the thread of why each experiment changed.
+The next phase is to validate operational sources first, then define the real-time-first dataset and model contracts. Until that work is complete, Hefesto remains a research project with a historical benchmark—not a deployed wildfire-risk product.

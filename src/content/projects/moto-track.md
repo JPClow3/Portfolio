@@ -1,59 +1,60 @@
 ---
 title: "Moto Track"
 slug: "moto-track"
-description: "A motorcycle command center for fuel economy, maintenance, tires, documents, parts, and cost intelligence."
-tech: ["Django", "HTMX", "Tailwind CSS", "PostgreSQL", "Docker"]
+description: "A live SvelteKit motorcycle operations platform for fuel, maintenance, documents, costs, professional shifts, and profitability, backed by Neon and Cloudflare."
+tech: ["SvelteKit", "TypeScript", "Neon Postgres", "Cloudflare", "Stripe", "Resend"]
 github: "https://github.com/JPClow3/moto_track"
 link: "https://moto-track.net/"
-image: "/projects/moto-track.png"
+image: "/projects/moto-track.webp"
 featured: true
-order: 3
+order: 1
 lang: "en"
 caseStudy: true
 status: "live"
 decisionLog:
-  problem: "Riders track fuel, maintenance, documents, tires, and costs across scattered notes, apps, and spreadsheets."
-  constraint: "The product needs app-like feedback without making the operational dashboard difficult to maintain or deploy."
-  decision: "Keep Django in charge of the domain and server-rendered UX, then use HTMX for focused interactions and Docker for a repeatable runtime."
-  outcome: "One operating surface now connects upkeep, cost visibility, reminders, and a future profitability workflow for professional riders."
-role: "Product engineering, backend, UI, and deployment strategy"
+  problem: "Riders and professional motorcycle operators need one reliable place for fuel, upkeep, documents, costs, and the work that makes a motorcycle profitable."
+  constraint: "The product needs fast app-like workflows, offline capture, edge deployment, and paid plans without splitting operational data across separate systems."
+  decision: "Rebuild the product with SvelteKit, Neon Postgres, and Cloudflare services, then connect Stripe for plans and Resend for transactional email."
+  outcome: "The live product now covers day-to-day motorcycle operations, including professional shifts, profitability, offline fuel capture, and supporting guides."
+role: "Product engineering, full-stack delivery, UI, and deployment strategy"
 year: "2026"
-problem: "Riders and work-vehicle owners track fuel, maintenance, documents, tires, and costs across scattered notes, apps, and spreadsheets."
-solution: "A server-rendered Django and HTMX dashboard that centralizes vehicle records, reminders, lifecycle tracking, parts, and cost views."
-impact: "Turns motorcycle upkeep into a single operating surface and creates a path toward profitability tracking for motoboys and mototaxis."
+problem: "Riders and professional motorcycle operators need one reliable place for fuel, upkeep, documents, costs, and the work that makes a motorcycle profitable."
+solution: "A live SvelteKit platform that centralizes fuel, maintenance, tires, documents, reminders, expenses, professional shifts, and profitability reports."
+impact: "Moto Track turns scattered motorcycle records into an operating surface for ownership and work use, with offline fuel capture and a clear path from free access to Stripe plans."
 metrics:
-  - label: "Core modules"
-    value: "8"
-  - label: "Interface"
-    value: "HTMX"
-  - label: "Deploy"
-    value: "Docker-ready"
+  - label: "Product status"
+    value: "Live SaaS"
+  - label: "Offline workflow"
+    value: "Fuel capture + sync"
+  - label: "Business model"
+    value: "Stripe plans"
 highlights:
-  - "Fuel economy, cost-per-km, and expense tracking"
-  - "Maintenance intervals, reminders, and service history"
-  - "Tire lifecycle, document vault, and parts inventory"
-  - "Product direction toward work-vehicle profitability"
+  - "Fuel, maintenance, tires, documents, reminders, and expenses"
+  - "Professional shifts, work costs, and profitability reports"
+  - "Offline fuel capture with queued synchronization"
+  - "Pricing, guides, transactional email, and Cloudflare delivery"
 ---
 
 ## Overview
 
-Moto Track started as a personal motorcycle management platform and is moving toward a sharper product thesis: help riders understand the real operating cost of a motorcycle without living in spreadsheets.
+Moto Track is a live SvelteKit motorcycle operations platform. It brings fuel, maintenance, tires, documents, reminders, expenses, professional shifts, and profitability into one place instead of leaving the rider to reconcile notes and spreadsheets.
 
-The product keeps the interface intentionally direct. Fuel, maintenance, documents, tires, parts, reminders, and expenses all sit in one place so the rider can answer practical questions quickly: what changed, what is due, and what is this vehicle really costing?
+The product serves both everyday ownership and work use. Riders can record fuel while offline and synchronize it later, follow maintenance and tire history, review operating costs, and use work and report views to understand whether professional riding is paying off.
 
 ## Product Decisions
 
-The stack favors speed and maintainability over novelty. Django owns the domain model and server-rendered pages, HTMX adds focused interactivity, Tailwind keeps the UI fast to iterate, and Docker keeps the deployment path predictable.
+The current application uses SvelteKit and TypeScript for the product surface, Neon Postgres for persistent data, and Cloudflare for the edge runtime and object storage. Neon Auth handles authentication, while app-layer ownership checks protect records. Stripe powers the paid plans and billing lifecycle; Resend sends transactional app email in-process.
 
-That combination lets the product feel app-like while staying simple enough to extend into work-vehicle use cases such as motoboy and mototaxi profitability tracking.
+This keeps the operational workflows close to the data while preserving a deployment path that is fast to iterate. Offline fuel capture is deliberately narrow and explicit: it queues the supported record locally and synchronizes it when connectivity returns instead of pretending the entire product is offline-first.
 
 ## What I Built
 
-- A structured vehicle dashboard for fuel, costs, maintenance, tires, documents, and parts.
-- Reminder surfaces for maintenance and operational tasks.
-- Cost and efficiency views that make long-term ownership patterns visible.
-- Documentation around deployment and product direction.
+- A live motorcycle dashboard for fuel, maintenance, tires, documents, reminders, expenses, and reports.
+- Professional work-shift records with cost and profitability views.
+- Offline fuel capture with a visible queue and synchronization path.
+- Pricing and Stripe checkout/portal flows, plus transactional email through Resend.
+- Public guides and supporting product surfaces around the authenticated application.
 
-## Next Direction
+## Current Scope
 
-The strongest next step is turning the personal tracker into a more explicit operational dashboard: revenue, work shifts, per-route costs, and monthly profitability for riders who use motorcycles as work vehicles.
+Moto Track is live at [moto-track.net](https://moto-track.net/) and remains an actively evolving product. Its public roadmap can describe future work, but the workflows above are already part of the current product.

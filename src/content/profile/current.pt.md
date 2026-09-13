@@ -3,9 +3,9 @@ lang: pt
 profile:
   name: "João Paulo Gonçalves Santos"
   shortName: "João Paulo"
-  role: "Desenvolvedor Freelancer"
-  subtitle: "Desenvolvedor freelancer disponível para apps web, APIs e automações. Trabalho com Python, Django, React e TypeScript — de MVPs a sistemas em produção."
-  location: "Brasil"
+  role: "Engenheiro de Produto Freelancer"
+  subtitle: "Engenheiro de produto freelancer construindo aplicações web operacionais, sistemas de dados e produtos de IA — da descoberta ao deploy."
+  location: "Rio Verde, GO, Brasil"
   timezone: "UTC-3"
   github: "https://github.com/JPClow3"
   linkedin: "https://www.linkedin.com/in/joaopaulosantosgo/"

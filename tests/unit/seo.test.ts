@@ -22,19 +22,19 @@ describe('seo utilities', () => {
   const siteUrl = new URL(SITE.url);
 
   describe('getHomeSeo()', () => {
-    it('returns freelance-focused metadata for English', () => {
+    it('returns product-engineering metadata for English', () => {
       const seo = getHomeSeo('en');
 
-      expect(seo.title.toLowerCase()).toContain('freelance');
-      expect(seo.description.toLowerCase()).toContain('freelance');
-      expect(seo.keywords.some((keyword) => keyword.includes('freelance'))).toBe(true);
+      expect(seo.title.toLowerCase()).toContain('product engineer');
+      expect(seo.description.toLowerCase()).toContain('product engineer');
+      expect(seo.description.toLowerCase()).toContain('cloudflare');
     });
 
-    it('returns freelance-focused metadata for Portuguese', () => {
+    it('returns product-engineering metadata for Portuguese', () => {
       const seo = getHomeSeo('pt');
 
-      expect(seo.title.toLowerCase()).toContain('freelancer');
-      expect(seo.description.toLowerCase()).toContain('freelancer');
+      expect(seo.title.toLowerCase()).toContain('engenheiro de produto');
+      expect(seo.description.toLowerCase()).toContain('engenheiro de produto');
     });
   });
 
@@ -127,7 +127,7 @@ describe('seo utilities', () => {
     it('generates standard Schema.org BreadcrumbList with correct positions', () => {
       const schema = buildBreadcrumbSchema([
         { name: 'Home', url: 'https://jpclow.dev/' },
-        { name: 'Projects', url: 'https://jpclow.dev/#projects' },
+        { name: 'Projects', url: 'https://jpclow.dev/projects/' },
         { name: 'Lorebound', url: 'https://jpclow.dev/projects/lorebound/' },
       ]);
 

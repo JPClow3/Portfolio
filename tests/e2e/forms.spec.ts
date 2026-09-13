@@ -161,8 +161,8 @@ test('form shows localized Turnstile failure message', async ({ page }) => {
   await completeTurnstile(page);
   await page.locator('#submit-btn').click({ force: true });
 
-  await expect(page.locator('#turnstile-error')).toContainText('seguranca');
-  await expect(page.locator('#error-message')).toContainText('seguranca');
+  await expect(page.locator('#turnstile-error')).toContainText('segurança');
+  await expect(page.locator('#error-message')).toContainText('segurança');
 });
 
 test('form shows network error state when request fails', async ({ page }) => {

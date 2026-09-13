@@ -4,7 +4,7 @@ const caseStudies = [
   {
     slug: 'throughline',
     title: 'Throughline',
-    metric: 'Offline-first',
+    metric: 'Local data remains usable',
   },
   {
     slug: 'lorebound',
@@ -14,12 +14,22 @@ const caseStudies = [
   {
     slug: 'moto-track',
     title: 'Moto Track',
-    metric: 'Docker-ready',
+    metric: 'Live SaaS',
   },
   {
     slug: 'hefesto',
     title: 'Hefesto',
-    metric: '0.456',
+    metric: '0.4565 (v5_0)',
+  },
+  {
+    slug: 'fatec',
+    title: 'FATEC Digital Platform',
+    metric: 'Registration → boleto in product',
+  },
+  {
+    slug: 'climagro',
+    title: 'ClimAgro',
+    metric: 'Daily + hourly',
   },
 ] as const;
 
@@ -43,6 +53,43 @@ for (const caseStudy of caseStudies) {
     await expect(scene).toHaveAttribute('data-scene-section', 'projects', { timeout: 15_000 });
   });
 }
+
+test('project catalog presents current work, private-source studies, and the archive', async ({ page }) => {
+  await page.goto('/projects/');
+
+  await expect(page.locator('h1')).toHaveText('Projects');
+  const cards = page.locator('main article');
+  await expect(cards).toHaveCount(18);
+
+  const expectedOrder = [
+    'Moto Track',
+    'AgroHub UniRV',
+    'Inova Rio Verde',
+    'FATEC Digital Platform',
+    'ClimAgro',
+    'Throughline',
+  ];
+  for (const [index, title] of expectedOrder.entries()) {
+    await expect(cards.nth(index).locator('h2')).toHaveText(title);
+  }
+
+  await expect(cards.filter({ hasText: 'FATEC Digital Platform' }).getByText('Private source', { exact: true })).toBeVisible();
+  await expect(cards.filter({ hasText: 'Hefesto' }).getByText('Research', { exact: true })).toBeVisible();
+  await expect(cards.filter({ hasText: 'League AI Oracle' }).getByText('Archived', { exact: true })).toBeVisible();
+  await expect(cards.filter({ hasText: 'AI Development Controller' }).getByText('Prototype', { exact: true })).toBeVisible();
+});
+
+test('Portuguese project catalog is complete and localized', async ({ page }) => {
+  await page.goto('/pt/projects/');
+
+  await expect(page.locator('h1')).toHaveText('Projetos');
+  await expect(page.locator('main article')).toHaveCount(18);
+  const catalog = page.locator('main');
+  await expect(catalog.getByText('Código privado', { exact: true }).first()).toBeVisible();
+  await expect(catalog.getByText('Pesquisa', { exact: true }).first()).toBeVisible();
+  await expect(catalog.getByText('Arquivado', { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Switch to English' })).toHaveAttribute('href', '/projects/');
+});
 
 test('Portuguese case studies use localized decision logs and preserve the project when switching language', async ({ page }) => {
   await page.goto('/pt/projects/lorebound/');
@@ -95,4 +142,3 @@ test('case studies include dynamic OpenGraph image and BreadcrumbList JSON-LD sc
   expect(breadcrumb.itemListElement[1].name).toBe('Projects');
   expect(breadcrumb.itemListElement[2].name).toBe('Lorebound');
 });
-

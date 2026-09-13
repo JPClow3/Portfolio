@@ -1,12 +1,12 @@
 ---
 title: "Inova Rio Verde"
 slug: "inova-rio-verde"
-description: "Um site do ecossistema de inovação de Rio Verde, mapeando hubs, incubadoras e programas locais em uma trilha geoespacial interativa."
+description: "Uma experiência geoespacial em produção que transforma hubs, incubadoras e programas de Rio Verde em uma trilha de inovação explorável."
 tech: ["Next.js", "Tailwind CSS", "Mapbox", "MapTiler", "deck.gl", "Cloudflare Hyperdrive", "Neon Postgres", "Neon Auth"]
 link: "https://inovarioverde.org/"
-image: "/projects/inova-rio-verde.png"
+image: "/projects/inova-rio-verde.webp"
 featured: true
-order: 6
+order: 3
 lang: "pt"
 caseStudy: true
 status: "live"
@@ -18,12 +18,12 @@ decisionLog:
   decision: "Construí o frontend em Next.js com Mapbox, MapTiler e deck.gl para a trilha interativa, com Neon Postgres acessado via Cloudflare Hyperdrive para consultas de baixa latência na borda, e Neon Auth cuidando do controle de acesso."
   outcome: "O Inova Rio Verde apresenta o ecossistema de inovação da cidade como uma trilha geoespacial explorável, em vez de uma lista estática de instituições."
 metrics:
-  - label: "Camada de mapa"
-    value: "Mapbox + deck.gl"
-  - label: "Camada de dados"
-    value: "Neon Postgres via Hyperdrive"
-  - label: "Autenticação"
-    value: "Neon Auth"
+  - label: "Superfície do produto"
+    value: "Trilha de inovação municipal"
+  - label: "Modelo operacional"
+    value: "Dados geoespaciais na borda"
+  - label: "Escopo da entrega"
+    value: "Do design ao deploy"
 highlights:
   - "Trilha da Inovação interativa e geoespacial mapeando o ecossistema local"
   - "Acesso a Postgres otimizado na borda via Cloudflare Hyperdrive"

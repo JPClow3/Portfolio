@@ -28,7 +28,19 @@ if (!profileEntry) {
 
 const profile = profileEntry.data.profile;
 
-const techMarquee = ['HTML5', 'CSS3', 'JavaScript', 'TypeScript', 'Astro', 'React', 'Tailwind', 'Python'];
+const techMarquee = [
+  'TypeScript',
+  'Python',
+  'Django',
+  'SvelteKit',
+  'Cloudflare',
+  'Neon',
+  'Geospatial',
+  'ML',
+  'Astro',
+  'React',
+  'Tailwind',
+];
 const web3FormsAccessKey = import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY ?? '';
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITEKEY ?? '';
 const turnstileWorkerUrl = import.meta.env.PUBLIC_TURNSTILE_WORKER_URL ?? '';
@@ -51,7 +63,7 @@ const projects = (await getLocalizedCollection('projects'))
   .slice(0, 6);
 
 const getProjectUrl = (project: any) =>
-  project.data.caseStudy ? `${currentLang === 'pt' ? '/pt' : ''}/projects/${project.data.slug}/` : project.data.link ?? project.data.github ?? '/#projects';
+  project.data.caseStudy ? `${currentLang === 'pt' ? '/pt' : ''}/projects/${project.data.slug}/` : project.data.link ?? project.data.github ?? `${currentLang === 'pt' ? '/pt' : ''}/projects/`;
 
 const projectItemsSchema = {
   '@context': 'https://schema.org',

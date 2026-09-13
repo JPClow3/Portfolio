@@ -27,7 +27,7 @@ Este blog foi desenvolvido utilizando:
 
 ```typescript
 const stack = {
-  framework: 'Astro 5',
+  framework: 'Astro 7',
   ui: 'Svelte 5',
   styling: 'Tailwind CSS v4',
   content: 'MDX',
@@ -41,7 +41,7 @@ Fique atento para novos artigos em breve!
 
 Se quiser ver essas tecnologias e conceitos em prática, confira alguns projetos:
 
-- [Portfólio](/pt/#projects) - Onde este blog é executado.
+- [Portfólio](/pt/projects/) - Onde este blog é executado.
 - [League AI Oracle](https://github.com/JPClow3/league-ai-oracle) - Projeto orientado a dados e IA.
 - [Resonant Echoes](https://github.com/JPClow3/resonant-echoes) - Experiências assistidas por IA.
 

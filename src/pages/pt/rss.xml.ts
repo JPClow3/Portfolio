@@ -13,7 +13,7 @@ export const GET: APIRoute = async (context) => {
   return rss({
     title: 'João Paulo Santos — Blog (Português)',
     description:
-      'Artigos e reflexões sobre desenvolvimento web, automação, APIs e engenharia de software por um desenvolvedor freelancer com Python, Django e React.',
+      'Artigos sobre engenharia de produto, desenvolvimento web, automação, sistemas de dados e entrega confiável de software.',
     site,
     items: sortedPosts.map((post) => {
       const slug = post.data.slug ?? post.id.replace(/^pt\//, '').replace(/\.(md|mdx)$/i, '');

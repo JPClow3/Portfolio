@@ -1,28 +1,28 @@
 ---
 title: "League AI Oracle"
 slug: "league-ai-oracle"
-description: "AI-powered strategic co-pilot for League of Legends that provides real-time insights and strategy recommendations using the Riot Games API."
+description: "An archived AI strategy co-pilot experiment for League of Legends, exploring Riot Games API data and recommendation workflows."
 tech: ["TypeScript", "AI/ML", "Riot Games API"]
 github: "https://github.com/JPClow3/League-AI-Oracle"
 featured: false
-order: 3
-lang: en
+order: 90
+lang: "en"
+status: "archived"
 ---
 
 ## Overview
 
-League AI Oracle is an AI-powered strategic co-pilot for League of Legends. The application analyzes real-time game data from the Riot Games API to provide insights and strategy recommendations.
+League AI Oracle was an AI strategy co-pilot experiment for League of Legends. It explored how match data from the Riot Games API could support contextual insights and strategy recommendations. The repository is archived and is not presented as a live service.
 
-## Features
+## Explored Features
 
-- Real-time match data fetching via Riot Games API
-- AI-powered strategic recommendations
-- Win probability predictions
-- Player performance insights
+- Match data fetching through the Riot Games API
+- AI-assisted strategic recommendations
+- Win-probability and player-performance exploration
 - Champion matchup analysis
 
 ## Tech Stack
 
-- **TypeScript** - Core language for type-safe development
-- **AI/ML** - Intelligent analysis and predictions
-- **Riot Games API** - Real-time data source
+- **TypeScript** — Core language for type-safe development
+- **AI/ML** — Experimental analysis and predictions
+- **Riot Games API** — Match data source for the prototype

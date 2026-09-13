@@ -41,7 +41,7 @@ Stay tuned for more content!
 
 If you want to see these ideas in practice, check out a few projects:
 
-- [Portfolio Website](/#projects) - The site where this blog runs.
+- [Portfolio Website](/projects/) - The site where this blog runs.
 - [League AI Oracle](https://github.com/JPClow3/league-ai-oracle) - Data and AI-oriented project.
 - [Resonant Echoes](https://github.com/JPClow3/resonant-echoes) - Experimenting with AI-assisted experiences.
 

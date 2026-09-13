@@ -21,7 +21,7 @@ const projectsCollection = defineCollection({
     order: z.number().default(0),
     lang: z.enum(['en', 'pt']).default('en'),
     caseStudy: z.boolean().default(false),
-    status: z.enum(['live', 'in-development']).default('live'),
+    status: z.enum(['live', 'in-development', 'research', 'prototype', 'private-source', 'archived']).default('live'),
     decisionLog: z.object({
       problem: z.string(),
       constraint: z.string(),

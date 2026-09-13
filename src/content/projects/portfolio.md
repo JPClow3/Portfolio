@@ -1,18 +1,31 @@
 ---
 title: "Developer Portfolio"
 slug: "portfolio"
-description: "My personal portfolio website built with Astro, Svelte 5, and Tailwind CSS. Features islands architecture, Three.js 3D effects, dark mode, scroll animations, and full accessibility support."
+description: "A bilingual, static-first portfolio that turns shipped product work into fast, accessible case studies with a deliberately small client-side footprint."
 tech: ["Astro", "Svelte", "TypeScript", "Tailwind CSS", "Three.js"]
 link: "https://jpclow.dev"
 github: "https://github.com/JPClow3/Portfolio"
 featured: false
-order: 6
-lang: en
+order: 12
+lang: "en"
+status: "live"
+metrics:
+  - label: "Delivery model"
+    value: "Static-first on Cloudflare Pages"
+  - label: "Languages"
+    value: "English + Portuguese"
+  - label: "Interactive islands"
+    value: "Hydrated only where needed"
+highlights:
+  - "Bilingual project catalog and technical case studies"
+  - "Generated Open Graph images, structured data, sitemap, and RSS"
+  - "Accessible navigation, reduced motion, responsive layouts, and theme control"
+  - "Three.js atmosphere isolated behind a Svelte island"
 ---
 
 ## Overview
 
-A modern, performant portfolio website showcasing my work as a Front-End Developer. Built with cutting-edge web technologies and best practices for accessibility and user experience.
+A modern, performant portfolio website presenting freelance product engineering work across operational web apps, data systems, and AI products. It is built around accessible, static-first delivery rather than a heavy single-page application.
 
 ## Features
 

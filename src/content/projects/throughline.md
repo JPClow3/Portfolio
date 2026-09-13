@@ -1,12 +1,12 @@
 ---
 title: "Throughline"
 slug: "throughline"
-description: "A calm, local-first planner that keeps goals, tasks, notes, boards, and timelines useful even when the network disappears."
+description: "A privacy-first planner that keeps goals, tasks, notes, boards, and timelines usable offline, with optional encrypted sync across devices."
 tech: ["React", "TypeScript", "IndexedDB", "PWA", "End-to-End Encryption"]
 github: "https://github.com/JPClow3/Throughline"
-image: "https://raw.githubusercontent.com/JPClow3/Throughline/main/apps/web/public/screenshot-1.png"
+image: "/projects/throughline.webp"
 featured: true
-order: 1
+order: 6
 lang: "en"
 caseStudy: true
 status: "live"
@@ -18,11 +18,11 @@ decisionLog:
   decision: "Use IndexedDB as the source of truth, encrypt sync records on-device, and keep push payloads deliberately redacted."
   outcome: "A calm installable planner works locally first, while optional sync preserves privacy without changing the daily workflow."
 metrics:
-  - label: "Persistence"
-    value: "Offline-first"
-  - label: "Sync"
-    value: "E2E encrypted"
-  - label: "Surfaces"
+  - label: "Offline behavior"
+    value: "Local data remains usable"
+  - label: "Privacy proof"
+    value: "E2E-encrypted sync"
+  - label: "Planning views"
     value: "Goals · board · timeline"
 highlights:
   - "Goals roll up task progress instead of sitting beside disconnected to-dos"

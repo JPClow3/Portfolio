@@ -109,6 +109,35 @@ test('homepage loads and displays main sections', async ({ page }) => {
   await expect(footer).toBeVisible();
 });
 
+test('homepage prioritizes the client-facing project showcase', async ({ page }) => {
+  await page.goto('/');
+
+  const expectedProjects = [
+    'Moto Track',
+    'AgroHub UniRV',
+    'Inova Rio Verde',
+    'FATEC Digital Platform',
+    'ClimAgro',
+    'Throughline',
+  ];
+  const cards = page.locator('[data-testid="project-card"]');
+
+  await expect(cards).toHaveCount(expectedProjects.length);
+  for (const [index, title] of expectedProjects.entries()) {
+    await expect(cards.nth(index).locator('h3')).toHaveText(title);
+    await expect(cards.nth(index).locator('[data-testid="project-outcome"]')).toBeVisible();
+    await expect(cards.nth(index).locator('[data-testid="project-proof"]')).toHaveCount(1);
+    await expect(cards.nth(index).locator('[data-testid="project-capabilities"] li')).toHaveCount(2);
+    await expect(cards.nth(index).getByText('Problem', { exact: true })).toHaveCount(0);
+    await expect(cards.nth(index).getByText('Constraint', { exact: true })).toHaveCount(0);
+    await expect(cards.nth(index).getByText('Decision', { exact: true })).toHaveCount(0);
+    await expect(cards.nth(index).getByText('Outcome', { exact: true })).toHaveCount(0);
+  }
+
+  await expect(page.locator('header nav').getByRole('link', { name: 'Blog', exact: true })).toHaveCount(0);
+  await expect(page.locator('header nav').getByRole('link', { name: 'Projects', exact: true })).toHaveAttribute('href', '/projects/');
+});
+
 test('hero section is visible', async ({ page }) => {
   await page.goto('/');
   
@@ -185,14 +214,14 @@ test('project card interaction keeps case study links clickable', async ({ page 
 
   const throughlineCard = page.locator('[data-testid="project-card"]').filter({ hasText: 'Throughline' }).first();
   await expect(throughlineCard).toBeVisible();
-  await expect(page.locator('[data-testid="project-card"]').first()).toContainText('Throughline');
+  await expect(page.locator('[data-testid="project-card"]').first()).toContainText('Moto Track');
   await throughlineCard.hover();
   await expect(throughlineCard).toHaveAttribute('data-pointer-active', 'true', { timeout: 5_000 });
   await throughlineCard.locator('a[href="/projects/throughline/"]').click();
   await expect(page).toHaveURL(/\/projects\/throughline\/?$/);
 });
 
-test('homepage presents the AI experimentation principles and protects the Lorebound source', async ({ page }) => {
+test('homepage presents the engineering principles and keeps private client source protected', async ({ page }) => {
   await page.goto('/');
 
   const approach = page.locator('#approach');
@@ -201,9 +230,10 @@ test('homepage presents the AI experimentation principles and protects the Loreb
   await expect(approach.getByText('Fallbacks are a feature')).toBeVisible();
   await expect(approach.getByText('User trust shapes architecture')).toBeVisible();
 
-  const loreboundCard = page.locator('[data-testid="project-card"]').filter({ hasText: 'Lorebound' }).first();
-  await expect(loreboundCard.getByText('In development', { exact: true })).toBeVisible();
-  await expect(loreboundCard.getByRole('link', { name: /view code/i })).toHaveCount(0);
+  const fatecCard = page.locator('[data-testid="project-card"]').filter({ hasText: 'FATEC Digital Platform' }).first();
+  await expect(fatecCard.getByText('Private source', { exact: true })).toBeVisible();
+  await expect(fatecCard.getByRole('link', { name: /view code/i })).toHaveCount(0);
+  await expect(page.locator('[data-testid="project-card"]').filter({ hasText: 'Lorebound' })).toHaveCount(0);
 });
 
 test('mobile menu toggles correctly', async ({ page }) => {

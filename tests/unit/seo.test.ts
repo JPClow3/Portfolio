@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
   SITE,
+  buildPersonSchema,
   buildProfessionalServiceSchema,
   getHomeSeo,
   getBlogIndexSeo,
@@ -120,6 +121,19 @@ describe('seo utilities', () => {
       });
 
       expect(schema).not.toHaveProperty('priceRange');
+    });
+  });
+
+  describe('person schema', () => {
+    it('keeps nationality and city-level location semantically distinct', () => {
+      const schema = buildPersonSchema({
+        lang: 'en',
+        siteUrl,
+        description: 'Full-stack product engineer in Brazil.',
+      });
+
+      expect(schema.nationality).toEqual({ '@type': 'Country', name: 'Brazil' });
+      expect(schema.homeLocation).toEqual({ '@type': 'Place', name: 'Rio Verde, GO, Brazil' });
     });
   });
 

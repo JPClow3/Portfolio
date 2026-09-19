@@ -17,7 +17,7 @@
   --bg: 250 250 252;
   --text: 15 23 42;
   --muted: 100 116 139;
-  --primary: 79 70 229;
+  --primary: 0 94 254;
 
   /* App tokens */
   --color-bg-primary: var(--bg);
@@ -29,7 +29,7 @@
   --color-text-muted: var(--muted);
 
   --color-accent: var(--primary);
-  --color-accent-hover: 67 56 202;
+  --color-accent-hover: 0 73 199;
   --color-accent-contrast: 255 255 255;
 
   --color-border: 203 213 225;
@@ -40,12 +40,12 @@
   --color-error-light: 254 226 226;
   --color-error-text: 127 29 29;
 
-  /* Activity heatmap (cold scale - light) */
+  /* Activity heatmap (brand blue scale - light) */
   --activity-empty: 226 232 240;
-  --activity-low: 186 230 253;
-  --activity-mid: 125 211 252;
-  --activity-high: 14 165 233;
-  --activity-peak: 3 105 161;
+  --activity-low: 191 219 254;
+  --activity-mid: 96 165 250;
+  --activity-high: 0 94 254;
+  --activity-peak: 0 58 166;
 
   /* Glass overlays */
   --glass-tint: 255 255 255;
@@ -66,7 +66,7 @@ html.dark {
   --bg: 9 9 11;
   --text: 241 245 249;
   --muted: 148 163 184;
-  --primary: 99 102 241;
+  --primary: 0 94 254;
 
   --color-bg-primary: var(--bg);
   --color-bg-secondary: 24 24 27;
@@ -77,7 +77,7 @@ html.dark {
   --color-text-muted: var(--muted);
 
   --color-accent: var(--primary);
-  --color-accent-hover: 129 140 248;
+  --color-accent-hover: 96 165 250;
   --color-accent-contrast: 255 255 255;
 
   --color-border: 63 63 70;
@@ -89,10 +89,10 @@ html.dark {
   --color-error-text: 254 226 226;
 
   --activity-empty: 51 65 85;
-  --activity-low: 8 47 73;
-  --activity-mid: 7 89 133;
-  --activity-high: 14 165 233;
-  --activity-peak: 125 211 252;
+  --activity-low: 30 64 175;
+  --activity-mid: 0 73 199;
+  --activity-high: 0 94 254;
+  --activity-peak: 147 197 253;
 
   --glass-tint: 226 244 255;
   --glass-shadow: 2 6 23;
@@ -313,7 +313,7 @@ html.dark .hover-lift:focus-visible {
 
 .text-gradient,
 .gradient-text {
-  background: linear-gradient(to right, #4f46e5, #0ea5e9);
+  background: linear-gradient(to right, #005EFE, #0090FF);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -321,7 +321,7 @@ html.dark .hover-lift:focus-visible {
 
 html.dark .text-gradient,
 html.dark .gradient-text {
-  background: linear-gradient(to right, #818cf8, #38bdf8);
+  background: linear-gradient(to right, #7BABFF, #38BDF8);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -367,8 +367,8 @@ html.dark .gradient-text {
   pointer-events: none;
   opacity: 0;
   background:
-    radial-gradient(circle at var(--spot-x) var(--spot-y), rgb(125 211 252 / 0.2), transparent 34%),
-    linear-gradient(135deg, rgb(14 165 233 / 0.18), transparent 42%, rgb(37 99 235 / 0.12));
+    radial-gradient(circle at var(--spot-x) var(--spot-y), rgb(147 197 253 / 0.2), transparent 34%),
+    linear-gradient(135deg, rgb(0 94 254 / 0.18), transparent 42%, rgb(0 73 199 / 0.12));
   transition: opacity 180ms ease;
 }
 
@@ -460,7 +460,7 @@ html.dark .gradient-text {
   min-height: 20rem;
   background:
     radial-gradient(circle at bottom left, rgb(var(--color-accent) / 0.08) 0 28%, transparent 29%),
-    radial-gradient(circle at top right, rgb(14 165 233 / 0.1) 0 24%, transparent 25%),
+    radial-gradient(circle at top right, rgb(0 144 255 / 0.1) 0 24%, transparent 25%),
     linear-gradient(180deg, rgb(var(--glass-tint) / var(--glass-bg-opacity)) 0%, rgb(var(--color-bg-secondary) / 0.58) 100%);
   background-size: 9rem 9rem, 8rem 8rem, auto;
 }
@@ -468,7 +468,7 @@ html.dark .gradient-text {
 html.dark .profile-identity-surface {
   background:
     radial-gradient(circle at bottom left, rgb(var(--color-accent) / 0.13) 0 28%, transparent 29%),
-    radial-gradient(circle at top right, rgb(14 165 233 / 0.12) 0 24%, transparent 25%),
+    radial-gradient(circle at top right, rgb(0 144 255 / 0.12) 0 24%, transparent 25%),
     linear-gradient(180deg, rgb(var(--glass-tint) / 0.08) 0%, rgb(var(--color-bg-secondary) / 0.7) 100%);
 }
 
@@ -504,7 +504,7 @@ html.dark .profile-identity-surface {
   position: absolute;
   inset: 18% 21%;
   border-radius: 999px;
-  background: linear-gradient(135deg, rgb(var(--color-accent) / 0.28), rgb(14 165 233 / 0.16));
+  background: linear-gradient(135deg, rgb(var(--color-accent) / 0.28), rgb(0 144 255 / 0.16));
   filter: blur(22px);
   transform: translateZ(-18px);
 }
@@ -519,7 +519,7 @@ html.dark .profile-identity-surface {
   border: 1px solid rgb(var(--color-border) / 0.58);
   background:
     linear-gradient(rgb(var(--color-bg-primary)), rgb(var(--color-bg-primary))) padding-box,
-    linear-gradient(135deg, rgb(var(--color-accent)), rgb(14 165 233), rgb(45 212 191)) border-box;
+    linear-gradient(135deg, rgb(var(--color-accent)), rgb(0 144 255), rgb(96 165 250)) border-box;
   box-shadow:
     inset 0 0 0 4px rgb(var(--color-bg-primary)),
     0 16px 34px rgb(var(--glass-shadow) / 0.16);
@@ -707,7 +707,7 @@ html.dark .profile-identity-surface {
   inset: -1px;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(120deg, rgb(14 165 233 / 0.72), rgb(45 212 191 / 0.58), rgb(96 165 250 / 0.7));
+  background: linear-gradient(120deg, rgb(0 94 254 / 0.72), rgb(0 178 255 / 0.58), rgb(96 165 250 / 0.7));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -769,7 +769,7 @@ html.dark .profile-identity-surface {
   height: 100%;
   width: calc(var(--quality-score) * 1%);
   border-radius: inherit;
-  background: linear-gradient(90deg, rgb(8 145 178), rgb(14 165 233), rgb(96 165 250));
+  background: linear-gradient(90deg, rgb(0 73 199), rgb(0 94 254), rgb(96 165 250));
   position: relative;
   overflow: hidden;
   transform-origin: left;

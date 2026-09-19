@@ -179,7 +179,7 @@
 
   :global(html.dark) .theme-swap {
     background:
-      radial-gradient(circle at 70% 20%, rgb(129 140 248 / 0.2), transparent 36%),
+      radial-gradient(circle at 70% 20%, rgb(96 165 250 / 0.2), transparent 36%),
       rgb(var(--color-bg-secondary) / 0.88);
   }
 

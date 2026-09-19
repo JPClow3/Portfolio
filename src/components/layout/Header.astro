@@ -72,10 +72,29 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
         href={`${localePrefix}/`}
         id="site-logo"
         data-logo-signal
-        class="header-logo text-lg font-bold gradient-text transition-opacity hover:opacity-85 focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
-        aria-label="Joao Paulo home"
+        class="header-logo inline-flex items-center transition-opacity hover:opacity-85 focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
+        aria-label="JPCLOW home"
       >
-        JP<span class="text-[rgb(var(--color-text-secondary))]">.</span>
+        <img
+          src="/brand/jpclow-logo.svg"
+          alt="JPCLOW"
+          width="47"
+          height="32"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+          class="header-logo-light h-8 w-auto"
+        />
+        <img
+          src="/brand/jpclow-logo-negative.svg"
+          alt="JPCLOW"
+          width="47"
+          height="32"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+          class="header-logo-dark h-8 w-auto"
+        />
       </a>
 
       <!-- Desktop Navigation -->
@@ -566,6 +585,22 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
 </script>
 
 <style>
+  .header-logo-light {
+    display: block;
+  }
+
+  .header-logo-dark {
+    display: none;
+  }
+
+  :global(html.dark) .header-logo-light {
+    display: none;
+  }
+
+  :global(html.dark) .header-logo-dark {
+    display: block;
+  }
+
   #header.scrolled {
     background: rgb(var(--color-bg-primary) / 0.72);
     backdrop-filter: blur(24px) saturate(120%);

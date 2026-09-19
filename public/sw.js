@@ -7,7 +7,15 @@ const PRECACHE_ASSETS = [
   '/site.webmanifest',
   '/favicon.svg',
   '/favicon.ico',
+  '/favicon-16x16.png',
+  '/favicon-32x32.png',
+  '/favicon-192x192.png',
+  '/favicon-512x512.png',
   '/apple-touch-icon.png',
+  '/brand/jpclow-logo.svg',
+  '/brand/jpclow-logo-negative.svg',
+  '/brand/jpclow-icon.svg',
+  '/brand/jpclow-icon-negative.svg',
   '/og-image.png',
 ];
 

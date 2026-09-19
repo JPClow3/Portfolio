@@ -91,7 +91,7 @@
     width: 3rem;
     height: 3rem;
     border-radius: 0.625rem;
-    background: linear-gradient(135deg, rgb(var(--color-accent)), rgb(14 165 233));
+    background: linear-gradient(135deg, rgb(var(--color-accent)), rgb(0 144 255));
     color: rgb(var(--color-accent-contrast));
     border: 1px solid rgb(var(--color-border) / 0.65);
     cursor: pointer;

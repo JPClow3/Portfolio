@@ -99,13 +99,13 @@
         keyLight.position.set(2.5, 3.5, 5.5);
         scene.add(keyLight);
 
-        const fillLight = new THREE.PointLight(0x7dd3fc, 0.65, 16);
+        const fillLight = new THREE.PointLight(0x5b95ff, 0.65, 16);
         fillLight.position.set(-3.5, -1.5, 4.5);
         scene.add(fillLight);
 
         const prismGeometry = new THREE.IcosahedronGeometry(isMobile ? 0.92 : 1.28, 1);
         const prismMaterial = new THREE.MeshPhysicalMaterial({
-          color: 0x7dd3fc,
+          color: 0x005efe,
           roughness: 0.2,
           metalness: 0.04,
           transparent: true,
@@ -121,7 +121,7 @@
 
         const edgeGeometry = new THREE.EdgesGeometry(prismGeometry, 14);
         const edgeMaterial = new THREE.LineBasicMaterial({
-          color: 0x7dd3fc,
+          color: 0x005efe,
           transparent: true,
           opacity: isMobile ? 0.24 : 0.34,
         });
@@ -130,7 +130,7 @@
         heroGroup.add(edges);
 
         const ringMaterial = new THREE.MeshBasicMaterial({
-          color: 0x38bdf8,
+          color: 0x0090ff,
           transparent: true,
           opacity: isMobile ? 0.07 : 0.11,
           depthWrite: false,
@@ -172,7 +172,7 @@
 
         particlesGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
         const particlesMaterial = new THREE.PointsMaterial({
-          color: 0x7dd3fc,
+          color: 0x5b95ff,
           size: isMobile ? 0.017 : 0.021,
           transparent: true,
           opacity: isMobile ? 0.28 : 0.36,
@@ -205,7 +205,7 @@
 
         lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
         const lineMaterial = new THREE.LineBasicMaterial({
-          color: 0x93c5fd,
+          color: 0x60a5fa,
           transparent: true,
           opacity: isMobile ? 0.08 : 0.13,
         });
@@ -214,7 +214,7 @@
         fieldGroup.add(depthLines);
 
         const ribbonMaterial = new THREE.LineBasicMaterial({
-          color: 0x7dd3fc,
+          color: 0x0090ff,
           transparent: true,
           opacity: isMobile ? 0.07 : 0.1,
         });
@@ -244,8 +244,8 @@
         }
 
         const applyTheme = () => {
-          const accent = readCssColor('--color-accent', 0x7dd3fc);
-          const hover = readCssColor('--color-accent-hover', 0xbae6fd);
+          const accent = readCssColor('--color-accent', 0x005efe);
+          const hover = readCssColor('--color-accent-hover', 0x60a5fa);
 
           prismMaterial.color.copy(accent);
           edgeMaterial.color.copy(accent);
@@ -597,7 +597,7 @@
     background: linear-gradient(
       135deg,
       rgb(var(--color-accent) / 0.1) 0%,
-      rgb(14 165 233 / 0.08) 100%
+      rgb(0 144 255 / 0.08) 100%
     );
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
@@ -607,7 +607,7 @@
     inset: 0;
     background:
       linear-gradient(135deg, rgb(var(--color-accent) / 0.07), transparent 36%),
-      linear-gradient(225deg, rgb(14 165 233 / 0.055), transparent 46%);
+      linear-gradient(225deg, rgb(0 144 255 / 0.055), transparent 46%);
   }
 
   .error-gradient {
@@ -616,7 +616,7 @@
     background: linear-gradient(
       135deg,
       rgb(var(--color-accent) / 0.06) 0%,
-      rgb(14 165 233 / 0.05) 100%
+      rgb(0 144 255 / 0.05) 100%
     );
     display: flex;
     align-items: center;

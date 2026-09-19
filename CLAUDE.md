@@ -87,7 +87,7 @@ npm run preview  # Preview production build
 **Colors** (RGB format for use with `rgb()` and opacity):
 - `--color-bg-primary/secondary/tertiary` — Background levels
 - `--color-text-primary/secondary/muted` — Text hierarchy
-- `--color-accent` / `--color-accent-hover` / `--color-accent-light` — Brand accent (indigo)
+- `--color-accent` / `--color-accent-hover` / `--color-accent-light` — Brand accent (JPCLOW blue `#005EFE`, hover `#0049C7` light / `#60A5FA` dark)
 - `--color-border` — Border color
 - Light mode in `:root`, dark mode in `html.dark`
 

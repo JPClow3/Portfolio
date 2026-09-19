@@ -16,7 +16,7 @@ describe('PWA & Service Worker configuration', () => {
     expect(manifest.short_name).toBeTruthy();
     expect(manifest.start_url).toBe('/');
     expect(manifest.display).toBe('standalone');
-    expect(manifest.theme_color).toBe('#087896');
+    expect(manifest.theme_color).toBe('#005EFE');
     expect(manifest.background_color).toBeTruthy();
     expect(Array.isArray(manifest.icons)).toBe(true);
     expect(manifest.icons.length).toBeGreaterThanOrEqual(2);

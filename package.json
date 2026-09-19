@@ -30,6 +30,7 @@
     "@astrojs/svelte": "^9.0.1",
     "@fontsource/plus-jakarta-sans": "^5.3.0",
     "@resvg/resvg-js": "^2.6.2",
+    "@sentry/browser": "^10.75.0",
     "@tailwindcss/vite": "^4.3.2",
     "@types/three": "^0.185.1",
     "astro": "^7.0.7",

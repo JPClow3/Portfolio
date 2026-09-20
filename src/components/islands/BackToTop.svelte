@@ -90,8 +90,8 @@
     right: 2rem;
     width: 3rem;
     height: 3rem;
-    border-radius: 0.625rem;
-    background: linear-gradient(135deg, rgb(var(--color-accent)), rgb(0 144 255));
+    border-radius: 0.5rem;
+    background: rgb(var(--color-accent));
     color: rgb(var(--color-accent-contrast));
     border: 1px solid rgb(var(--color-border) / 0.65);
     cursor: pointer;
@@ -104,14 +104,16 @@
     transform: translateY(2rem) scale(0.9);
     transition:
       opacity 200ms ease,
-      transform 200ms ease;
-    box-shadow: 0 10px 24px rgb(var(--glass-shadow) / 0.16);
+      transform 200ms ease,
+      background-color 200ms ease;
+    box-shadow: 0 6px 16px rgb(var(--glass-shadow) / 0.14);
     z-index: 40;
   }
 
   .back-to-top-button:hover {
+    background: rgb(var(--color-accent-hover));
     transform: translateY(1rem) scale(1);
-    box-shadow: 0 14px 30px rgb(var(--glass-shadow) / 0.22);
+    box-shadow: 0 8px 20px rgb(var(--glass-shadow) / 0.18);
   }
 
   .back-to-top-button:focus-visible {

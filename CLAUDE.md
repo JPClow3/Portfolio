@@ -82,27 +82,38 @@ npm run preview  # Preview production build
 
 ## Design System (`src/styles/global.css`)
 
+Follows the JPCLOW Manual de Identidade Visual v1.0 (institutional source of truth for brand).
+Known exception: `HeroScene.svelte` (Three.js particles) is kept per owner decision, even though
+Manual §9 recommends avoiding excess particles/futurist effects.
+
 ### CSS Variables
 
+**Institutional tokens (Manual §19.1–§19.4):**
+- `--jpclow-blue: #005EFE`, `--jpclow-dark: #1D2026`, `--jpclow-bg: #F7F8FA`, `--jpclow-surface: #FFFFFF`
+- `--jpclow-text-secondary: #667085`, `--jpclow-border: #DDE1E7`
+- `--jpclow-bg-dark: #0E1014`, `--jpclow-surface-dark: #171A20`
+- `--space-1`–`--space-8`: 4, 8, 16, 24, 32, 48, 64, 96px
+- `--radius-sm/md/lg`: 4 / 8 / 12px (small elements / buttons / cards — no pills)
+- `--font-body: "Inter", Arial, sans-serif`; `--font-display: "Space Grotesk", "Inter", Arial, sans-serif`
+- Type scale §7.4: display 64, H1 48, H2 36, H3 28, H4 22, body-lg 18, body 16, small 14, caption 12px
+
 **Colors** (RGB format for use with `rgb()` and opacity):
-- `--color-bg-primary/secondary/tertiary` — Background levels
-- `--color-text-primary/secondary/muted` — Text hierarchy
-- `--color-accent` / `--color-accent-hover` / `--color-accent-light` — Brand accent (JPCLOW blue `#005EFE`, hover `#0049C7` light / `#60A5FA` dark)
-- `--color-border` — Border color
-- Light mode in `:root`, dark mode in `html.dark`
+- `--color-bg-primary/secondary/tertiary` — Background levels (`#F7F8FA` / `#FFFFFF` light; `#0E1014` / `#171A20` / `#1D2026` dark)
+- `--color-text-primary/secondary/muted` — Text hierarchy (secondary `#667085` light)
+- `--color-accent` / `--color-accent-hover` — Brand accent `#005EFE`, hover `#0049C7` light / `#60A5FA` dark (legible variant, never a logo recolor)
+- `--color-accent-contrast: 255 255 255`
+- `--color-border` — `#DDE1E7` light / `#2A313B`-range dark
+- `--color-success` / `--color-warning` / `--color-error` — Functional status colors, always paired with text/icon (§6.4)
+- Light mode in `:root`, dark mode in `html.dark` (base `#0E1014`, never pure black)
 
-**Shadows** (3 elevation levels):
-- `--shadow-elevation-low/medium/high` — Progressive depth
-- `--shadow-accent-glow` — Neon glow effect for accent elements
+**Typography:**
+- Headings (`h1`–`h6`): Space Grotesk (Medium/Semibold/Bold)
+- Body/UI: Inter (Regular/Medium/Semibold); fallbacks Arial / system sans-serif
 
-**Transitions:**
-- `--transition-fast` (150ms), `--transition-base` (200ms), `--transition-slow` (300ms)
-
-**Fluid Typography** (responsive via `clamp()`):
-- `--font-size-xs` through `--font-size-5xl` — 9 scales, no media queries needed
-
-**Proficiency Colors** (used in Skills):
-- `--color-proficiency-advanced` (green), `--color-proficiency-intermediate` (amber), `--color-proficiency-native` (blue)
+**Shadows (discreet, functional — Manual §13.1):**
+- `.hover-lift`: `translateY(-4px)` + `0 6px 16px` neutral shadow (no accent glow)
+- `.hover-glow`: subtle neutral shadow only
+- No heavy/glow shadows as a default style
 
 ### Utility Classes
 
@@ -110,9 +121,9 @@ npm run preview  # Preview production build
 |-------|---------|
 | `.glass` | Glassmorphism: `backdrop-blur(12px)`, 70% bg opacity |
 | `.glass-card` | Stronger glass: `backdrop-blur(16px)`, 60% bg, elevated shadow, border |
-| `.gradient-text` | Multi-color gradient text fill |
+| `.gradient-text` | Solid brand-accent text (sobriety: no gradient fill per Manual §6) |
 | `.hover-lift` | Hover: `translateY(-4px)` + medium shadow |
-| `.hover-glow` | Hover: accent glow box-shadow |
+| `.hover-glow` | Hover: subtle neutral shadow only |
 | `.link-underline` | Animated underline via `::after` pseudo-element |
 | `.skip-link` | Accessibility skip-to-content (visible on `:focus`) |
 
@@ -135,7 +146,7 @@ npm run preview  # Preview production build
 ## Reusable Components
 
 ### `Icon.astro`
-Centralized SVG icon system using Feather icon paths.
+Centralized SVG icon system (Lucide-compatible, uniform `stroke-width: 2` per Manual §10).
 
 **Props:** `name` (required), `size` (default: 24), `class` (optional)
 
@@ -213,7 +224,7 @@ Located in `src/content/`, schemas in `config.ts`:
 ### SEO & Performance
 - JSON-LD Person structured data in BaseLayout
 - OG + Twitter Card meta tags
-- Self-hosted fonts via `@fontsource/plus-jakarta-sans` (zero external font CDNs)
+- Self-hosted fonts via `@fontsource/inter` + `@fontsource/space-grotesk` (zero external font CDNs)
 - Skip link for keyboard navigation
 - Auto-generated sitemap via `@astrojs/sitemap`
 - Static output (SSG) — all HTML generated at build time
@@ -252,6 +263,7 @@ Configured in `tsconfig.json`:
 - `src/components/islands/HeroScene.svelte` — Three.js 3D scene
 - `src/components/islands/ThemeToggle.svelte` — Theme toggle with icon animation
 - `src/layouts/BaseLayout.astro` — SEO, structured data, theme init, font loading
+- `public/brand/` — Official logo/symbol SVGs (`logo-primary`, `logo-negative`, `icon-primary`, `icon-negative` + `README.txt`); source of truth is the Brand Pack
 
 ## Code Conventions
 - **Astro components:** Static content, layouts, sections (zero JS by default)

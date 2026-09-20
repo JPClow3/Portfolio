@@ -19,7 +19,7 @@ const {
 ---
 
 <div class="glass-panel flex flex-col items-center justify-center rounded-lg p-10 text-center sm:p-14 transition-all duration-300">
-  <div class="mb-5 inline-flex h-16 w-16 items-center justify-center rounded-full bg-[rgb(var(--color-bg-tertiary))] text-[rgb(var(--color-text-muted))] shadow-inner">
+  <div class="mb-5 inline-flex h-16 w-16 items-center justify-center rounded-lg bg-[rgb(var(--color-bg-tertiary))] text-[rgb(var(--color-text-muted))] shadow-sm">
     <Icon name={iconName} size={32} class="opacity-70" />
   </div>
   
@@ -34,7 +34,7 @@ const {
   {actionText && actionHref && (
     <a
       href={actionHref}
-      class="inline-flex items-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-5 py-2.5 text-sm font-bold text-[rgb(var(--color-accent-contrast))] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-accent-glow)]"
+      class="inline-flex items-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-5 py-2.5 text-sm font-bold text-[rgb(var(--color-accent-contrast))] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[rgb(var(--color-accent-hover))]"
     >
       {actionText}
     </a>

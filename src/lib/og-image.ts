@@ -33,27 +33,30 @@ function loadFonts(): LoadedFont[] {
 
   const fontPaths = [
     {
+      name: 'Inter',
       weight: 400 as const,
-      subpath: 'node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-400-normal.woff',
+      subpath: 'node_modules/@fontsource/inter/files/inter-latin-400-normal.woff',
     },
     {
+      name: 'Inter',
       weight: 600 as const,
-      subpath: 'node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-600-normal.woff',
+      subpath: 'node_modules/@fontsource/inter/files/inter-latin-600-normal.woff',
     },
     {
+      name: 'Space Grotesk',
       weight: 700 as const,
-      subpath: 'node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-700-normal.woff',
+      subpath: 'node_modules/@fontsource/space-grotesk/files/space-grotesk-latin-700-normal.woff',
     },
   ];
 
   const fonts: LoadedFont[] = [];
   const cwd = process.cwd();
 
-  for (const { weight, subpath } of fontPaths) {
+  for (const { name, weight, subpath } of fontPaths) {
     const fullPath = resolve(cwd, subpath);
     if (existsSync(fullPath)) {
       fonts.push({
-        name: 'Plus Jakarta Sans',
+        name,
         data: readFileSync(fullPath),
         weight,
         style: 'normal',
@@ -62,7 +65,7 @@ function loadFonts(): LoadedFont[] {
   }
 
   if (fonts.length === 0) {
-    throw new Error('Could not load Plus Jakarta Sans fonts for OG image generation');
+    throw new Error('Could not load Inter / Space Grotesk fonts for OG image generation');
   }
 
   cachedFonts = fonts;
@@ -99,9 +102,9 @@ export async function renderOgSvg(options: OgImageOptions): Promise<string> {
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: '56px 64px',
-          background: 'linear-gradient(145deg, #090D16 0%, #0c1527 50%, #0F172A 100%)',
+          background: 'linear-gradient(145deg, #0E1014 0%, #12161D 50%, #171A20 100%)',
           color: 'white',
-          fontFamily: 'Plus Jakarta Sans',
+          fontFamily: 'Inter',
           position: 'relative',
         },
         children: [
@@ -161,8 +164,8 @@ export async function renderOgSvg(options: OgImageOptions): Promise<string> {
                             alignItems: 'center',
                             gap: '8px',
                             background: 'rgba(0, 94, 254, 0.14)',
-                            border: '1px solid rgba(91, 149, 255, 0.4)',
-                            borderRadius: '9999px',
+                            border: '1px solid rgba(96, 165, 250, 0.4)',
+                            borderRadius: '8px',
                             padding: '6px 16px',
                           },
                           children: [
@@ -173,7 +176,7 @@ export async function renderOgSvg(options: OgImageOptions): Promise<string> {
                                   width: '8px',
                                   height: '8px',
                                   borderRadius: '9999px',
-                                  backgroundColor: '#5B95FF',
+                                  backgroundColor: '#60A5FA',
                                 },
                               },
                             },
@@ -183,7 +186,7 @@ export async function renderOgSvg(options: OgImageOptions): Promise<string> {
                                 style: {
                                   fontSize: '14px',
                                   fontWeight: 700,
-                                  color: '#5B95FF',
+                                  color: '#60A5FA',
                                   letterSpacing: '0.12em',
                                   textTransform: 'uppercase',
                                 },
@@ -200,7 +203,7 @@ export async function renderOgSvg(options: OgImageOptions): Promise<string> {
                               style: {
                                 background: 'rgba(255, 255, 255, 0.05)',
                                 border: '1px solid rgba(255, 255, 255, 0.12)',
-                                borderRadius: '9999px',
+                                borderRadius: '8px',
                                 padding: '6px 14px',
                                 fontSize: '13px',
                                 fontWeight: 600,
@@ -248,6 +251,7 @@ export async function renderOgSvg(options: OgImageOptions): Promise<string> {
                     style: {
                       fontSize: `${titleFontSize}px`,
                       fontWeight: 700,
+                      fontFamily: 'Space Grotesk, Inter',
                       color: '#F8FAFC',
                       lineHeight: 1.15,
                       letterSpacing: '-0.025em',

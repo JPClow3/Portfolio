@@ -1,51 +1,44 @@
 ---
 title: "Farm-Fin"
 slug: "farm-fin"
-description: "Uma aplicação web privada de gestão financeira e agronômica que conecta fluxo de caixa, safras, insumos, estoque, barter, hedge, DRE e o LCDPR brasileiro."
+description: "Projeto acadêmico da disciplina Prática de Engenharia de Software da UniRV sobre modelagem de fluxos financeiros e operacionais no agronegócio."
 tech: ["Next.js", "React", "TypeScript", "Neon Postgres", "Drizzle", "Cloudflare", "Excel"]
 featured: false
 order: 15
 lang: "pt"
 caseStudy: true
-status: "private-source"
-role: "Arquitetura de produto, modelagem financeira/agronômica, interface e deploy"
+status: "in-development"
+role: "Modelagem de domínio e implementação em projeto da disciplina Prática de Engenharia de Software da UniRV"
 year: "2026"
 decisionLog:
   problem: "O controle financeiro rural costuma ficar dividido entre arquivos bancários, planilhas, relatórios contábeis, estoque de insumos, registros de safra e contratos físicos de commodities."
-  constraint: "O sistema precisa preservar rastreabilidade contábil entre parcelas, aprovações, conciliações, unidades, rateios, saída fiscal e visões operacionais por safra."
-  decision: "Modelei os fluxos em uma aplicação Next.js com TypeScript estrito, Neon e Drizzle, usando estados explícitos do domínio e exportações nativas para integração operacional."
-  outcome: "Gestores conectam caixa, estoque, custo por área, recebíveis, barter, hedge, DRE e LCDPR em um único modelo operacional consistente."
-metrics:
-  - label: "Grupos centrais de fluxo"
-    value: "9"
-  - label: "Saída fiscal"
-    value: "LCDPR layout 1.3"
-  - label: "Exportações operacionais"
-    value: "XLSX nativo com múltiplas abas"
+  constraint: "O exercício exige pensar na rastreabilidade entre parcelas, aprovações, conciliações, unidades, rateios, saída fiscal e visões por safra, sem tratar o protótipo como sistema implantado em uma fazenda."
+  decision: "O domínio foi modelado em uma aplicação Next.js com TypeScript, Neon e Drizzle, com estados explícitos para estudar as relações entre os fluxos."
+  outcome: "O trabalho organiza requisitos e decisões de implementação para um protótipo acadêmico de gestão rural; não representa uma operação em produção."
 highlights:
-  - "Contas, cenários de caixa, conciliação bancária, recorrência e aprovações"
-  - "Contratos de barter e hedge com estados físicos e financeiros"
-  - "Custo médio, lotes, validade, Kardex e rateio por talhão/safra"
-  - "DRE agrícola, geração do LCDPR, impressão e exportações Excel"
+  - "Modelagem de contas, cenários de caixa, conciliação, recorrência e aprovações"
+  - "Estudo de contratos de barter e hedge e seus estados físicos e financeiros"
+  - "Modelagem de estoque, custo médio e rateio por talhão e safra"
+  - "Exploração de DRE agrícola, LCDPR e exportações para a rotina contábil"
 ---
 
 ## Visão geral
 
-Farm-Fin é uma plataforma privada para o agronegócio que conecta controles financeiros à realidade física da fazenda. Movimentos de caixa, safras, talhões, máquinas, insumos, estoque, barter, hedge, demonstrativos e obrigações fiscais compartilham um único domínio.
+Farm-Fin é um projeto da disciplina Prática de Engenharia de Software da UniRV. O protótipo explora como controles financeiros podem se relacionar com safras, talhões, máquinas, insumos, estoque, contratos e obrigações fiscais. É um trabalho acadêmico em desenvolvimento, sem operação em fazendas.
 
 ## Decisões de produto
 
-A aplicação usa estados de workflow explícitos em vez de tratar todo registro como transação genérica. Contas a pagar carregam parcelas, recorrência, anexos, aprovações e aging; contratos permanecem abertos até fixação ou entrega; estoque preserva lote e histórico de custo médio.
+Na modelagem do protótipo, estados explícitos ajudam a diferenciar parcelas, aprovações, contratos e movimentos de estoque em vez de tratar tudo como uma transação genérica.
 
-Next.js e TypeScript estrito definem a superfície, Neon Postgres e Drizzle sustentam o modelo relacional e exportações XLSX com múltiplas abas mantêm o sistema integrado ao trabalho de contadores e processos já estabelecidos.
+Next.js e TypeScript definem a aplicação; Neon Postgres e Drizzle apoiam o modelo relacional. O estudo também considera exportações XLSX para representar a troca de informações com rotinas contábeis.
 
-## O que eu construí
+## Escopo estudado no protótipo
 
-- Cadastros de fazendas, talhões, safras, parceiros, máquinas e colaboradores.
-- Contas, aprovações, recorrência, cenários de caixa e conciliação.
-- Barter, hedge, estoque, custo médio, lotes, Kardex e rateio de overhead.
-- Custo por safra/talhão, DRE agrícola, LCDPR 1.3, impressão e Excel.
+- Cadastro e relação entre fazendas, talhões, safras, parceiros e máquinas.
+- Estados de contas, aprovações, recorrência, cenários de caixa e conciliação.
+- Relações entre contratos, estoque, custo médio, lotes e rateio.
+- Requisitos de custo por safra, DRE agrícola, LCDPR e exportação.
 
 ## Disponibilidade do código
 
-Farm-Fin é um trabalho de código privado. Este estudo de caso apresenta domínio e arquitetura sem expor dados de clientes ou detalhes proprietários.
+O código do Farm-Fin é privado. Este estudo de caso apresenta a proposta e decisões de engenharia do trabalho acadêmico, sem sugerir uso em produção ou dados de clientes.

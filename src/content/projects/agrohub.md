@@ -10,20 +10,13 @@ order: 2
 lang: "en"
 caseStudy: true
 status: "live"
-role: "Freelance full-stack — design and development, solo"
+role: "Web application development for a UniRV institutional project"
 year: "2026"
 decisionLog:
   problem: "UniRV's innovation ecosystem had no single entry point for startups, mentors, partners, and the public to find incubation programs, events, and institutional information."
   constraint: "The portal had to serve very different audiences — applicants, partners, and compliance/transparency requirements — without becoming a slow, hard-to-maintain institutional CMS."
-  decision: "Built a server-rendered Django application with HTMX for focused interactivity and Alpine.js for lightweight client-side behavior, shipped as containers behind Docker Swarm and managed through Portainer."
+  decision: "Contributed to the server-rendered Django application, using HTMX for focused interactivity and Alpine.js for lightweight client-side behavior, and shipping it in containers behind Docker Swarm."
   outcome: "AgroHub UniRV now centralizes the startup directory, events calendar, service listings, and institutional access channels in a portal that stays fast and simple to operate."
-metrics:
-  - label: "Startups incubated"
-    value: "38+"
-  - label: "Projects supported"
-    value: "100+"
-  - label: "Partnerships"
-    value: "20+"
 highlights:
   - "Public directory of incubated startups"
   - "Events calendar for mentorships, workshops, and pitch days"
@@ -39,7 +32,7 @@ AgroHub UniRV is the innovation and entrepreneurship hub portal for Universidade
 
 The stack favors reliability and low operating cost over novelty. Django owns the domain model and server-rendered pages, HTMX adds interactivity exactly where it's needed, and Alpine.js handles small client-side behaviors without pulling in a full frontend framework. The app runs as containers orchestrated with Docker Swarm and managed day-to-day through Portainer.
 
-## What I Built
+## Technical Contributions
 
 - A public directory of incubated startups with program details.
 - An events calendar covering mentorships, workshops, and pitch days.
@@ -48,4 +41,4 @@ The stack favors reliability and low operating cost over novelty. Django owns th
 
 ## Role
 
-Freelance engagement covering the full build: UI/UX design, frontend, backend, and deployment, delivered solo.
+AgroHub is a UniRV institutional project developed with the hub team. My role focused on web application development and deployment. UniRV leads the initiative and its institutional decisions.

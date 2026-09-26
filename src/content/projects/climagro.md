@@ -1,7 +1,7 @@
 ---
 title: "ClimAgro"
 slug: "climagro"
-description: "An operational Django agronomy web platform that turns daily and hourly weather data into water-balance, irrigation, and fire-risk decisions."
+description: "ClimAgro UniRV, coordinated by Prof. Dr. Gilmar Oliveira Santos, brings together weather data and climate analysis to support agricultural planning in Rio Verde."
 tech: ["Python", "Django", "JavaScript", "PostgreSQL", "INMET", "FAO-56", "Docker", "Playwright"]
 image: "/projects/climagro.webp"
 featured: true
@@ -9,13 +9,13 @@ order: 5
 lang: "en"
 caseStudy: true
 status: "private-source"
-role: "Full-stack engineering, producer/consumer data contracts, agronomic models, and operations"
+role: "Web platform and data-flow development in a project coordinated by Prof. Dr. Gilmar Oliveira Santos"
 year: "2026"
 decisionLog:
   problem: "Raw station measurements are difficult to turn into timely, explainable irrigation and climate decisions for producers and technical teams."
   constraint: "The product depends on a separate ingestion service, incomplete historical windows, agronomic formulas, and infrastructure that must fail honestly when upstream data is stale or unavailable."
-  decision: "Separated weather ingestion from the Django product, pinned their OpenAPI contract, implemented FAO-56-based calculations with explicit warm-up semantics, and added accessible tables alongside interactive charts."
-  outcome: "Users can inspect daily and hourly climate data, water balance, irrigation estimates, and fire-risk inputs through operational workflows that expose freshness and gaps instead of hiding them."
+  decision: "The implementation separates weather ingestion from the Django application through an OpenAPI contract; FAO-56-based calculations include explicit historical warm-up, and charts are paired with accessible tables."
+  outcome: "The platform presents daily and hourly climate data, water balance, irrigation estimates, and fire-risk inputs while indicating data freshness and gaps."
 metrics:
   - label: "Weather resolution"
     value: "Daily + hourly"
@@ -32,7 +32,7 @@ highlights:
 
 ## Overview
 
-ClimAgro turns meteorological measurements into operational agronomy tools. Daily and hourly station data feed climate summaries, water balance, irrigation calculations, newsletters, and a fire-risk workflow.
+ClimAgro UniRV is coordinated by Prof. Dr. Gilmar Oliveira Santos to make regional weather information, historical data, and climate analysis available for agricultural planning. It also serves researchers, students, and the wider community. My contribution is to the web platform and its data flows.
 
 ## Product decisions
 
@@ -40,7 +40,7 @@ Ingestion and presentation are separate services with an explicit contract. The 
 
 Agronomic outputs preserve chronology as well as totals. Water-balance calculations include the historical warm-up required for the selected period, expose residual deficit by magnitude and duration, and pair interactive charts with accessible tabular data and downloads.
 
-## What I built
+## Technical contributions
 
 - Daily and hourly station-data exploration with monthly and annual summaries.
 - FAO-56 evapotranspiration, water balance, irrigation, and fire-risk workflows.
@@ -50,4 +50,4 @@ Agronomic outputs preserve chronology as well as totals. Water-balance calculati
 
 ## Source availability
 
-ClimAgro is institutional work operated from private repositories. The case study documents the public product behavior and non-sensitive engineering decisions.
+ClimAgro is a UniRV institutional project under the technical and scientific coordination of Prof. Dr. Gilmar Oliveira Santos, operated from private repositories. This case study describes my technical contribution without attributing authorship or coordination of the project to me.

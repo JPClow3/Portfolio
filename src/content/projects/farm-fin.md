@@ -1,51 +1,44 @@
 ---
 title: "Farm-Fin"
 slug: "farm-fin"
-description: "A private-source web platform for financial and agronomic management that connects farm cash flow, crops, inputs, inventory, barter, hedge, DRE, and Brazilian LCDPR reporting."
+description: "An academic project for UniRV's Software Engineering Practice course, exploring financial and operational workflows for Brazilian agriculture."
 tech: ["Next.js", "React", "TypeScript", "Neon Postgres", "Drizzle", "Cloudflare", "Excel"]
 featured: false
 order: 15
 lang: "en"
 caseStudy: true
-status: "private-source"
-role: "Product architecture, financial/agronomic domain modeling, interface, and deployment"
+status: "in-development"
+role: "Domain modeling and implementation for UniRV's Software Engineering Practice course"
 year: "2026"
 decisionLog:
   problem: "Farm financial control is often split between bank files, spreadsheets, accounting reports, input inventory, crop records, and physical commodity contracts."
-  constraint: "The system must preserve accounting traceability across installments, approvals, reconciliations, units, cost allocation, tax output, and crop-specific operational views."
-  decision: "Modeled the workflows in a strict TypeScript/Next.js application backed by Neon and Drizzle, with explicit domain states and native spreadsheet exports for operational handoff."
-  outcome: "Farm managers can connect cash, inventory, field cost, receivables, barter, hedge, DRE, and LCDPR work in one consistent operational model."
-metrics:
-  - label: "Core workflow groups"
-    value: "9"
-  - label: "Tax output"
-    value: "LCDPR layout 1.3"
-  - label: "Operational exports"
-    value: "Native multi-sheet XLSX"
+  constraint: "The exercise must account for traceability across installments, approvals, reconciliation, units, allocation, tax output, and crop-specific views without presenting the prototype as a deployed farm system."
+  decision: "The domain was modeled in a Next.js and TypeScript application backed by Neon and Drizzle, using explicit states to study relationships among workflows."
+  outcome: "The work organizes requirements and implementation decisions for an academic rural-management prototype; it does not represent a production operation."
 highlights:
-  - "Payables, receivables, cash-flow scenarios, bank reconciliation, and approvals"
-  - "Barter and hedge contracts with physical and financial settlement states"
-  - "Weighted-average inventory, lots, expiry, Kardex, and field/crop cost allocation"
-  - "Agricultural DRE, LCDPR generation, printable reports, and Excel exports"
+  - "Modeling payables, cash-flow scenarios, reconciliation, recurrence, and approvals"
+  - "Studying barter and hedge contracts and their physical and financial states"
+  - "Modeling inventory, weighted-average cost, and field/crop allocation"
+  - "Exploring agricultural DRE, LCDPR, and exports for accounting workflows"
 ---
 
 ## Overview
 
-Farm-Fin is a private agribusiness platform that connects financial controls with the physical reality of a farm. Cash movements, crops, fields, machinery, inputs, inventory, barter, hedge, accounting statements, and tax output share one domain model.
+Farm-Fin is a project for UniRV's Software Engineering Practice course. The prototype explores how financial controls relate to crops, fields, machinery, inputs, inventory, contracts, and tax reporting. It is academic work in development, not a system operating on farms.
 
 ## Product decisions
 
-The application uses explicit workflow states instead of treating every record as a generic transaction. Payables can carry installments, recurrence, attachments, approvals, and aging; contracts can remain open until price fixation or physical delivery; inventory preserves lot and weighted-average cost history.
+The prototype models explicit states for installments, approvals, contracts, and inventory movements instead of treating every record as a generic transaction.
 
-Next.js and strict TypeScript define the product surface, Neon Postgres and Drizzle hold the relational model, and multi-sheet XLSX exports keep the system useful alongside accountants and established operational processes.
+Next.js and TypeScript define the application, while Neon Postgres and Drizzle support the relational model. The study also considers XLSX exports to represent information exchange with accounting workflows.
 
-## What I built
+## Scope explored in the prototype
 
-- Farm, field, crop, partner, machinery, and labor master data.
-- Payables, receivables, approvals, recurrence, cash-flow scenarios, and reconciliation.
-- Barter, hedge, input stock, weighted-average cost, lots, Kardex, and overhead allocation.
-- Crop/field cost, agricultural DRE, LCDPR 1.3, print, and Excel exports.
+- Relationships among farms, fields, crops, partners, and machinery.
+- States for accounts, approvals, recurrence, cash-flow scenarios, and reconciliation.
+- Relationships among contracts, inventory, weighted-average cost, lots, and allocation.
+- Requirements for crop cost, agricultural DRE, LCDPR, and exports.
 
 ## Source availability
 
-Farm-Fin is private-source work. This case study describes the domain and architecture without exposing client data or proprietary implementation details.
+Farm-Fin's source code is private. This case study describes the proposal and engineering decisions behind the academic work without suggesting production use or client data.

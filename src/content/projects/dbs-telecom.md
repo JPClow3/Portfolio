@@ -1,38 +1,31 @@
 ---
 title: "DBS Telecom Subscriber Hub"
 slug: "dbs-telecom"
-description: "A mobile self-service platform that connects DBS Telecom customers to billing, support, plans, diagnostics, and assisted service through one guarded BFF."
+description: "An interview project prototype exploring telecom subscriber self-service flows through a mobile app and guarded BFF."
 tech: ["Expo", "React Native", "TypeScript", "Cloudflare Workers", "Neon Postgres", "IXC Soft", "AI"]
 github: "https://github.com/JPClow3/dbs-telecom"
 featured: false
 order: 8
 lang: "en"
 caseStudy: true
-status: "live"
-role: "Mobile and backend product engineering, integrations, security boundaries, and delivery"
+status: "prototype"
+role: "Mobile and backend prototype implementation for an interview project"
 year: "2026"
 decisionLog:
-  problem: "Subscriber support tasks were fragmented across financial, technical, and service channels, creating friction for customers and operational load for staff."
+  problem: "The interview exercise explored bringing financial, technical, and service flows into one subscriber self-service experience."
   constraint: "The mobile app must never receive provider credentials, must prevent cross-account access, and must distinguish live provider data from demo or unavailable states."
   decision: "Built an Expo/React Native app behind a TypeScript BFF that centralizes JWT authorization, IXC Soft integration, Neon persistence, streaming chat, and bounded AI assistance."
-  outcome: "Customers get one self-service journey for invoices, support, plans, diagnostics, queueing, and feedback while sensitive integrations remain isolated behind the server boundary."
-metrics:
-  - label: "Backend regression suite"
-    value: "190 tests"
-  - label: "Service channels"
-    value: "Financial · technical · assisted"
-  - label: "Truthful data states"
-    value: "Live · demo · unavailable · unauthorized"
+  outcome: "The prototype demonstrates a journey for invoices, support, plans, and diagnostics with sensitive integrations isolated on the server; it is not a production customer service."
 highlights:
   - "CPF/CNPJ authentication with server-side credentials and anti-IDOR checks"
   - "Invoices, support tickets, optical diagnostics, plans, queueing, CSAT, and referrals"
   - "Synchronous and streamed assistance with explicit AI guardrails"
-  - "Cloudflare Worker BFF, Neon persistence, Expo delivery, and desktop/mobile browser E2E"
+  - "Cloudflare Worker BFF, Neon persistence, Expo app, and desktop/mobile browser E2E"
 ---
 
 ## Overview
 
-The DBS Telecom Subscriber Hub is an Expo/React Native self-service application backed by a TypeScript BFF. It brings financial, technical, and assisted-service workflows into one customer journey without exposing IXC or AI provider credentials to the device.
+This is a technical prototype I developed for an interview project, using a DBS Telecom subscriber hub as the scenario. The Expo/React Native app is backed by a TypeScript BFF and explores financial, technical, and assisted-service flows without exposing provider credentials to the device. It is not a deployed customer product.
 
 ## Product decisions
 
@@ -40,7 +33,7 @@ The BFF is the trust boundary. It owns authentication, authorization, provider a
 
 The interface also distinguishes live provider responses from demo, unavailable, and unauthorized states. That prevents a local fixture or partial integration from being presented as a real financial or network operation.
 
-## What I built
+## Prototype scope
 
 - Expo/React Native customer application with responsive web coverage.
 - Authentication, invoices, plans, support tickets, queueing, diagnostics, CSAT, and referrals.

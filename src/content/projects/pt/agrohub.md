@@ -10,20 +10,13 @@ order: 2
 lang: "pt"
 caseStudy: true
 status: "live"
-role: "Freelance full-stack — design e desenvolvimento, sozinho"
+role: "Desenvolvimento da aplicação web em projeto institucional da UniRV"
 year: "2026"
 decisionLog:
   problem: "O ecossistema de inovação da UniRV não tinha um ponto único de entrada para startups, mentores, parceiros e o público encontrarem programas de incubação, eventos e informações institucionais."
   constraint: "O portal precisava atender públicos muito diferentes — candidatos, parceiros e exigências de transparência — sem virar um CMS institucional lento e difícil de manter."
-  decision: "Construí uma aplicação Django renderizada no servidor, com HTMX para interatividade pontual e Alpine.js para comportamentos leves no cliente, publicada em containers com Docker Swarm e gerenciada pelo Portainer."
+  decision: "Participei da implementação da aplicação Django renderizada no servidor, com HTMX para interatividade pontual e Alpine.js para comportamentos leves no cliente, publicada em containers com Docker Swarm."
   outcome: "O AgroHub UniRV agora centraliza o diretório de startups, calendário de eventos, catálogo de serviços e canais de acesso institucional em um portal rápido e simples de operar."
-metrics:
-  - label: "Startups incubadas"
-    value: "38+"
-  - label: "Projetos atendidos"
-    value: "100+"
-  - label: "Parcerias"
-    value: "20+"
 highlights:
   - "Diretório público de startups incubadas"
   - "Calendário de eventos para mentorias, workshops e dias de pitch"
@@ -39,7 +32,7 @@ O AgroHub UniRV é o portal do hub de inovação e empreendedorismo da Universid
 
 O stack prioriza confiabilidade e baixo custo operacional em vez de novidade. Django concentra o domínio e as páginas renderizadas no servidor, HTMX adiciona interatividade exatamente onde é necessário, e Alpine.js cuida de pequenos comportamentos no cliente sem trazer um framework de frontend completo. A aplicação roda em containers orquestrados com Docker Swarm e é gerenciada no dia a dia pelo Portainer.
 
-## O que eu construí
+## Contribuições técnicas
 
 - Diretório público de startups incubadas com detalhes do programa.
 - Calendário de eventos cobrindo mentorias, workshops e dias de pitch.
@@ -48,4 +41,4 @@ O stack prioriza confiabilidade e baixo custo operacional em vez de novidade. Dj
 
 ## Papel
 
-Projeto freelance cobrindo a construção completa: design de UI/UX, frontend, backend e deploy, entregue sozinho.
+O AgroHub é um projeto institucional da UniRV, desenvolvido com a equipe do hub. Minha atuação se concentrou no desenvolvimento da aplicação web e em sua implantação. A coordenação e as decisões institucionais são da UniRV.

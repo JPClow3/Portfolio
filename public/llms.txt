@@ -29,14 +29,13 @@ Relevant Portuguese search terms: desenvolvedor full stack freelancer, engenheir
 ## Selected case studies
 
 - [Moto Track](https://jpclow.dev/projects/moto-track/) — Live SvelteKit SaaS web application for motorcycle operations, offline fuel capture, professional shifts, costs, and profitability.
-- [AgroHub UniRV](https://jpclow.dev/projects/agrohub/) — Live Django web portal for UniRV’s startup ecosystem, events, services, and public institutional access.
+- [AgroHub UniRV](https://jpclow.dev/projects/agrohub/) — Institutional UniRV portal for startups, events, services, and public access; João Paulo contributed to web development and deployment.
 - [Inova Rio Verde](https://jpclow.dev/projects/inova-rio-verde/) — Live Next.js geospatial web application presenting Rio Verde’s innovation ecosystem as an interactive trail.
-- [ClimAgro](https://jpclow.dev/projects/climagro/) — Private-source Django agronomy platform for weather data, water balance, irrigation, and fire-risk workflows.
+- [ClimAgro](https://jpclow.dev/projects/climagro/) — UniRV weather and agricultural-planning initiative coordinated by Prof. Dr. Gilmar Oliveira Santos; João Paulo contributes to web development and data flows.
 - [Throughline](https://jpclow.dev/projects/throughline/) — React local-first PWA planner with offline use and optional end-to-end encrypted synchronization.
 - [Lorebound](https://jpclow.dev/projects/lorebound/) — Interactive-fiction web platform in development, using curated story worlds, controlled AI turns, persistent memory, and transparent usage.
-- [DBS Telecom Subscriber Hub](https://jpclow.dev/projects/dbs-telecom/) — Expo and React Native self-service application backed by a guarded TypeScript BFF for billing, support, plans, and diagnostics.
 - [Signal Ledger](https://jpclow.dev/projects/signal-ledger/) — Private-source Next.js briefing PWA that groups developing topics and keeps source evidence close to each conclusion.
-- [Farm-Fin](https://jpclow.dev/projects/farm-fin/) — Private-source Next.js platform for Brazilian farm finance, agronomic management, inventory, contracts, DRE, and LCDPR reporting.
+- [Farm-Fin](https://jpclow.dev/projects/farm-fin/) — Academic prototype for UniRV’s Software Engineering Practice course exploring financial and operational workflows in Brazilian agriculture; not a production farm system.
 - [FATEC Digital Platform](https://jpclow.dev/projects/fatec/) — Private-source Django education platform for institutional content, admissions, candidate administration, and boleto access.
 - [AI Development Controller](https://jpclow.dev/projects/ai-dev-controller/) — TypeScript workflow controller that turns Linear issues into dependency-aware agent work and validated draft pull requests.
 - [Hefesto](https://jpclow.dev/projects/hefesto/) — Research and re-architecture work for wildfire ignition-risk modeling and geospatial data pipelines in Goiás.

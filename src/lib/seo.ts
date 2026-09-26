@@ -33,7 +33,7 @@ const HOME_SEO: Record<Lang, PageSeo> = {
   en: {
     title: 'João Paulo Santos | Full-Stack Product Engineer',
     description:
-      'Freelance full-stack product engineer in Brazil building web applications, APIs, automation, data systems, and AI products with TypeScript and Python. Available for remote contract work.',
+      'Freelance full-stack product engineer in Brazil building web applications, APIs, automation, data systems, and AI products with Python, TypeScript, and Cloudflare. Available for remote contract work.',
     keywords: [
       'freelance software developer',
       'freelance product engineer',
@@ -51,7 +51,7 @@ const HOME_SEO: Record<Lang, PageSeo> = {
   pt: {
     title: 'João Paulo Santos | Engenheiro de Produto Full Stack',
     description:
-      'Desenvolvedor full stack freelancer no Brasil para aplicações web, APIs, automação, sistemas de dados e produtos de IA com TypeScript e Python. Disponível para projetos remotos.',
+      'Desenvolvedor full stack freelancer e engenheiro de produto no Brasil para aplicações web, APIs, automação, sistemas de dados e produtos de IA com TypeScript e Python. Disponível para projetos remotos.',
     keywords: [
       'desenvolvedor freelancer',
       'engenheiro de produto freelancer',

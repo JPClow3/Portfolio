@@ -1,7 +1,7 @@
 ---
 title: "Throughline"
 slug: "throughline"
-description: "Um planejador focado em privacidade que mantém metas, tarefas, notas, quadros e linhas do tempo disponíveis offline, com sincronização criptografada opcional."
+description: "Um PWA em React focado em privacidade que mantém metas, tarefas, notas, quadros e linhas do tempo disponíveis offline, com sincronização criptografada opcional."
 tech: ["React", "TypeScript", "IndexedDB", "PWA", "Criptografia ponta a ponta"]
 github: "https://github.com/JPClow3/Throughline"
 image: "/projects/throughline.webp"

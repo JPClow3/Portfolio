@@ -1,7 +1,7 @@
 ---
 title: "ClimAgro"
 slug: "climagro"
-description: "Uma plataforma agronômica operacional que transforma dados meteorológicos diários e horários em decisões de balanço hídrico, irrigação e risco de fogo."
+description: "Uma aplicação web agronômica operacional em Django que transforma dados meteorológicos diários e horários em decisões de balanço hídrico, irrigação e risco de fogo."
 tech: ["Python", "Django", "JavaScript", "PostgreSQL", "INMET", "FAO-56", "Docker", "Playwright"]
 image: "/projects/climagro.webp"
 featured: true

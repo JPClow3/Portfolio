@@ -1,7 +1,7 @@
 ---
 title: "Lorebound"
 slug: "lorebound"
-description: "A reader-first interactive-fiction platform that pairs curated story worlds with controlled AI turns, persistent memory, and transparent usage."
+description: "A reader-first interactive-fiction web platform that pairs curated story worlds with controlled AI turns, persistent memory, and transparent usage."
 tech: ["TypeScript", "React", "Neon Postgres", "Drizzle", "Cloudflare Workers", "AI", "Stripe"]
 image: "/projects/lorebound.webp"
 featured: true

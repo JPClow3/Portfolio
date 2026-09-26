@@ -33,33 +33,36 @@ const HOME_SEO: Record<Lang, PageSeo> = {
   en: {
     title: 'João Paulo Santos | Full-Stack Product Engineer',
     description:
-      'Full-stack product engineer in Brazil shipping web apps, automation, data systems, and AI products with TypeScript, Python, Cloudflare, and Neon. Available for contract work.',
+      'Freelance full-stack product engineer in Brazil building web applications, APIs, automation, data systems, and AI products with TypeScript and Python. Available for remote contract work.',
     keywords: [
       'freelance software developer',
-      'freelance web developer',
-      'hire freelance developer',
-      'Python developer for hire',
-      'Django developer freelance',
-      'React developer Brazil',
-      'remote freelance developer',
-      'contract software developer',
-      'full stack freelance developer',
+      'freelance product engineer',
+      'web application development',
+      'API development',
+      'workflow automation',
+      'data systems developer',
+      'AI product engineer',
+      'Python developer Brazil',
+      'Django developer',
+      'remote software developer',
       'João Paulo Santos developer',
     ],
   },
   pt: {
     title: 'João Paulo Santos | Engenheiro de Produto Full Stack',
     description:
-      'Engenheiro de produto full stack no Brasil. Entrego aplicações web, automação, sistemas de dados e produtos de IA com TypeScript, Python, Cloudflare e Neon.',
+      'Desenvolvedor full stack freelancer no Brasil para aplicações web, APIs, automação, sistemas de dados e produtos de IA com TypeScript e Python. Disponível para projetos remotos.',
     keywords: [
       'desenvolvedor freelancer',
-      'desenvolvedor de software freelancer',
-      'contratar desenvolvedor freelancer',
-      'desenvolvedor Python freelance',
-      'desenvolvedor Django freelancer',
-      'desenvolvedor React Brasil',
-      'desenvolvedor remoto freelancer',
-      'desenvolvedor full stack freelance',
+      'engenheiro de produto freelancer',
+      'desenvolvimento de aplicações web',
+      'desenvolvimento de APIs',
+      'automação de processos',
+      'sistemas de dados',
+      'desenvolvimento de produtos de IA',
+      'desenvolvedor Python Brasil',
+      'desenvolvedor Django',
+      'desenvolvedor remoto',
       'João Paulo Santos desenvolvedor',
     ],
   },
@@ -198,7 +201,7 @@ interface SchemaOptions {
   description: string;
 }
 
-export function buildPersonSchema({ lang, siteUrl, description }: SchemaOptions) {
+export function buildPersonSchema({ lang, siteUrl }: SchemaOptions) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -208,8 +211,8 @@ export function buildPersonSchema({ lang, siteUrl, description }: SchemaOptions)
     url: siteUrl.toString(),
     email: SITE.email,
     image: new URL('/og-image.png', siteUrl).toString(),
-    jobTitle: lang === 'pt' ? 'Engenheiro de Produto Full Stack' : 'Full-Stack Product Engineer',
-    description,
+    jobTitle: lang === 'pt' ? 'Engenheiro de Produto Full Stack Freelancer' : 'Freelance Full-Stack Product Engineer',
+    description: HOME_SEO[lang].description,
     nationality: {
       '@type': 'Country',
       name: 'Brazil',
@@ -223,24 +226,28 @@ export function buildPersonSchema({ lang, siteUrl, description }: SchemaOptions)
       'Django',
       'React',
       'TypeScript',
+      'SvelteKit',
       'Astro',
+      'Cloudflare Workers',
+      'Neon Postgres',
       'Web Development',
       'API Development',
-      'Automation',
-      'Software Engineering',
+      'Workflow Automation',
+      'Data Systems',
+      'AI Product Engineering',
     ],
     sameAs: [SOCIAL.github, SOCIAL.linkedin, SOCIAL.instagram],
   };
 }
 
-export function buildProfessionalServiceSchema({ lang, siteUrl, description }: SchemaOptions) {
+export function buildProfessionalServiceSchema({ lang, siteUrl }: SchemaOptions) {
   return {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
     '@id': `${siteUrl}#freelance-service`,
-    name: lang === 'pt' ? 'João Paulo Santos — Desenvolvimento Freelancer' : 'João Paulo Santos — Freelance Development',
+    name: lang === 'pt' ? 'João Paulo Santos — Engenharia de Produto Freelancer' : 'João Paulo Santos — Freelance Product Engineering',
     url: siteUrl.toString(),
-    description,
+    description: HOME_SEO[lang].description,
     image: new URL('/og-image.png', siteUrl).toString(),
     areaServed: [
       { '@type': 'Country', name: 'Brazil' },
@@ -251,12 +258,28 @@ export function buildProfessionalServiceSchema({ lang, siteUrl, description }: S
       '@id': `${siteUrl}#person`,
     },
     serviceType: [
+      'Freelance Software Development',
       'Web Application Development',
       'API Development',
-      'Automation Engineering',
+      'Workflow Automation',
+      'Data Systems Development',
+      'AI Product Engineering',
       'Full Stack Development',
     ],
-    knowsAbout: ['TypeScript', 'Python', 'SvelteKit', 'React', 'Cloudflare', 'Neon Postgres', 'Astro'],
+    knowsAbout: [
+      'TypeScript',
+      'Python',
+      'Django',
+      'SvelteKit',
+      'React',
+      'Cloudflare',
+      'Neon Postgres',
+      'Astro',
+      'API design',
+      'Workflow automation',
+      'Data systems',
+      'AI products',
+    ],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'sales',

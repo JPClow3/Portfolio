@@ -6,7 +6,7 @@ import Footer from '@/components/layout/Footer.astro';
 import Icon from '@/components/common/Icon.astro';
 import CodeCopy from '@/components/common/CodeCopy.astro';
 import { defaultLang, type Lang, ui } from '@/lib/i18n';
-import { formatPageTitle, buildProjectBreadcrumbSchema, getProjectOgImageUrl } from '@/lib/seo';
+import { SITE, formatPageTitle, buildProjectBreadcrumbSchema, getProjectOgImageUrl } from '@/lib/seo';
 
 interface Props {
   project: CollectionEntry<'projects'>;
@@ -34,11 +34,16 @@ const publicRepositoryUrl = hasPublicRepository ? project.data.github : undefine
 const caseStudySchema = {
   '@context': 'https://schema.org',
   '@type': 'CreativeWork',
+  '@id': `${caseStudyUrl}#case-study`,
   name: project.data.title,
   description: project.data.description,
   url: caseStudyUrl,
+  mainEntityOfPage: caseStudyUrl,
   image: ogImageUrl,
-  author: { '@type': 'Person', name: 'Joao Paulo Goncalves Santos', url: siteUrl.toString() },
+  inLanguage: SITE.localeMap[currentLang],
+  author: { '@id': `${siteUrl}#person` },
+  creator: { '@id': `${siteUrl}#person` },
+  isPartOf: { '@id': `${siteUrl}#website` },
   keywords: project.data.tech,
   programmingLanguage: project.data.tech,
   codeRepository: publicRepositoryUrl,

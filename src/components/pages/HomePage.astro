@@ -73,12 +73,15 @@ const projectItemsSchema = {
     '@type': 'ListItem',
     position: index + 1,
     item: {
-      '@type': 'SoftwareSourceCode',
+      '@type': project.data.github ? 'SoftwareSourceCode' : 'CreativeWork',
       name: project.data.title,
       description: project.data.description,
       codeRepository: project.data.github,
       url: new URL(getProjectUrl(project), siteUrl).toString(),
       programmingLanguage: project.data.tech,
+      keywords: project.data.tech,
+      inLanguage: currentLang === 'pt' ? 'pt-BR' : 'en-US',
+      author: { '@id': `${siteUrl}#person` },
     },
   })),
 };

@@ -3,8 +3,8 @@ lang: en
 profile:
   name: "João Paulo Gonçalves Santos"
   shortName: "João Paulo"
-  role: "Freelance Product Engineer"
-  subtitle: "Freelance product engineer building operational web apps, data systems, and AI products — from discovery through deployment."
+  role: "Freelance Full-Stack Product Engineer"
+  subtitle: "Freelance full-stack product engineer building web applications, APIs, workflow automation, data systems, and AI products — from discovery through deployment."
   location: "Rio Verde, GO, Brazil"
   timezone: "UTC-3"
   github: "https://github.com/JPClow3"

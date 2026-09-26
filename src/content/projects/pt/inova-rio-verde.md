@@ -1,7 +1,7 @@
 ---
 title: "Inova Rio Verde"
 slug: "inova-rio-verde"
-description: "Uma experiência geoespacial em produção que transforma hubs, incubadoras e programas de Rio Verde em uma trilha de inovação explorável."
+description: "Uma aplicação web geoespacial em produção que transforma hubs, incubadoras e programas de Rio Verde em uma trilha de inovação explorável."
 tech: ["Next.js", "Tailwind CSS", "Mapbox", "MapTiler", "deck.gl", "Cloudflare Hyperdrive", "Neon Postgres", "Neon Auth"]
 link: "https://inovarioverde.org/"
 image: "/projects/inova-rio-verde.webp"

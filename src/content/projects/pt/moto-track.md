@@ -1,7 +1,7 @@
 ---
 title: "Moto Track"
 slug: "moto-track"
-description: "Uma plataforma SaaS ativa em SvelteKit para operação de motocicletas, com abastecimento, manutenção, documentos, custos, turnos profissionais e rentabilidade, apoiada por Neon e Cloudflare."
+description: "Uma aplicação web SaaS ativa em SvelteKit para operação de motocicletas, com abastecimento, manutenção, documentos, custos, turnos profissionais e rentabilidade, apoiada por Neon e Cloudflare."
 tech: ["SvelteKit", "TypeScript", "Neon Postgres", "Cloudflare", "Stripe", "Resend"]
 github: "https://github.com/JPClow3/moto_track"
 link: "https://moto-track.net/"

@@ -40,15 +40,33 @@ const statusLabels: Record<ProjectStatus, string> = currentLang === 'pt'
     };
 
 const pageDescription = currentLang === 'pt'
-  ? 'Um catálogo de produtos web, sistemas operacionais, plataformas de dados e experimentos de pesquisa — com o estado de cada trabalho apresentado com clareza.'
-  : 'A catalog of web products, operational systems, data platforms, and research experiments — with the state of each project presented clearly.';
+  ? 'Estudos de caso de um desenvolvedor full stack freelancer no Brasil, com aplicações web, APIs, automação, sistemas de dados e produtos de IA. Cada projeto informa seu estado atual com clareza.'
+  : 'Case studies from a freelance full-stack product engineer in Brazil, covering web applications, APIs, automation, data systems, and AI products. Each project states its current status clearly.';
+
+const pageKeywords = currentLang === 'pt'
+  ? [
+      'estudos de caso desenvolvimento web',
+      'desenvolvedor full stack freelancer Brasil',
+      'aplicações web e APIs',
+      'automação de processos',
+      'sistemas de dados',
+      'produtos de IA',
+    ]
+  : [
+      'web development case studies',
+      'freelance full-stack developer Brazil',
+      'web applications and APIs',
+      'workflow automation',
+      'data systems',
+      'AI products',
+    ];
 
 const projectHref = (project: Project) => project.data.caseStudy
   ? `${localePrefix}/projects/${project.data.slug}/`
   : project.data.link ?? project.data.github ?? `${localePrefix}/projects/`;
 ---
 
-<BaseLayout title={formatPageTitle(t['projects.title'], currentLang)} description={pageDescription}>
+<BaseLayout title={formatPageTitle(t['projects.title'], currentLang)} description={pageDescription} keywords={pageKeywords}>
   <Header />
   <main id="main-content" tabindex="-1" class="noise-bg relative min-h-screen overflow-x-hidden px-4 pb-16 pt-[6.5rem] sm:px-6 lg:px-8">
     <div class="mx-auto max-w-6xl" data-scene-section="projects">
@@ -60,7 +78,7 @@ const projectHref = (project: Project) => project.data.caseStudy
 
       <header class="mb-10 max-w-3xl">
         <p class="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[rgb(var(--color-accent))]">
-          {currentLang === 'pt' ? 'Trabalho selecionado e arquivo' : 'Selected work and archive'}
+          {currentLang === 'pt' ? 'Estudos de caso de engenharia de produto freelancer' : 'Freelance product engineering case studies'}
         </p>
         <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">{t['projects.title']}</h1>
         <p class="mt-4 text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg">{pageDescription}</p>

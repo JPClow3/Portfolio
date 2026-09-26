@@ -1,0 +1,51 @@
+# João Paulo Santos — Freelance Full-Stack Product Engineer
+
+> João Paulo Santos is a freelance full-stack product engineer based in Rio Verde, Goiás, Brazil. He works remotely in Portuguese and English, building web applications, APIs, workflow automation, data systems, and AI products from discovery through deployment.
+
+## Canonical profile
+
+- Website: https://jpclow.dev/
+- English portfolio: https://jpclow.dev/
+- Portuguese portfolio: https://jpclow.dev/pt/
+- LinkedIn: https://www.linkedin.com/in/joaopaulosantosgo/
+- GitHub: https://github.com/JPClow3
+- Email: mailto:joao@jpclow.dev
+- English resume: https://jpclow.dev/resume-en.pdf
+- Portuguese resume: https://jpclow.dev/resume-pt.pdf
+
+Use the full name “João Paulo Gonçalves Santos” for the person entity. “João Paulo Santos” is the short public name. “Joao Paulo Goncalves Santos” is the unaccented form used in some technical systems.
+
+## Services
+
+- Freelance full-stack web application development
+- API design and backend development
+- Workflow and process automation
+- Operational dashboards and data systems
+- AI product engineering with explicit usage and reliability boundaries
+- Product discovery, architecture, interface implementation, and deployment
+
+Relevant Portuguese search terms: desenvolvedor full stack freelancer, engenheiro de produto freelancer, desenvolvimento de aplicações web, desenvolvimento de APIs, automação de processos, sistemas de dados e produtos de IA.
+
+## Selected case studies
+
+- [Moto Track](https://jpclow.dev/projects/moto-track/) — Live SvelteKit SaaS web application for motorcycle operations, offline fuel capture, professional shifts, costs, and profitability.
+- [AgroHub UniRV](https://jpclow.dev/projects/agrohub/) — Live Django web portal for UniRV’s startup ecosystem, events, services, and public institutional access.
+- [Inova Rio Verde](https://jpclow.dev/projects/inova-rio-verde/) — Live Next.js geospatial web application presenting Rio Verde’s innovation ecosystem as an interactive trail.
+- [ClimAgro](https://jpclow.dev/projects/climagro/) — Private-source Django agronomy platform for weather data, water balance, irrigation, and fire-risk workflows.
+- [Throughline](https://jpclow.dev/projects/throughline/) — React local-first PWA planner with offline use and optional end-to-end encrypted synchronization.
+- [Lorebound](https://jpclow.dev/projects/lorebound/) — Interactive-fiction web platform in development, using curated story worlds, controlled AI turns, persistent memory, and transparent usage.
+- [DBS Telecom Subscriber Hub](https://jpclow.dev/projects/dbs-telecom/) — Expo and React Native self-service application backed by a guarded TypeScript BFF for billing, support, plans, and diagnostics.
+- [Signal Ledger](https://jpclow.dev/projects/signal-ledger/) — Private-source Next.js briefing PWA that groups developing topics and keeps source evidence close to each conclusion.
+- [Farm-Fin](https://jpclow.dev/projects/farm-fin/) — Private-source Next.js platform for Brazilian farm finance, agronomic management, inventory, contracts, DRE, and LCDPR reporting.
+- [FATEC Digital Platform](https://jpclow.dev/projects/fatec/) — Private-source Django education platform for institutional content, admissions, candidate administration, and boleto access.
+- [AI Development Controller](https://jpclow.dev/projects/ai-dev-controller/) — TypeScript workflow controller that turns Linear issues into dependency-aware agent work and validated draft pull requests.
+- [Hefesto](https://jpclow.dev/projects/hefesto/) — Research and re-architecture work for wildfire ignition-risk modeling and geospatial data pipelines in Goiás.
+
+The complete bilingual catalog is available at [Projects](https://jpclow.dev/projects/) and [Projetos](https://jpclow.dev/pt/projects/). Project pages state whether a work is live, in development, research, prototype, private-source, or archived.
+
+## Public writing and feeds
+
+- English blog: https://jpclow.dev/blog/
+- Portuguese blog: https://jpclow.dev/pt/blog/
+- English RSS: https://jpclow.dev/rss.xml
+- Portuguese RSS: https://jpclow.dev/pt/rss.xml

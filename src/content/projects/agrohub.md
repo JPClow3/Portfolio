@@ -1,7 +1,7 @@
 ---
 title: "AgroHub UniRV"
 slug: "agrohub"
-description: "A live institutional portal that gives UniRV's startups, events, services, and public-access channels one fast, maintainable home."
+description: "A live Django web portal for UniRV's startup ecosystem, events, services, and public-access channels, built as a fast, maintainable institutional home."
 tech: ["Python", "Django", "HTMX", "Tailwind CSS", "Alpine.js", "Docker Swarm", "Portainer"]
 link: "https://agrohub.unirv.edu.br/"
 image: "/projects/agrohub.webp"

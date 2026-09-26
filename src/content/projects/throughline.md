@@ -1,7 +1,7 @@
 ---
 title: "Throughline"
 slug: "throughline"
-description: "A privacy-first planner that keeps goals, tasks, notes, boards, and timelines usable offline, with optional encrypted sync across devices."
+description: "A privacy-first React PWA planner that keeps goals, tasks, notes, boards, and timelines usable offline, with optional encrypted sync across devices."
 tech: ["React", "TypeScript", "IndexedDB", "PWA", "End-to-End Encryption"]
 github: "https://github.com/JPClow3/Throughline"
 image: "/projects/throughline.webp"

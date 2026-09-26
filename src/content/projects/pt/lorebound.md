@@ -1,7 +1,7 @@
 ---
 title: "Lorebound"
 slug: "lorebound"
-description: "Uma plataforma de ficção interativa focada no leitor, que combina mundos curados com turnos de IA controlados, memória persistente e uso transparente."
+description: "Uma plataforma web de ficção interativa focada no leitor, que combina mundos curados com turnos de IA controlados, memória persistente e uso transparente."
 tech: ["TypeScript", "React", "Neon Postgres", "Drizzle", "Cloudflare Workers", "IA", "Stripe"]
 image: "/projects/lorebound.webp"
 featured: true

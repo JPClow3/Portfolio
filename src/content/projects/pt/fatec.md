@@ -1,7 +1,7 @@
 ---
 title: "Plataforma Digital FATEC"
 slug: "fatec"
-description: "Uma plataforma educacional em produção que reúne conteúdo institucional, inscrições, concursos, administração de candidatos e acesso direto ao boleto."
+description: "Uma plataforma web educacional em produção, feita com Django, que reúne conteúdo institucional, inscrições, concursos, administração de candidatos e acesso direto ao boleto."
 tech: ["Python", "Django", "HTMX", "Alpine.js", "Tailwind CSS", "PostgreSQL", "Banco do Brasil"]
 link: "https://www.fateccacu.edu.br/"
 featured: false

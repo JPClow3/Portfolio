@@ -1,7 +1,7 @@
 ---
 title: "Farm-Fin"
 slug: "farm-fin"
-description: "A financial and agronomic management platform that connects farm cash flow, crops, inputs, inventory, barter, hedge, DRE, and Brazilian LCDPR reporting."
+description: "A private-source web platform for financial and agronomic management that connects farm cash flow, crops, inputs, inventory, barter, hedge, DRE, and Brazilian LCDPR reporting."
 tech: ["Next.js", "React", "TypeScript", "Neon Postgres", "Drizzle", "Cloudflare", "Excel"]
 featured: false
 order: 15

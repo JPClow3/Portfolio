@@ -1,7 +1,7 @@
 ---
 title: "Farm-Fin"
 slug: "farm-fin"
-description: "Uma plataforma de gestão financeira e agronômica que conecta fluxo de caixa, safras, insumos, estoque, barter, hedge, DRE e o LCDPR brasileiro."
+description: "Uma aplicação web privada de gestão financeira e agronômica que conecta fluxo de caixa, safras, insumos, estoque, barter, hedge, DRE e o LCDPR brasileiro."
 tech: ["Next.js", "React", "TypeScript", "Neon Postgres", "Drizzle", "Cloudflare", "Excel"]
 featured: false
 order: 15

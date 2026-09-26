@@ -4,6 +4,26 @@ import svelte from '@astrojs/svelte';
 import mdx from '@astrojs/mdx';
 import sitemap, { ChangeFreqEnum } from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
+import { execFileSync } from 'node:child_process';
+import { writeFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+
+const deploymentMarker = {
+  name: 'deployment-marker',
+  hooks: {
+    'astro:build:done': async ({ dir }) => {
+      let sha = process.env.CF_PAGES_COMMIT_SHA ?? process.env.GITHUB_SHA;
+      if (!sha) {
+        try {
+          sha = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+        } catch {
+          sha = 'unknown';
+        }
+      }
+      await writeFile(fileURLToPath(new URL('./build-sha.txt', dir)), `${sha}\n`);
+    },
+  },
+};
 
 // https://astro.build/config
 export default defineConfig({
@@ -15,6 +35,7 @@ export default defineConfig({
   integrations: [
     svelte(),
     mdx(),
+    deploymentMarker,
     sitemap({
       i18n: {
         defaultLocale: 'en',

@@ -17,6 +17,9 @@ decisionLog:
   constraint: "The portal had to serve very different audiences — applicants, partners, and compliance/transparency requirements — without becoming a slow, hard-to-maintain institutional CMS."
   decision: "Contributed to the server-rendered Django application, using HTMX for focused interactivity and Alpine.js for lightweight client-side behavior, and shipping it in containers behind Docker Swarm."
   outcome: "AgroHub UniRV now centralizes the startup directory, events calendar, service listings, and institutional access channels in a portal that stays fast and simple to operate."
+metrics:
+  - label: "Portal scope"
+    value: "Startups · events · services"
 highlights:
   - "Public directory of incubated startups"
   - "Events calendar for mentorships, workshops, and pitch days"

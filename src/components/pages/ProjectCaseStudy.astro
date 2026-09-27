@@ -6,6 +6,12 @@ import Footer from '@/components/layout/Footer.astro';
 import Icon from '@/components/common/Icon.astro';
 import CodeCopy from '@/components/common/CodeCopy.astro';
 import { defaultLang, type Lang, ui } from '@/lib/i18n';
+import { projectImageSources } from '@/lib/images';
+import { getStudioCopy, localePath, projectHref } from '@/lib/studio';
+import { getCollection } from 'astro:content';
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
+import Spotlight from '@/components/common/Spotlight.astro';
+import CtaBand from '@/components/studio/CtaBand.astro';
 import { SITE, formatPageTitle, buildProjectBreadcrumbSchema, getProjectOgImageUrl } from '@/lib/seo';
 
 interface Props {
@@ -29,6 +35,15 @@ const statusLabels: Record<string, string> = {
   archived: t['project.archived'],
 };
 const statusLabel = project.data.status !== 'live' ? statusLabels[project.data.status] : undefined;
+const copy = getStudioCopy(currentLang);
+// Internal links: services that cite this project, plus the next case study in catalog order
+const relatedServices = copy.services.filter((service) => service.proof.some((proof) => proof.slug === project.data.slug));
+const caseStudies = (await getCollection('projects', ({ data }) => data.lang === project.data.lang && data.caseStudy))
+  .sort((a, b) => a.data.order - b.data.order);
+const currentIndex = caseStudies.findIndex((entry) => entry.data.slug === project.data.slug);
+const nextCase = caseStudies.length > 1 ? caseStudies[(currentIndex + 1) % caseStudies.length] : undefined;
+const nextLabel = currentLang === 'pt' ? 'Próximo case' : 'Next case study';
+const relatedLabel = currentLang === 'pt' ? 'Serviços aplicados neste projeto' : 'Services behind this project';
 const hasPublicRepository = Boolean(project.data.github) && !['in-development', 'private-source'].includes(project.data.status);
 const publicRepositoryUrl = hasPublicRepository ? project.data.github : undefined;
 const caseStudySchema = {
@@ -41,8 +56,9 @@ const caseStudySchema = {
   mainEntityOfPage: caseStudyUrl,
   image: ogImageUrl,
   inLanguage: SITE.localeMap[currentLang],
-  author: { '@id': `${siteUrl}#person` },
-  creator: { '@id': `${siteUrl}#person` },
+  author: { '@id': `${siteUrl}#organization` },
+  creator: { '@id': `${siteUrl}#organization` },
+  publisher: { '@id': `${siteUrl}#organization` },
   isPartOf: { '@id': `${siteUrl}#website` },
   keywords: project.data.tech,
   programmingLanguage: project.data.tech,
@@ -66,51 +82,119 @@ const breadcrumbSchema = buildProjectBreadcrumbSchema({
   schema={[caseStudySchema, breadcrumbSchema]}
 >
   <Header />
-  <main id="main-content" tabindex="-1" class="noise-bg relative overflow-x-hidden px-4 pb-12 pt-[6.5rem] sm:px-6 lg:px-8">
-    <article class="mx-auto max-w-6xl" data-scene-section="projects">
-      <nav aria-label="Breadcrumb" class="mb-6">
-        <ol class="flex flex-wrap items-center gap-2 text-sm text-[rgb(var(--color-text-secondary))]">
-          <li><a href={`${localePrefix}/`} class="rounded-sm transition-colors hover:text-[rgb(var(--color-accent))]">{t['project.breadcrumbHome']}</a></li>
+  <main id="main-content" tabindex="-1" class="relative overflow-x-clip pt-[6.5rem]">
+    <article class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8" data-scene-section="projects">
+      <nav aria-label="Breadcrumb" class="mb-6 font-mono text-xs uppercase tracking-[0.14em] text-[rgb(var(--color-text-muted))]">
+        <ol class="flex flex-wrap items-center gap-2">
+          <li><a href={`${localePrefix}/`} class="transition-colors hover:text-[rgb(var(--color-text-primary))]">{t['project.breadcrumbHome']}</a></li>
           <li aria-hidden="true">/</li>
-          <li><a href={`${localePrefix}/projects/`} class="rounded-sm transition-colors hover:text-[rgb(var(--color-accent))]">{t['project.breadcrumbProjects']}</a></li>
+          <li><a href={`${localePrefix}/projects/`} class="transition-colors hover:text-[rgb(var(--color-text-primary))]">{t['projects.title']}</a></li>
           <li aria-hidden="true">/</li>
-          <li aria-current="page" class="truncate font-semibold text-[rgb(var(--color-text-primary))]">{project.data.title}</li>
+          <li aria-current="page" class="truncate text-[rgb(var(--color-text-secondary))]">{project.data.title}</li>
         </ol>
       </nav>
 
-      <header class="glass-panel overflow-hidden rounded-lg">
+      <header class="panel overflow-hidden">
         <div class="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
-          <div class="p-5 sm:p-7 lg:p-8">
-            <div class="mb-4 flex flex-wrap items-center gap-2">
-              <span class="rounded-md border border-[rgb(var(--color-accent)/0.35)] bg-[rgb(var(--color-accent)/0.1)] px-2.5 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--color-accent))]">{t['project.caseStudy']}</span>
-              {statusLabel && <span class="rounded-md border border-[rgb(var(--color-accent)/0.35)] px-2.5 py-1 text-xs font-semibold text-[rgb(var(--color-accent))]">{statusLabel}</span>}
-              {project.data.year && <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.66)] px-2.5 py-1 text-xs font-semibold text-[rgb(var(--color-text-secondary))]">{project.data.year}</span>}
+          <div class="p-6 sm:p-8 lg:p-10">
+            <div class="mb-5 flex flex-wrap items-center gap-2">
+              <span class="chip border-[rgb(var(--color-accent)/0.45)] text-[rgb(var(--color-accent-hover))]">{t['project.caseStudy']}</span>
+              {statusLabel && <span class="chip border-[rgb(var(--color-accent)/0.45)] text-[rgb(var(--color-accent-hover))]">{statusLabel}</span>}
+              {project.data.year && <span class="chip">{project.data.year}</span>}
             </div>
-            <h1 class="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">{project.data.title}</h1>
-            <p class="mt-4 max-w-2xl text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg">{project.data.description}</p>
-            {project.data.role && <p class="mt-5 text-sm font-semibold"><span class="text-[rgb(var(--color-text-muted))]">{t['project.role']}</span> {project.data.role}</p>}
-            <div class="mt-5 flex flex-wrap gap-1.5">{project.data.tech.map((tech) => <span class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.72)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-[rgb(var(--color-text-secondary))]">{tech}</span>)}</div>
-            <div class="mt-7 flex flex-wrap gap-3 text-sm">
-              <a href={`${localePrefix}/projects/`} class="hover-lift inline-flex items-center gap-2 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.28)] px-4 py-2 font-semibold transition-all"><Icon name="arrow-down" size={16} class="rotate-90" />{t['project.backToProjects']}</a>
-              {publicRepositoryUrl && <a href={publicRepositoryUrl} target="_blank" rel="noreferrer" class="hover-lift inline-flex items-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-4 py-2 font-semibold text-[rgb(var(--color-accent-contrast))]"><span>{t['project.repository']}</span><Icon name="external-link" size={15} /></a>}
-              {project.data.link && <a href={project.data.link} target="_blank" rel="noreferrer" class="hover-lift inline-flex items-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-4 py-2 font-semibold text-[rgb(var(--color-accent-contrast))]"><span>{t['project.live']}</span><Icon name="external-link" size={15} /></a>}
+            <h1 class="display-lg max-w-3xl">{project.data.title}</h1>
+            <p class="mt-5 max-w-2xl text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg">{project.data.description}</p>
+            {project.data.role && <p class="mt-5 text-sm"><span class="mono-label mr-2">{t['project.role']}</span><span class="font-semibold">{project.data.role}</span></p>}
+            <ul class="mt-5 flex flex-wrap gap-1.5">{project.data.tech.map((tech) => <li class="chip">{tech}</li>)}</ul>
+            <div class="mt-8 flex flex-wrap gap-3">
+              {project.data.link && <a href={project.data.link} target="_blank" rel="noreferrer" class="btn btn-primary"><span>{t['project.live']}</span><Icon name="arrow-up-right" size={16} class="btn-arrow" /></a>}
+              {publicRepositoryUrl && <a href={publicRepositoryUrl} target="_blank" rel="noreferrer" class="btn btn-ghost"><Icon name="github" size={16} /><span>{t['project.repository']}</span></a>}
+              <a href={`${localePrefix}/projects/`} class="btn btn-ghost"><Icon name="arrow-right" size={16} class="rotate-180" />{t['project.backToProjects']}</a>
             </div>
           </div>
-          {project.data.image && <div class="relative min-h-[260px] border-t border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.5)] lg:border-l lg:border-t-0"><img src={project.data.image} alt={`${project.data.title} ${t['projects.previewAlt']}`} class="h-full min-h-[260px] w-full object-contain" loading="eager" decoding="async" /></div>}
+          {project.data.image && (
+            <div class="relative flex items-center border-t border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-tertiary)/0.6)] p-4 sm:p-6 lg:border-l lg:border-t-0">
+              <div class="dot-field pointer-events-none absolute inset-0 opacity-70" aria-hidden="true"></div>
+              <div class="work-frame relative w-full">
+                <div class="work-frame-chrome" aria-hidden="true"><i></i><i></i><i></i></div>
+                <img src={project.data.image} srcset={projectImageSources(project.data.image).srcset} sizes="(min-width: 1024px) 45vw, 100vw" alt={`${project.data.title} ${t['projects.previewAlt']}`} class="block aspect-[16/10] w-full object-cover object-top" width="1440" height="900" loading="eager" fetchpriority="high" decoding="async" />
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
-      {decisionLog && <section class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label={t['project.decisionLog']}>
-        {[[t['home.problem'], decisionLog.problem], [t['home.constraint'], decisionLog.constraint], [t['home.decision'], decisionLog.decision], [t['home.outcome'], decisionLog.outcome]].map(([label, value]) => <div class="glass-panel rounded-lg p-5"><p class="text-xs font-bold uppercase tracking-[0.18em] text-[rgb(var(--color-text-muted))]">{label}</p><p class="mt-3 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{value}</p></div>)}
-      </section>}
+      {decisionLog && (
+        <section class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-label={t['project.decisionLog']}>
+          {[[t['home.problem'], decisionLog.problem], [t['home.constraint'], decisionLog.constraint], [t['home.decision'], decisionLog.decision], [t['home.outcome'], decisionLog.outcome]].map(([label, value], index) => (
+            <ScrollReveal animation="fade-up" delay={index * 70} class="h-full">
+              <div class="panel h-full p-5">
+                <p class="mono-label flex items-center gap-2"><span class="text-[rgb(var(--color-accent-hover))]" aria-hidden="true">{`0${index + 1}`}</span><span>{label}</span></p>
+                <p class="mt-3 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{value}</p>
+              </div>
+            </ScrollReveal>
+          ))}
+        </section>
+      )}
 
-      {project.data.metrics.length > 0 && <section class="mt-6 grid gap-3 sm:grid-cols-3" aria-label={t['project.metrics']}>{project.data.metrics.map((metric) => <div class="glass-panel rounded-lg p-5"><p class="text-2xl font-extrabold text-[rgb(var(--color-accent))]">{metric.value}</p><p class="mt-1 text-sm text-[rgb(var(--color-text-muted))]">{metric.label}</p></div>)}</section>}
+      {project.data.metrics.length > 0 && (
+        <section class="mt-4 grid gap-4 sm:grid-cols-3" aria-label={t['project.metrics']}>
+          {project.data.metrics.map((metric) => (
+            <div class="panel p-5">
+              <p class="text-2xl font-semibold tracking-tight text-[rgb(var(--color-accent-hover))]" style="font-family: var(--font-display)">{metric.value}</p>
+              <p class="mono-label mt-2">{metric.label}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-      <div class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
-        <div class="glass-panel rounded-lg p-5 sm:p-7"><div class="prose prose-slate dark:prose-invert max-w-none"><Content /></div></div>
-        {project.data.highlights.length > 0 && <aside class="glass-panel h-fit rounded-lg p-5"><h2 class="text-sm font-bold uppercase tracking-[0.18em] text-[rgb(var(--color-text-muted))]">{t['project.highlights']}</h2><ul class="mt-4 space-y-3 text-sm text-[rgb(var(--color-text-secondary))]">{project.data.highlights.map((highlight) => <li class="flex gap-2"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[rgb(var(--color-accent))]" aria-hidden="true"></span><span>{highlight}</span></li>)}</ul></aside>}
+      <div class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_19rem]">
+        <div class="panel p-6 sm:p-8"><div class="prose prose-slate dark:prose-invert max-w-none"><Content /></div></div>
+        <aside class="flex h-fit flex-col gap-4 lg:sticky lg:top-24">
+          {project.data.highlights.length > 0 && (
+            <div class="panel p-5">
+              <h2 class="mono-label">{t['project.highlights']}</h2>
+              <ul class="mt-4 space-y-3 text-sm text-[rgb(var(--color-text-secondary))]">
+                {project.data.highlights.map((highlight) => (
+                  <li class="flex gap-2.5"><Icon name="check" size={16} class="mt-0.5 shrink-0 text-[rgb(var(--color-accent-hover))]" /><span>{highlight}</span></li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {relatedServices.length > 0 && (
+            <nav class="panel p-5" aria-label={relatedLabel}>
+              <h2 class="mono-label">{relatedLabel}</h2>
+              <ul class="mt-3 space-y-1">
+                {relatedServices.map((service) => (
+                  <li>
+                    <a href={`${localePath('/services/', currentLang)}#${service.id}`} class="group flex min-h-11 items-center gap-3 text-sm font-semibold transition-colors hover:text-[rgb(var(--color-accent-hover))]">
+                      <span class="icon-tile h-8 w-8"><Icon name={service.icon} size={15} /></span>
+                      {service.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+        </aside>
       </div>
+
+      {nextCase && (
+        <ScrollReveal animation="fade-up" class="mt-8">
+          <Spotlight tag="a" href={projectHref(nextCase.data.slug, currentLang)} class="panel group flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+            <div>
+              <p class="mono-label">{nextLabel}</p>
+              <p class="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl" style="font-family: var(--font-display)">{nextCase.data.title}</p>
+              <p class="mt-2 max-w-2xl text-sm text-[rgb(var(--color-text-secondary))]">{nextCase.data.description}</p>
+            </div>
+            <span class="icon-tile h-12 w-12 transition-transform group-hover:translate-x-1" aria-hidden="true"><Icon name="arrow-right" size={20} /></span>
+          </Spotlight>
+        </ScrollReveal>
+      )}
     </article>
+    <div class="mt-16">
+      <CtaBand />
+    </div>
   </main>
   <CodeCopy lang={currentLang} />
   <Footer />

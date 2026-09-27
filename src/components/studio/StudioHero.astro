@@ -1,0 +1,87 @@
+---
+import { getCollection } from 'astro:content';
+import Icon from '@/components/common/Icon.astro';
+import Parallax from '@/components/common/Parallax.astro';
+import StudioScene from '@/components/islands/StudioScene.svelte';
+import { defaultLang, type Lang } from '@/lib/i18n';
+import { getStudioCopy, localePath } from '@/lib/studio';
+
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const copy = getStudioCopy(currentLang);
+
+const projects = await getCollection('projects', ({ data }) => data.lang === 'en');
+const liveCount = projects.filter((project) => project.data.status === 'live' && project.data.slug !== 'portfolio').length;
+const caseCount = projects.filter((project) => project.data.caseStudy).length;
+
+const stats = [
+  { value: String(liveCount).padStart(2, '0'), count: liveCount, label: copy.hero.stats.live },
+  { value: String(caseCount).padStart(2, '0'), count: caseCount, label: copy.hero.stats.cases },
+  { value: 'EN · PT', label: copy.hero.stats.languages },
+  { value: 'UTC−3', label: copy.hero.stats.timezone },
+];
+---
+
+<section
+  id="top"
+  aria-labelledby="hero-heading"
+  class="force-dark surface grain relative isolate flex min-h-[100svh] flex-col overflow-hidden"
+  data-pointer-glow
+>
+  <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+    <div class="hero-aurora"></div>
+    <div class="hero-beam hidden lg:block"></div>
+    <div class="grid-floor"></div>
+    <div class="pointer-glow"></div>
+    <div class="absolute inset-x-0 bottom-0 h-40 bg-linear-to-t from-[rgb(var(--color-bg-primary))] to-transparent"></div>
+  </div>
+
+  <StudioScene client:idle />
+
+  <!-- Top-anchored (not centred) so a taller headline after font load pushes content down instead of shifting it -->
+  <div class="studio-container relative z-10 flex flex-1 flex-col justify-start pb-10 pt-32 lg:pt-[clamp(9rem,18svh,12rem)]">
+    <Parallax speed={-0.08}>
+      <p class="fade-rise mb-8 inline-flex items-center gap-3 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.6)] px-3 py-1.5 font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-[rgb(var(--color-text-secondary))] backdrop-blur" style="--d: 40ms">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span data-scramble="1100">{copy.hero.eyebrow}</span>
+      </p>
+
+      <h1 id="hero-heading" class="display-xl max-w-[16ch]">
+        <span class="reveal-line"><span style="--i: 0">{copy.hero.lines[0]}</span></span>
+        <span class="reveal-line"><span class="text-outline" style="--i: 1">{copy.hero.lines[1]}</span></span>
+        <span class="reveal-line"><span class="text-shine" style="--i: 2">{copy.hero.lines[2]}</span></span>
+      </h1>
+
+      <p class="fade-rise mt-8 max-w-xl border-l border-[rgb(var(--color-accent))] pl-5 text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg" style="--d: 260ms">
+        {copy.hero.lead}
+      </p>
+
+      <a href={localePath('/about/', currentLang)} class="fade-rise u-link mt-4 inline-flex text-sm text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))]" style="--d: 300ms">
+        {copy.hero.founderAttribution}
+        <Icon name="arrow-up-right" size={15} class="ml-1" />
+      </a>
+
+      <div class="fade-rise mt-10 flex flex-wrap gap-3" style="--d: 340ms">
+        <a href={localePath('/contact/', currentLang)} class="btn btn-primary" data-magnetic="0.25">
+          {copy.hero.primaryCta}
+          <Icon name="arrow-right" size={18} class="btn-arrow" />
+        </a>
+        <a href="#work" class="btn btn-ghost" data-magnetic="0.2">{copy.hero.secondaryCta}</a>
+      </div>
+    </Parallax>
+  </div>
+
+  <div class="studio-container relative z-10 pb-8">
+    <dl class="fade-rise grid grid-cols-2 border-t border-[rgb(var(--color-border))] md:grid-cols-4" style="--d: 420ms">
+      {stats.map((stat, index) => (
+        <div class:list={['flex flex-col py-5 pr-4', index > 0 && 'md:border-l md:border-[rgb(var(--color-border))] md:pl-6', index % 2 === 1 && 'border-l border-[rgb(var(--color-border))] pl-4 md:pl-6']}>
+          <dt class="mono-label order-2 mt-2">{stat.label}</dt>
+          <dd class="font-display text-2xl font-semibold tracking-tight text-[rgb(var(--color-text-primary))] sm:text-3xl" style="font-family: var(--font-display)" data-count={stat.count} data-count-delay={stat.count !== undefined ? 600 + index * 150 : undefined}>{stat.value}</dd>
+        </div>
+      ))}
+    </dl>
+    <div class="mt-4 hidden items-center gap-3 lg:flex" aria-hidden="true">
+      <span class="scroll-cue"></span>
+      <span class="mono-label">{copy.hero.scrollHint}</span>
+    </div>
+  </div>
+</section>

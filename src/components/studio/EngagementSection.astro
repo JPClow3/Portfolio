@@ -1,0 +1,59 @@
+---
+import Icon from '@/components/common/Icon.astro';
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
+import SectionHeading from '@/components/studio/SectionHeading.astro';
+import { defaultLang, type Lang } from '@/lib/i18n';
+import { getStudioCopy, localePath } from '@/lib/studio';
+
+interface Props {
+  index?: string;
+}
+
+const { index = '06' } = Astro.props;
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const copy = getStudioCopy(currentLang);
+const section = copy.sections.engagement;
+---
+
+<section id="engagement" aria-labelledby="engagement-heading" class="studio-section">
+  <div class="studio-container">
+    <SectionHeading id="engagement-heading" index={index} eyebrow={section.eyebrow} title={section.title} lead={section.lead} />
+
+    <ul class="grid gap-4 lg:grid-cols-3">
+      {copy.engagement.map((model, modelIndex) => (
+        <ScrollReveal animation="fade-up" delay={modelIndex * 90} tag="li" class="h-full">
+          <article class:list={[
+            'panel relative flex h-full flex-col p-6 sm:p-8',
+            model.featured && 'beam-border bg-[linear-gradient(180deg,rgb(var(--color-accent)/0.12),rgb(var(--color-bg-secondary)/0.9)_45%)] shadow-[0_30px_80px_-40px_rgb(0_94_254/0.7)]',
+          ]}>
+            <div class="flex items-center justify-between gap-3">
+              <span class="mono-label">{`0${modelIndex + 1}`}</span>
+              {model.featured && <span class="chip border-[rgb(var(--color-accent)/0.5)] text-[rgb(var(--color-accent-hover))]">{copy.labels.recommended}</span>}
+            </div>
+            <h3 class="mt-6 text-2xl font-semibold tracking-tight">{model.title}</h3>
+            <p class="mt-2 text-sm text-[rgb(var(--color-text-muted))]">
+              <span class="font-semibold text-[rgb(var(--color-text-secondary))]">{copy.labels.bestFor}:</span> {model.bestFor}
+            </p>
+            <p class="mt-4 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-base">{model.description}</p>
+            <ul class="mt-6 space-y-2.5 border-t border-[rgb(var(--color-border))] pt-6 text-sm">
+              {model.points.map((point) => (
+                <li class="flex items-start gap-2.5">
+                  <Icon name="check" size={16} class="mt-0.5 shrink-0 text-[rgb(var(--color-accent-hover))]" />
+                  <span>{point}</span>
+                </li>
+              ))}
+            </ul>
+            <a
+              href={localePath('/contact/', currentLang)}
+              class:list={['btn mt-8 w-full', model.featured ? 'btn-primary' : 'btn-ghost']}
+              aria-label={`${section.cta}: ${model.title}`}
+            >
+              {section.cta}
+              <Icon name="arrow-right" size={16} class="btn-arrow" />
+            </a>
+          </article>
+        </ScrollReveal>
+      ))}
+    </ul>
+  </div>
+</section>

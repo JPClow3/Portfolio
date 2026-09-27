@@ -1,0 +1,28 @@
+# Cloudflare Pages response headers (https://developers.cloudflare.com/pages/configuration/headers/)
+# scripts/serve.mjs mirrors the caching rules for local Playwright/Lighthouse runs.
+
+/*
+  X-Content-Type-Options: nosniff
+  Content-Signal: ai-train=yes, search=yes, ai-input=yes
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+
+/
+  Link: </llms.txt>; rel="describedby"; type="text/plain"
+
+# Content-hashed build output never changes for a given URL
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Stable media that is replaced rarely
+/projects/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/brand/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/open-graph/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+# The service worker must always be revalidated
+/sw.js
+  Cache-Control: no-cache

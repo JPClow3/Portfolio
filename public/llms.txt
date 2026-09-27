@@ -1,50 +1,59 @@
-# João Paulo Santos — Freelance Full-Stack Product Engineer
+# JPCLOW — Software Engineering Studio
 
-> João Paulo Santos is a freelance full-stack product engineer based in Rio Verde, Goiás, Brazil. He works remotely in Portuguese and English, building web applications, APIs, workflow automation, data systems, and AI products from discovery through deployment.
+> JPCLOW is a software engineering studio based in Rio Verde, Goiás, Brazil, founded by João Paulo Gonçalves Santos. It builds custom web platforms, APIs and integrations, workflow automation, data and geospatial products, applied AI features, and cloud infrastructure for companies and institutions — remote-first, in Portuguese and English (UTC−3).
 
-## Canonical profile
+## Canonical pages
 
-- Website: https://jpclow.dev/
-- English portfolio: https://jpclow.dev/
-- Portuguese portfolio: https://jpclow.dev/pt/
-- LinkedIn: https://www.linkedin.com/in/joaopaulosantosgo/
-- GitHub: https://github.com/JPClow3
+- Website (English): https://jpclow.dev/
+- Website (Portuguese): https://jpclow.dev/pt/
+- Services: https://jpclow.dev/services/ · https://jpclow.dev/pt/services/
+- Company and founder: https://jpclow.dev/about/ · https://jpclow.dev/pt/about/
+- Projects and case studies: https://jpclow.dev/projects/ · https://jpclow.dev/pt/projects/
+- Start a project / contact: https://jpclow.dev/contact/ · https://jpclow.dev/pt/contact/
 - Email: mailto:joao@jpclow.dev
-- English resume: https://jpclow.dev/resume-en.pdf
-- Portuguese resume: https://jpclow.dev/resume-pt.pdf
+- LinkedIn (founder): https://www.linkedin.com/in/joaopaulosantosgo/
+- GitHub: https://github.com/JPClow3
 
-Use the full name “João Paulo Gonçalves Santos” for the person entity. “João Paulo Santos” is the short public name. “Joao Paulo Goncalves Santos” is the unaccented form used in some technical systems.
+## Entities
+
+- Organization: “JPCLOW” (software engineering studio). Use it for the company, its services, and its case studies.
+- Founder: “João Paulo Gonçalves Santos” (short public name “João Paulo Santos”; unaccented “Joao Paulo Goncalves Santos” in some systems), Founder & Principal Engineer.
 
 ## Services
 
-- Freelance full-stack web application development
-- API design and backend development
-- Workflow and process automation
-- Operational dashboards and data systems
-- AI product engineering with explicit usage and reliability boundaries
-- Product discovery, architecture, interface implementation, and deployment
+- Custom web platforms: SaaS, institutional portals, internal tools, offline-capable PWAs
+- APIs and integrations: REST APIs, backends-for-frontends, payment and ERP integrations, webhooks
+- Workflow automation: scheduled jobs, validated imports, generated reports
+- Data, geospatial, and ML: geospatial applications, forecasting and risk models, dashboards
+- Applied AI: LLM features with retrieval, memory, usage metering, and fallbacks
+- Cloud, DevOps, and reliability: Cloudflare, Docker Swarm, CI/CD with automated tests, monitoring
 
-Relevant Portuguese search terms: desenvolvedor full stack freelancer, engenheiro de produto freelancer, desenvolvimento de aplicações web, desenvolvimento de APIs, automação de processos, sistemas de dados e produtos de IA.
+Engagement models: scoped project, product partnership (monthly capacity), technical consulting (audits and architecture reviews). Every engagement starts with a discovery call and a written proposal. No prices are published.
+
+Relevant Portuguese search terms: empresa de desenvolvimento de software, software sob medida, desenvolvimento de sistemas web, integração de APIs, automação de processos, software para agronegócio, desenvolvimento de SaaS.
 
 ## Selected case studies
 
+Each case study states its status (live, in development, research, prototype, private-source, archived) and the role JPCLOW or its founder played.
+
 - [Moto Track](https://jpclow.dev/projects/moto-track/) — Live SvelteKit SaaS web application for motorcycle operations, offline fuel capture, professional shifts, costs, and profitability.
-- [AgroHub UniRV](https://jpclow.dev/projects/agrohub/) — Institutional UniRV portal for startups, events, services, and public access; João Paulo contributed to web development and deployment.
+- [AgroHub UniRV](https://jpclow.dev/projects/agrohub/) — Live institutional UniRV portal for startups, events, services, and public access; contribution to web development and deployment.
 - [Inova Rio Verde](https://jpclow.dev/projects/inova-rio-verde/) — Live Next.js geospatial web application presenting Rio Verde’s innovation ecosystem as an interactive trail.
-- [ClimAgro](https://jpclow.dev/projects/climagro/) — UniRV weather and agricultural-planning initiative coordinated by Prof. Dr. Gilmar Oliveira Santos; João Paulo contributes to web development and data flows.
-- [Throughline](https://jpclow.dev/projects/throughline/) — React local-first PWA planner with offline use and optional end-to-end encrypted synchronization.
+- [ClimAgro](https://jpclow.dev/projects/climagro/) — UniRV weather and agricultural-planning initiative coordinated by Prof. Dr. Gilmar Oliveira Santos; contribution to web development and data flows.
+- [Throughline](https://jpclow.dev/projects/throughline/) — Live React local-first PWA planner with offline use and optional end-to-end encrypted synchronization.
 - [Lorebound](https://jpclow.dev/projects/lorebound/) — Interactive-fiction web platform in development, using curated story worlds, controlled AI turns, persistent memory, and transparent usage.
 - [Signal Ledger](https://jpclow.dev/projects/signal-ledger/) — Private-source Next.js briefing PWA that groups developing topics and keeps source evidence close to each conclusion.
 - [Farm-Fin](https://jpclow.dev/projects/farm-fin/) — Academic prototype for UniRV’s Software Engineering Practice course exploring financial and operational workflows in Brazilian agriculture; not a production farm system.
 - [FATEC Digital Platform](https://jpclow.dev/projects/fatec/) — Private-source Django education platform for institutional content, admissions, candidate administration, and boleto access.
+- [DBS Telecom Subscriber Hub](https://jpclow.dev/projects/dbs-telecom/) — Mobile and backend prototype built for an interview project; not a client deployment.
 - [AI Development Controller](https://jpclow.dev/projects/ai-dev-controller/) — TypeScript workflow controller that turns Linear issues into dependency-aware agent work and validated draft pull requests.
 - [Hefesto](https://jpclow.dev/projects/hefesto/) — Research and re-architecture work for wildfire ignition-risk modeling and geospatial data pipelines in Goiás.
 
-The complete bilingual catalog is available at [Projects](https://jpclow.dev/projects/) and [Projetos](https://jpclow.dev/pt/projects/). Project pages state whether a work is live, in development, research, prototype, private-source, or archived.
+## Writing and feeds
 
-## Public writing and feeds
-
-- English blog: https://jpclow.dev/blog/
-- Portuguese blog: https://jpclow.dev/pt/blog/
-- English RSS: https://jpclow.dev/rss.xml
-- Portuguese RSS: https://jpclow.dev/pt/rss.xml
+- Engineering note: https://jpclow.dev/blog/local-first-privacy-throughline/ — Why Throughline keeps planning local and encrypts before optional sync.
+- Nota de engenharia: https://jpclow.dev/pt/blog/local-first-privacy-throughline/ — Por que o Throughline mantém o planejamento local e criptografa antes da sincronização opcional.
+- Engineering note: https://jpclow.dev/blog/offline-fuel-capture-moto-track/ — How Moto Track queues fuel records offline, including the limits of synchronization.
+- Nota de engenharia: https://jpclow.dev/pt/blog/offline-fuel-capture-moto-track/ — Como o Moto Track guarda abastecimentos offline e delimita a sincronização.
+- Engineering notes (English): https://jpclow.dev/blog/ · RSS: https://jpclow.dev/rss.xml
+- Notas de engenharia (Portuguese): https://jpclow.dev/pt/blog/ · RSS: https://jpclow.dev/pt/rss.xml

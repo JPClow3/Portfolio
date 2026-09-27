@@ -1,0 +1,72 @@
+---
+import { getCollection } from 'astro:content';
+import Icon from '@/components/common/Icon.astro';
+import Parallax from '@/components/common/Parallax.astro';
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
+import SplitText from '@/components/common/SplitText.astro';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
+import { getStudioCopy, localePath } from '@/lib/studio';
+
+interface Props {
+  /** Show the contact-page button; hidden on the contact page itself. */
+  showContactButton?: boolean;
+}
+
+const { showContactButton = true } = Astro.props;
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
+const copy = getStudioCopy(currentLang);
+const section = copy.sections.cta;
+
+const profileEntries = await getCollection('profile', ({ data }) => data.lang === currentLang);
+const fallbackEntries = await getCollection('profile', ({ data }) => data.lang === defaultLang);
+const profile = (profileEntries[0] ?? fallbackEntries[0]).data.profile;
+---
+
+<section id="contact" aria-labelledby="cta-heading" class="force-dark surface grain relative isolate overflow-hidden border-t border-[rgb(var(--color-border))]" data-pointer-glow>
+  <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+    <Parallax speed={0.2} class="absolute inset-0">
+      <div class="absolute left-1/2 top-1/2 h-[42rem] w-[70rem] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse_at_center,rgb(0_94_254/0.32),transparent_62%)]"></div>
+    </Parallax>
+    <div class="grid-floor opacity-70"></div>
+    <div class="pointer-glow"></div>
+  </div>
+
+  <div class="studio-container py-24 text-center sm:py-32">
+    <ScrollReveal animation="scale">
+      <p class="eyebrow mb-6 justify-center">{section.eyebrow}</p>
+      <h2 id="cta-heading" class="display-lg mx-auto max-w-4xl"><SplitText text={section.title} delay={150} /></h2>
+      <p class="mx-auto mt-6 max-w-xl text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg">{section.lead}</p>
+      <div class="mt-10 flex flex-wrap items-center justify-center gap-3">
+        {showContactButton && (
+          <a href={localePath('/contact/', currentLang)} class="btn btn-primary" data-magnetic="0.25">
+            {section.primary}
+            <Icon name="arrow-right" size={18} class="btn-arrow" />
+          </a>
+        )}
+        <span class="inline-flex items-center gap-1.5">
+          <a href={`mailto:${profile.email}`} class="btn btn-ghost">
+            <Icon name="email" size={16} />
+            {profile.email}
+          </a>
+          <button
+          type="button"
+          class="copy-btn btn btn-ghost min-h-11 w-11 px-0"
+          data-copy={profile.email}
+          data-copied-label={t['common.copied']}
+          aria-label={t['common.copyEmail']}
+          title={t['common.copyEmail']}
+        >
+          <Icon name="copy" size={16} class="copy-idle" />
+          <Icon name="check" size={16} class="copy-check" />
+          <span class="sr-only" data-copy-status aria-live="polite"></span>
+        </button>
+        </span>
+        <a href={profile.linkedin} target="_blank" rel="noreferrer" class="btn btn-ghost" aria-label="LinkedIn">
+          <Icon name="linkedin" size={16} />
+          LinkedIn
+        </a>
+      </div>
+    </ScrollReveal>
+  </div>
+</section>

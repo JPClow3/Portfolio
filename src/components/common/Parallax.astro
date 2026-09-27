@@ -1,0 +1,75 @@
+---
+/**
+ * Scroll-linked parallax wrapper. `speed` is the fraction of the element's
+ * distance from the viewport centre applied as translateY (negative = slower
+ * than scroll, positive = faster). Disabled for prefers-reduced-motion.
+ */
+interface Props {
+  speed?: number;
+  class?: string;
+  tag?: 'div' | 'span' | 'figure';
+}
+
+const { speed = -0.12, class: className = '', tag = 'div' } = Astro.props;
+const Tag = tag;
+---
+
+<Tag class:list={['parallax', className]} data-parallax={speed}>
+  <slot />
+</Tag>
+
+<style>
+  .parallax {
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .parallax {
+      transform: none !important;
+      will-change: auto;
+    }
+  }
+</style>
+
+<script>
+  let frame = 0;
+  let elements: HTMLElement[] = [];
+  const offsets = new WeakMap<HTMLElement, number>();
+
+  function update() {
+    frame = 0;
+    const viewportHeight = window.innerHeight;
+
+    for (const element of elements) {
+      const speed = Number(element.dataset.parallax) || 0;
+      const currentOffset = offsets.get(element) ?? 0;
+      const rect = element.getBoundingClientRect();
+      const top = rect.top - currentOffset;
+
+      if (top > viewportHeight * 1.5 || top + rect.height < -viewportHeight * 0.5) continue;
+
+      const distanceFromCentre = top + rect.height / 2 - viewportHeight / 2;
+      const offset = Math.round(distanceFromCentre * speed * 10) / 10;
+      offsets.set(element, offset);
+      element.style.transform = `translate3d(0, ${offset}px, 0)`;
+    }
+  }
+
+  function requestUpdate() {
+    if (!frame) frame = requestAnimationFrame(update);
+  }
+
+  function initParallax() {
+    elements = Array.from(document.querySelectorAll<HTMLElement>('[data-parallax]'));
+    if (elements.length === 0 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    window.removeEventListener('scroll', requestUpdate);
+    window.removeEventListener('resize', requestUpdate);
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate, { passive: true });
+    requestUpdate();
+  }
+
+  initParallax();
+  document.addEventListener('astro:page-load', initParallax);
+</script>

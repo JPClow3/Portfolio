@@ -1,6 +1,15 @@
 import { test, expect } from '@playwright/test';
 import { inflateSync } from 'node:zlib';
 
+test('English homepage stays accessible to a Portuguese-language browser', async ({ browser, baseURL }) => {
+  const context = await browser.newContext({ locale: 'pt-BR' });
+  const page = await context.newPage();
+  await page.goto(`${baseURL}/?lang=en`);
+  await expect(page).toHaveURL(`${baseURL}/?lang=en`);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await context.close();
+});
+
 function paethPredictor(left: number, up: number, upLeft: number) {
   const estimate = left + up - upLeft;
   const leftDistance = Math.abs(estimate - left);
@@ -94,7 +103,7 @@ test('homepage loads and displays main sections', async ({ page }) => {
   await page.goto('/');
   
   // Check page title
-  await expect(page).toHaveTitle(/João Paulo/i);
+  await expect(page).toHaveTitle(/JPCLOW/);
   
   // Check main heading exists
   const mainHeading = page.locator('h1');
@@ -126,7 +135,8 @@ test('homepage prioritizes the client-facing project showcase', async ({ page })
   for (const [index, title] of expectedProjects.entries()) {
     await expect(cards.nth(index).locator('h3')).toHaveText(title);
     await expect(cards.nth(index).locator('[data-testid="project-outcome"]')).toBeVisible();
-    await expect(cards.nth(index).locator('[data-testid="project-proof"]')).toHaveCount(1);
+    // A proof metric is optional: only shown when the project content defines one
+    expect(await cards.nth(index).locator('[data-testid="project-proof"]').count()).toBeLessThanOrEqual(1);
     await expect(cards.nth(index).locator('[data-testid="project-capabilities"] li')).toHaveCount(2);
     await expect(cards.nth(index).getByText('Problem', { exact: true })).toHaveCount(0);
     await expect(cards.nth(index).getByText('Constraint', { exact: true })).toHaveCount(0);
@@ -134,8 +144,10 @@ test('homepage prioritizes the client-facing project showcase', async ({ page })
     await expect(cards.nth(index).getByText('Outcome', { exact: true })).toHaveCount(0);
   }
 
-  await expect(page.locator('header nav').getByRole('link', { name: 'Blog', exact: true })).toHaveCount(0);
-  await expect(page.locator('header nav').getByRole('link', { name: 'Projects', exact: true })).toHaveAttribute('href', '/projects/');
+  const primaryNav = page.getByRole('navigation', { name: 'Primary' });
+  await expect(primaryNav.getByRole('link', { name: 'Work', exact: true }).first()).toHaveAttribute('href', '/projects/');
+  await expect(primaryNav.getByRole('link', { name: 'Services', exact: true }).first()).toHaveAttribute('href', '/services/');
+  await expect(primaryNav.getByRole('link', { name: /start a project/i }).first()).toHaveAttribute('href', '/contact/');
 });
 
 test('hero section is visible', async ({ page }) => {
@@ -145,10 +157,9 @@ test('hero section is visible', async ({ page }) => {
   const hero = page.locator('section').first();
   await expect(hero).toBeVisible();
   
-  // Check for call-to-action buttons
-  const ctaButtons = page.locator('a[href*="#projects"], a[href*="github.com"]');
-  const count = await ctaButtons.count();
-  expect(count).toBeGreaterThan(0);
+  // B2B calls to action: start a project and jump to the work showcase
+  await expect(hero.locator('a[href="/contact/"]')).toBeVisible();
+  await expect(hero.locator('a[href="#work"]')).toBeVisible();
 });
 
 test('ambient Three.js scene mounts and reacts to page scroll', async ({ page }) => {
@@ -171,69 +182,75 @@ test('ambient Three.js scene mounts and reacts to page scroll', async ({ page })
   await expect.poll(async () => Number(await scene.getAttribute('data-scroll-target'))).toBeGreaterThan(initialTarget + 0.02);
 });
 
-test('active navigation and ambient scene follow homepage sections', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await page.goto('/');
-
-  const scene = page.locator('[data-testid="site-scene"]');
-  await expect(scene).toHaveAttribute('data-scene-ready', 'true', { timeout: 30_000 });
-
-  await page.locator('#projects').scrollIntoViewIfNeeded();
-
-  const projectNav = page.locator('[data-nav-section="projects"]').first();
-  await expect(projectNav).toHaveAttribute('data-active', 'true', { timeout: 5_000 });
-  await expect(scene).toHaveAttribute('data-scene-section', 'projects', { timeout: 5_000 });
-});
-
-test('logo focus pulls ambient particles without breaking reduced motion', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await page.goto('/');
-
-  const scene = page.locator('[data-testid="site-scene"]');
-  const logo = page.locator('[data-logo-signal]');
-
-  await expect(scene).toHaveAttribute('data-scene-ready', 'true', { timeout: 30_000 });
-  await logo.hover();
-  await expect(scene).toHaveAttribute('data-logo-focus', 'true', { timeout: 5_000 });
-  await page.mouse.move(20, 180);
-  await expect(scene).toHaveAttribute('data-logo-focus', 'false', { timeout: 5_000 });
-
-  const pageErrors: string[] = [];
-  page.on('pageerror', (error) => pageErrors.push(error.message));
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.reload();
-  await expect(scene.locator('.static-gradient')).toBeVisible({ timeout: 5_000 });
-  await logo.focus();
-  await page.waitForTimeout(100);
-  expect(pageErrors).toEqual([]);
-});
-
 test('project card interaction keeps case study links clickable', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/');
 
   const throughlineCard = page.locator('[data-testid="project-card"]').filter({ hasText: 'Throughline' }).first();
-  await expect(throughlineCard).toBeVisible();
   await expect(page.locator('[data-testid="project-card"]').first()).toContainText('Moto Track');
-  await throughlineCard.hover();
-  await expect(throughlineCard).toHaveAttribute('data-pointer-active', 'true', { timeout: 5_000 });
+  await throughlineCard.scrollIntoViewIfNeeded();
+  await expect(throughlineCard).toBeVisible();
   await throughlineCard.locator('a[href="/projects/throughline/"]').click();
   await expect(page).toHaveURL(/\/projects\/throughline\/?$/);
 });
 
-test('homepage presents the engineering principles and keeps private client source protected', async ({ page }) => {
+test('active navigation follows homepage sections', async ({ page }) => {
   await page.goto('/');
 
-  const approach = page.locator('#approach');
-  await expect(approach.getByRole('heading', { name: 'What I optimize for' })).toBeVisible();
-  await expect(approach.getByText('AI must improve the task')).toBeVisible();
-  await expect(approach.getByText('Fallbacks are a feature')).toBeVisible();
-  await expect(approach.getByText('User trust shapes architecture')).toBeVisible();
+  await page.locator('#work').scrollIntoViewIfNeeded();
+  await expect(page.locator('[data-nav-section="work"]').first()).toHaveAttribute('data-active', 'true', { timeout: 5_000 });
+
+  await page.locator('#process').scrollIntoViewIfNeeded();
+  await expect(page.locator('[data-nav-section="process"]').first()).toHaveAttribute('data-active', 'true', { timeout: 5_000 });
+});
+
+test('hero scene renders a static frame for reduced motion without errors', async ({ page }) => {
+  const pageErrors: string[] = [];
+  page.on('pageerror', (error) => pageErrors.push(error.message));
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+
+  const scene = page.locator('[data-testid="site-scene"]');
+  await expect(scene).toHaveAttribute('data-scene-ready', 'true', { timeout: 30_000 });
+  await expect(scene.locator('canvas')).toHaveCount(1);
+  expect(pageErrors).toEqual([]);
+});
+
+test('homepage presents the B2B offer and keeps private client source protected', async ({ page }) => {
+  await page.goto('/');
+
+  await expect(page.locator('#services article')).toHaveCount(6);
+  await expect(page.locator('#services').getByRole('heading', { name: 'Custom web platforms' })).toBeVisible();
+  await expect(page.locator('#process li article')).toHaveCount(4);
+  await expect(page.locator('#engagement li article')).toHaveCount(3);
+  await expect(page.locator('#faq details')).toHaveCount(6);
+  await expect(page.locator('#engineering figure pre')).toBeVisible();
 
   const loreboundCard = page.locator('[data-testid="project-card"]').filter({ hasText: 'Lorebound' }).first();
   await expect(loreboundCard.getByText('In development', { exact: true })).toBeVisible();
   await expect(loreboundCard.getByRole('link', { name: /view code/i })).toHaveCount(0);
   await expect(page.locator('[data-testid="project-card"]').filter({ hasText: 'FATEC Digital Platform' })).toHaveCount(0);
+});
+
+test('studio pages render in both languages with localized headings', async ({ page }) => {
+  const pages = [
+    { path: '/services/', heading: /From first diagram/ },
+    { path: '/pt/services/', heading: /Do primeiro diagrama/ },
+    { path: '/about/', heading: /engineering studio built on shipping/ },
+    { path: '/pt/about/', heading: /estúdio de engenharia feito para entregar/ },
+    { path: '/contact/', heading: /what you need to build/ },
+    { path: '/pt/contact/', heading: /o que você precisa construir/ },
+  ];
+
+  for (const entry of pages) {
+    await page.goto(entry.path);
+    await expect(page.locator('h1')).toHaveText(entry.heading);
+    await expect(page.locator('link[rel="alternate"][hreflang="pt-BR"]')).toHaveCount(1);
+  }
+
+  await page.goto('/services/');
+  await expect(page.locator('#data')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Mudar para Português' }).first()).toHaveAttribute('href', '/pt/services/');
 });
 
 test('mobile menu toggles correctly', async ({ page }) => {

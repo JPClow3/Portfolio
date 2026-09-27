@@ -11,7 +11,7 @@ export const GET: APIRoute = async (context) => {
   const site = context.site ?? 'https://jpclow.dev';
 
   return rss({
-    title: 'João Paulo Santos — Blog (Português)',
+    title: 'JPCLOW — Notas de engenharia',
     description:
       'Artigos sobre engenharia de produto, desenvolvimento web, automação, sistemas de dados e entrega confiável de software.',
     site,

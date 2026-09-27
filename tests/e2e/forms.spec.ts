@@ -37,8 +37,17 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test('contact form is visible on homepage', async ({ page }) => {
+test('homepage closes with a contact call to action', async ({ page }) => {
   await page.goto('/');
+
+  const cta = page.locator('#contact');
+  await expect(cta.locator('a[href="/contact/"]')).toBeVisible();
+  await expect(cta.locator('a[href^="mailto:"]')).toBeVisible();
+  await expect(cta.locator('a[href*="linkedin.com"]')).toBeVisible();
+});
+
+test('contact form is visible on the contact page', async ({ page }) => {
+  await page.goto('/contact/');
 
   const contactSection = page.locator('#contact');
   await expect(contactSection).toBeVisible();
@@ -58,7 +67,7 @@ test('contact form is visible on homepage', async ({ page }) => {
 });
 
 test('form validation blocks empty submission', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/contact/');
 
   if (!(await hasContactForm(page))) {
     await expect(page.locator('#contact a[href^="mailto:"]').first()).toBeVisible();
@@ -77,7 +86,7 @@ test('form validation blocks empty submission', async ({ page }) => {
 });
 
 test('form validation rejects invalid email', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/contact/');
 
   if (!(await hasContactForm(page))) {
     await expect(page.locator('#contact a[href^="mailto:"]').first()).toBeVisible();
@@ -103,7 +112,7 @@ test('form accepts valid input with mocked submission', async ({ page }) => {
     });
   });
 
-  await page.goto('/');
+  await page.goto('/contact/');
 
   if (!(await hasContactForm(page))) {
     await expect(page.locator('#contact a[href^="mailto:"]').first()).toBeVisible();
@@ -128,7 +137,7 @@ test('form requires Turnstile before Web3Forms submission', async ({ page }) => 
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true }) });
   });
 
-  await page.goto('/');
+  await page.goto('/contact/');
 
   if (!(await hasContactForm(page))) {
     await expect(page.locator('#contact a[href^="mailto:"]').first()).toBeVisible();
@@ -148,7 +157,7 @@ test('form requires Turnstile before Web3Forms submission', async ({ page }) => 
 test('form shows localized Turnstile failure message', async ({ page }) => {
   await mockTurnstile(page, false);
 
-  await page.goto('/pt/');
+  await page.goto('/pt/contact/');
 
   if (!(await hasContactForm(page))) {
     await expect(page.locator('#contact')).toBeVisible();
@@ -171,7 +180,7 @@ test('form shows network error state when request fails', async ({ page }) => {
     await route.abort('failed');
   });
 
-  await page.goto('/');
+  await page.goto('/contact/');
 
   if (!(await hasContactForm(page))) {
     await expect(page.locator('#contact a[href^="mailto:"]').first()).toBeVisible();
@@ -190,7 +199,7 @@ test('form shows network error state when request fails', async ({ page }) => {
 });
 
 test('form status region uses aria-live for assistive technologies', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/contact/');
 
   if (!(await hasContactForm(page))) {
     await expect(page.locator('#contact a[href^="mailto:"]').first()).toBeVisible();
@@ -202,7 +211,7 @@ test('form status region uses aria-live for assistive technologies', async ({ pa
 });
 
 test('form validation messages are localized in Portuguese', async ({ page }) => {
-  await page.goto('/pt/');
+  await page.goto('/pt/contact/');
 
   if (!(await hasContactForm(page))) {
     await expect(page.locator('#contact')).toBeVisible();
@@ -216,7 +225,7 @@ test('form validation messages are localized in Portuguese', async ({ page }) =>
 });
 
 test('contact links have accessible names', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/contact/');
 
   const links = page.locator('#contact a');
   const count = await links.count();
@@ -232,7 +241,7 @@ test('contact links have accessible names', async ({ page }) => {
 });
 
 test('contact section keyboard navigation works', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/contact/');
 
   const firstContactLink = page.locator('#contact a').first();
   await firstContactLink.focus();
@@ -244,8 +253,8 @@ test('contact section keyboard navigation works', async ({ page }) => {
 });
 
 test('contact section is accessible via keyboard', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/contact/');
 
-  const contactHeading = page.locator('#contact h2');
+  const contactHeading = page.locator('#contact h2').first();
   await expect(contactHeading).toBeVisible();
 });

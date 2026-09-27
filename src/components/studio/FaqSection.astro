@@ -1,0 +1,41 @@
+---
+import Icon from '@/components/common/Icon.astro';
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
+import SplitText from '@/components/common/SplitText.astro';
+import { defaultLang, type Lang } from '@/lib/i18n';
+import { getStudioCopy } from '@/lib/studio';
+
+interface Props {
+  index?: string;
+}
+
+const { index = '07' } = Astro.props;
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const copy = getStudioCopy(currentLang);
+const section = copy.sections.faq;
+---
+
+<section id="faq" aria-labelledby="faq-heading" class="studio-section">
+  <div class="studio-container grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+    <ScrollReveal animation="fade-up">
+      <p class="eyebrow mb-5"><span class="text-[rgb(var(--color-text-muted))]">{index}</span>{section.eyebrow}</p>
+      <h2 id="faq-heading" class="heading-section"><SplitText text={section.title} /></h2>
+    </ScrollReveal>
+
+    <div class="border-t border-[rgb(var(--color-border))]">
+      {copy.faq.map((item, itemIndex) => (
+        <ScrollReveal animation="fade" delay={itemIndex * 50}>
+          <details class="faq-item group border-b border-[rgb(var(--color-border))]" open={itemIndex === 0}>
+            <summary class="flex min-h-11 items-center justify-between gap-6 py-6 text-left text-lg font-semibold tracking-tight transition-colors hover:text-[rgb(var(--color-accent-hover))] sm:text-xl">
+              {item.question}
+              <span class="faq-toggle inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[rgb(var(--color-border))] text-[rgb(var(--color-accent-hover))]">
+                <Icon name="plus" size={18} />
+              </span>
+            </summary>
+            <p class="max-w-2xl pb-6 pr-12 text-base leading-relaxed text-[rgb(var(--color-text-secondary))]">{item.answer}</p>
+          </details>
+        </ScrollReveal>
+      ))}
+    </div>
+  </div>
+</section>

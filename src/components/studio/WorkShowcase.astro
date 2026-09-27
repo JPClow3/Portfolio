@@ -1,0 +1,145 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Icon from '@/components/common/Icon.astro';
+import Parallax from '@/components/common/Parallax.astro';
+import SectionHeading from '@/components/studio/SectionHeading.astro';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
+import { getStudioCopy, localePath, projectHref } from '@/lib/studio';
+import { projectImageSources } from '@/lib/images';
+
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
+const copy = getStudioCopy(currentLang);
+const section = copy.sections.work;
+
+type Project = CollectionEntry<'projects'>;
+
+const localized = await getCollection('projects', ({ data }) => data.lang === currentLang);
+const source = localized.length > 0 ? localized : await getCollection('projects', ({ data }) => data.lang === defaultLang);
+const projects = source
+  .filter((project) => project.data.featured)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 6);
+
+const statusLabels: Partial<Record<Project['data']['status'], string>> = {
+  'in-development': t['project.inDevelopment'],
+  research: t['project.research'],
+  prototype: t['project.prototype'],
+  'private-source': t['project.privateSource'],
+  archived: t['project.archived'],
+};
+
+const primaryHref = (project: Project) =>
+  project.data.caseStudy ? projectHref(project.data.slug, currentLang) : project.data.link ?? project.data.github ?? localePath('/projects/', currentLang);
+---
+
+<section id="work" aria-labelledby="work-heading" class="studio-section">
+  <div class="studio-container">
+    <SectionHeading id="work-heading" index="02" eyebrow={section.eyebrow} title={section.title} lead={section.lead}>
+      <a href={localePath('/projects/', currentLang)} class="link-arrow text-sm lg:col-start-2">
+        {section.cta}
+        <Icon name="arrow-up-right" size={16} />
+      </a>
+    </SectionHeading>
+
+    <ol class="space-y-6 lg:space-y-10">
+      {projects.map((project, index) => {
+        const href = primaryHref(project);
+        const isExternal = href.startsWith('http');
+        const primaryLabel = project.data.caseStudy ? copy.labels.viewCase : t['projects.viewProject'];
+        const proof = project.data.metrics[0];
+        const status = statusLabels[project.data.status];
+
+        return (
+          <li class="work-stack-item" style={`--i: ${index}`}>
+            <article
+              data-testid="project-card"
+              class="work-card group grid overflow-hidden rounded-[var(--radius-lg)] border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary))] shadow-[0_-20px_60px_-30px_rgb(0_0_0/0.5)] lg:min-h-[34rem] lg:grid-cols-[1fr_1.15fr]"
+            >
+              <div class="flex flex-col p-6 sm:p-8 lg:p-10">
+                <div class="flex items-start justify-between gap-4">
+                  <span class="work-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                  <div class="flex flex-wrap justify-end gap-1.5">
+                    {project.data.year && <span class="chip">{project.data.year}</span>}
+                    {status && <span class="chip border-[rgb(var(--color-accent)/0.4)] text-[rgb(var(--color-accent-hover))]">{status}</span>}
+                  </div>
+                </div>
+
+                <h3 class="mt-8 text-3xl font-semibold tracking-tight sm:text-4xl">{project.data.title}</h3>
+                <p data-testid="project-outcome" class="mt-4 text-pretty text-base leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.description}</p>
+
+                <div class="mt-6 grid gap-4 sm:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+                  {proof && (
+                    <div data-testid="project-proof" class="rounded-md border border-[rgb(var(--color-accent)/0.3)] bg-[rgb(var(--color-accent)/0.08)] px-4 py-3">
+                      <p class="font-display text-2xl font-semibold text-[rgb(var(--color-accent-hover))]" style="font-family: var(--font-display)">{proof.value}</p>
+                      <p class="mono-label mt-1">{proof.label}</p>
+                    </div>
+                  )}
+                  {project.data.highlights.length > 0 && (
+                    <div data-testid="project-capabilities">
+                      <p class="mono-label">{t['home.capabilities']}</p>
+                      <ul class="mt-2 grid gap-1.5 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">
+                        {project.data.highlights.slice(0, 2).map((highlight) => (
+                          <li class="flex gap-2">
+                            <Icon name="check" size={16} class="mt-0.5 shrink-0 text-[rgb(var(--color-accent-hover))]" />
+                            <span>{highlight}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                <ul class="mt-6 flex flex-wrap gap-1.5">
+                  {project.data.tech.slice(0, 5).map((tech) => <li class="chip">{tech}</li>)}
+                </ul>
+
+                <div class="mt-auto flex flex-wrap items-center gap-x-6 gap-y-1 pt-6 text-sm">
+                  <a
+                    href={href}
+                    target={isExternal ? '_blank' : undefined}
+                    rel={isExternal ? 'noreferrer' : undefined}
+                    class="link-arrow"
+                    aria-label={`${primaryLabel} - ${project.data.title}`}
+                  >
+                    {primaryLabel}
+                    <Icon name="arrow-up-right" size={16} />
+                  </a>
+                  {project.data.link && (
+                    <a href={project.data.link} target="_blank" rel="noreferrer" class="inline-flex min-h-11 items-center text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-text-primary))]" aria-label={`${t['home.live']} ${project.data.title}`}>
+                      {t['home.live']}
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {project.data.image && (
+                <div class="relative flex items-center border-t border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-tertiary)/0.6)] p-4 sm:p-6 lg:border-l lg:border-t-0 lg:p-8">
+                  <div class="dot-field pointer-events-none absolute inset-0 opacity-70" aria-hidden="true"></div>
+                  <div class="work-frame relative w-full">
+                    <div class="work-frame-chrome" aria-hidden="true"><i></i><i></i><i></i></div>
+                    <div class="work-frame-media aspect-[16/10] overflow-hidden">
+                      <Parallax speed={0.05} class="h-[110%] -mt-[5%]">
+                        <img
+                          src={project.data.image}
+                          srcset={projectImageSources(project.data.image).srcset}
+                          sizes="(min-width: 1024px) 40vw, 100vw"
+                          alt={`${project.data.title} — ${t['projects.previewAlt']}`}
+                          class="h-full w-full object-cover object-top"
+                          loading="lazy"
+                          decoding="async"
+                          width="1440"
+                          height="900"
+                        />
+                      </Parallax>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </article>
+          </li>
+        );
+      })}
+    </ol>
+  </div>
+</section>

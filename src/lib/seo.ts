@@ -1,7 +1,9 @@
 import type { Lang } from '@/lib/i18n';
+import { getStudioCopy } from '@/lib/studio';
 
 export const SITE = {
   name: 'jpclow.dev',
+  company: 'JPCLOW',
   url: 'https://jpclow.dev',
   author: 'João Paulo Gonçalves Santos',
   shortAuthor: 'João Paulo Santos',
@@ -31,70 +33,120 @@ export interface PageSeo {
 
 const HOME_SEO: Record<Lang, PageSeo> = {
   en: {
-    title: 'João Paulo Santos | Full-Stack Product Engineer',
+    title: 'JPCLOW | Software Engineering Studio — João Paulo Santos',
     description:
-      'Freelance full-stack product engineer in Brazil building web applications, APIs, automation, data systems, and AI products with Python, TypeScript, and Cloudflare. Available for remote contract work.',
+      'Founded by João Paulo Santos in Brazil, JPCLOW builds web platforms, APIs, automation, and data & AI products for companies, from discovery to production.',
     keywords: [
-      'freelance software developer',
-      'freelance product engineer',
-      'web application development',
-      'API development',
+      'software development company',
+      'custom software development',
+      'software engineering studio',
+      'web platform development',
+      'API integration services',
       'workflow automation',
-      'data systems developer',
-      'AI product engineer',
-      'Python developer Brazil',
-      'Django developer',
-      'remote software developer',
-      'João Paulo Santos developer',
+      'data engineering and geospatial',
+      'AI integration services',
+      'nearshore software development Brazil',
+      'Cloudflare development',
+      'JPCLOW',
     ],
   },
   pt: {
-    title: 'João Paulo Santos | Engenheiro de Produto Full Stack',
+    title: 'JPCLOW: Estúdio de Engenharia de Software, João Paulo Santos',
     description:
-      'Desenvolvedor full stack freelancer e engenheiro de produto no Brasil para aplicações web, APIs, automação, sistemas de dados e produtos de IA com TypeScript e Python. Disponível para projetos remotos.',
+      'Fundada por João Paulo Santos no Brasil, a JPCLOW cria plataformas web, APIs, automação e produtos de dados e IA para empresas, da descoberta à produção.',
     keywords: [
-      'desenvolvedor freelancer',
-      'engenheiro de produto freelancer',
-      'desenvolvimento de aplicações web',
-      'desenvolvimento de APIs',
+      'empresa de desenvolvimento de software',
+      'software sob medida',
+      'estúdio de engenharia de software',
+      'desenvolvimento de sistemas web',
+      'integração de APIs',
       'automação de processos',
-      'sistemas de dados',
-      'desenvolvimento de produtos de IA',
-      'desenvolvedor Python Brasil',
-      'desenvolvedor Django',
-      'desenvolvedor remoto',
-      'João Paulo Santos desenvolvedor',
+      'software para agronegócio',
+      'desenvolvimento de SaaS',
+      'software house Goiás',
+      'JPCLOW',
     ],
+  },
+};
+
+type StudioPage = 'services' | 'about' | 'contact';
+
+const PAGE_SEO: Record<StudioPage, Record<Lang, PageSeo>> = {
+  services: {
+    en: {
+      title: 'Software Development Services | JPCLOW',
+      description:
+        'Web platforms, APIs and integrations, workflow automation, data and geospatial products, applied AI, and cloud reliability, delivered end to end.',
+      keywords: ['software development services', 'custom web platforms', 'API development', 'workflow automation', 'applied AI', 'Cloudflare DevOps'],
+    },
+    pt: {
+      title: 'Serviços de Desenvolvimento de Software | JPCLOW',
+      description:
+        'Plataformas web, APIs e integrações, automação de processos, dados e geoespacial, IA aplicada e confiabilidade em cloud, entregues de ponta a ponta.',
+      keywords: ['serviços de desenvolvimento de software', 'plataformas web sob medida', 'desenvolvimento de APIs', 'automação de processos', 'IA aplicada', 'DevOps Cloudflare'],
+    },
+  },
+  about: {
+    en: {
+      title: 'Company | JPCLOW — Software Engineering Studio',
+      description:
+        'JPCLOW is a software engineering studio founded by João Paulo Santos, building software for agribusiness, education, operations, and digital products.',
+      keywords: ['JPCLOW', 'software studio Brazil', 'João Paulo Santos', 'software engineering company'],
+    },
+    pt: {
+      title: 'Empresa | JPCLOW — Estúdio de Engenharia de Software',
+      description:
+        'A JPCLOW é um estúdio de engenharia de software fundado por João Paulo Santos, que cria software para agronegócio, educação, operações e produtos digitais.',
+      keywords: ['JPCLOW', 'estúdio de software', 'João Paulo Santos', 'empresa de engenharia de software'],
+    },
+  },
+  contact: {
+    en: {
+      title: 'Start a Project | JPCLOW',
+      description:
+        'Tell JPCLOW about your project. Share the problem, timeline, and systems involved, and get a first technical read with next steps.',
+      keywords: ['hire software development company', 'software project proposal', 'contact JPCLOW'],
+    },
+    pt: {
+      title: 'Iniciar um Projeto | JPCLOW',
+      description:
+        'Conte para a JPCLOW sobre o seu projeto. Compartilhe o problema, o prazo e os sistemas envolvidos e receba uma primeira leitura técnica com os próximos passos.',
+      keywords: ['contratar empresa de software', 'proposta de projeto de software', 'contato JPCLOW'],
+    },
   },
 };
 
 const BLOG_INDEX_SEO: Record<Lang, PageSeo> = {
   en: {
-    title: 'Blog | João Paulo Santos — Freelance Developer',
+    title: 'Blog | JPCLOW — Engineering Notes',
     description:
-      'Notes on product engineering, web development, automation, data systems, and building reliable software.',
+      'Engineering notes from JPCLOW on real product decisions, including Moto Track\'s offline fuel workflow and the limits of local data capture.',
     keywords: [
-      'freelance developer blog',
-      'web development blog',
-      'Python Django tutorials',
-      'software engineering notes',
+      'product engineering notes',
+      'offline web app design',
+      'Moto Track case study',
+      'SvelteKit offline workflow',
     ],
   },
   pt: {
-    title: 'Blog | João Paulo Santos — Desenvolvedor Freelancer',
+    title: 'Blog | JPCLOW — Notas de Engenharia',
     description:
-      'Artigos sobre engenharia de produto, desenvolvimento web, automação, sistemas de dados e construção de software confiável.',
+      'Notas de engenharia da JPCLOW sobre decisões reais de produto, incluindo o fluxo offline de abastecimento do Moto Track e seus limites.',
     keywords: [
-      'blog desenvolvedor freelancer',
-      'blog desenvolvimento web',
-      'tutoriais Python Django',
-      'engenharia de software',
+      'notas de engenharia de produto',
+      'aplicação web offline',
+      'case Moto Track',
+      'fluxo offline SvelteKit',
     ],
   },
 };
 
 export function getHomeSeo(lang: Lang): PageSeo {
   return HOME_SEO[lang];
+}
+
+export function getPageSeo(page: StudioPage, lang: Lang): PageSeo {
+  return PAGE_SEO[page][lang] ?? PAGE_SEO[page].en;
 }
 
 export function getBlogIndexSeo(lang: Lang = 'en'): PageSeo {
@@ -106,10 +158,7 @@ export function formatPageTitle(pageTitle: string, lang: Lang = 'en'): string {
     return pageTitle;
   }
 
-  const suffix =
-    lang === 'pt'
-      ? 'João Paulo Santos | Desenvolvedor Freelancer'
-      : 'João Paulo Santos | Freelance Developer';
+  const suffix = lang === 'pt' ? 'JPCLOW | Estúdio de Software' : 'JPCLOW | Software Studio';
 
   return `${pageTitle} | ${suffix}`;
 }
@@ -139,6 +188,16 @@ export function getPathAlternates(pathname: string, siteUrl: URL): AlternateLink
       { hreflang: SITE.localeMap.en, url: absoluteUrl('/', siteUrl) },
       { hreflang: SITE.localeMap.pt, url: absoluteUrl('/pt/', siteUrl) },
       { hreflang: 'x-default', url: absoluteUrl('/', siteUrl) },
+    ];
+  }
+
+  const staticMatch = normalized.match(/^\/(?:pt\/)?(services|about|contact|projects)\/$/);
+  if (staticMatch) {
+    const path = `/${staticMatch[1]}/`;
+    return [
+      { hreflang: SITE.localeMap.en, url: absoluteUrl(path, siteUrl) },
+      { hreflang: SITE.localeMap.pt, url: absoluteUrl(`/pt${path}`, siteUrl) },
+      { hreflang: 'x-default', url: absoluteUrl(path, siteUrl) },
     ];
   }
 
@@ -208,11 +267,10 @@ export function buildPersonSchema({ lang, siteUrl }: SchemaOptions) {
     '@id': `${siteUrl}#person`,
     name: SITE.author,
     alternateName: ['João Paulo Santos', 'Joao Paulo Goncalves Santos'],
-    url: siteUrl.toString(),
+    url: new URL(lang === 'pt' ? '/pt/about/' : '/about/', siteUrl).toString(),
     email: SITE.email,
-    image: new URL('/og-image.png', siteUrl).toString(),
-    jobTitle: lang === 'pt' ? 'Engenheiro de Produto Full Stack Freelancer' : 'Freelance Full-Stack Product Engineer',
-    description: HOME_SEO[lang].description,
+    jobTitle: lang === 'pt' ? 'Fundador e Engenheiro Principal' : 'Founder & Principal Engineer',
+    worksFor: { '@id': `${siteUrl}#organization` },
     nationality: {
       '@type': 'Country',
       name: 'Brazil',
@@ -221,72 +279,69 @@ export function buildPersonSchema({ lang, siteUrl }: SchemaOptions) {
       '@type': 'Place',
       name: 'Rio Verde, GO, Brazil',
     },
-    knowsAbout: [
-      'Python',
-      'Django',
-      'React',
-      'TypeScript',
-      'SvelteKit',
-      'Astro',
-      'Cloudflare Workers',
-      'Neon Postgres',
-      'Web Development',
-      'API Development',
-      'Workflow Automation',
-      'Data Systems',
-      'AI Product Engineering',
-    ],
+    knowsAbout: ['Python', 'Django', 'TypeScript', 'SvelteKit', 'React', 'Astro', 'Cloudflare Workers', 'Neon Postgres'],
     sameAs: [SOCIAL.github, SOCIAL.linkedin, SOCIAL.instagram],
   };
 }
 
 export function buildProfessionalServiceSchema({ lang, siteUrl }: SchemaOptions) {
+  const copy = getStudioCopy(lang);
+
   return {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
-    '@id': `${siteUrl}#freelance-service`,
-    name: lang === 'pt' ? 'João Paulo Santos — Engenharia de Produto Freelancer' : 'João Paulo Santos — Freelance Product Engineering',
+    '@id': `${siteUrl}#organization`,
+    name: SITE.company,
     url: siteUrl.toString(),
-    description: HOME_SEO[lang].description,
+    logo: new URL('/brand/logo-primary.svg', siteUrl).toString(),
     image: new URL('/og-image.png', siteUrl).toString(),
+    description: HOME_SEO[lang].description,
+    email: SITE.email,
+    founder: { '@id': `${siteUrl}#person` },
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Rio Verde',
+      addressRegion: 'GO',
+      addressCountry: 'BR',
+    },
     areaServed: [
       { '@type': 'Country', name: 'Brazil' },
       { '@type': 'Place', name: 'Worldwide' },
     ],
     availableLanguage: ['English', 'Portuguese'],
-    provider: {
-      '@id': `${siteUrl}#person`,
-    },
-    serviceType: [
-      'Freelance Software Development',
-      'Web Application Development',
-      'API Development',
-      'Workflow Automation',
-      'Data Systems Development',
-      'AI Product Engineering',
-      'Full Stack Development',
-    ],
-    knowsAbout: [
-      'TypeScript',
-      'Python',
-      'Django',
-      'SvelteKit',
-      'React',
-      'Cloudflare',
-      'Neon Postgres',
-      'Astro',
-      'API design',
-      'Workflow automation',
-      'Data systems',
-      'AI products',
-    ],
+    serviceType: copy.services.map((service) => service.title),
+    knowsAbout: ['TypeScript', 'Python', 'Django', 'SvelteKit', 'React', 'Astro', 'Cloudflare', 'PostgreSQL', 'Geospatial data', 'Applied AI'],
+    sameAs: [SOCIAL.github, SOCIAL.linkedin],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'sales',
       email: SITE.email,
+      url: new URL(lang === 'pt' ? '/pt/contact/' : '/contact/', siteUrl).toString(),
       availableLanguage: ['English', 'Portuguese'],
       areaServed: 'Worldwide',
     },
+  };
+}
+
+export function buildServicesSchema(lang: Lang, siteUrl: URL) {
+  const copy = getStudioCopy(lang);
+  const pageUrl = new URL(lang === 'pt' ? '/pt/services/' : '/services/', siteUrl).toString();
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'OfferCatalog',
+    name: lang === 'pt' ? 'Serviços JPCLOW' : 'JPCLOW services',
+    url: pageUrl,
+    itemListElement: copy.services.map((service) => ({
+      '@type': 'Offer',
+      itemOffered: {
+        '@type': 'Service',
+        name: service.title,
+        description: service.description,
+        url: `${pageUrl}#${service.id}`,
+        provider: { '@id': `${siteUrl}#organization` },
+      },
+    })),
   };
 }
 
@@ -295,67 +350,22 @@ export function buildWebsiteSchema({ lang, siteUrl }: Pick<SchemaOptions, 'lang'
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     '@id': `${siteUrl}#website`,
-    name: SITE.name,
+    name: SITE.company,
     url: siteUrl.toString(),
     inLanguage: SITE.localeMap[lang],
     publisher: {
-      '@id': `${siteUrl}#person`,
+      '@id': `${siteUrl}#organization`,
     },
     potentialAction: {
       '@type': 'ContactAction',
-      target: `${siteUrl.toString()}#contact`,
-      name: lang === 'pt' ? 'Entrar em contato' : 'Get in touch',
+      target: new URL(lang === 'pt' ? '/pt/contact/' : '/contact/', siteUrl).toString(),
+      name: lang === 'pt' ? 'Iniciar um projeto' : 'Start a project',
     },
   };
 }
 
 export function buildHomeFaqSchema(lang: Lang) {
-  const faq =
-    lang === 'pt'
-      ? [
-          {
-            question: 'Você trabalha como desenvolvedor freelancer?',
-            answer:
-              'Sim. Trabalho como engenheiro de produto em aplicações web, APIs, automação, dados e integrações com TypeScript, Python e Cloudflare.',
-          },
-          {
-            question: 'Quais serviços você oferece?',
-            answer:
-              'Desenvolvimento full stack, criação de APIs, automação de processos, integrações, dashboards e produtos web com foco em performance, acessibilidade e entrega confiável.',
-          },
-          {
-            question: 'Você aceita trabalho remoto?',
-            answer:
-              'Sim. Trabalho remotamente com clientes no Brasil e no exterior, com comunicação em português e inglês.',
-          },
-          {
-            question: 'Como contratar você para um projeto?',
-            answer:
-              'Envie uma mensagem pelo formulário de contato em jpclow.dev ou conecte pelo LinkedIn. Respondo com disponibilidade, escopo e próximos passos.',
-          },
-        ]
-      : [
-          {
-            question: 'Do you work as a freelance software developer?',
-            answer:
-              'Yes. I take on product engineering work across web applications, APIs, automation, data systems, and integrations with TypeScript, Python, and Cloudflare.',
-          },
-          {
-            question: 'What freelance development services do you offer?',
-            answer:
-              'Full stack web development, API design, workflow automation, integrations, dashboards, and product engineering with a focus on performance, accessibility, and reliable delivery.',
-          },
-          {
-            question: 'Are you available for remote freelance work?',
-            answer:
-              'Yes. I work remotely with clients in Brazil and internationally, in both English and Portuguese.',
-          },
-          {
-            question: 'How do I hire you for a project?',
-            answer:
-              'Send a message through the contact form at jpclow.dev or connect on LinkedIn. I reply with availability, scope, and next steps.',
-          },
-        ];
+  const faq = getStudioCopy(lang).faq;
 
   return {
     '@context': 'https://schema.org',
@@ -374,8 +384,8 @@ export function buildHomeFaqSchema(lang: Lang) {
 export function buildDefaultSchemas(options: SchemaOptions) {
   return [
     buildWebsiteSchema(options),
-    buildPersonSchema(options),
     buildProfessionalServiceSchema(options),
+    buildPersonSchema(options),
   ];
 }
 
@@ -425,7 +435,7 @@ export function buildProjectBreadcrumbSchema({
       url: homeUrl,
     },
     {
-      name: isPt ? 'Projetos' : 'Projects',
+      name: isPt ? 'Projetos e cases' : 'Projects & case studies',
       url: projectsUrl,
     },
     {
@@ -497,4 +507,49 @@ export function getBlogOgImageUrl(slug: string, langOrSiteUrl?: Lang | URL, site
   const isPt = lang === 'pt';
   const path = isPt ? `/open-graph/pt/blog/${slug}.png` : `/open-graph/blog/${slug}.png`;
   return url ? new URL(path, url).toString() : path;
+}
+
+export const SITE_OG_PAGES = ['home', 'services', 'about', 'contact', 'projects', 'blog'] as const;
+export type SiteOgPageId = (typeof SITE_OG_PAGES)[number];
+
+export function getSiteOgImageUrl(page: SiteOgPageId, lang: Lang = 'en'): string {
+  return lang === 'pt' ? `/open-graph/pt/site/${page}.png` : `/open-graph/site/${page}.png`;
+}
+
+const STUDIO_PAGE_TYPES: Record<StudioPage, string> = {
+  services: 'WebPage',
+  about: 'AboutPage',
+  contact: 'ContactPage',
+};
+
+const STUDIO_PAGE_CRUMBS: Record<StudioPage, Record<Lang, string>> = {
+  services: { en: 'Services', pt: 'Serviços' },
+  about: { en: 'Company', pt: 'Empresa' },
+  contact: { en: 'Contact', pt: 'Contato' },
+};
+
+/** WebPage (typed) + BreadcrumbList for /services/, /about/, /contact/ in either locale. */
+export function buildStudioPageSchemas(page: StudioPage, lang: Lang, siteUrl: URL) {
+  const prefix = lang === 'pt' ? '/pt' : '';
+  const pageUrl = new URL(`${prefix}/${page}/`, siteUrl).toString();
+  const seo = getPageSeo(page, lang);
+
+  return [
+    {
+      '@context': 'https://schema.org',
+      '@type': STUDIO_PAGE_TYPES[page],
+      '@id': `${pageUrl}#webpage`,
+      name: seo.title,
+      description: seo.description,
+      url: pageUrl,
+      inLanguage: SITE.localeMap[lang],
+      isPartOf: { '@id': `${siteUrl}#website` },
+      about: { '@id': `${siteUrl}#organization` },
+      primaryImageOfPage: new URL(getSiteOgImageUrl(page, lang), siteUrl).toString(),
+    },
+    buildBreadcrumbSchema([
+      { name: lang === 'pt' ? 'Início' : 'Home', url: new URL(`${prefix}/`, siteUrl).toString() },
+      { name: STUDIO_PAGE_CRUMBS[page][lang], url: pageUrl },
+    ]),
+  ];
 }

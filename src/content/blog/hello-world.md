@@ -1,48 +1,31 @@
 ---
-title: "Hello World - Welcome to My Blog"
-description: "An introduction to my new blog built with Astro and MDX, where I'll share insights on software development, front-end technologies, and my learning journey."
+title: "Hello World — How These Notes Began"
+description: "A short note on the move from João Paulo Santos's personal development blog to JPCLOW's engineering notes and project case studies."
 pubDate: 2025-01-15
-tags: ["introduction", "astro", "web development"]
+updatedDate: 2026-09-27
+tags: ["introduction", "portfolio", "engineering notes"]
 draft: false
 lang: en
 slug: hello-world
 ---
 
-## Welcome!
+## From a personal blog to engineering notes
 
-Welcome to my new blog! I'm excited to launch this space where I'll be sharing my thoughts, learnings, and experiences in software development.
+This page began as the introduction to João Paulo Santos's personal development blog. The site now presents JPCLOW, the software engineering studio he founded. The original URL remains available so existing links continue to work; new articles focus on specific product and engineering decisions.
 
-## What to Expect
+The [case study catalog](/projects/) distinguishes live products from prototypes, research, and work in development. Each case describes the problem, the role played, the main decision, and the current outcome. The [company page](/about/) explains João Paulo's background and the studio's way of working.
 
-I'll be writing about:
+## What to read next
 
-- **Front-End Development** - React, Svelte, and modern web technologies
-- **Software Engineering** - Best practices, patterns, and architecture
-- **Learning Journey** - Insights from my path in tech
-- **Projects** - Deep dives into my personal projects
+- [Why Moto Track queues only fuel records offline](/blog/offline-fuel-capture-moto-track/) examines one narrow offline workflow and its limits.
+- [Moto Track case study](/projects/moto-track/) covers the product, stack, and current scope.
 
-## Built with Modern Tech
-
-This blog is built using:
+These notes describe implemented behavior and its trade-offs. When a project is still a prototype or under development, its case study says so.
 
 ```typescript
-const stack = {
-  framework: 'Astro 7',
-  ui: 'Svelte 5',
-  styling: 'Tailwind CSS v4',
-  content: 'MDX',
-  deployment: 'Cloudflare Pages'
+type ProjectEvidence = {
+  status: 'live' | 'in-development' | 'prototype' | 'research';
+  role: string;
+  decision: string;
 };
 ```
-
-Stay tuned for more content!
-
-## Related Projects
-
-If you want to see these ideas in practice, check out a few projects:
-
-- [Portfolio Website](/projects/) - The site where this blog runs.
-- [League AI Oracle](https://github.com/JPClow3/league-ai-oracle) - Data and AI-oriented project.
-- [Resonant Echoes](https://github.com/JPClow3/resonant-echoes) - Experimenting with AI-assisted experiences.
-
-You can also browse all posts at [Blog Index](/blog).

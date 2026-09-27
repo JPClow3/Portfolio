@@ -7,7 +7,11 @@ import EmptyState from '@/components/common/EmptyState.astro';
 import Icon from '@/components/common/Icon.astro';
 import ScrollReveal from '@/components/common/ScrollReveal.astro';
 import { defaultLang, type Lang, ui } from '@/lib/i18n';
-import { formatPageTitle } from '@/lib/seo';
+import { buildBreadcrumbSchema, formatPageTitle, getSiteOgImageUrl } from '@/lib/seo';
+import Spotlight from '@/components/common/Spotlight.astro';
+import PageHero from '@/components/studio/PageHero.astro';
+import CtaBand from '@/components/studio/CtaBand.astro';
+import { projectImageSources } from '@/lib/images';
 
 const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
 const t = ui[currentLang] ?? ui[defaultLang];
@@ -15,8 +19,12 @@ const localePrefix = currentLang === 'pt' ? '/pt' : '';
 
 const localizedProjects = await getCollection('projects', ({ data }) => data.lang === currentLang);
 const fallbackProjects = await getCollection('projects', ({ data }) => data.lang === defaultLang);
+const archiveSlugs = new Set(['league-ai-oracle', 'pax-nulla', 'project-rift-idle', 'resonant-echoes', 'veins-of-eridun']);
+const isArchive = (project: CollectionEntry<'projects'>) => project.data.status === 'archived' || archiveSlugs.has(project.data.slug);
 const projects = (localizedProjects.length > 0 ? localizedProjects : fallbackProjects)
-  .sort((a, b) => a.data.order - b.data.order || a.data.title.localeCompare(b.data.title));
+  .sort((a, b) => Number(isArchive(a)) - Number(isArchive(b)) || a.data.order - b.data.order || a.data.title.localeCompare(b.data.title));
+const archiveStartIndex = projects.findIndex(isArchive);
+const archiveLabel = currentLang === 'pt' ? 'Arquivo / experimentos' : 'Archive / experiments';
 
 type Project = CollectionEntry<'projects'>;
 type ProjectStatus = Project['data']['status'];
@@ -40,13 +48,13 @@ const statusLabels: Record<ProjectStatus, string> = currentLang === 'pt'
     };
 
 const pageDescription = currentLang === 'pt'
-  ? 'Estudos de caso de um desenvolvedor full stack freelancer no Brasil, com aplicações web, APIs, automação, sistemas de dados e produtos de IA. Cada projeto informa seu estado atual com clareza.'
-  : 'Case studies from a freelance full-stack product engineer in Brazil, covering web applications, APIs, automation, data systems, and AI products. Each project states its current status clearly.';
+  ? 'Projetos e cases da JPCLOW: plataformas web, APIs, automação, sistemas de dados e produtos de IA em diferentes estágios. Cada projeto informa seu estado atual.'
+  : 'Projects and case studies from JPCLOW: web platforms, APIs, automation, data systems, and AI products at different stages. Each project states its current status.';
 
 const pageKeywords = currentLang === 'pt'
   ? [
       'estudos de caso desenvolvimento web',
-      'desenvolvedor full stack freelancer Brasil',
+      'empresa de desenvolvimento de software Brasil',
       'aplicações web e APIs',
       'automação de processos',
       'sistemas de dados',
@@ -54,124 +62,214 @@ const pageKeywords = currentLang === 'pt'
     ]
   : [
       'web development case studies',
-      'freelance full-stack developer Brazil',
+      'software development company Brazil',
       'web applications and APIs',
       'workflow automation',
       'data systems',
       'AI products',
     ];
 
+const siteUrl = Astro.site ?? new URL('https://jpclow.dev');
+const heroEyebrow = currentLang === 'pt' ? 'Trabalhos da JPCLOW' : 'JPCLOW selected work';
+const heroLead = currentLang === 'pt'
+  ? 'Explore trabalhos em produção, desenvolvimento, pesquisa e protótipo. Os cases detalhados apresentam o papel desempenhado, as decisões e o resultado atual.'
+  : 'Explore work in production, development, research, and prototype stages. Detailed case studies explain the role played, decisions made, and current outcome.';
+const filterAllLabel = currentLang === 'pt' ? 'Todos' : 'All';
+const filterGroupLabel = currentLang === 'pt' ? 'Filtrar por status' : 'Filter by status';
+const resultsLabel = currentLang === 'pt' ? 'projetos exibidos' : 'projects shown';
+
+// Status filters in a stable order, only for statuses that actually occur
+const statusOrder: ProjectStatus[] = ['live', 'in-development', 'private-source', 'research', 'prototype', 'archived'];
+const statusCounts = statusOrder
+  .map((status) => ({ status, count: projects.filter((project) => project.data.status === status).length }))
+  .filter((entry) => entry.count > 0);
+
 const projectHref = (project: Project) => project.data.caseStudy
   ? `${localePrefix}/projects/${project.data.slug}/`
   : project.data.link ?? project.data.github ?? `${localePrefix}/projects/`;
+const catalogUrl = new URL(`${localePrefix}/projects/`, siteUrl).toString();
+const catalogSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  '@id': `${catalogUrl}#collection`,
+  name: t['projects.title'],
+  description: pageDescription,
+  url: catalogUrl,
+  inLanguage: currentLang === 'pt' ? 'pt-BR' : 'en-US',
+  isPartOf: { '@id': `${siteUrl}#website` },
+  publisher: { '@id': `${siteUrl}#organization` },
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: projects.map((project, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: project.data.title,
+      url: new URL(projectHref(project), siteUrl).toString(),
+    })),
+  },
+};
+const breadcrumbSchema = buildBreadcrumbSchema([
+  { name: t['project.breadcrumbHome'], url: new URL(`${localePrefix}/`, siteUrl).toString() },
+  { name: t['projects.title'], url: catalogUrl },
+]);
 ---
 
-<BaseLayout title={formatPageTitle(t['projects.title'], currentLang)} description={pageDescription} keywords={pageKeywords}>
+<BaseLayout title={formatPageTitle(t['projects.title'], currentLang)} description={pageDescription} keywords={pageKeywords} ogImage={getSiteOgImageUrl('projects', currentLang)} schema={[catalogSchema, breadcrumbSchema]}>
   <Header />
-  <main id="main-content" tabindex="-1" class="noise-bg relative min-h-screen overflow-x-hidden px-4 pb-16 pt-[6.5rem] sm:px-6 lg:px-8">
-    <div class="mx-auto max-w-6xl" data-scene-section="projects">
-      <nav aria-label="Breadcrumb" class="mb-6 text-sm text-[rgb(var(--color-text-secondary))]">
-        <a href={`${localePrefix}/`} class="rounded-sm transition-colors hover:text-[rgb(var(--color-accent))]">{t['project.breadcrumbHome']}</a>
-        <span class="mx-2" aria-hidden="true">/</span>
-        <span aria-current="page" class="font-semibold text-[rgb(var(--color-text-primary))]">{t['projects.title']}</span>
-      </nav>
+  <main id="main-content" tabindex="-1" class="relative overflow-x-clip">
+    <PageHero eyebrow={heroEyebrow} title={t['projects.title']} lead={heroLead} crumb={t['projects.title']} />
 
-      <header class="mb-10 max-w-3xl">
-        <p class="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[rgb(var(--color-accent))]">
-          {currentLang === 'pt' ? 'Estudos de caso de engenharia de produto freelancer' : 'Freelance product engineering case studies'}
-        </p>
-        <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">{t['projects.title']}</h1>
-        <p class="mt-4 text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg">{pageDescription}</p>
-      </header>
+    <section class="studio-section pt-12 sm:pt-16" data-scene-section="projects" aria-label={t['projects.title']}>
+      <div class="studio-container">
+        {projects.length > 0 ? (
+          <>
+            <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+              <div class="flex flex-wrap gap-2" role="group" aria-label={filterGroupLabel} data-catalog-filters>
+                <button type="button" class="catalog-filter" data-filter="all" aria-pressed="true">
+                  {filterAllLabel}<span class="catalog-filter-count">{projects.length}</span>
+                </button>
+                {statusCounts.map((entry) => (
+                  <button type="button" class="catalog-filter" data-filter={entry.status} aria-pressed="false">
+                    {statusLabels[entry.status]}<span class="catalog-filter-count">{entry.count}</span>
+                  </button>
+                ))}
+              </div>
+              <p class="mono-label" aria-live="polite"><span data-catalog-count>{projects.length}</span> {resultsLabel}</p>
+            </div>
 
-      {projects.length > 0 ? (
-        <div class="grid gap-5 md:grid-cols-2">
-          {projects.map((project, index) => {
-            const href = projectHref(project);
-            const isExternal = href.startsWith('http');
-            const proof = project.data.metrics[0];
-            const capabilities = project.data.highlights.slice(0, 2);
+            <div class="grid gap-5 md:grid-cols-2" data-catalog-grid>
+              {projects.map((project, index) => {
+                const href = projectHref(project);
+                const isExternal = href.startsWith('http');
+                const proof = project.data.metrics[0];
+                const capabilities = project.data.highlights.slice(0, 2);
 
-            return (
-              <ScrollReveal animation="fade-up" delay={Math.min(index, 5) * 70} tag="div" class="h-full">
-                <article class="glass-panel group flex h-full flex-col overflow-hidden rounded-lg transition-all hover:border-[rgb(var(--color-accent)/0.42)]">
-                  {project.data.image && (
-                    <div class="aspect-[16/8] overflow-hidden border-b border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.5)]">
-                      <img
-                        src={project.data.image}
-                        alt={`${project.data.title} ${t['projects.previewAlt']}`}
-                        class="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
-                        loading={index < 2 ? 'eager' : 'lazy'}
-                        decoding="async"
-                        width="1440"
-                        height="900"
-                      />
-                    </div>
-                  )}
-                  <div class="flex flex-1 flex-col p-5 sm:p-6">
-                    <div class="flex flex-wrap items-start justify-between gap-3">
-                      <div>
-                        <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[rgb(var(--color-text-muted))]">
-                          {project.data.featured ? t['projects.featured'] : project.data.year ?? '—'}
-                        </p>
-                        <h2 class="mt-1 text-2xl font-bold tracking-tight">{project.data.title}</h2>
-                      </div>
-                      <span class="rounded-md border border-[rgb(var(--color-accent)/0.3)] bg-[rgb(var(--color-accent)/0.08)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[rgb(var(--color-accent))]">
-                        {statusLabels[project.data.status]}
-                      </span>
-                    </div>
-
-                    <p class="mt-3 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.description}</p>
-
-                    {proof && (
-                      <div class="mt-5 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.45)] px-3.5 py-3">
-                        <p class="text-[10px] font-bold uppercase tracking-[0.14em] text-[rgb(var(--color-text-muted))]">{proof.label}</p>
-                        <p class="mt-1 text-sm font-semibold text-[rgb(var(--color-text-primary))]">{proof.value}</p>
-                      </div>
-                    )}
-
-                    {capabilities.length > 0 && (
-                      <ul class="mt-4 space-y-2 text-sm text-[rgb(var(--color-text-secondary))]">
-                        {capabilities.map((capability) => (
-                          <li class="flex gap-2">
-                            <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[rgb(var(--color-accent))]" aria-hidden="true"></span>
-                            <span>{capability}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-
-                    <div class="mt-auto flex flex-wrap gap-4 pt-6 text-sm">
-                      <a
-                        href={href}
-                        target={isExternal ? '_blank' : undefined}
-                        rel={isExternal ? 'noreferrer' : undefined}
-                        class="inline-flex items-center gap-1.5 font-semibold text-[rgb(var(--color-accent))] hover:underline"
-                      >
-                        {project.data.caseStudy ? t['project.caseStudy'] : t['projects.viewProject']}
-                        {isExternal && <Icon name="external-link" size={14} />}
-                      </a>
-                      {project.data.github && project.data.status !== 'private-source' && (
-                        <a href={project.data.github} target="_blank" rel="noreferrer" class="text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))]">
-                          {t['project.repository']}
-                        </a>
+                return (
+                  <>
+                  {index === archiveStartIndex && <h2 class="heading-section col-span-full mt-10" data-catalog-archive-heading>{archiveLabel}</h2>}
+                  <ScrollReveal animation="fade-up" delay={Math.min(index % 2, 1) * 80} tag="div" class="catalog-item h-full" data-status={project.data.status} data-archive={isArchive(project) ? 'true' : 'false'}>
+                    <Spotlight tag="article" class="panel group flex h-full flex-col overflow-hidden">
+                      {project.data.image && (
+                        <div class="aspect-[16/8] overflow-hidden border-b border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-tertiary)/0.6)]">
+                          <img
+                            src={project.data.image}
+                            srcset={projectImageSources(project.data.image).srcset}
+                            sizes="(min-width: 768px) 50vw, 100vw"
+                            alt={`${project.data.title} ${t['projects.previewAlt']}`}
+                            class="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.03]"
+                            loading={index < 2 ? 'eager' : 'lazy'}
+                            fetchpriority={index === 0 ? 'high' : undefined}
+                            decoding="async"
+                            width="1440"
+                            height="900"
+                          />
+                        </div>
                       )}
-                      {project.data.link && (
-                        <a href={project.data.link} target="_blank" rel="noreferrer" class="text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))]">
-                          {t['project.live']}
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </article>
-              </ScrollReveal>
-            );
-          })}
-        </div>
-      ) : (
-        <EmptyState iconName="code" title={t['projects.emptyTitle']} description={t['projects.emptyDesc']} />
-      )}
-    </div>
+                      <div class="flex flex-1 flex-col p-6 sm:p-7">
+                        <div class="flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <p class="mono-label">{project.data.featured ? t['projects.featured'] : project.data.year ?? '—'}</p>
+                            <h2 class="mt-2 text-2xl font-semibold tracking-tight">{project.data.title}</h2>
+                          </div>
+                          <span class:list={['chip', project.data.status === 'live' ? 'border-[rgb(var(--color-success)/0.45)] text-[rgb(var(--color-success))]' : 'border-[rgb(var(--color-accent)/0.4)] text-[rgb(var(--color-accent-hover))]']}>
+                            {statusLabels[project.data.status]}
+                          </span>
+                        </div>
+
+                        <p class="mt-3 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.description}</p>
+
+                        {proof && (
+                          <div class="mt-5 rounded-md border border-[rgb(var(--color-accent)/0.3)] bg-[rgb(var(--color-accent)/0.08)] px-4 py-3">
+                            <p class="mono-label">{proof.label}</p>
+                            <p class="mt-1 text-sm font-semibold text-[rgb(var(--color-text-primary))]">{proof.value}</p>
+                          </div>
+                        )}
+
+                        {capabilities.length > 0 && (
+                          <ul class="mt-4 space-y-2 text-sm text-[rgb(var(--color-text-secondary))]">
+                            {capabilities.map((capability) => (
+                              <li class="flex gap-2.5">
+                                <Icon name="check" size={16} class="mt-0.5 shrink-0 text-[rgb(var(--color-accent-hover))]" />
+                                <span>{capability}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+
+                        <div class="mt-auto flex flex-wrap items-center gap-x-5 gap-y-1 pt-6 text-sm">
+                          <a
+                            href={href}
+                            target={isExternal ? '_blank' : undefined}
+                            rel={isExternal ? 'noreferrer' : undefined}
+                            class="link-arrow"
+                          >
+                            {project.data.caseStudy ? t['project.caseStudy'] : t['projects.viewProject']}<span class="sr-only">: {project.data.title}</span>
+                            <Icon name="arrow-up-right" size={15} />
+                          </a>
+                          {project.data.github && project.data.status !== 'private-source' && (
+                            <a href={project.data.github} target="_blank" rel="noreferrer" class="u-link inline-flex min-h-11 items-center text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))]">
+                              {t['project.repository']}
+                            </a>
+                          )}
+                          {project.data.link && (
+                            <a href={project.data.link} target="_blank" rel="noreferrer" class="u-link inline-flex min-h-11 items-center text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))]">
+                              {t['project.live']}
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </Spotlight>
+                  </ScrollReveal>
+                  </>
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          <EmptyState iconName="code" title={t['projects.emptyTitle']} description={t['projects.emptyDesc']} />
+        )}
+      </div>
+    </section>
+
+    <CtaBand />
   </main>
+
+  <script>
+    function initCatalogFilters() {
+      const group = document.querySelector<HTMLElement>('[data-catalog-filters]');
+      if (!group || group.dataset.ready === 'true') return;
+      group.dataset.ready = 'true';
+
+      const items = Array.from(document.querySelectorAll<HTMLElement>('.catalog-item'));
+      const count = document.querySelector<HTMLElement>('[data-catalog-count]');
+      const archiveHeading = document.querySelector<HTMLElement>('[data-catalog-archive-heading]');
+      const archiveItems = items.filter((item) => item.dataset.archive === 'true');
+
+      group.addEventListener('click', (event) => {
+        const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-filter]');
+        if (!button) return;
+        const filter = button.dataset.filter;
+
+        group.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((candidate) => {
+          candidate.setAttribute('aria-pressed', String(candidate === button));
+        });
+
+        let visible = 0;
+        items.forEach((item) => {
+          const show = filter === 'all' || item.dataset.status === filter;
+          item.hidden = !show;
+          if (show) {
+            visible += 1;
+            item.classList.add('revealed');
+          }
+        });
+        if (archiveHeading) archiveHeading.hidden = !archiveItems.some((item) => !item.hidden);
+        if (count) count.textContent = String(visible);
+      });
+    }
+
+    initCatalogFilters();
+    document.addEventListener('astro:page-load', initCatalogFilters);
+  </script>
   <Footer />
 </BaseLayout>

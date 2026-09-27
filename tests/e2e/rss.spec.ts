@@ -9,7 +9,7 @@ test('global RSS feed is accessible and returns valid XML', async ({ request }) 
 
   const xml = await response.text();
   expect(xml).toContain('<rss version="2.0"');
-  expect(xml).toContain('<title>João Paulo Santos — Blog</title>');
+  expect(xml).toContain('<title>JPCLOW — Engineering notes</title>');
   expect(xml).toContain('<item>');
 });
 
@@ -22,7 +22,7 @@ test('Portuguese localized RSS feed is accessible and returns valid XML', async 
 
   const xml = await response.text();
   expect(xml).toContain('<rss version="2.0"');
-  expect(xml).toContain('<title>João Paulo Santos — Blog (Português)</title>');
+  expect(xml).toContain('<title>JPCLOW — Notas de engenharia</title>');
   expect(xml).toContain('<language>pt-BR</language>');
 });
 

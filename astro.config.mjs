@@ -65,6 +65,12 @@ export default defineConfig({
           return item;
         }
 
+        if (/\/(pt\/)?(services|about|contact)\/$/.test(url)) {
+          item.priority = 0.9;
+          item.changefreq = ChangeFreqEnum.MONTHLY;
+          return item;
+        }
+
         if (url.includes('/projects/')) {
           item.priority = 0.85;
           item.changefreq = ChangeFreqEnum.MONTHLY;
@@ -85,6 +91,14 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    // Pre-bundle the lazily imported Three.js modules so dev doesn't re-optimize mid-session (504 "Outdated Optimize Dep")
+    optimizeDeps: {
+      include: [
+        'three',
+        'three/addons/geometries/RoundedBoxGeometry.js',
+        'three/addons/environments/RoomEnvironment.js',
+      ],
+    },
     build: {
       chunkSizeWarningLimit: 800
     }

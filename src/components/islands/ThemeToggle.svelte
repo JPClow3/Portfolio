@@ -8,19 +8,7 @@
     isDark = document.documentElement.classList.contains('dark');
     mounted = true;
 
-    // Listen for system theme changes and cleanup with returned function
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (!localStorage.getItem('theme')) {
-        isDark = e.matches;
-        if (isDark) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-      }
-    };
-    mediaQuery.addEventListener('change', handleChange);
+    // Dark-first site: system preference changes are ignored until the visitor picks a theme
 
     const handleStorage = (e: StorageEvent) => {
       if (e.key === 'theme') {
@@ -35,7 +23,6 @@
     window.addEventListener('storage', handleStorage);
 
     return () => {
-      mediaQuery.removeEventListener('change', handleChange);
       window.removeEventListener('storage', handleStorage);
     };
   });

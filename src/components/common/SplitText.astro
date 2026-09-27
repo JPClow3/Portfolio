@@ -1,0 +1,20 @@
+---
+/**
+ * Splits text into masked words that rise in sequence once the nearest
+ * `<ScrollReveal>` ancestor is revealed (styles: `.split-word` in global.css).
+ */
+interface Props {
+  text: string;
+  /** Delay (ms) added before the first word. */
+  delay?: number;
+}
+
+const { text, delay = 0 } = Astro.props;
+const words = text.split(/\s+/).filter(Boolean);
+---
+
+{words.map((word, index) => (
+  <>
+    <span class="split-word"><span style={`--w: ${index}; --w-delay: ${delay}ms`}>{word}</span></span>{index < words.length - 1 ? ' ' : ''}
+  </>
+))}

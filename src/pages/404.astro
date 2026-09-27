@@ -7,59 +7,40 @@ import { ui } from '@/lib/i18n';
 
 const en = ui.en;
 const pt = ui.pt;
+
+// Localized client-side: the static 404 is served for every unknown path in both locales
+const destinations = [
+  { id: 'dest-services', icon: 'layers' as const, key: 'nav.services' as const, en: '/services/', pt: '/pt/services/' },
+  { id: 'dest-work', icon: 'briefcase' as const, key: 'nav.work' as const, en: '/projects/', pt: '/pt/projects/' },
+  { id: 'dest-contact', icon: 'email' as const, key: 'nav.startProject' as const, en: '/contact/', pt: '/pt/contact/' },
+];
 ---
 
-<BaseLayout title={en['error404.title']} description={en['error404.message']} noindex>
+<BaseLayout title={`${en['error404.title']} | JPCLOW`} description={en['error404.message']} noindex>
   <Header />
 
-  <main id="main-content" tabindex="-1" class="flex min-h-[80vh] items-center justify-center px-4 py-12 pt-[6.5rem] sm:px-6 lg:px-8 animate-fade-in">
-    <div class="w-full max-w-md text-center">
-      <!-- 404 Icon/Illustration -->
-      <div class="mb-6">
-        <h1 class="gradient-text text-7xl font-extrabold sm:text-8xl">
-          404
-        </h1>
-      </div>
+  <main id="main-content" tabindex="-1" class="force-dark surface grain relative isolate flex min-h-[88svh] items-center overflow-hidden" data-pointer-glow>
+    <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+      <div class="hero-aurora"></div>
+      <div class="grid-floor opacity-80"></div>
+      <div class="pointer-glow"></div>
+    </div>
 
-      <!-- Error Message -->
-      <h2 id="error-heading" class="mb-3 text-2xl font-bold text-[rgb(var(--color-text-primary))] sm:text-3xl">
-        {en['error404.heading']}
-      </h2>
-
-      <p id="error-message" class="mb-7 text-base text-[rgb(var(--color-text-secondary))]">
+    <div class="studio-container py-32 text-center">
+      <p class="display-xl text-outline fade-rise select-none" aria-hidden="true">404</p>
+      <h1 id="error-heading" class="heading-section fade-rise mt-6" style="--d: 120ms">{en['error404.heading']}</h1>
+      <p id="error-message" class="fade-rise mx-auto mt-5 max-w-xl text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg" style="--d: 220ms">
         {en['error404.message']}
       </p>
 
-      <!-- Action Buttons -->
-      <div class="flex flex-col items-center justify-center gap-3 sm:flex-row">
-        <a
-          id="btn-home"
-          href="/"
-          class="hover-lift inline-flex items-center gap-2 rounded-md bg-[rgb(var(--color-accent))] px-5 py-2.5 font-semibold text-[rgb(var(--color-accent-contrast))] transition-colors hover:bg-[rgb(var(--color-accent-hover))]"
-        >
-          {en['error404.backHome']}
-        </a>
-
-        <a
-          id="btn-blog"
-          href="/blog"
-          class="inline-flex items-center gap-2 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--glass-tint)/0.28)] px-5 py-2.5 font-semibold text-[rgb(var(--color-text-primary))] transition-all hover:border-[rgb(var(--color-border-hover))] hover:bg-[rgb(var(--color-bg-tertiary)/0.55)]"
-        >
-          <Icon name="book-open" size={18} />
-          <span id="label-blog">{en['error404.blog']}</span>
-        </a>
-      </div>
-
-      <!-- Suggestions -->
-      <div class="mt-12 space-y-3 text-sm text-[rgb(var(--color-text-secondary))]">
-        <p id="suggestions-title" class="font-medium text-[rgb(var(--color-text-primary))]">
-          {en['error404.suggestionsTitle']}
-        </p>
-        <ul class="space-y-2">
-          <li id="suggestion-1">• {en['error404.suggestion1']}</li>
-          <li id="suggestion-2">• {en['error404.suggestion2']}</li>
-          <li id="suggestion-3">• {en['error404.suggestion3']}</li>
-        </ul>
+      <div class="fade-rise mt-10 flex flex-wrap items-center justify-center gap-3" style="--d: 320ms">
+        <a id="btn-home" href="/" class="btn btn-primary" data-magnetic="0.2">{en['error404.backHome']}</a>
+        {destinations.map((destination) => (
+          <a id={destination.id} href={destination.en} data-href-pt={destination.pt} data-label-key={destination.key} class="btn btn-ghost">
+            <Icon name={destination.icon} size={16} />
+            <span>{en[destination.key]}</span>
+          </a>
+        ))}
       </div>
     </div>
   </main>
@@ -72,49 +53,35 @@ const pt = ui.pt;
     const pathname = window.location.pathname;
     const storedLang = localStorage.getItem('languagePreference');
     const browserLang = (navigator.language || '').toLowerCase();
-    
+
     const isPortuguese =
       pathname.startsWith('/pt') ||
       storedLang === 'pt' ||
-      (!storedLang && (browserLang.startsWith('pt') || browserLang === 'pt-br'));
+      (!storedLang && browserLang.startsWith('pt'));
 
-    const dict = isPortuguese ? pt : en;
-    const homeHref = isPortuguese ? '/pt/' : '/';
-    const blogHref = isPortuguese ? '/pt/blog' : '/blog';
+    if (!isPortuguese) return;
 
-    document.title = `${dict['error404.title']} | João Paulo Santos`;
+    document.documentElement.lang = 'pt';
+    document.title = `${pt['error404.title']} | JPCLOW`;
 
-    const headingEl = document.getElementById('error-heading');
-    if (headingEl) headingEl.textContent = dict['error404.heading'];
-
-    const messageEl = document.getElementById('error-message');
-    if (messageEl) messageEl.textContent = dict['error404.message'];
+    const setText = (id, value) => {
+      const element = document.getElementById(id);
+      if (element) element.textContent = value;
+    };
+    setText('error-heading', pt['error404.heading']);
+    setText('error-message', pt['error404.message']);
 
     const homeBtn = document.getElementById('btn-home');
     if (homeBtn) {
-      homeBtn.textContent = dict['error404.backHome'];
-      homeBtn.setAttribute('href', homeHref);
+      homeBtn.textContent = pt['error404.backHome'];
+      homeBtn.setAttribute('href', '/pt/');
     }
 
-    const blogBtn = document.getElementById('btn-blog');
-    if (blogBtn) {
-      blogBtn.setAttribute('href', blogHref);
-    }
-
-    const blogLabel = document.getElementById('label-blog');
-    if (blogLabel) blogLabel.textContent = dict['error404.blog'];
-
-    const suggestionsTitleEl = document.getElementById('suggestions-title');
-    if (suggestionsTitleEl) suggestionsTitleEl.textContent = dict['error404.suggestionsTitle'];
-
-    const s1 = document.getElementById('suggestion-1');
-    if (s1) s1.textContent = `• ${dict['error404.suggestion1']}`;
-
-    const s2 = document.getElementById('suggestion-2');
-    if (s2) s2.textContent = `• ${dict['error404.suggestion2']}`;
-
-    const s3 = document.getElementById('suggestion-3');
-    if (s3) s3.textContent = `• ${dict['error404.suggestion3']}`;
+    document.querySelectorAll('[data-href-pt]').forEach((link) => {
+      link.setAttribute('href', link.dataset.hrefPt);
+      const label = link.querySelector('span');
+      if (label && link.dataset.labelKey) label.textContent = pt[link.dataset.labelKey];
+    });
   }
 
   applyLanguage();

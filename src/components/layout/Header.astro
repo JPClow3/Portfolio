@@ -37,54 +37,36 @@ const paletteStrings = {
   hint: t['palette.hint'],
 };
 
+// Every page exists in both locales, so the switcher keeps the current path
 const unprefixedPath = isPortuguese
   ? Astro.url.pathname.replace(/^\/pt(?=\/|$)/, '') || '/'
   : Astro.url.pathname;
-const isSubpage =
-  unprefixedPath === '/projects' ||
-  unprefixedPath.startsWith('/projects/') ||
-  unprefixedPath === '/blog' ||
-  unprefixedPath.startsWith('/blog/');
-const englishPath = isSubpage ? unprefixedPath : '/';
-const portuguesePath = isSubpage ? `/pt${englishPath}` : '/pt/';
+const englishPath = unprefixedPath;
+const portuguesePath = unprefixedPath === '/' ? '/pt/' : `/pt${unprefixedPath}`;
 
 const navLinks: NavLink[] = [
-  { label: t['nav.about'], href: `${localePrefix}/#about`, section: 'about' },
-  { label: t['nav.projects'], href: `${localePrefix}/projects/`, section: 'projects' },
-  { label: t['nav.experience'], href: `${localePrefix}/#experience`, section: 'experience' },
-  { label: t['nav.activity'], href: `${localePrefix}/#activity`, section: 'activity' },
-  { label: t['nav.contact'], href: `${localePrefix}/#contact`, section: 'contact' },
+  { label: t['nav.services'], href: `${localePrefix}/services/`, section: 'services' },
+  { label: t['nav.work'], href: `${localePrefix}/projects/`, section: 'work' },
+  { label: t['nav.process'], href: `${localePrefix}/#process`, section: 'process' },
+  { label: t['nav.company'], href: `${localePrefix}/about/`, section: 'about' },
+  { label: t['nav.blog'], href: `${localePrefix}/blog/`, section: 'blog' },
 ];
-
-// Resume link (separate since it has download behavior)
-const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
-
+const contactHref = `${localePrefix}/contact/`;
 ---
 
 <header
   id="header"
-  class="fixed top-0 left-0 right-0 z-50 glass border-b border-[rgb(var(--color-border)/0.55)] transition-shadow duration-300"
+  class="force-dark fixed inset-x-0 top-0 z-50 border-b border-transparent transition-[background-color,border-color,box-shadow] duration-300"
 >
-  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex h-14 items-center justify-between">
-      <!-- Logo -->
+  <nav aria-label="Primary" class="studio-container">
+    <div class="flex h-16 items-center justify-between gap-4 lg:h-[4.5rem]">
       <a
         href={`${localePrefix}/`}
         id="site-logo"
         data-logo-signal
-        class="header-logo inline-flex items-center transition-opacity hover:opacity-85 focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
+        class="inline-flex shrink-0 items-center transition-opacity hover:opacity-85"
         aria-label="JPCLOW home"
       >
-        <img
-          src="/brand/jpclow-logo.svg"
-          alt="JPCLOW"
-          width="47"
-          height="32"
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-          class="header-logo-light h-8 w-auto"
-        />
         <img
           src="/brand/jpclow-logo-negative.svg"
           alt="JPCLOW"
@@ -93,50 +75,36 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
           loading="eager"
           fetchpriority="high"
           decoding="async"
-          class="header-logo-dark h-8 w-auto"
+          class="h-8 w-auto"
         />
       </a>
 
       <!-- Desktop Navigation -->
-      <div class="hidden lg:flex items-center gap-1">
+      <div data-nav-track class="relative hidden items-center gap-0.5 rounded-[var(--radius-lg)] border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.55)] p-1 backdrop-blur-xl lg:flex">
+        <span class="nav-indicator" data-nav-indicator aria-hidden="true"></span>
         {navLinks.map((link) => (
           <a
             href={link.href}
             data-nav-link
             data-nav-section={link.section}
-            class="nav-link relative rounded-md px-3 py-1.5 text-sm font-medium text-[rgb(var(--color-text-secondary))] transition-[background-color,border-color,box-shadow] hover:text-[rgb(var(--color-text-primary))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))] group"
+            class="nav-link nav-link--track relative z-10 rounded-md px-3.5 py-2 text-sm font-medium text-[rgb(var(--color-text-secondary))] transition-colors hover:text-[rgb(var(--color-text-primary))]"
           >
             {link.label}
-            <span class="absolute bottom-0 left-1/2 h-[2px] w-0 -translate-x-1/2 rounded-t-sm bg-[rgb(var(--color-accent))] transition-all duration-300 group-hover:w-4/5" />
           </a>
         ))}
       </div>
 
-      <!-- Right Section -->
       <div class="flex items-center gap-2">
-        <a
-          href={resumeLink}
-          download
-          class="hidden items-center gap-1.5 rounded-md bg-[rgb(var(--color-accent))] px-3 py-1.5 text-sm font-semibold text-[rgb(var(--color-accent-contrast))] shadow-sm transition hover:bg-[rgb(var(--color-accent-hover))] lg:inline-flex"
-          aria-label={`${t['nav.resume']} PDF`}
-        >
-          <Icon name="download" size={16} />
-          {t['nav.resume']}
-        </a>
-
-        <!-- Language Switcher (Desktop) -->
-        <div class="hidden items-center gap-0.5 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.58)] p-0.5 lg:flex" role="group" aria-label="Select language">
+        <div class="hidden items-center gap-0.5 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.55)] p-0.5 lg:flex" role="group" aria-label="Select language">
           <a
             href={englishPath}
             data-lang-link
             data-lang-base="/"
             class:list={[
               'rounded px-2.5 py-1 text-xs font-semibold transition-colors',
-              isEnglish
-                ? 'bg-[rgb(var(--color-accent))] text-[rgb(var(--color-accent-contrast))]'
-                : 'text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))]',
+              isEnglish ? 'bg-[rgb(var(--color-bg-tertiary))] text-[rgb(var(--color-text-primary))]' : 'text-[rgb(var(--color-text-muted))] hover:text-[rgb(var(--color-text-primary))]',
             ]}
-            aria-label="Switch to English"
+            aria-label="EN — Switch to English"
             aria-current={isEnglish ? 'true' : undefined}
           >EN</a>
           <a
@@ -145,32 +113,34 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
             data-lang-base="/pt/"
             class:list={[
               'rounded px-2.5 py-1 text-xs font-semibold transition-colors',
-              isPortuguese
-                ? 'bg-[rgb(var(--color-accent))] text-[rgb(var(--color-accent-contrast))]'
-                : 'text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))]',
+              isPortuguese ? 'bg-[rgb(var(--color-bg-tertiary))] text-[rgb(var(--color-text-primary))]' : 'text-[rgb(var(--color-text-muted))] hover:text-[rgb(var(--color-text-primary))]',
             ]}
-            aria-label="Mudar para Português"
+            aria-label="PT — Mudar para Português"
             aria-current={isPortuguese ? 'true' : undefined}
           >PT</a>
         </div>
 
-        <CommandPalette items={paletteItems} strings={paletteStrings} client:load />
+        <div class="hidden xl:block">
+          <CommandPalette items={paletteItems} strings={paletteStrings} client:load />
+        </div>
         <ThemeToggle client:load />
 
-        <!-- Mobile Menu Button -->
+        <a href={contactHref} data-nav-link data-nav-section="contact" data-magnetic="0.2" class="btn btn-primary hidden min-h-10 px-4 text-sm sm:inline-flex">
+          {t['nav.startProject']}
+          <Icon name="arrow-right" size={16} class="btn-arrow" />
+        </a>
+
         <button
           type="button"
-          class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md p-2 transition-colors hover:bg-[rgb(var(--color-bg-secondary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))] lg:hidden"
+          class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md p-2 text-[rgb(var(--color-text-primary))] transition-colors hover:bg-[rgb(var(--color-bg-secondary))] lg:hidden"
           aria-label="Toggle navigation menu"
           aria-expanded="false"
           aria-controls="mobile-menu"
           id="mobile-menu-button"
         >
-          <!-- Hamburger icon -->
           <span id="menu-icon-open" aria-hidden="true" class="flex items-center justify-center">
             <Icon name="menu" size={24} />
           </span>
-          <!-- Close icon (hidden by default) -->
           <span id="menu-icon-close" aria-hidden="true" class="hidden flex items-center justify-center">
             <Icon name="close" size={24} />
           </span>
@@ -183,64 +153,55 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
       id="mobile-menu"
       role="navigation"
       aria-label="Mobile navigation"
-      class="overflow-hidden rounded-lg border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-primary))] shadow-[0_18px_50px_rgb(var(--glass-shadow)/0.14)] transition-all duration-300 ease-in-out lg:hidden"
+      class="overflow-hidden rounded-[var(--radius-lg)] border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary))] shadow-[0_24px_60px_rgb(0_0_0/0.45)] transition-all duration-300 ease-in-out lg:hidden"
       style="max-height: 0; opacity: 0;"
     >
-      <div class="mt-2 border-t border-[rgb(var(--color-border))] p-2 pt-3">
-        <div class="flex flex-col gap-1">
-          {navLinks.map((link) => (
-            <a
-              href={link.href}
-              data-nav-link
-              data-nav-section={link.section}
-              class="nav-link link-underline flex min-h-11 items-center rounded-md px-4 py-2.5 text-sm font-medium text-[rgb(var(--color-text-secondary))] transition-[background-color,border-color,box-shadow] hover:bg-[rgb(var(--color-bg-secondary))] hover:text-[rgb(var(--color-text-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
-            >
-              {link.label}
-            </a>
-          ))}
+      <div class="flex flex-col gap-1 p-2">
+        {navLinks.map((link) => (
           <a
-            href={resumeLink}
-            download
-            class="flex min-h-11 items-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium text-[rgb(var(--color-accent))] transition-colors hover:bg-[rgb(var(--color-accent)/0.1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--color-bg-primary))]"
+            href={link.href}
+            data-nav-link
+            data-nav-section={link.section}
+            class="nav-link flex min-h-11 items-center justify-between rounded-md px-4 py-2.5 text-base font-medium text-[rgb(var(--color-text-secondary))] transition-colors hover:bg-[rgb(var(--color-bg-tertiary))] hover:text-[rgb(var(--color-text-primary))]"
           >
-            <Icon name="download" size={16} />
-            {t['nav.resume']}
+            {link.label}
+            <Icon name="arrow-up-right" size={16} class="text-[rgb(var(--color-text-muted))]" />
           </a>
+        ))}
+        <a href={contactHref} class="btn btn-primary mt-2 w-full">
+          {t['nav.startProject']}
+          <Icon name="arrow-right" size={16} class="btn-arrow" />
+        </a>
 
-          <!-- Language Switcher (Mobile) -->
-          <div class="mt-1 flex items-center gap-2 border-t border-[rgb(var(--color-border))] px-4 py-2.5 pt-3" role="group" aria-label="Select language">
-            <Icon name="globe" size={16} class="text-[rgb(var(--color-text-muted))]" />
-            <a
-              href={englishPath}
-              data-lang-link
-              data-lang-base="/"
-              class:list={[
-                'inline-flex min-h-11 min-w-11 items-center justify-center rounded px-3 py-1.5 text-xs font-semibold transition-colors',
-                isEnglish
-                  ? 'bg-[rgb(var(--color-accent))] text-[rgb(var(--color-accent-contrast))]'
-                  : 'text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] bg-[rgb(var(--color-bg-secondary))]',
-              ]}
-              aria-label="Switch to English"
-              aria-current={isEnglish ? 'true' : undefined}
-            >EN</a>
-            <a
-              href={portuguesePath}
-              data-lang-link
-              data-lang-base="/pt/"
-              class:list={[
-                'inline-flex min-h-11 min-w-11 items-center justify-center rounded px-3 py-1.5 text-xs font-semibold transition-colors',
-                isPortuguese
-                  ? 'bg-[rgb(var(--color-accent))] text-[rgb(var(--color-accent-contrast))]'
-                  : 'text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] bg-[rgb(var(--color-bg-secondary))]',
-              ]}
-              aria-label="Mudar para Português"
-              aria-current={isPortuguese ? 'true' : undefined}
-            >PT</a>
-          </div>
+        <div class="mt-2 flex items-center gap-2 border-t border-[rgb(var(--color-border))] px-2 pt-3" role="group" aria-label="Select language">
+          <Icon name="globe" size={16} class="text-[rgb(var(--color-text-muted))]" />
+          <a
+            href={englishPath}
+            data-lang-link
+            data-lang-base="/"
+            class:list={[
+              'inline-flex min-h-11 min-w-11 items-center justify-center rounded px-3 py-1.5 text-xs font-semibold transition-colors',
+              isEnglish ? 'bg-[rgb(var(--color-accent))] text-white' : 'bg-[rgb(var(--color-bg-tertiary))] text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))]',
+            ]}
+            aria-label="EN — Switch to English"
+            aria-current={isEnglish ? 'true' : undefined}
+          >EN</a>
+          <a
+            href={portuguesePath}
+            data-lang-link
+            data-lang-base="/pt/"
+            class:list={[
+              'inline-flex min-h-11 min-w-11 items-center justify-center rounded px-3 py-1.5 text-xs font-semibold transition-colors',
+              isPortuguese ? 'bg-[rgb(var(--color-accent))] text-white' : 'bg-[rgb(var(--color-bg-tertiary))] text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))]',
+            ]}
+            aria-label="PT — Mudar para Português"
+            aria-current={isPortuguese ? 'true' : undefined}
+          >PT</a>
         </div>
       </div>
     </div>
   </nav>
+  <span class="header-progress" aria-hidden="true"></span>
 </header>
 
 <script>
@@ -408,13 +369,24 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
     const headerEl = header;
     headerEl.dataset.scrollInitialized = 'true';
 
+    let lastY = window.scrollY;
+
     function handleScroll() {
-      if (window.scrollY > 50) {
-        headerEl.classList.add('scrolled');
-      } else {
-        headerEl.classList.remove('scrolled');
+      const y = window.scrollY;
+      headerEl.classList.toggle('scrolled', y > 50);
+
+      // Hide while reading downward, reveal on any upward intent; never while the mobile menu is open
+      const menuOpen = document.getElementById('mobile-menu-button')?.getAttribute('aria-expanded') === 'true';
+      const focusInside = headerEl.contains(document.activeElement);
+      if (Math.abs(y - lastY) > 6) {
+        headerEl.dataset.hidden = String(y > lastY && y > 320 && !menuOpen && !focusInside);
+        lastY = y;
       }
     }
+
+    headerEl.addEventListener('focusin', () => {
+      headerEl.dataset.hidden = 'false';
+    });
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll(); // Check initial state
@@ -443,9 +415,54 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
   }
 
   function dispatchSceneSection(section: string) {
+    // The case-study ambient scene still keys its mood on the legacy 'projects' name
     window.dispatchEvent(new CustomEvent('portfolio:section-change', {
-      detail: { section },
+      detail: { section: section === 'work' ? 'projects' : section },
     }));
+  }
+
+  let indicatorHover: HTMLElement | null = null;
+
+  function moveNavIndicator() {
+    const track = document.querySelector<HTMLElement>('[data-nav-track]');
+    const indicator = track?.querySelector<HTMLElement>('[data-nav-indicator]');
+    if (!track || !indicator) return;
+
+    const active = track.querySelector<HTMLElement>('.nav-link--track[data-active="true"]');
+    const target = indicatorHover ?? active;
+    if (!target) {
+      indicator.dataset.visible = 'false';
+      return;
+    }
+
+    indicator.style.setProperty('--ix', `${target.offsetLeft}px`);
+    indicator.style.setProperty('--iw', `${target.offsetWidth}px`);
+    indicator.style.setProperty('--active-bar', target === active ? '1' : '0');
+    indicator.dataset.visible = 'true';
+  }
+
+  function initNavIndicator() {
+    const track = document.querySelector<HTMLElement>('[data-nav-track]');
+    if (!track || track.dataset.indicatorInitialized === 'true') return;
+    track.dataset.indicatorInitialized = 'true';
+
+    track.querySelectorAll<HTMLElement>('.nav-link--track').forEach((link) => {
+      const enter = () => {
+        indicatorHover = link;
+        moveNavIndicator();
+      };
+      link.addEventListener('pointerenter', enter);
+      link.addEventListener('focus', enter);
+    });
+    const leave = () => {
+      indicatorHover = null;
+      moveNavIndicator();
+    };
+    track.addEventListener('pointerleave', leave);
+    track.addEventListener('focusout', leave);
+    window.addEventListener('resize', moveNavIndicator, { passive: true });
+    // Link widths change when the web font replaces the fallback; re-measure once it has loaded
+    document.fonts?.ready.then(moveNavIndicator);
   }
 
   function setActiveNav(section: string) {
@@ -460,27 +477,35 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
       }
     });
 
+    moveNavIndicator();
     dispatchSceneSection(section);
   }
 
   function getRouteSection() {
     const path = window.location.pathname;
 
-    if (path.startsWith('/blog') || path.startsWith('/pt/blog')) return 'blog';
-    if (path.startsWith('/projects') || path.startsWith('/pt/projects')) return 'projects';
+    const unprefixed = path.replace(/^\/pt(?=\/|$)/, '') || '/';
+    const routeSections: Array<[string, string]> = [
+      ['/blog', 'blog'],
+      ['/projects', 'work'],
+      ['/services', 'services'],
+      ['/about', 'about'],
+      ['/contact', 'contact'],
+    ];
 
-    return '';
+    return routeSections.find(([prefix]) => unprefixed.startsWith(prefix))?.[1] ?? '';
   }
 
   function getHomepageSections() {
-    return ['about', 'projects', 'experience', 'activity', 'contact']
+    // Sections without a nav link clear the highlight while they are in view
+    return ['top', 'services', 'work', 'process', 'engineering', 'sectors', 'engagement', 'faq', 'contact']
       .map((id) => document.getElementById(id))
       .filter((section): section is HTMLElement => Boolean(section));
   }
 
   function findCurrentHomepageSection(sections: HTMLElement[]) {
     const anchorY = window.innerHeight * 0.38;
-    let bestSection = sections[0]?.id ?? 'about';
+    let bestSection = sections[0]?.id ?? '';
     let bestDistance = Number.POSITIVE_INFINITY;
 
     sections.forEach((section) => {
@@ -518,7 +543,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
 
     const sections = getHomepageSections();
     if (sections.length === 0) {
-      setActiveNav('about');
+      setActiveNav('');
       return;
     }
 
@@ -572,6 +597,7 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
   initLangLinks();
   initActiveNav();
   initLogoSignal();
+  initNavIndicator();
   window.addEventListener('hashchange', initLangLinks);
 
   // Re-initialize on Astro page transitions
@@ -581,38 +607,26 @@ const resumeLink = isPortuguese ? '/resume-pt.pdf' : '/resume-en.pdf';
     initLangLinks();
     initActiveNav();
     initLogoSignal();
+    initNavIndicator();
   });
 </script>
 
 <style>
-  .header-logo-light {
-    display: block;
-  }
-
-  .header-logo-dark {
-    display: none;
-  }
-
-  :global(html.dark) .header-logo-light {
-    display: none;
-  }
-
-  :global(html.dark) .header-logo-dark {
-    display: block;
-  }
-
   #header.scrolled {
-    background: rgb(var(--color-bg-primary) / 0.72);
-    backdrop-filter: blur(24px) saturate(120%);
-    -webkit-backdrop-filter: blur(24px) saturate(120%);
-    box-shadow: 0 8px 32px rgb(var(--glass-shadow) / 0.12);
-    border-bottom: 1px solid rgb(var(--color-accent) / 0.1);
+    background: rgb(var(--color-bg-primary) / 0.9);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border-bottom-color: rgb(var(--color-border) / 0.8);
+    box-shadow: 0 10px 40px rgb(0 0 0 / 0.35);
   }
 
-  :global(html.dark) #header.scrolled {
-    background: rgb(var(--color-bg-primary) / 0.5);
-    box-shadow: 0 10px 32px rgb(var(--glass-shadow) / 0.35);
-    border-bottom: 1px solid rgb(var(--color-accent) / 0.15);
+  .nav-link[data-active="true"] {
+    color: rgb(var(--color-text-primary));
+    background: rgb(var(--color-bg-tertiary));
+  }
+
+  .nav-link--track[data-active="true"] {
+    background: transparent;
   }
 
   @media (prefers-reduced-motion: reduce) {

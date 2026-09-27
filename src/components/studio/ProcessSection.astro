@@ -1,0 +1,84 @@
+---
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
+import SplitText from '@/components/common/SplitText.astro';
+import { defaultLang, type Lang } from '@/lib/i18n';
+import { getStudioCopy } from '@/lib/studio';
+
+interface Props {
+  index?: string;
+}
+
+const { index = '03' } = Astro.props;
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const copy = getStudioCopy(currentLang);
+const section = copy.sections.process;
+---
+
+<section id="process" aria-labelledby="process-heading" class="studio-section">
+  <div class="studio-container grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+    <div class="lg:sticky lg:top-28 lg:self-start">
+      <ScrollReveal animation="fade-up">
+        <p class="eyebrow mb-5"><span class="text-[rgb(var(--color-text-muted))]">{index}</span>{section.eyebrow}</p>
+        <h2 id="process-heading" class="heading-section"><SplitText text={section.title} /></h2>
+        <p class="mt-6 max-w-md text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg">{section.lead}</p>
+      </ScrollReveal>
+    </div>
+
+    <ol class="relative" data-process-track>
+      <span class="process-rail" aria-hidden="true"></span>
+      {copy.process.map((step, stepIndex) => (
+        <li class="process-step relative pb-10 pl-14 last:pb-0">
+          <span class="process-node" aria-hidden="true"></span>
+          <ScrollReveal animation="fade-left" delay={80}>
+            <article class="panel p-6 sm:p-7">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <span class="mono-label text-[rgb(var(--color-accent-hover))]">{`${copy.labels.step} ${String(stepIndex + 1).padStart(2, '0')}`}</span>
+                <span class="chip">{step.duration}</span>
+              </div>
+              <h3 class="mt-4 text-xl font-semibold tracking-tight sm:text-2xl">{step.title}</h3>
+              <p class="mt-3 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-base">{step.description}</p>
+              <div class="mt-5 border-t border-[rgb(var(--color-border))] pt-4">
+                <p class="mono-label">{copy.labels.outputs}</p>
+                <ul class="mt-2 flex flex-wrap gap-1.5">
+                  {step.outputs.map((output) => <li class="chip">{output}</li>)}
+                </ul>
+              </div>
+            </article>
+          </ScrollReveal>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<script>
+  function initProcessRail() {
+    const track = document.querySelector<HTMLElement>('[data-process-track]');
+    if (!track) return;
+
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const rect = track.getBoundingClientRect();
+      const anchor = window.innerHeight * 0.6;
+      const progress = Math.min(1, Math.max(0, (anchor - rect.top) / Math.max(rect.height, 1)));
+      track.style.setProperty('--progress', progress.toFixed(3));
+
+      // Light each step once the rail has reached its node
+      const reached = progress * rect.height;
+      track.querySelectorAll<HTMLElement>('.process-step').forEach((step) => {
+        step.dataset.lit = String(step.offsetTop + 28 <= reached);
+      });
+    };
+    const requestUpdate = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate, { passive: true });
+    update();
+  }
+
+  initProcessRail();
+  document.addEventListener('astro:page-load', initProcessRail);
+</script>

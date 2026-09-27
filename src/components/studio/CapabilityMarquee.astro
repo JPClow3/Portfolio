@@ -1,0 +1,35 @@
+---
+import { defaultLang, type Lang } from '@/lib/i18n';
+import { getStudioCopy } from '@/lib/studio';
+
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const copy = getStudioCopy(currentLang);
+
+const stack = [
+  'TypeScript', 'Python', 'Django', 'SvelteKit', 'React', 'Astro', 'Tailwind CSS', 'PostgreSQL', 'Neon',
+  'Supabase', 'Cloudflare Workers', 'Docker Swarm', 'Three.js', 'deck.gl', 'Mapbox', 'XGBoost', 'Stripe',
+  'HTMX', 'Sentry', 'Playwright',
+];
+---
+
+<section aria-label={copy.marquee.label} class="relative overflow-hidden border-y border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.6)] py-8">
+  <div class="marquee-container overflow-hidden" aria-hidden="true">
+    <div class="marquee marquee--slow flex min-w-max items-center gap-10 pr-10">
+      {[...copy.marquee.words, ...copy.marquee.words].map((word, index) => (
+        <>
+          <span class:list={['marquee-words', index % 2 === 0 ? 'text-outline' : 'text-[rgb(var(--color-text-primary))]']}>{word}</span>
+          <span class="marquee-sep"></span>
+        </>
+      ))}
+    </div>
+  </div>
+
+  <div class="marquee-container mt-6 overflow-hidden">
+    <ul class="marquee marquee--reverse flex min-w-max items-center gap-3 pr-3">
+      {[...stack, ...stack].map((tech, index) => (
+        <li class="chip px-3 py-1.5 text-xs" aria-hidden={index >= stack.length ? 'true' : undefined}>{tech}</li>
+      ))}
+    </ul>
+  </div>
+  <p class="sr-only">{copy.marquee.words.join(', ')}</p>
+</section>

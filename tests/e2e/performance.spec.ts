@@ -28,14 +28,6 @@ test('homepage uses self-hosted fonts without external Google Fonts and keeps th
   expect(threeRequestedAt).toBeGreaterThanOrEqual(navigationStartedAt + 2_500);
 });
 
-test('homepage requests the avatar at its rendered size without a larger DPR variant', async ({ page }) => {
-  await page.goto('/');
-
-  const avatar = page.locator('.profile-avatar');
-  await expect(avatar).toHaveAttribute('src', /[?&]s=212(?:&|$)/);
-  await expect(avatar).not.toHaveAttribute('srcset', /./);
-});
-
 test('ambient scene starts without Three.js deprecation warnings', async ({ page }) => {
   const warnings: string[] = [];
   page.on('console', (message) => {

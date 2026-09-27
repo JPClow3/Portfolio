@@ -223,7 +223,7 @@ test('homepage presents the B2B offer and keeps private client source protected'
   await expect(page.locator('#services').getByRole('heading', { name: 'Custom web platforms' })).toBeVisible();
   await expect(page.locator('#process li article')).toHaveCount(4);
   await expect(page.locator('#engagement li article')).toHaveCount(3);
-  await expect(page.locator('#faq details')).toHaveCount(6);
+  await expect(page.locator('#faq details')).toHaveCount(7);
   await expect(page.locator('#engineering figure pre')).toBeVisible();
 
   const loreboundCard = page.locator('[data-testid="project-card"]').filter({ hasText: 'Lorebound' }).first();

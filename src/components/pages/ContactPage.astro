@@ -1,0 +1,104 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
+import Icon from '@/components/common/Icon.astro';
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
+import ContactForm from '@/components/common/ContactForm.astro';
+import PageHero from '@/components/studio/PageHero.astro';
+import FaqSection from '@/components/studio/FaqSection.astro';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
+import { buildStudioPageSchemas, getPageSeo, getSiteOgImageUrl } from '@/lib/seo';
+import { getStudioCopy } from '@/lib/studio';
+
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
+const copy = getStudioCopy(currentLang);
+const seo = getPageSeo('contact', currentLang);
+
+const profileEntries = await getCollection('profile', ({ data }) => data.lang === currentLang);
+const fallbackEntries = await getCollection('profile', ({ data }) => data.lang === defaultLang);
+const profile = (profileEntries[0] ?? fallbackEntries[0]).data.profile;
+
+const directLinks = [
+  { icon: 'email' as const, label: profile.email, href: `mailto:${profile.email}` },
+  { icon: 'linkedin' as const, label: 'LinkedIn', href: profile.linkedin },
+  { icon: 'github' as const, label: 'GitHub', href: profile.github },
+];
+---
+
+<BaseLayout title={seo.title} description={seo.description} keywords={seo.keywords} ogImage={getSiteOgImageUrl('contact', currentLang)} schema={buildStudioPageSchemas('contact', currentLang, Astro.site ?? new URL('https://jpclow.dev'))}>
+  <Header />
+  <main id="main-content" tabindex="-1" class="relative overflow-x-clip">
+    <PageHero eyebrow={copy.contactPage.heroEyebrow} title={copy.contactPage.heroTitle} lead={copy.contactPage.heroLead} crumb={t['nav.contact']} />
+
+    <section id="contact" aria-label={t['contact.title']} class="studio-section">
+      <div class="studio-container grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+        <div class="space-y-12">
+          <ScrollReveal animation="fade-up">
+            <p class="eyebrow mb-6">{copy.contactPage.nextTitle}</p>
+            <ol class="space-y-6">
+              {copy.contactPage.next.map((step, index) => (
+                <li class="flex gap-5">
+                  <span class="icon-tile font-mono text-sm">{String(index + 1).padStart(2, '0')}</span>
+                  <div>
+                    <h2 class="text-lg font-semibold tracking-tight">{step.title}</h2>
+                    <p class="mt-1 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{step.description}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </ScrollReveal>
+
+          <ScrollReveal animation="fade-up" delay={100}>
+            <p class="eyebrow mb-4">{copy.contactPage.directTitle}</p>
+            <ul class="divide-y divide-[rgb(var(--color-border))] border-y border-[rgb(var(--color-border))]">
+              {directLinks.map((link) => (
+                <li class="flex items-center gap-3">
+                  <a
+                    href={link.href}
+                    target={link.href.startsWith('http') ? '_blank' : undefined}
+                    rel={link.href.startsWith('http') ? 'noreferrer' : undefined}
+                    class="group flex min-h-14 flex-1 items-center justify-between gap-4 py-3 text-base font-semibold transition-colors hover:text-[rgb(var(--color-accent-hover))]"
+                  >
+                    <span class="flex items-center gap-3">
+                      <Icon name={link.icon} size={18} class="text-[rgb(var(--color-text-muted))]" />
+                      {link.label}
+                    </span>
+                    <Icon name="arrow-up-right" size={16} class="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  </a>
+                  {link.icon === 'email' && (
+                    <button
+                      type="button"
+                      class="copy-btn btn btn-ghost min-h-11 w-11 px-0"
+                      data-copy={profile.email}
+                      data-copied-label={t['common.copied']}
+                      aria-label={t['common.copyEmail']}
+                      title={t['common.copyEmail']}
+                    >
+                      <Icon name="copy" size={16} class="copy-idle" />
+                      <Icon name="check" size={16} class="copy-check" />
+                      <span class="sr-only" data-copy-status aria-live="polite"></span>
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+            <p class="mt-4 flex items-center gap-2 font-mono text-xs text-[rgb(var(--color-text-muted))]">
+              <Icon name="location" size={14} />
+              {copy.brand.location} · {profile.timezone}
+            </p>
+          </ScrollReveal>
+        </div>
+
+        <ScrollReveal animation="fade-left">
+          <ContactForm />
+        </ScrollReveal>
+      </div>
+    </section>
+
+    <FaqSection index="01" />
+  </main>
+  <Footer />
+</BaseLayout>

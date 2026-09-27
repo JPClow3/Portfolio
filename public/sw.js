@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jp-portfolio-v1';
+const CACHE_NAME = 'jp-portfolio-v2';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -54,6 +54,15 @@ self.addEventListener('fetch', (event) => {
 
   // Ignore browser extensions, chrome-extension, etc.
   if (!url.protocol.startsWith('http')) {
+    return;
+  }
+
+  // Only handle same-origin site assets; never Vite dev-server internals
+  if (
+    url.pathname.startsWith('/node_modules/') ||
+    url.pathname.startsWith('/@') ||
+    url.pathname.startsWith('/src/')
+  ) {
     return;
   }
 
@@ -138,7 +147,7 @@ self.addEventListener('fetch', (event) => {
           })
           .catch(() => {
             // Non-fatal if offline
-            return cachedResponse;
+            return cachedResponse || Response.error();
           });
 
         return cachedResponse || fetchPromise;
@@ -159,6 +168,6 @@ self.addEventListener('fetch', (event) => {
         }
         return networkResponse;
       })
-      .catch(() => caches.match(request))
+      .catch(async () => (await caches.match(request)) || Response.error())
   );
 });

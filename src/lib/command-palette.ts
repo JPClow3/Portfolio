@@ -32,17 +32,17 @@ interface BuildCommandPaletteItemsOptions {
 
 const copy = {
   en: {
-    sections: 'Sections',
-    projects: 'Projects',
-    experience: 'Experience',
-    approach: 'What I optimize for',
-    activity: 'GitHub activity',
-    contact: 'Contact',
+    sections: 'Pages',
+    services: 'Services',
+    projects: 'Projects & case studies',
+    process: 'Process',
+    company: 'Company',
+    blog: 'Blog',
+    contact: 'Start a project',
     links: 'Links',
-    github: 'GitHub profile',
+    github: 'GitHub',
     linkedin: 'LinkedIn',
-    email: 'Email João',
-    resume: 'Download resume',
+    email: 'Email JPCLOW',
     inDevelopment: 'In development',
     research: 'Research',
     prototype: 'Prototype',
@@ -50,17 +50,17 @@ const copy = {
     archived: 'Archived',
   },
   pt: {
-    sections: 'Seções',
-    projects: 'Projetos',
-    experience: 'Experiência',
-    approach: 'O que eu otimizo',
-    activity: 'Atividade no GitHub',
-    contact: 'Contato',
+    sections: 'Páginas',
+    services: 'Serviços',
+    projects: 'Projetos e cases',
+    process: 'Processo',
+    company: 'Empresa',
+    blog: 'Blog',
+    contact: 'Iniciar um projeto',
     links: 'Links',
-    github: 'Perfil no GitHub',
+    github: 'GitHub',
     linkedin: 'LinkedIn',
-    email: 'Enviar email para João',
-    resume: 'Baixar currículo',
+    email: 'Enviar email para a JPCLOW',
     inDevelopment: 'Em desenvolvimento',
     research: 'Pesquisa',
     prototype: 'Protótipo',
@@ -72,7 +72,6 @@ const copy = {
 export function buildCommandPaletteItems({ lang, profile, projects }: BuildCommandPaletteItemsOptions): CommandPaletteItem[] {
   const t = copy[lang];
   const localePrefix = lang === 'pt' ? '/pt' : '';
-  const resumeHref = lang === 'pt' ? '/resume-pt.pdf' : '/resume-en.pdf';
   const projectStatus = {
     live: undefined,
     'in-development': t.inDevelopment,
@@ -83,11 +82,12 @@ export function buildCommandPaletteItems({ lang, profile, projects }: BuildComma
   } as const;
 
   return [
-    { id: 'section-projects', label: t.projects, group: t.sections, href: `${localePrefix}/projects/`, kind: 'navigate', keywords: ['work', 'portfolio', 'catalog'] },
-    { id: 'section-experience', label: t.experience, group: t.sections, href: `${localePrefix}/#experience`, kind: 'navigate', keywords: ['journey', 'career'] },
-    { id: 'section-approach', label: t.approach, group: t.sections, href: `${localePrefix}/#approach`, kind: 'navigate', keywords: ['principles', 'ai'] },
-    { id: 'section-activity', label: t.activity, group: t.sections, href: `${localePrefix}/#activity`, kind: 'navigate', keywords: ['commits', 'repositories'] },
-    { id: 'section-contact', label: t.contact, group: t.sections, href: `${localePrefix}/#contact`, kind: 'navigate', keywords: ['hire', 'message'] },
+    { id: 'section-services', label: t.services, group: t.sections, href: `${localePrefix}/services/`, kind: 'navigate', keywords: ['capabilities', 'development', 'automation', 'ai'] },
+    { id: 'section-projects', label: t.projects, group: t.sections, href: `${localePrefix}/projects/`, kind: 'navigate', keywords: ['work', 'portfolio', 'cases'] },
+    { id: 'section-process', label: t.process, group: t.sections, href: `${localePrefix}/#process`, kind: 'navigate', keywords: ['delivery', 'sprints'] },
+    { id: 'section-company', label: t.company, group: t.sections, href: `${localePrefix}/about/`, kind: 'navigate', keywords: ['about', 'founder', 'studio'] },
+    { id: 'section-blog', label: t.blog, group: t.sections, href: `${localePrefix}/blog/`, kind: 'navigate', keywords: ['articles', 'notes'] },
+    { id: 'section-contact', label: t.contact, group: t.sections, href: `${localePrefix}/contact/`, kind: 'navigate', keywords: ['hire', 'proposal', 'message'] },
     ...projects.map((project) => ({
       id: `project-${project.slug}`,
       label: project.title,
@@ -100,6 +100,5 @@ export function buildCommandPaletteItems({ lang, profile, projects }: BuildComma
     { id: 'github', label: t.github, group: t.links, href: profile.github, kind: 'external', keywords: ['repositories', 'code'] },
     { id: 'linkedin', label: t.linkedin, group: t.links, href: profile.linkedin, kind: 'external', keywords: ['professional', 'network'] },
     { id: 'email', label: t.email, group: t.links, href: `mailto:${profile.email}`, kind: 'email', keywords: ['contact', 'message'] },
-    { id: 'resume', label: t.resume, group: t.links, href: resumeHref, kind: 'download', keywords: ['cv', 'curriculum'] },
   ];
 }

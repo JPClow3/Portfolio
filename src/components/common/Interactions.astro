@@ -1,0 +1,197 @@
+---
+/**
+ * Site-wide micro-interactions (no markup). Mounted once in BaseLayout.
+ * - `--scroll-progress` on <html> (0–1) for the header line and back-to-top ring
+ * - `[data-magnetic]`: element eases toward the pointer (uses the `translate` property)
+ * - `[data-scramble]`: decodes its text on load
+ * - `[data-count]`: counts up to its numeric value on load
+ * - `[data-pointer-glow]`: writes pointer position to --gx/--gy
+ * - `[data-copy]`: copies text and flips `data-copied` for feedback
+ * - `.work-stack-item`: earlier stacked cards recede as the next one covers them
+ * Everything motion-related is skipped for prefers-reduced-motion.
+ */
+---
+
+<script>
+  const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cleanups: Array<() => void> = [];
+
+  function on<K extends keyof WindowEventMap>(target: Window, type: K, handler: (event: WindowEventMap[K]) => void) {
+    target.addEventListener(type, handler as EventListener, { passive: true });
+    cleanups.push(() => target.removeEventListener(type, handler as EventListener));
+  }
+
+  function initScrollState() {
+    const root = document.documentElement;
+    const stackItems = Array.from(document.querySelectorAll<HTMLElement>('.work-stack-item'));
+    const isDesktop = window.matchMedia('(min-width: 1024px)');
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+      const max = Math.max(root.scrollHeight - window.innerHeight, 1);
+      root.style.setProperty('--scroll-progress', Math.min(1, window.scrollY / max).toFixed(4));
+
+      if (!isDesktop.matches || reducedMotion()) return;
+      stackItems.forEach((item, index) => {
+        const next = stackItems[index + 1];
+        const card = item.firstElementChild as HTMLElement | null;
+        if (!card) return;
+        if (!next) {
+          card.style.removeProperty('--stack-depth');
+          return;
+        }
+        const itemTop = item.getBoundingClientRect().top;
+        const nextTop = next.getBoundingClientRect().top;
+        const distance = Math.max(nextTop - itemTop, 0);
+        const depth = 1 - Math.min(1, distance / Math.max(item.offsetHeight, 1));
+        card.style.setProperty('--stack-depth', depth.toFixed(3));
+      });
+    };
+
+    const request = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    on(window, 'scroll', request);
+    on(window, 'resize', request);
+    update();
+  }
+
+  function initMagnetic() {
+    if (reducedMotion() || !window.matchMedia('(hover: hover)').matches) return;
+
+    document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((element) => {
+      const strength = Number(element.dataset.magnetic) || 0.25;
+      const move = (event: PointerEvent) => {
+        const rect = element.getBoundingClientRect();
+        const x = (event.clientX - rect.left - rect.width / 2) * strength;
+        const y = (event.clientY - rect.top - rect.height / 2) * strength;
+        element.style.translate = `${x.toFixed(1)}px ${y.toFixed(1)}px`;
+      };
+      const reset = () => {
+        element.style.translate = '';
+      };
+      element.addEventListener('pointermove', move);
+      element.addEventListener('pointerleave', reset);
+      cleanups.push(() => {
+        element.removeEventListener('pointermove', move);
+        element.removeEventListener('pointerleave', reset);
+        reset();
+      });
+    });
+  }
+
+  function initScramble() {
+    const glyphs = '01<>/{}[]#*+=_ABCDEFGHJKLMNPQRSTUVWXYZ';
+    document.querySelectorAll<HTMLElement>('[data-scramble]').forEach((element) => {
+      const target = element.textContent ?? '';
+      if (reducedMotion() || !target.trim()) return;
+
+      element.setAttribute('aria-label', target);
+      const duration = Number(element.dataset.scramble) || 900;
+      const start = performance.now();
+      let frame = 0;
+
+      const tick = (now: number) => {
+        const progress = Math.min(1, (now - start) / duration);
+        const revealed = Math.floor(progress * target.length);
+        element.textContent = target
+          .split('')
+          .map((char, index) => (index < revealed || char === ' ' ? char : glyphs[Math.floor(Math.random() * glyphs.length)]))
+          .join('');
+        if (progress < 1) frame = requestAnimationFrame(tick);
+        else element.textContent = target;
+      };
+      frame = requestAnimationFrame(tick);
+      cleanups.push(() => {
+        cancelAnimationFrame(frame);
+        element.textContent = target;
+      });
+    });
+  }
+
+  function initCountUp() {
+    document.querySelectorAll<HTMLElement>('[data-count]').forEach((element) => {
+      const target = Number(element.dataset.count);
+      if (!Number.isFinite(target) || reducedMotion()) return;
+
+      const pad = (element.textContent ?? '').trim().length;
+      const delay = Number(element.dataset.countDelay) || 0;
+      const duration = 1400;
+      let frame = 0;
+      const timer = window.setTimeout(() => {
+        const start = performance.now();
+        const tick = (now: number) => {
+          const progress = Math.min(1, (now - start) / duration);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          element.textContent = String(Math.round(target * eased)).padStart(pad, '0');
+          if (progress < 1) frame = requestAnimationFrame(tick);
+        };
+        frame = requestAnimationFrame(tick);
+      }, delay);
+      element.textContent = '0'.padStart(pad, '0');
+      cleanups.push(() => {
+        window.clearTimeout(timer);
+        cancelAnimationFrame(frame);
+        element.textContent = String(target).padStart(pad, '0');
+      });
+    });
+  }
+
+  function initPointerGlow() {
+    if (reducedMotion() || !window.matchMedia('(hover: hover)').matches) return;
+
+    document.querySelectorAll<HTMLElement>('[data-pointer-glow]').forEach((element) => {
+      const move = (event: PointerEvent) => {
+        const rect = element.getBoundingClientRect();
+        element.style.setProperty('--gx', `${event.clientX - rect.left}px`);
+        element.style.setProperty('--gy', `${event.clientY - rect.top}px`);
+        element.dataset.glow = 'true';
+      };
+      const leave = () => {
+        element.dataset.glow = 'false';
+      };
+      element.addEventListener('pointermove', move, { passive: true });
+      element.addEventListener('pointerleave', leave);
+      cleanups.push(() => {
+        element.removeEventListener('pointermove', move);
+        element.removeEventListener('pointerleave', leave);
+      });
+    });
+  }
+
+  function initCopy() {
+    document.querySelectorAll<HTMLElement>('[data-copy]').forEach((button) => {
+      let timer = 0;
+      const status = button.querySelector<HTMLElement>('[data-copy-status]');
+      const click = async () => {
+        try {
+          await navigator.clipboard.writeText(button.dataset.copy ?? '');
+          button.dataset.copied = 'true';
+          if (status) status.textContent = button.dataset.copiedLabel ?? 'Copied';
+          window.clearTimeout(timer);
+          timer = window.setTimeout(() => {
+            button.dataset.copied = 'false';
+            if (status) status.textContent = '';
+          }, 1800);
+        } catch {
+          window.location.href = `mailto:${button.dataset.copy}`;
+        }
+      };
+      button.addEventListener('click', click);
+      cleanups.push(() => button.removeEventListener('click', click));
+    });
+  }
+
+  function init() {
+    cleanups.splice(0).forEach((cleanup) => cleanup());
+    initScrollState();
+    initMagnetic();
+    initScramble();
+    initCountUp();
+    initPointerGlow();
+    initCopy();
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);</script>

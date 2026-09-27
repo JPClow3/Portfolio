@@ -3,7 +3,7 @@
 **For AI assistants (Cursor/Codex):** This file is the single source of truth for this portfolio codebase (Astro project at repo root). Use it for context, conventions, and file locations when editing this project.
 
 ## Project Overview
-Modern portfolio website for João Paulo Gonçalves Santos built with Astro 7, Svelte 5, and TypeScript. Uses islands architecture for optimal performance with a comprehensive design system.
+B2B company website for **JPCLOW**, the software engineering studio founded by João Paulo Gonçalves Santos, built with Astro 7, Svelte 5, and TypeScript. It presents services, case studies, process, and engagement models to companies (dark-first, Three.js hero, parallax), using islands architecture and a comprehensive design system.
 
 **Live Site:** https://jpclow.dev
 
@@ -14,18 +14,7 @@ Modern portfolio website for João Paulo Gonçalves Santos built with Astro 7, S
 - **Email:** joao@jpclow.dev
 
 ### Current Projects (src/content/projects/)
-| File | Project | Tech |
-|------|---------|------|
-| throughline.md | Throughline | React, TypeScript, IndexedDB, PWA, End-to-End Encryption |
-| lorebound.md | Lorebound | TypeScript, React, Cloudflare Workers, Supabase, AI, Stripe |
-| moto-track.md | Moto Track | Django, HTMX, Tailwind CSS, PostgreSQL, Docker |
-| hefesto.md | Hefesto | Python, XGBoost, Geospatial Data, Climate Data, ML Ops |
-| agrohub.md | AgroHub UniRV | Python, Django, HTMX, Tailwind CSS, Alpine.js, Docker Swarm, Portainer |
-| inova-rio-verde.md | Inova Rio Verde | Next.js, Tailwind CSS, Mapbox, MapTiler, deck.gl, Cloudflare Hyperdrive, Neon Postgres |
-| portfolio.md | Developer Portfolio | Astro, Svelte, TypeScript, Tailwind CSS, Three.js |
-| resonant-echoes.md | Resonant Echoes | TypeScript, Google Gemini, AI |
-| league-ai-oracle.md | League AI Oracle | TypeScript, AI/ML, Riot Games API |
-| veins-of-eridun.md | Veins of Eridûn | TypeScript, AI |
+The catalog contains 18 projects in each locale. Read the frontmatter in `src/content/projects/` for the current stack, status, and case-study availability; these change as the projects evolve. The homepage features a smaller selection, and the catalog includes live, in-development, private-source, research, prototype, and archived work.
 
 ## Tech Stack
 | Layer | Technology | Purpose |
@@ -34,7 +23,7 @@ Modern portfolio website for João Paulo Gonçalves Santos built with Astro 7, S
 | Language | TypeScript | Type safety (strict mode) |
 | UI Islands | Svelte 5 | Interactive components (runes syntax: `$state`, `onMount`) |
 | Styling | Tailwind CSS v4 | Utility-first CSS via `@tailwindcss/vite` |
-| 3D/WebGL | Three.js | Hero visual effects (floating icosahedron + particles) |
+| 3D/WebGL | Three.js | Homepage hero module cluster (`StudioScene`) + ambient case-study scene (`HeroScene`) |
 | Content | Content Collections + MDX | Type-safe markdown content |
 | Contact | Web3Forms + Cloudflare Turnstile | Serverless form submissions with bot protection |
 | Deployment | Cloudflare Pages | GitHub integration builds static `dist/` |
@@ -49,9 +38,16 @@ src/
 │   ├── islands/             # Interactive Svelte components
 │   │   ├── BackToTop.svelte        # Scroll-to-top button
 │   │   ├── ThemeToggle.svelte      # Dark/light toggle w/ rotate animation
-│   │   └── HeroScene.svelte        # Three.js 3D scene
+│   │   ├── StudioScene.svelte      # Homepage hero Three.js scene (glossy module cluster)
+│   │   └── HeroScene.svelte        # Ambient Three.js scene (case-study pages only)
+│   ├── studio/              # B2B sections (Astro): StudioHero, CapabilityMarquee, ServicesGrid,
+│   │                        # WorkShowcase, ProcessSection, EngineeringSection, SectorsSection,
+│   │                        # EngagementSection, FaqSection, CtaBand, PageHero, SectionHeading
 │   └── pages/               # Page-level components (Astro)
-│       └── HomePage.astro          # Full homepage layout (all sections inline)
+│       ├── HomePage.astro          # Composes the studio sections
+│       ├── ServicesPage.astro      # /services/ (+ /pt/services/)
+│       ├── AboutPage.astro         # /about/ company + founder
+│       └── ContactPage.astro       # /contact/ project inquiry form
 ├── content/
 │   ├── projects/             # Project markdown files
 │   ├── experience/           # Experience markdown files
@@ -68,15 +64,52 @@ src/
 ├── styles/
 │   └── global.css           # Full design system
 └── lib/
-    └── i18n.ts              # UI translations (EN/PT)
+    ├── i18n.ts              # Flat UI strings (EN/PT): nav, footer, form
+    └── studio.ts            # Structured B2B copy (EN/PT): services, process, sectors, engagement, FAQ
 ```
 
 ## Commands
 ```bash
-npm run dev      # Start dev server (localhost:4321)
-npm run build    # Production build
-npm run preview  # Preview production build
+npm run dev               # Start dev server (localhost:4321)
+npm run build             # Production build
+npm run preview           # Preview production build
+npm run images:optimize   # PNG→WebP + 800px variants for project screenshots (required for srcset)
+
+npm test                  # Unit + Chromium e2e
+npm run test:unit         # Vitest (tests/unit, .ts/.js/.mjs)
+npm run test:e2e:chromium # Playwright against dist/ (served by scripts/serve.mjs on :4410)
+npm run test:a11y         # Only the axe WCAG 2.1 A/AA scan (tests/e2e/accessibility.spec.ts)
+npm run test:lighthouse   # Lighthouse budgets on dist/ (run `npm run build` first)
 ```
+
+### Testing
+- **Unit (`tests/unit/`)**: SEO/schema, i18n hygiene (EN/PT key parity, no dead keys, no first-person copy), studio copy integrity (`studio.test.ts`: locale parity, cited case studies exist, no invented clients/prices), responsive image variants, command palette, OG images, RSS, PWA, commit-message policy.
+- **E2E (`tests/e2e/`)**: build first (`npm run build`); forms need `PUBLIC_WEB3FORMS_ACCESS_KEY`, `PUBLIC_TURNSTILE_SITEKEY`, `PUBLIC_TURNSTILE_WORKER_URL` at build time (CI builds without them, so form tests skip). `studio.spec.ts` covers header hide/reveal, nav indicator, scroll progress, hero count-up/decode, copy-email, FAQ, contact payload, deep links, internal link crawl, language switcher, mobile menu, phone overflow + runtime errors, SEO metadata, JSON-LD, theme default. Stub `challenges.cloudflare.com` in new specs so `networkidle` settles.
+- **Accessibility**: `accessibility.spec.ts` runs axe on 10 pages in dark and light themes (reduced motion so reveals are visible); zero violations expected.
+- **Lighthouse (`scripts/lighthouse.mjs`)**: serves `dist/` on :4420, audits `/`, `/services/`, `/about/`, `/contact/`, `/projects/`, a case study and `/pt/` on mobile + desktop with `--lang=en-US`, writes `lighthouse-reports/` (gitignored). Budgets: accessibility 100, SEO 100, best practices 95, performance 80 mobile / 90 desktop (override with `LH_PERF_MOBILE`/`LH_PERF_DESKTOP`; CI uses 75/85). Filter with `LH_PAGES` / `LH_FORM_FACTORS` (Git Bash: prefix `MSYS_NO_PATHCONV=1`).
+- **CI (`.github/workflows/build.yml`)**: build → astro check → unit → Chromium e2e (incl. axe) → Lighthouse, uploading Lighthouse reports always and the Playwright report on failure.
+
+### Performance guardrails (found via Lighthouse — keep them)
+- `StudioScene` skips WebGL on phones (<768px), data-saver, and devices with fewer than 4 cores (CSS glow only; `data-scene-ready="lite"`), and on desktop starts ≥2.5s after `load`.
+- Hero text must be partly painted on the first frame (`.reveal-line` starts at 60%, `.fade-rise` at opacity 0.01) so it counts for FCP/LCP.
+- Don't position hero decorations with `%` of the hero height (font swap changes it → CLS); use `svh`/`inset: 0`.
+- Project screenshots use `projectImageSources()` (`src/lib/images.ts`) for `srcset`; below-the-fold images are `loading="lazy"`.
+- `public/_headers` sets immutable caching for `/_astro/*` and security headers on Cloudflare Pages; `scripts/serve.mjs` mirrors it and compresses (br/gzip) so local audits match production.
+- No cross-document `@view-transition`: it froze rendering after click navigation in Chromium (fragment scroll and IntersectionObserver never ran).
+- Critical fonts (Space Grotesk 600, Inter 400 latin) are preloaded in `BaseLayout`; the hero content is top-anchored, not vertically centred, so font swap can't shift it.
+
+### SEO conventions
+- Titles ≤ 60 chars and descriptions 70–160 chars for home/services/about/contact/blog (enforced in `tests/unit/seo.test.ts`).
+- Every top-level page has its own 1200×630 social preview generated at build time: `/open-graph/site/{home,services,about,contact,projects,blog}.png` (+ `/open-graph/pt/site/...`) via `getSiteOgImageUrl()` + `src/lib/site-og.ts`; `BaseLayout` defaults to the localized home preview.
+- Structured data: Organization (`#organization`) + founder Person on every page; `buildStudioPageSchemas()` adds typed `WebPage`/`AboutPage`/`ContactPage` + `BreadcrumbList` to studio pages; the catalog is a `CollectionPage` with an `ItemList`; case studies are `CreativeWork` published by the organization.
+- Internal linking: case studies link to the services that cite them ("Services behind this project") and to the next case study; service cards deep-link to `/services/#<id>`.
+- Honesty: copy must not claim production/client delivery for projects whose status is research, prototype, or in development (`studio.test.ts` guards the sectors lead and the "Related work" label). Keep `public/llms.txt` in sync with project status and attribution.
+
+### Reading & page styles
+- `.prose` (long-form Markdown for case studies and blog posts) is defined in `global.css` — no typography plugin is installed.
+- Heading base styles live in `@layer base` so `.mono-label`/utilities can restyle headings.
+- In light mode the header is always a solid dark bar (its logo is white); don't make it transparent over light pages.
+- The catalog has client-side status filters (`[data-catalog-filters]`, `aria-pressed`, live count); `ScrollReveal` passes `data-*` attributes through.
 
 ---
 
@@ -114,6 +147,8 @@ Manual §9 recommends avoiding excess particles/futurist effects.
 - `.hover-lift`: `translateY(-4px)` + `0 6px 16px` neutral shadow (no accent glow)
 - `.hover-glow`: subtle neutral shadow only
 - No heavy/glow shadows as a default style
+
+**Studio layer (end of `global.css`, inside `@layer components`):** owner-approved exception to Manual §13 — subtle blue glows on buttons/cards/3D. Classes: `.studio-container`, `.studio-section`, `.eyebrow`, `.mono-label`, `.display-xl/.display-lg/.heading-section`, `.text-outline`, `.text-shine`, `.reveal-line`, `.fade-rise`, `.btn .btn-primary .btn-ghost`, `.link-arrow`, `.panel`, `.spotlight`, `.beam-border`, `.icon-tile`, `.chip`, `.grid-floor`, `.hero-aurora`, `.work-*`, `.process-*`, `.code-window`, `.arch-line`. Keep them in the layer so Tailwind utilities can override them. Motion layer (end of file): smart-hiding header + progress line, sliding nav indicator, `.split-word`, button light sweep/press/loading, `.u-link`, card lift, `.grain`, `.pointer-glow`, `.field` states, copy feedback, animated FAQ (`::details-content`). Avoid class names that collide with Tailwind utilities (e.g. `ring`).
 
 ### Utility Classes
 
@@ -181,8 +216,11 @@ Respects `prefers-reduced-motion`. Re-initializes on Astro page transitions via 
 
 ## Key Patterns
 
-### Homepage
-- `pages/index.astro` delegates to `components/pages/HomePage.astro`, which owns the full page layout with all sections inlined (hero, tech marquee, projects bento, journey timeline, GitHub stats, contact footer). The `pt/index.astro` page renders the same component, picking up the `pt` locale from Astro's i18n routing.
+### Homepage & studio pages
+- `pages/index.astro` delegates to `components/pages/HomePage.astro`, which composes the `components/studio/*` sections: hero (StudioScene) → capability marquee → services bento → sticky-stacked case studies (featured projects) → process → engineering showcase → sectors → engagement models → FAQ → CTA band (`#contact`).
+- `/services/`, `/about/`, `/contact/` each have EN and `pt/` route files delegating to a page component. The full contact form (`common/ContactForm.astro`) lives on `/contact/`.
+- B2B copy is edited in `src/lib/studio.ts` (typed `StudioCopy`, one object per locale). Project references use content-collection slugs.
+- Keep claims factual: no invented clients, testimonials, prices, or metrics — stats in the hero are computed from content.
 
 ### Islands Architecture
 - Astro components are static by default (zero JS shipped)
@@ -192,7 +230,8 @@ Respects `prefers-reduced-motion`. Re-initializes on Astro page transitions via 
   - `client:idle` — After page load, during idle time
 
 ### Theme System
-- CSS variables in `global.css` for light (`:root`) and dark (`html.dark`)
+- CSS variables in `global.css` for light (`:root`) and dark (`html.dark`); `.force-dark` applies the dark tokens to a subtree (hero, header, footer, CTA band, engineering section) so they stay dark in light mode
+- **Dark-first:** the inline init script uses dark unless the visitor explicitly stored `theme=light`
 - Inline `<script is:inline>` in BaseLayout prevents FOUC
 - ThemeToggle.svelte: `$state` rune, localStorage + system preference, smooth rotate/scale icon animation
 - Body has `transition: background-color 200ms` for smooth theme switching
@@ -222,9 +261,10 @@ Located in `src/content/`, schemas in `config.ts`:
 - **profile** — lang, currentFocus (title, items[]), customMetric (label, githubUsername, fallbackEvents[])
 
 ### SEO & Performance
-- JSON-LD structured data in BaseLayout: Person, WebSite, ProfessionalService, FAQPage
+- JSON-LD structured data in BaseLayout: WebSite, ProfessionalService (`#organization`, JPCLOW) with founder Person (`#person`); FAQPage on home (from `studio.ts`); OfferCatalog on `/services/`
 - JSON-LD `BreadcrumbList` structured data in project case studies (`ProjectCaseStudy.astro`) and blog articles (`BlogLayout.astro`)
-- Dynamic build-time OpenGraph & Twitter Card PNG images generated via Satori + `@resvg/resvg-js` (`src/lib/og-image.ts`) at `/open-graph/projects/[slug].png`, `/open-graph/pt/projects/[slug].png`, `/open-graph/blog/[slug].png`, and `/open-graph/pt/blog/[slug].png`
+- Dynamic build-time OpenGraph & Twitter Card PNG images generated via Satori + `@resvg/resvg-js` (`src/lib/og-image.ts`) at `/open-graph/projects/[slug].png`, `/open-graph/pt/projects/[slug].png`, `/open-graph/blog/[slug].png`, and `/open-graph/pt/blog/[slug].png` (author: JPCLOW)
+- Page metadata lives in `src/lib/seo.ts` (`getHomeSeo`, `getPageSeo`, `getBlogIndexSeo`); hreflang alternates cover `/services/`, `/about/`, `/contact/`, `/projects/`, and blog paths
 - Self-hosted fonts via `@fontsource/inter` + `@fontsource/space-grotesk` (zero external font CDNs)
 - Skip link for keyboard navigation
 - Auto-generated sitemap via `@astrojs/sitemap`
@@ -243,15 +283,20 @@ Configured in `tsconfig.json`:
 
 | Component | File | Key Features |
 |-----------|------|--------------|
-| HomePage | `components/pages/HomePage.astro` | Full page layout — hero, marquee, bento grid, timeline, GitHub stats, contact footer |
+| HomePage | `components/pages/HomePage.astro` | Composes the B2B studio sections |
 | Header | `components/layout/Header.astro` | Glass nav, scroll shadow, mobile menu, i18n |
 | Footer | `components/layout/Footer.astro` | Social links, credits |
-| Icon | `components/common/Icon.astro` | 17-icon SVG system |
+| Icon | `components/common/Icon.astro` | Lucide-style SVG icons (names typed in `icon-names.ts`) |
+| Parallax | `components/common/Parallax.astro` | Scroll-linked translateY wrapper (`speed`), reduced-motion safe |
+| Spotlight | `components/common/Spotlight.astro` | Cursor-following glow card surface |
+| ContactForm | `components/common/ContactForm.astro` | Web3Forms + Turnstile inquiry form |
+| StudioScene | `components/islands/StudioScene.svelte` | Hero WebGL cluster; loads ≥2.5s after `load` |
+| Interactions | `components/common/Interactions.astro` | Site-wide motion: `--scroll-progress`, `[data-magnetic]`, `[data-scramble]`, `[data-count]`, `[data-pointer-glow]`, `[data-copy]`, stacked-card depth |
+| SplitText | `components/common/SplitText.astro` | Word-by-word masked heading reveal (inside `<ScrollReveal>`) |
 | ScrollReveal | `components/common/ScrollReveal.astro` | IntersectionObserver scroll animations |
 | HeroScene | `components/islands/HeroScene.svelte` | Three.js 3D icosahedron + particles |
 | ThemeToggle | `components/islands/ThemeToggle.svelte` | Dark/light toggle with icon animation |
 | BackToTop | `components/islands/BackToTop.svelte` | Scroll-to-top button |
-
 
 ---
 

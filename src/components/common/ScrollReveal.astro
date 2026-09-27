@@ -6,6 +6,8 @@ interface Props {
   threshold?: number;
   class?: string;
   tag?: 'div' | 'section' | 'article' | 'li' | 'span';
+  /** Extra data attributes are passed through to the wrapper (e.g. for client-side filters). */
+  [key: `data-${string}`]: string | undefined;
 }
 
 const {
@@ -15,6 +17,7 @@ const {
   threshold = 0.1,
   class: className = '',
   tag = 'div',
+  ...dataAttributes
 } = Astro.props;
 
 const Tag = tag;
@@ -25,6 +28,7 @@ const Tag = tag;
   data-scroll-reveal
   data-threshold={threshold}
   style={`--reveal-delay: ${delay}ms; --reveal-duration: ${duration}ms;`}
+  {...dataAttributes}
 >
   <slot />
 </Tag>

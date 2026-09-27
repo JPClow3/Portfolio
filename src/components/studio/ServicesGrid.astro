@@ -1,0 +1,100 @@
+---
+import Icon from '@/components/common/Icon.astro';
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
+import Spotlight from '@/components/common/Spotlight.astro';
+import SectionHeading from '@/components/studio/SectionHeading.astro';
+import { defaultLang, type Lang } from '@/lib/i18n';
+import { getStudioCopy, localePath } from '@/lib/studio';
+
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const copy = getStudioCopy(currentLang);
+const section = copy.sections.services;
+
+// Bento layout on a 6-column grid (lg+): wide / narrow / three thirds / full width
+const spans = ['lg:col-span-4', 'lg:col-span-2', 'lg:col-span-2', 'lg:col-span-2', 'lg:col-span-2', 'lg:col-span-6'];
+const chartBars = [38, 54, 46, 72, 58, 84, 66, 92, 78, 100];
+---
+
+<section id="services" aria-labelledby="services-heading" class="studio-section">
+  <div class="line-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] opacity-60" aria-hidden="true"></div>
+  <div class="studio-container">
+    <SectionHeading id="services-heading" index="01" eyebrow={section.eyebrow} title={section.title} lead={section.lead} />
+
+    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+      {copy.services.map((service, index) => (
+        <ScrollReveal animation="fade-up" delay={(index % 3) * 90} class:list={['h-full', spans[index], index === 0 || index === 5 ? 'md:col-span-2' : '']}>
+          <Spotlight tag="article" class="panel flex h-full flex-col p-6 sm:p-7">
+            <div class:list={['flex h-full flex-col gap-6', (index === 0 || index === 5) && 'lg:flex-row lg:items-stretch lg:gap-10']}>
+              <div class="flex flex-1 flex-col">
+                <div class="flex items-center justify-between gap-4">
+                  <span class="icon-tile"><Icon name={service.icon} size={20} /></span>
+                  <span class="mono-label">0{index + 1}</span>
+                </div>
+                <h3 class="mt-6 text-xl font-semibold tracking-tight sm:text-2xl">{service.title}</h3>
+                <p class="mt-3 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-base">{service.summary}</p>
+                <ul class="mt-5 flex flex-wrap gap-1.5">
+                  {service.deliverables.slice(0, 3).map((item) => <li class="chip">{item}</li>)}
+                </ul>
+                <a href={`${localePath('/services/', currentLang)}#${service.id}`} class="link-arrow mt-auto pt-5 text-sm">
+                  {copy.labels.learnMore}<span class="sr-only">: {service.title}</span>
+                  <Icon name="arrow-up-right" size={16} />
+                </a>
+              </div>
+
+              {index === 0 && (
+                <div class="mini-window hidden flex-1 sm:block" aria-hidden="true">
+                  <div class="work-frame-chrome"><i></i><i></i><i></i></div>
+                  <div class="grid grid-cols-[5rem_1fr] gap-4 p-4">
+                    <div class="space-y-2.5">
+                      <div class="mini-bar mini-bar--accent w-4/5"></div>
+                      <div class="mini-bar w-full"></div>
+                      <div class="mini-bar w-3/5"></div>
+                      <div class="mini-bar w-4/5"></div>
+                    </div>
+                    <div class="space-y-3">
+                      <div class="grid grid-cols-3 gap-2">
+                        {[0, 1, 2].map(() => (
+                          <div class="rounded-md border border-[rgb(var(--color-border))] p-2">
+                            <div class="mini-bar mb-2 w-1/2"></div>
+                            <div class="mini-bar w-3/4"></div>
+                          </div>
+                        ))}
+                      </div>
+                      <div class="mini-chart">
+                        {chartBars.map((height, barIndex) => <span style={`height: ${height}%; --i: ${barIndex}`}></span>)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {index === 1 && (
+                <pre class="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-primary)/0.7)] p-3 font-mono text-[0.6875rem] leading-relaxed text-[rgb(var(--color-text-secondary))]" aria-hidden="true"><span class="text-[rgb(var(--color-accent-hover))]">POST</span> /v1/orders <span class="text-[rgb(var(--color-success))]">201</span>
+{`{ "id": "ord_8f2c", "status": "confirmed" }`}</pre>
+              )}
+
+              {index === 3 && (
+                <div class="mini-chart" aria-hidden="true">
+                  {chartBars.slice(2).map((height, barIndex) => <span style={`height: ${height}%; --i: ${barIndex}`}></span>)}
+                </div>
+              )}
+
+              {index === 5 && (
+                <div class="hidden flex-1 items-center lg:flex" aria-hidden="true">
+                  <div class="grid w-full grid-cols-4 gap-2">
+                    {['gru', 'iad', 'fra', 'nrt', 'scl', 'lhr', 'sin', 'syd'].map((region, regionIndex) => (
+                      <div class="flex items-center gap-2 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-primary)/0.6)] px-3 py-2 font-mono text-xs uppercase text-[rgb(var(--color-text-secondary))]">
+                        <span class="status-dot" style={`animation-delay: ${regionIndex * 240}ms`}></span>
+                        {region}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </Spotlight>
+        </ScrollReveal>
+      ))}
+    </div>
+  </div>
+</section>

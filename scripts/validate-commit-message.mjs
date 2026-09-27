@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 
 const conventionalSubject = /^(feat|fix|docs|style|refactor|perf|test|chore|build|ci|revert)(\([a-z0-9._/-]+\))?: (.+)$/;
 const generatedSubject = /^(Merge |Revert "|\[[A-Z]+-[0-9]+\] )/;
@@ -41,14 +42,21 @@ function readSubjects(args) {
   throw new Error('usage: validate-commit-message.mjs --file <path> | --range <base> <head> | <subject>');
 }
 
-let failed = false;
-for (const subject of readSubjects(process.argv.slice(2))) {
-  const error = validateCommitSubject(subject);
-  if (!error) continue;
-  failed = true;
-  console.error(`[ERROR] Invalid commit subject: "${subject}"`);
-  console.error(`        ${error}.`);
+function main() {
+  let failed = false;
+  for (const subject of readSubjects(process.argv.slice(2))) {
+    const error = validateCommitSubject(subject);
+    if (!error) continue;
+    failed = true;
+    console.error(`[ERROR] Invalid commit subject: "${subject}"`);
+    console.error(`        ${error}.`);
+  }
+
+  if (failed) process.exit(1);
+  console.log('[OK] Commit subjects are descriptive and follow the project convention.');
 }
 
-if (failed) process.exit(1);
-console.log('[OK] Commit subjects are descriptive and follow the project convention.');
+// Run the CLI only when executed directly, so tests can import validateCommitSubject
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main();
+}

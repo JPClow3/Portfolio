@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { useTranslations, getLangFromUrl, languages, defaultLang, ui } from '../../src/lib/i18n';
 import type { Lang } from '../../src/lib/i18n';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 
 describe('i18n Utilities', () => {
   describe('languages', () => {
@@ -34,31 +36,31 @@ describe('i18n Utilities', () => {
     it('should translate English strings correctly', () => {
       const t = useTranslations('en');
       
-      expect(t('nav.about')).toBe('About');
+      expect(t('nav.company')).toBe('Company');
       expect(t('nav.contact')).toBe('Contact');
-      expect(t('hero.name')).toBe('João Paulo Santos');
+      expect(t('nav.startProject').length).toBeGreaterThan(0);
     });
 
     it('should translate Portuguese strings correctly', () => {
       const t = useTranslations('pt');
       
-      expect(t('nav.about')).toBe('Sobre');
+      expect(t('nav.company')).toBe('Empresa');
       expect(t('nav.contact')).toBe('Contato');
-      expect(t('hero.name')).toBe('João Paulo Santos');
+      expect(t('nav.startProject').length).toBeGreaterThan(0);
     });
 
     it('should fallback to English for missing translation key in selected language', () => {
       const ptDict = ui.pt as Record<string, string>;
-      const original = ptDict['common.loading'];
+      const original = ptDict['common.backToTop'];
 
-      delete ptDict['common.loading'];
+      delete ptDict['common.backToTop'];
 
       const t = useTranslations('pt');
-      const result = t('common.loading');
+      const result = t('common.backToTop');
 
-      expect(result).toBe(ui.en['common.loading']);
+      expect(result).toBe(ui.en['common.backToTop']);
 
-      ptDict['common.loading'] = original;
+      ptDict['common.backToTop'] = original;
     });
 
     it('should handle all EN translations without errors', () => {
@@ -85,9 +87,9 @@ describe('i18n Utilities', () => {
       const enT = useTranslations('en');
       const ptT = useTranslations('pt');
       
-      expect(enT('nav.about')).not.toBe(ptT('nav.about'));
-      expect(enT('nav.about')).toBe('About');
-      expect(ptT('nav.about')).toBe('Sobre');
+      expect(enT('nav.company')).not.toBe(ptT('nav.company'));
+      expect(enT('nav.company')).toBe('Company');
+      expect(ptT('nav.company')).toBe('Empresa');
     });
   });
 
@@ -152,18 +154,15 @@ describe('i18n Utilities', () => {
       const t = useTranslations(lang as Lang);
       
       expect(lang).toBe('pt');
-      expect(t('nav.about')).toBe('Sobre');
+      expect(t('nav.company')).toBe('Empresa');
     });
 
     it('should handle language switching', () => {
       const enT = useTranslations('en');
       const ptT = useTranslations('pt');
       
-      const enGreeting = enT('hero.greeting');
-      const ptGreeting = ptT('hero.greeting');
-      
-      expect(enGreeting).toBe("Hello, I'm");
-      expect(ptGreeting).toBe('Olá, eu sou');
+      expect(enT('nav.startProject')).toBe('Start a project');
+      expect(ptT('nav.startProject')).toBe('Iniciar projeto');
     });
 
     it('should maintain consistency across languages', () => {
@@ -201,6 +200,33 @@ describe('i18n Utilities', () => {
       expect(missingInPt, `Missing keys in PT: ${missingInPt.join(', ')}`).toEqual([]);
       expect(missingInEn, `Missing keys in EN: ${missingInEn.join(', ')}`).toEqual([]);
       expect(enKeys).toEqual(ptKeys);
+    });
+  });
+
+  describe('dictionary hygiene', () => {
+    it('keeps English and Portuguese keys in parity', () => {
+      expect(Object.keys(ui.pt).sort()).toEqual(Object.keys(ui.en).sort());
+    });
+
+    it('has no dead keys that no component references', () => {
+      const root = resolve(__dirname, '../../src');
+      const files: string[] = [];
+      const walk = (dir: string) => {
+        for (const entry of readdirSync(dir)) {
+          const full = join(dir, entry);
+          if (statSync(full).isDirectory()) walk(full);
+          else if (/\.(astro|ts|svelte)$/.test(entry) && !full.endsWith(join('lib', 'i18n.ts'))) files.push(full);
+        }
+      };
+      walk(root);
+      const source = files.map((file) => readFileSync(file, 'utf-8')).join('\n');
+      const unused = Object.keys(ui.en).filter((key) => !source.includes(`'${key}'`) && !source.includes(`"${key}"`));
+      expect(unused).toEqual([]);
+    });
+
+    it('does not use first-person singular copy for the studio', () => {
+      const values = [...Object.values(ui.en), ...Object.values(ui.pt)].join(' ');
+      expect(values).not.toMatch(/\b(I'm|I've|I haven't|my)\b/);
     });
   });
 });

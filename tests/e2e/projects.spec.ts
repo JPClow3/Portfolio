@@ -40,13 +40,12 @@ for (const caseStudy of caseStudies) {
 
     await expect(page.locator('h1')).toContainText(caseStudy.title);
     const decisionLog = page.getByLabel('Decision log');
-    await expect(decisionLog.getByText('Problem', { exact: true })).toBeVisible();
-    await expect(decisionLog.getByText('Constraint', { exact: true })).toBeVisible();
-    await expect(decisionLog.getByText('Decision', { exact: true })).toBeVisible();
-    await expect(decisionLog.getByText('Outcome', { exact: true })).toBeVisible();
+    await expect(decisionLog.locator('p.mono-label')).toHaveText([
+      '01Problem', '02Constraint', '03Decision', '04Outcome',
+    ]);
     await expect(page.getByText(caseStudy.metric, { exact: true })).toBeVisible();
 
-    const projectNav = page.locator('[data-nav-section="projects"]').first();
+    const projectNav = page.locator('[data-nav-section="work"]').first();
     await expect(projectNav).toHaveAttribute('data-active', 'true', { timeout: 5_000 });
 
     const scene = page.locator('[data-testid="site-scene"]');
@@ -57,7 +56,7 @@ for (const caseStudy of caseStudies) {
 test('project catalog presents current work, private-source studies, and the archive', async ({ page }) => {
   await page.goto('/projects/');
 
-  await expect(page.locator('h1')).toHaveText('Projects');
+  await expect(page.locator('h1')).toHaveText('Projects & case studies');
   const cards = page.locator('main article');
   await expect(cards).toHaveCount(18);
 
@@ -77,12 +76,19 @@ test('project catalog presents current work, private-source studies, and the arc
   await expect(cards.filter({ hasText: 'Hefesto' }).getByText('Research', { exact: true })).toBeVisible();
   await expect(cards.filter({ hasText: 'League AI Oracle' }).getByText('Archived', { exact: true })).toBeVisible();
   await expect(cards.filter({ hasText: 'AI Development Controller' }).getByText('Prototype', { exact: true })).toBeVisible();
+  const archiveHeading = page.getByRole('heading', { name: 'Archive / experiments' });
+  await expect(archiveHeading).toBeVisible();
+  const archiveFollowsMainWork = await archiveHeading.evaluate((heading) => {
+    const firstArchive = heading.parentElement?.querySelector('[data-archive="true"]');
+    return Boolean(firstArchive && (heading.compareDocumentPosition(firstArchive) & Node.DOCUMENT_POSITION_FOLLOWING));
+  });
+  expect(archiveFollowsMainWork).toBe(true);
 });
 
 test('Portuguese project catalog is complete and localized', async ({ page }) => {
   await page.goto('/pt/projects/');
 
-  await expect(page.locator('h1')).toHaveText('Projetos');
+  await expect(page.locator('h1')).toHaveText('Projetos e cases');
   await expect(page.locator('main article')).toHaveCount(18);
   const catalog = page.locator('main');
   await expect(catalog.getByText('Código privado', { exact: true }).first()).toBeVisible();
@@ -96,10 +102,9 @@ test('Portuguese case studies use localized decision logs and preserve the proje
 
   await expect(page.locator('h1')).toContainText('Lorebound');
   await expect(page.locator('main article > header').getByText('Em desenvolvimento', { exact: true })).toBeVisible();
-  await expect(page.getByText('Problema', { exact: true })).toBeVisible();
-  await expect(page.getByText('Restrição', { exact: true })).toBeVisible();
-  await expect(page.getByText('Decisão', { exact: true })).toBeVisible();
-  await expect(page.getByText('Resultado', { exact: true })).toBeVisible();
+  await expect(page.getByLabel('Registro de decisões').locator('p.mono-label')).toHaveText([
+    '01Problema', '02Restrição', '03Decisão', '04Resultado',
+  ]);
   await expect(page.getByRole('link', { name: 'Switch to English' })).toHaveAttribute('href', '/projects/lorebound/');
   await expect(page.getByRole('link', { name: /repositório/i })).toHaveCount(0);
 });
@@ -139,6 +144,6 @@ test('case studies include dynamic OpenGraph image and BreadcrumbList JSON-LD sc
   expect(breadcrumb).toBeDefined();
   expect(breadcrumb.itemListElement).toHaveLength(3);
   expect(breadcrumb.itemListElement[0].name).toBe('Home');
-  expect(breadcrumb.itemListElement[1].name).toBe('Projects');
+  expect(breadcrumb.itemListElement[1].name).toBe('Projects & case studies');
   expect(breadcrumb.itemListElement[2].name).toBe('Lorebound');
 });

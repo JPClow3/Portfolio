@@ -18,9 +18,16 @@ describe('buildCommandPaletteItems', () => {
     const items = buildCommandPaletteItems({ lang: 'en', profile, projects });
 
     expect(items.find((item) => item.id === 'section-projects')).toMatchObject({
-      label: 'Projects',
+      label: 'Projects & case studies',
       href: '/projects/',
       kind: 'navigate',
+    });
+    expect(items.find((item) => item.id === 'section-services')).toMatchObject({
+      href: '/services/',
+      kind: 'navigate',
+    });
+    expect(items.find((item) => item.id === 'section-contact')).toMatchObject({
+      href: '/contact/',
     });
     expect(items.find((item) => item.id === 'project-throughline')).toMatchObject({
       label: 'Throughline',
@@ -41,8 +48,12 @@ describe('buildCommandPaletteItems', () => {
     const items = buildCommandPaletteItems({ lang: 'pt', profile, projects });
 
     expect(items.find((item) => item.id === 'section-projects')).toMatchObject({
-      label: 'Projetos',
+      label: 'Projetos e cases',
       href: '/pt/projects/',
+    });
+    expect(items.find((item) => item.id === 'section-company')).toMatchObject({
+      label: 'Empresa',
+      href: '/pt/about/',
     });
     expect(items.find((item) => item.id === 'project-lorebound')).toMatchObject({
       label: 'Lorebound',
@@ -52,9 +63,6 @@ describe('buildCommandPaletteItems', () => {
     expect(items.find((item) => item.id === 'project-hefesto')).toMatchObject({
       status: 'Pesquisa',
     });
-    expect(items.find((item) => item.id === 'resume')).toMatchObject({
-      href: '/resume-pt.pdf',
-      kind: 'download',
-    });
+    expect(items.find((item) => item.id === 'resume')).toBeUndefined();
   });
 });

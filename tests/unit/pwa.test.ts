@@ -12,7 +12,7 @@ describe('PWA & Service Worker configuration', () => {
     const content = readFileSync(manifestPath, 'utf8');
     const manifest = JSON.parse(content);
 
-    expect(manifest.name).toContain('João Paulo');
+    expect(manifest.name).toContain('JPCLOW');
     expect(manifest.short_name).toBeTruthy();
     expect(manifest.start_url).toBe('/');
     expect(manifest.display).toBe('standalone');

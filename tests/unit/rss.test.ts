@@ -55,7 +55,7 @@ describe('RSS feeds generation', () => {
       const xml = readFileSync(rssPath, 'utf8');
       expect(xml).toContain('<rss version="2.0"');
       expect(xml).toContain('xmlns:atom="http://www.w3.org/2005/Atom"');
-      expect(xml).toContain('<title>João Paulo Santos — Blog</title>');
+      expect(xml).toContain('<title>JPCLOW — Engineering notes</title>');
       expect(xml).toContain('https://jpclow.dev/rss.xml');
     }
 

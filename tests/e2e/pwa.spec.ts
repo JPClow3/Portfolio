@@ -15,7 +15,7 @@ test('web manifest is accessible and contains valid JSON metadata', async ({ req
   expect(response.status()).toBe(200);
 
   const manifest = await response.json();
-  expect(manifest.name).toContain('João Paulo');
+  expect(manifest.name).toContain('JPCLOW');
   expect(manifest.start_url).toBe('/');
   expect(manifest.display).toBe('standalone');
   expect(manifest.icons.length).toBeGreaterThan(0);

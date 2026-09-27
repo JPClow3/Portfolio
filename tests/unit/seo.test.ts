@@ -5,7 +5,9 @@ import {
   SITE,
   buildPersonSchema,
   buildProfessionalServiceSchema,
+  buildServicesSchema,
   getHomeSeo,
+  getPageSeo,
   getBlogIndexSeo,
   formatPageTitle,
   getPathAlternates,
@@ -23,39 +25,74 @@ describe('seo utilities', () => {
   const siteUrl = new URL(SITE.url);
 
   describe('getHomeSeo()', () => {
-    it('returns product-engineering metadata for English', () => {
+    it('returns company (B2B) metadata for English', () => {
       const seo = getHomeSeo('en');
 
-      expect(seo.title.toLowerCase()).toContain('product engineer');
-      expect(seo.description.toLowerCase()).toContain('product engineer');
-      expect(seo.description.toLowerCase()).toContain('cloudflare');
+      expect(seo.title).toContain('JPCLOW');
+      expect(seo.title.toLowerCase()).toContain('software engineering studio');
+      expect(seo.title).toContain('João Paulo Santos');
+      expect(seo.description.toLowerCase()).toContain('for companies');
+      expect(seo.description.toLowerCase()).not.toContain('freelance');
     });
 
-    it('returns product-engineering metadata for Portuguese', () => {
+    it('returns company (B2B) metadata for Portuguese', () => {
       const seo = getHomeSeo('pt');
 
-      expect(seo.title.toLowerCase()).toContain('engenheiro de produto');
-      expect(seo.description.toLowerCase()).toContain('engenheiro de produto');
+      expect(seo.title.toLowerCase()).toContain('estúdio de engenharia de software');
+      expect(seo.title).toContain('João Paulo Santos');
+      expect(seo.description.toLowerCase()).toContain('para empresas');
+      expect(seo.description.toLowerCase()).not.toContain('freelancer');
+    });
+  });
+
+  describe('search snippet lengths', () => {
+    // Google truncates titles around ~60 characters and descriptions around ~160
+    const entries = (['en', 'pt'] as const).flatMap((lang) => [
+      [`${lang} home`, getHomeSeo(lang)],
+      [`${lang} services`, getPageSeo('services', lang)],
+      [`${lang} about`, getPageSeo('about', lang)],
+      [`${lang} contact`, getPageSeo('contact', lang)],
+      [`${lang} blog`, getBlogIndexSeo(lang)],
+    ] as const);
+
+    it.each(entries)('%s title fits in a search result', (_, seo) => {
+      expect(seo.title.length).toBeLessThanOrEqual(60);
+      expect(seo.title).toContain('JPCLOW');
+    });
+
+    it.each(entries)('%s description is 70–160 characters', (_, seo) => {
+      expect(seo.description.length).toBeGreaterThanOrEqual(70);
+      expect(seo.description.length).toBeLessThanOrEqual(160);
+    });
+  });
+
+  describe('getPageSeo()', () => {
+    it('returns localized metadata for the studio pages', () => {
+      for (const page of ['services', 'about', 'contact'] as const) {
+        expect(getPageSeo(page, 'en').title).toContain('JPCLOW');
+        expect(getPageSeo(page, 'pt').title).toContain('JPCLOW');
+        expect(getPageSeo(page, 'pt').description).not.toBe(getPageSeo(page, 'en').description);
+      }
     });
   });
 
   describe('getBlogIndexSeo()', () => {
-    it('includes freelance positioning in blog metadata for both locales', () => {
+    it('uses company positioning in blog metadata for both locales', () => {
       const enSeo = getBlogIndexSeo('en');
       const ptSeo = getBlogIndexSeo('pt');
 
-      expect(enSeo.title.toLowerCase()).toContain('freelance');
+      expect(enSeo.title).toContain('JPCLOW');
       expect(enSeo.description.length).toBeGreaterThan(40);
 
-      expect(ptSeo.title.toLowerCase()).toContain('freelancer');
+      expect(ptSeo.title).toContain('JPCLOW');
       expect(ptSeo.description.length).toBeGreaterThan(40);
     });
   });
 
   describe('formatPageTitle()', () => {
-    it('appends freelance suffix when title has no pipe', () => {
-      expect(formatPageTitle('Lorebound', 'en')).toContain('Freelance Developer');
-      expect(formatPageTitle('Lorebound', 'pt')).toContain('Desenvolvedor Freelancer');
+    it('appends the studio suffix when title has no pipe', () => {
+      expect(formatPageTitle('Lorebound', 'en')).toBe('Lorebound | JPCLOW | Software Studio');
+      expect(formatPageTitle('Lorebound', 'pt')).toBe('Lorebound | JPCLOW | Estúdio de Software');
     });
 
     it('preserves titles that already include a pipe', () => {
@@ -77,6 +114,14 @@ describe('seo utilities', () => {
 
       expect(alternates.some((item) => item.url.endsWith('/projects/lorebound/'))).toBe(true);
       expect(alternates.some((item) => item.url.endsWith('/pt/projects/lorebound/'))).toBe(true);
+    });
+
+    it('returns en, pt, and x-default for studio pages in either locale', () => {
+      for (const path of ['/services/', '/pt/about/', '/contact/', '/pt/projects/']) {
+        const alternates = getPathAlternates(path, siteUrl);
+        expect(alternates.map((item) => item.hreflang)).toEqual(['en-US', 'pt-BR', 'x-default']);
+        expect(alternates[1].url.startsWith('https://jpclow.dev/pt/')).toBe(true);
+      }
     });
 
     it('returns localized blog alternates for index and posts', () => {
@@ -113,14 +158,30 @@ describe('seo utilities', () => {
   });
 
   describe('service schema', () => {
-    it('does not fabricate a price range for freelance services', () => {
+    it('does not fabricate a price range for studio services', () => {
       const schema = buildProfessionalServiceSchema({
         lang: 'en',
         siteUrl,
-        description: 'Freelance development services.',
+        description: 'Software engineering services.',
       });
 
       expect(schema).not.toHaveProperty('priceRange');
+    });
+
+    it('describes JPCLOW as the organization with the founder linked', () => {
+      const schema = buildProfessionalServiceSchema({ lang: 'en', siteUrl, description: '' });
+
+      expect(schema['@id']).toBe('https://jpclow.dev/#organization');
+      expect(schema.name).toBe('JPCLOW');
+      expect(schema.founder).toEqual({ '@id': 'https://jpclow.dev/#person' });
+      expect(schema.serviceType.length).toBeGreaterThan(0);
+    });
+
+    it('lists every service in the services catalog with anchor URLs', () => {
+      const catalog = buildServicesSchema('pt', siteUrl);
+
+      expect(catalog['@type']).toBe('OfferCatalog');
+      expect(catalog.itemListElement[0].itemOffered.url).toMatch(/^https:\/\/jpclow\.dev\/pt\/services\/#/);
     });
   });
 
@@ -172,7 +233,7 @@ describe('seo utilities', () => {
 
       expect(enBreadcrumb.itemListElement[0].name).toBe('Home');
       expect(enBreadcrumb.itemListElement[0].item).toBe('https://jpclow.dev/');
-      expect(enBreadcrumb.itemListElement[1].name).toBe('Projects');
+      expect(enBreadcrumb.itemListElement[1].name).toBe('Projects & case studies');
       expect(enBreadcrumb.itemListElement[2].name).toBe('Throughline');
       expect(enBreadcrumb.itemListElement[2].item).toBe('https://jpclow.dev/projects/throughline/');
 
@@ -185,7 +246,7 @@ describe('seo utilities', () => {
 
       expect(ptBreadcrumb.itemListElement[0].name).toBe('Início');
       expect(ptBreadcrumb.itemListElement[0].item).toBe('https://jpclow.dev/pt/');
-      expect(ptBreadcrumb.itemListElement[1].name).toBe('Projetos');
+      expect(ptBreadcrumb.itemListElement[1].name).toBe('Projetos e cases');
       expect(ptBreadcrumb.itemListElement[2].item).toBe('https://jpclow.dev/pt/projects/throughline/');
     });
 

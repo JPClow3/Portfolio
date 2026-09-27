@@ -1,0 +1,40 @@
+---
+import Parallax from '@/components/common/Parallax.astro';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
+import { localePath } from '@/lib/studio';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  lead: string;
+  crumb: string;
+}
+
+const { eyebrow, title, lead, crumb } = Astro.props;
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
+---
+
+<section aria-labelledby="page-heading" class="force-dark surface grain relative isolate overflow-hidden border-b border-[rgb(var(--color-border))]" data-pointer-glow>
+  <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+    <Parallax speed={0.2} class="absolute inset-0">
+      <div class="hero-aurora"></div>
+    </Parallax>
+    <div class="grid-floor opacity-80"></div>
+    <div class="pointer-glow"></div>
+  </div>
+
+  <div class="studio-container pb-20 pt-36 sm:pb-24 sm:pt-44">
+    <nav aria-label="Breadcrumb" class="fade-rise mb-8 font-mono text-xs uppercase tracking-[0.14em] text-[rgb(var(--color-text-muted))]">
+      <a href={localePath('/', currentLang)} class="transition-colors hover:text-[rgb(var(--color-text-primary))]">{t['project.breadcrumbHome']}</a>
+      <span class="mx-2" aria-hidden="true">/</span>
+      <span aria-current="page" class="text-[rgb(var(--color-text-secondary))]">{crumb}</span>
+    </nav>
+    <p class="eyebrow fade-rise mb-6" style="--d: 60ms">{eyebrow}</p>
+    <h1 id="page-heading" class="display-lg max-w-4xl">
+      <span class="reveal-line"><span style="--i: 1">{title}</span></span>
+    </h1>
+    <p class="fade-rise mt-8 max-w-2xl border-l border-[rgb(var(--color-accent))] pl-5 text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg" style="--d: 360ms">{lead}</p>
+    <slot />
+  </div>
+</section>

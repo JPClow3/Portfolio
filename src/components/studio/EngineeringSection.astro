@@ -1,0 +1,114 @@
+---
+import Icon from '@/components/common/Icon.astro';
+import Parallax from '@/components/common/Parallax.astro';
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
+import Spotlight from '@/components/common/Spotlight.astro';
+import SectionHeading from '@/components/studio/SectionHeading.astro';
+import { defaultLang, type Lang } from '@/lib/i18n';
+import { getStudioCopy } from '@/lib/studio';
+
+interface Props {
+  index?: string;
+}
+
+const { index = '04' } = Astro.props;
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const copy = getStudioCopy(currentLang);
+const section = copy.sections.engineering;
+const excerptLabel = currentLang === 'pt' ? 'Trecho ilustrativo' : 'Illustrative excerpt';
+
+// Hand-tokenised so the snippet ships as static HTML (no highlighter at runtime)
+const code: string[] = [
+  '<span class="tok-c">// edge/api/orders.ts — typed, validated, observable</span>',
+  '<span class="tok-k">import</span> { z } <span class="tok-k">from</span> <span class="tok-s">\'zod\'</span>;',
+  '<span class="tok-k">import</span> { withTracing, problem } <span class="tok-k">from</span> <span class="tok-s">\'@/lib/platform\'</span>;',
+  '',
+  '<span class="tok-k">const</span> <span class="tok-t">Order</span> = z.<span class="tok-f">object</span>({',
+  '  customerId: z.<span class="tok-f">string</span>().<span class="tok-f">uuid</span>(),',
+  '  items: z.<span class="tok-f">array</span>(<span class="tok-t">LineItem</span>).<span class="tok-f">min</span>(<span class="tok-n">1</span>),',
+  '});',
+  '',
+  '<span class="tok-k">export default</span> <span class="tok-f">withTracing</span>(<span class="tok-k">async</span> (request, env) =&gt; {',
+  '  <span class="tok-k">const</span> body = <span class="tok-t">Order</span>.<span class="tok-f">safeParse</span>(<span class="tok-k">await</span> request.<span class="tok-f">json</span>());',
+  '  <span class="tok-k">if</span> (!body.success) <span class="tok-k">return</span> <span class="tok-f">problem</span>(<span class="tok-n">422</span>, body.error);',
+  '',
+  '  <span class="tok-k">const</span> order = <span class="tok-k">await</span> env.DB.orders.<span class="tok-f">create</span>(body.data);',
+  '  <span class="tok-k">await</span> env.QUEUE.<span class="tok-f">send</span>({ type: <span class="tok-s">\'order.created\'</span>, id: order.id });',
+  '',
+  '  <span class="tok-k">return</span> <span class="tok-t">Response</span>.<span class="tok-f">json</span>(order, { status: <span class="tok-n">201</span> });',
+  '});<span class="caret" aria-hidden="true"></span>',
+];
+
+const checks = ['typecheck', 'unit', 'e2e', 'a11y', 'deploy → edge'];
+---
+
+<section id="engineering" aria-labelledby="engineering-heading" class="force-dark surface grain studio-section overflow-hidden">
+  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+    <Parallax speed={0.12} class="absolute inset-0">
+      <div class="absolute left-[-10%] top-[10%] h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(circle,rgb(0_94_254/0.22),transparent_65%)]"></div>
+    </Parallax>
+    <div class="dot-field absolute inset-0 opacity-50"></div>
+  </div>
+
+  <div class="studio-container relative">
+    <SectionHeading id="engineering-heading" index={index} eyebrow={section.eyebrow} title={section.title} lead={section.lead} />
+
+    <div class="grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:gap-8">
+      <ScrollReveal animation="fade-right" class="min-w-0">
+        <figure class="code-window">
+          <div class="flex items-center justify-between gap-4 border-b border-[rgb(var(--color-border))] px-4">
+            <div class="flex items-center gap-1 overflow-x-auto" aria-hidden="true">
+              <span class="border-b-2 border-[rgb(var(--color-accent))] px-3 py-3 font-mono text-xs text-[rgb(var(--color-text-primary))]">orders.ts</span>
+              <span class="px-3 py-3 font-mono text-xs text-[rgb(var(--color-text-muted))]">schema.sql</span>
+              <span class="hidden px-3 py-3 font-mono text-xs text-[rgb(var(--color-text-muted))] sm:inline">ci.yml</span>
+            </div>
+            <figcaption class="mono-label hidden shrink-0 sm:block">{excerptLabel}</figcaption>
+          </div>
+          <pre><code>{code.map((line, lineIndex) => <span class="ln" style={`--l: ${lineIndex}`} set:html={line || ' '} />)}</code></pre>
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.6)] px-4 py-3 font-mono text-xs text-[rgb(var(--color-text-secondary))]">
+            <Icon name="terminal" size={14} class="text-[rgb(var(--color-text-muted))]" />
+            {checks.map((check) => (
+              <span class="inline-flex items-center gap-1.5">
+                <Icon name="check" size={13} class="text-[rgb(var(--color-success))]" />
+                {check}
+              </span>
+            ))}
+          </div>
+        </figure>
+      </ScrollReveal>
+
+      <ul class="grid gap-4 sm:grid-cols-2">
+        {copy.standards.map((standard, standardIndex) => (
+          <ScrollReveal animation="fade-up" delay={standardIndex * 70} tag="li" class="h-full">
+            <Spotlight class="panel h-full p-5">
+              <span class="icon-tile"><Icon name={standard.icon} size={18} /></span>
+              <h3 class="mt-4 text-base font-semibold tracking-tight">{standard.title}</h3>
+              <p class="mt-2 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{standard.description}</p>
+            </Spotlight>
+          </ScrollReveal>
+        ))}
+      </ul>
+    </div>
+
+    <ScrollReveal animation="fade-up" class="mt-8">
+      <div class="panel p-6 sm:p-8">
+        <p class="mono-label mb-6">{copy.labels.layers}</p>
+        <div>
+          {copy.architecture.map((layer, layerIndex) => (
+            <>
+              {layerIndex > 0 && <div class="arch-line" style={`--d: ${layerIndex * 300}ms`} aria-hidden="true"></div>}
+              <div class="grid items-center gap-3 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-primary)/0.6)] p-3 sm:grid-cols-[10rem_1fr] sm:p-4">
+                <p class="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.14em] text-[rgb(var(--color-accent-hover))]">
+                  <span class="text-[rgb(var(--color-text-muted))]">L{layerIndex + 1}</span>{layer.layer}
+                </p>
+                <ul class="flex flex-wrap gap-2">
+                  {layer.items.map((item) => <li class="chip bg-[rgb(var(--color-bg-secondary))] px-2.5 py-1 text-xs text-[rgb(var(--color-text-primary))]">{item}</li>)}
+                </ul>
+              </div>
+            </>
+          ))}
+        </div>
+      </div>
+    </ScrollReveal>
+  </div>
+</section>

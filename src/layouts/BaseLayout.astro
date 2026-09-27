@@ -2,12 +2,17 @@
 import '@/styles/global.css';
 import BackToTop from '@/components/islands/BackToTop.svelte';
 import HeroScene from '@/components/islands/HeroScene.svelte';
+import Interactions from '@/components/common/Interactions.astro';
+// Preloaded so the display headline and body text don't swap fonts after first paint (CLS)
+import displayFontUrl from '@fontsource/space-grotesk/files/space-grotesk-latin-600-normal.woff2?url';
+import bodyFontUrl from '@fontsource/inter/files/inter-latin-400-normal.woff2?url';
 import { defaultLang, type Lang, ui } from '@/lib/i18n';
 import {
   SITE,
   getAlternateOgLocales,
   getOgLocale,
   getPathAlternates,
+  getSiteOgImageUrl,
   buildDefaultSchemas,
 } from '@/lib/seo';
 
@@ -27,9 +32,9 @@ interface Props {
 
 const {
   title,
-  description = 'Portfolio of João Paulo Santos, a freelance full-stack product engineer in Brazil building web applications, APIs, automation, data systems, and AI products with TypeScript and Python.',
+  description = 'JPCLOW is a software engineering studio in Brazil building custom web platforms, APIs, workflow automation, and data & AI products for companies.',
   keywords = [],
-  ogImage = '/og-image.png',
+  ogImage,
   ogType = 'website',
   twitterCard = 'summary_large_image',
   articlePublishedTime,
@@ -43,12 +48,11 @@ const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
 const t = ui[currentLang] ?? ui[defaultLang];
 const siteUrl = Astro.site ?? new URL(SITE.url);
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
-const ogImageUrl = new URL(ogImage, siteUrl);
+const ogImageUrl = new URL(ogImage ?? getSiteOgImageUrl('home', currentLang), siteUrl);
 const observabilityEndpoint = import.meta.env.PUBLIC_OBSERVABILITY_ENDPOINT ?? '';
-const shouldRenderScene =
-  Astro.url.pathname === '/' ||
-  Astro.url.pathname === '/pt/' ||
-  Astro.url.pathname.startsWith('/projects/');
+const registerServiceWorker = import.meta.env.PROD;
+// The homepage hero mounts its own StudioScene; the ambient scene stays on case studies
+const shouldRenderScene = /^\/(?:pt\/)?projects\/[^/]+\/?$/.test(Astro.url.pathname);
 
 const alternateLinks = getPathAlternates(Astro.url.pathname, siteUrl);
 const ogLocale = getOgLocale(currentLang);
@@ -83,8 +87,7 @@ const allSchema = [...defaultSchema, ...customSchema.filter(Boolean)];
     ))}
     <meta name="robots" content={robotsContent} />
     <meta name="googlebot" content={robotsContent} />
-    <meta name="theme-color" content="#005EFE" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0E1014" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#0E1014" />
 
     <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={SITE.name} />
@@ -92,6 +95,9 @@ const allSchema = [...defaultSchema, ...customSchema.filter(Boolean)];
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:image:alt" content={title} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:locale" content={ogLocale} />
     {alternateOgLocales.map((locale) => (
@@ -107,6 +113,9 @@ const allSchema = [...defaultSchema, ...customSchema.filter(Boolean)];
     <meta name="twitter:image" content={ogImageUrl} />
     <meta name="twitter:image:alt" content={title} />
 
+    <link rel="preload" href={displayFontUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={bodyFontUrl} as="font" type="font/woff2" crossorigin />
+
     <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -116,10 +125,10 @@ const allSchema = [...defaultSchema, ...customSchema.filter(Boolean)];
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="João Paulo" />
+    <meta name="apple-mobile-web-app-title" content="JPCLOW" />
 
-    <link rel="alternate" type="application/rss+xml" title="João Paulo Santos — Blog RSS Feed" href={new URL('/rss.xml', siteUrl).toString()} />
-    <link rel="alternate" type="application/rss+xml" title="João Paulo Santos — Blog RSS Feed (Português)" href={new URL('/pt/rss.xml', siteUrl).toString()} />
+    <link rel="alternate" type="application/rss+xml" title="JPCLOW — Blog RSS Feed" href={new URL('/rss.xml', siteUrl).toString()} />
+    <link rel="alternate" type="application/rss+xml" title="JPCLOW — Blog RSS Feed (Português)" href={new URL('/pt/rss.xml', siteUrl).toString()} />
 
     <link rel="dns-prefetch" href="https://2.gravatar.com" />
     <link rel="preconnect" href="https://2.gravatar.com" crossorigin />
@@ -137,33 +146,31 @@ const allSchema = [...defaultSchema, ...customSchema.filter(Boolean)];
           theme = null;
         }
 
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const shouldUseDark = theme === 'dark' || (!theme && prefersDark);
+        // Dark-first: light mode only when the visitor explicitly chose it
+        const shouldUseDark = theme !== 'light';
 
         document.documentElement.classList.toggle('dark', shouldUseDark);
       })();
     </script>
 
-    <script is:inline>
-      (() => {
-        if (window.location.pathname === '/') {
-          const hasPref = localStorage.getItem('languagePreference');
-          const wantsPt = (navigator.language || '').toLowerCase().startsWith('pt');
-          
-          if (hasPref === 'pt' || (!hasPref && wantsPt)) {
-            window.location.replace('/pt/' + window.location.search + window.location.hash);
+    <script define:vars={{ registerServiceWorker }} is:inline>
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        if (registerServiceWorker) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {
+              // Service worker registration failure is non-fatal
+            });
+          });
+        } else {
+          // Dev server: a worker left over from a production preview would intercept Vite's
+          // module/HMR requests, so remove it and its caches.
+          navigator.serviceWorker.getRegistrations().then((registrations) => {
+            registrations.forEach((registration) => registration.unregister());
+          });
+          if ('caches' in window) {
+            caches.keys().then((keys) => keys.forEach((key) => caches.delete(key)));
           }
         }
-      })();
-    </script>
-
-    <script is:inline>
-      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {
-            // Service worker registration failure is non-fatal
-          });
-        });
       }
     </script>
 
@@ -345,6 +352,7 @@ const allSchema = [...defaultSchema, ...customSchema.filter(Boolean)];
     
     <!-- Back to top button -->
     <BackToTop client:idle />
+    <Interactions />
 
     <script>
       import * as Sentry from '@sentry/browser';

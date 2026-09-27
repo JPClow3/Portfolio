@@ -9,7 +9,7 @@ export const GET: APIRoute = async (context) => {
   const site = context.site ?? 'https://jpclow.dev';
 
   return rss({
-    title: 'João Paulo Santos — Blog',
+    title: 'JPCLOW — Engineering notes',
     description:
       'Notes on product engineering, web development, automation, data systems, and reliable software delivery.',
     site,

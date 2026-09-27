@@ -1,0 +1,43 @@
+---
+/**
+ * Card surface with a cursor-following glow and border highlight
+ * (styles: `.spotlight` in global.css). Pointer position is written to --mx/--my.
+ */
+interface Props {
+  class?: string;
+  tag?: 'div' | 'article' | 'li' | 'a';
+  href?: string;
+  [key: `data-${string}`]: string | undefined;
+}
+
+const { class: className = '', tag = 'div', href, ...rest } = Astro.props;
+const Tag = tag;
+---
+
+<Tag class:list={['spotlight', className]} data-spotlight href={href} {...rest}>
+  <slot />
+</Tag>
+
+<script>
+  function initSpotlight() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    document.querySelectorAll<HTMLElement>('[data-spotlight]').forEach((card) => {
+      if (card.dataset.spotlightReady === 'true') return;
+      card.dataset.spotlightReady = 'true';
+
+      card.addEventListener(
+        'pointermove',
+        (event) => {
+          const rect = card.getBoundingClientRect();
+          card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+          card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+        },
+        { passive: true },
+      );
+    });
+  }
+
+  initSpotlight();
+  document.addEventListener('astro:page-load', initSpotlight);
+</script>

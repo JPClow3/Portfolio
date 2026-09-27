@@ -1,0 +1,124 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
+import Icon from '@/components/common/Icon.astro';
+import Parallax from '@/components/common/Parallax.astro';
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
+import SplitText from '@/components/common/SplitText.astro';
+import Spotlight from '@/components/common/Spotlight.astro';
+import PageHero from '@/components/studio/PageHero.astro';
+import SectorsSection from '@/components/studio/SectorsSection.astro';
+import EngineeringSection from '@/components/studio/EngineeringSection.astro';
+import CtaBand from '@/components/studio/CtaBand.astro';
+import { defaultLang, type Lang, ui } from '@/lib/i18n';
+import { buildStudioPageSchemas, getPageSeo, getSiteOgImageUrl } from '@/lib/seo';
+import { getStudioCopy } from '@/lib/studio';
+
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const t = ui[currentLang] ?? ui[defaultLang];
+const copy = getStudioCopy(currentLang);
+const seo = getPageSeo('about', currentLang);
+
+const profileEntries = await getCollection('profile', ({ data }) => data.lang === currentLang);
+const fallbackEntries = await getCollection('profile', ({ data }) => data.lang === defaultLang);
+const profile = (profileEntries[0] ?? fallbackEntries[0]).data.profile;
+const avatarUrl = `https://2.gravatar.com/avatar/${profile.gravatarHash}?s=224&d=initials`;
+
+const localizedExperience = await getCollection('experience', ({ data }) => data.lang === currentLang);
+const experience = (localizedExperience.length > 0 ? localizedExperience : await getCollection('experience', ({ data }) => data.lang === defaultLang))
+  .sort((a, b) => b.data.startDate.getTime() - a.data.startDate.getTime());
+
+const yearOf = (date?: Date) => (date ? String(date.getFullYear()) : t['experience.present']);
+---
+
+<BaseLayout title={seo.title} description={seo.description} keywords={seo.keywords} ogImage={getSiteOgImageUrl('about', currentLang)} schema={buildStudioPageSchemas('about', currentLang, Astro.site ?? new URL('https://jpclow.dev'))}>
+  <Header />
+  <main id="main-content" tabindex="-1" class="relative overflow-x-clip">
+    <PageHero eyebrow={copy.about.heroEyebrow} title={copy.about.heroTitle} lead={copy.about.heroLead} crumb={t['nav.company']} />
+
+    <section aria-labelledby="story-heading" class="studio-section">
+      <div class="studio-container grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+        <ScrollReveal animation="fade-up">
+          <p class="eyebrow mb-5"><span class="text-[rgb(var(--color-text-muted))]">01</span>{copy.brand.name}</p>
+          <h2 id="story-heading" class="heading-section"><SplitText text={copy.about.storyTitle} /></h2>
+        </ScrollReveal>
+        <div class="space-y-6 text-lg leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-xl">
+          {copy.about.story.map((paragraph, index) => (
+            <ScrollReveal animation="fade-up" delay={index * 100}>
+              <p class:list={[index === 0 && 'text-[rgb(var(--color-text-primary))]']}>{paragraph}</p>
+            </ScrollReveal>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="principles-heading" class="studio-section pt-0">
+      <div class="studio-container">
+        <ScrollReveal animation="fade-up">
+          <p class="eyebrow mb-5"><span class="text-[rgb(var(--color-text-muted))]">02</span>{copy.about.principlesTitle}</p>
+          <h2 id="principles-heading" class="sr-only">{copy.about.principlesTitle}</h2>
+        </ScrollReveal>
+        <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {copy.about.principles.map((principle, index) => (
+            <ScrollReveal animation="fade-up" delay={index * 80} tag="li" class="h-full">
+              <Spotlight class="panel h-full p-6">
+                <span class="work-index text-5xl" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                <h3 class="mt-6 text-lg font-semibold tracking-tight">{principle.title}</h3>
+                <p class="mt-2 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{principle.description}</p>
+              </Spotlight>
+            </ScrollReveal>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section id="founder" aria-labelledby="founder-heading" class="studio-section border-y border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.5)]">
+      <div class="studio-container grid items-start gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+        <ScrollReveal animation="fade-right">
+          <div class="relative">
+            <Parallax speed={0.08} class="pointer-events-none absolute -inset-10 -z-10" >
+              <div class="h-full w-full bg-[radial-gradient(circle_at_40%_40%,rgb(0_94_254/0.25),transparent_60%)]" aria-hidden="true"></div>
+            </Parallax>
+            <div class="panel flex flex-col gap-6 p-6 sm:flex-row sm:items-center sm:p-8">
+              <img src={avatarUrl} alt={profile.name} width="160" height="160" loading="lazy" decoding="async" class="h-28 w-28 rounded-[var(--radius-lg)] border border-[rgb(var(--color-border))] object-cover" />
+              <div>
+                <p class="mono-label">{copy.about.founderEyebrow}</p>
+                <h2 id="founder-heading" class="mt-2 text-2xl font-semibold tracking-tight">{profile.name}</h2>
+                <p class="mt-1 text-sm font-semibold text-[rgb(var(--color-accent-hover))]">{copy.about.founderRole}</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <a href={profile.linkedin} target="_blank" rel="noreferrer" class="btn btn-ghost min-h-11 px-3 text-sm"><Icon name="linkedin" size={16} />LinkedIn</a>
+                  <a href={profile.github} target="_blank" rel="noreferrer" class="btn btn-ghost min-h-11 px-3 text-sm"><Icon name="github" size={16} />GitHub</a>
+                </div>
+              </div>
+            </div>
+            <p class="mt-6 text-base leading-relaxed text-[rgb(var(--color-text-secondary))]">{copy.about.founderBio}</p>
+          </div>
+        </ScrollReveal>
+
+        <div>
+          <p class="mono-label mb-4">{copy.about.backgroundTitle}</p>
+          <ol class="border-t border-[rgb(var(--color-border))]">
+            {experience.map((entry, index) => (
+              <ScrollReveal animation="fade-up" delay={index * 70} tag="li">
+                <div class="grid gap-2 border-b border-[rgb(var(--color-border))] py-5 sm:grid-cols-[7rem_1fr] sm:gap-6">
+                  <p class="font-mono text-xs text-[rgb(var(--color-text-muted))]">{yearOf(entry.data.startDate)} — {yearOf(entry.data.endDate)}</p>
+                  <div>
+                    <h3 class="text-lg font-semibold tracking-tight">{entry.data.company}</h3>
+                    <p class="text-sm text-[rgb(var(--color-text-secondary))]">{entry.data.role}</p>
+                  </div>
+                </div>
+              </ScrollReveal>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <SectorsSection index="03" />
+    <EngineeringSection index="04" />
+    <CtaBand />
+  </main>
+  <Footer />
+</BaseLayout>

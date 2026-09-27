@@ -83,8 +83,8 @@ export async function renderOgSvg(options: OgImageOptions): Promise<string> {
   const title = options.title.trim();
   const description = options.description ? truncateText(options.description.trim(), 135) : '';
   const category = options.category ?? (options.lang === 'pt' ? 'Estudo de Caso' : 'Case Study');
-  const author = options.author ?? 'João Paulo Santos';
-  const role = options.role ?? (options.lang === 'pt' ? 'Desenvolvedor Freelancer' : 'Freelance Software Developer');
+  const author = options.author ?? 'JPCLOW';
+  const role = options.role ?? (options.lang === 'pt' ? 'Estúdio de Engenharia de Software' : 'Software Engineering Studio');
   const siteDomain = options.siteDomain ?? 'jpclow.dev';
   const tags = (options.tags ?? []).slice(0, 4);
 
@@ -386,8 +386,8 @@ export async function generateProjectOgImage(
     category: isPt ? 'Estudo de Caso' : 'Case Study',
     tags: project.data.tech,
     lang,
-    author: SITE.shortAuthor,
-    role: isPt ? 'Desenvolvedor Freelancer' : 'Freelance Software Developer',
+    author: SITE.company,
+    role: isPt ? 'Estúdio de Engenharia de Software' : 'Software Engineering Studio',
     badge: project.data.year ?? (project.data.status === 'in-development' ? (isPt ? 'Em Desenvolvimento' : 'In Dev') : undefined),
     siteDomain: SITE.name,
   });
@@ -404,8 +404,26 @@ export async function generateBlogOgImage(
     category: isPt ? 'Artigo' : 'Blog Article',
     tags: post.data.tags,
     lang,
-    author: SITE.shortAuthor,
-    role: isPt ? 'Desenvolvedor Freelancer' : 'Freelance Software Developer',
+    author: SITE.company,
+    role: isPt ? 'Estúdio de Engenharia de Software' : 'Software Engineering Studio',
+    siteDomain: SITE.name,
+  });
+}
+
+export interface SiteOgPage {
+  title: string;
+  description: string;
+  category: string;
+  tags: string[];
+}
+
+/** Social preview for top-level studio pages (home, services, company, contact, catalog, blog). */
+export async function generateSiteOgImage(page: SiteOgPage, lang: Lang): Promise<Buffer> {
+  return renderOgPng({
+    ...page,
+    lang,
+    author: SITE.company,
+    role: lang === 'pt' ? 'Estúdio de Engenharia de Software' : 'Software Engineering Studio',
     siteDomain: SITE.name,
   });
 }

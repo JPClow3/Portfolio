@@ -1,0 +1,31 @@
+---
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
+import SplitText from '@/components/common/SplitText.astro';
+
+interface Props {
+  id: string;
+  eyebrow: string;
+  title: string;
+  lead?: string;
+  index?: string;
+  align?: 'left' | 'split';
+}
+
+const { id, eyebrow, title, lead, index, align = 'split' } = Astro.props;
+---
+
+<ScrollReveal animation="fade-up">
+  <div class:list={['mb-12 lg:mb-16', align === 'split' && lead ? 'grid gap-6 lg:grid-cols-[1.25fr_1fr] lg:items-end lg:gap-16' : 'max-w-3xl']}>
+    <div>
+      <p class="eyebrow mb-5">
+        {index && <span class="text-[rgb(var(--color-text-muted))]">{index}</span>}
+        {eyebrow}
+      </p>
+      <h2 id={id} class="heading-section"><SplitText text={title} /></h2>
+    </div>
+    {lead && (
+      <p class:list={['text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg', align === 'left' && 'mt-5']}>{lead}</p>
+    )}
+    <slot />
+  </div>
+</ScrollReveal>

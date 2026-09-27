@@ -6,12 +6,15 @@ test('English blog index page loads with reading time', async ({ page }) => {
   // Check page title
   const title = page.locator('h1');
   await expect(title).toBeVisible();
-  await expect(title).toHaveText('Latest Posts');
+  await expect(title).toHaveText('Engineering notes');
   
   // Blog posts should be present
   const blogPosts = page.locator('article');
   const postCount = await blogPosts.count();
-  expect(postCount).toBeGreaterThan(0);
+  expect(postCount).toBeGreaterThan(1);
+  await expect(blogPosts.first()).toContainText('Local First Planning');
+  await expect(blogPosts).toContainText(['Local First Planning', 'Offline Capture Is a Narrow Promise']);
+  await expect(page.locator('article a[href*="hello-world"]')).toHaveCount(0);
 
   // Reading time should be rendered on article cards
   const readingTime = page.locator('article').first().getByText(/min read/i);
@@ -24,12 +27,14 @@ test('Portuguese blog index page loads with reading time', async ({ page }) => {
   // Check page title
   const title = page.locator('h1');
   await expect(title).toBeVisible();
-  await expect(title).toHaveText('Últimos Posts');
+  await expect(title).toHaveText('Notas de engenharia');
   
   // Blog posts should be present
   const blogPosts = page.locator('article');
   const postCount = await blogPosts.count();
-  expect(postCount).toBeGreaterThan(0);
+  expect(postCount).toBeGreaterThan(1);
+  await expect(blogPosts.first()).toContainText('Planejamento local');
+  await expect(page.locator('article a[href*="hello-world"]')).toHaveCount(0);
 
   // Reading time should be rendered on article cards in Portuguese
   const readingTime = page.locator('article').first().getByText(/min de leitura/i);
@@ -136,6 +141,6 @@ test('blog post includes dynamic OpenGraph image and BreadcrumbList JSON-LD sche
   expect(breadcrumb.itemListElement).toHaveLength(3);
   expect(breadcrumb.itemListElement[0].name).toBe('Home');
   expect(breadcrumb.itemListElement[1].name).toBe('Blog');
-  expect(breadcrumb.itemListElement[2].name).toBe('Hello World - Welcome to My Blog');
+  expect(breadcrumb.itemListElement[2].name).toBe('Hello World — How These Notes Began');
 });
 

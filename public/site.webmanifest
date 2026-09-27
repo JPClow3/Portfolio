@@ -1,12 +1,12 @@
 {
-  "name": "João Paulo Santos — Freelance Developer",
-  "short_name": "JP Santos",
-  "description": "Freelance software developer portfolio of João Paulo Santos — web apps, APIs, and automation with Python, Django, and React.",
+  "name": "JPCLOW — Software Engineering Studio",
+  "short_name": "JPCLOW",
+  "description": "JPCLOW builds custom web platforms, APIs, workflow automation, and data & AI products for companies.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#F7F8FA",
+  "background_color": "#0E1014",
   "theme_color": "#005EFE",
   "icons": [
     {
@@ -42,25 +42,40 @@
   ],
   "shortcuts": [
     {
-      "name": "Projects",
-      "short_name": "Projects",
-      "description": "View featured software projects and case studies",
-      "url": "/#projects",
-      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+      "name": "Services",
+      "short_name": "Services",
+      "description": "Software engineering services",
+      "url": "/services/",
+      "icons": [
+        {
+          "src": "/favicon.svg",
+          "sizes": "any"
+        }
+      ]
     },
     {
-      "name": "Blog",
-      "short_name": "Blog",
-      "description": "Read technical notes and engineering articles",
-      "url": "/blog",
-      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+      "name": "Case studies",
+      "short_name": "Work",
+      "description": "Selected work and case studies",
+      "url": "/projects/",
+      "icons": [
+        {
+          "src": "/favicon.svg",
+          "sizes": "any"
+        }
+      ]
     },
     {
-      "name": "Contact",
+      "name": "Start a project",
       "short_name": "Contact",
-      "description": "Get in touch for freelance development",
-      "url": "/#contact",
-      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+      "description": "Request a proposal",
+      "url": "/contact/",
+      "icons": [
+        {
+          "src": "/favicon.svg",
+          "sizes": "any"
+        }
+      ]
     }
   ]
 }

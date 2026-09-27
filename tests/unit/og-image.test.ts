@@ -35,7 +35,7 @@ describe('OG Image Generation', () => {
     // Check PNG magic bytes: 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A
     const pngMagic = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
     expect(buffer.subarray(0, 8)).toEqual(pngMagic);
-  });
+  }, 30_000); // first Satori + resvg render loads fonts and WASM
 
   it('truncates long descriptions gracefully without throwing', async () => {
     const longDesc = 'A'.repeat(200);

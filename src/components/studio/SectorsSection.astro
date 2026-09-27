@@ -1,0 +1,50 @@
+---
+import Icon from '@/components/common/Icon.astro';
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
+import Spotlight from '@/components/common/Spotlight.astro';
+import SectionHeading from '@/components/studio/SectionHeading.astro';
+import { defaultLang, type Lang } from '@/lib/i18n';
+import { getStudioCopy, projectHref } from '@/lib/studio';
+
+interface Props {
+  index?: string;
+}
+
+const { index = '05' } = Astro.props;
+const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
+const copy = getStudioCopy(currentLang);
+const section = copy.sections.sectors;
+---
+
+<section id="sectors" aria-labelledby="sectors-heading" class="studio-section">
+  <div class="studio-container">
+    <SectionHeading id="sectors-heading" index={index} eyebrow={section.eyebrow} title={section.title} lead={section.lead} />
+
+    <ul class="grid gap-px overflow-hidden rounded-[var(--radius-lg)] border border-[rgb(var(--color-border))] bg-[rgb(var(--color-border))] md:grid-cols-2">
+      {copy.sectors.map((sector, sectorIndex) => (
+        <ScrollReveal animation="fade" delay={sectorIndex * 80} tag="li" class="h-full">
+          <Spotlight class="flex h-full flex-col bg-[rgb(var(--color-bg-secondary))] p-6 sm:p-8">
+            <div class="flex items-start justify-between gap-6">
+              <h3 class="text-2xl font-semibold tracking-tight">{sector.title}</h3>
+              <span class="work-index text-5xl" aria-hidden="true">{String(sectorIndex + 1).padStart(2, '0')}</span>
+            </div>
+            <p class="mt-3 max-w-md text-sm leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-base">{sector.description}</p>
+            <div class="mt-auto pt-6">
+              <p class="mono-label">{copy.labels.provenIn}</p>
+              <ul class="mt-2 flex flex-wrap gap-x-4">
+                {sector.proof.map((project) => (
+                  <li>
+                    <a href={projectHref(project.slug, currentLang)} class="link-arrow text-sm">
+                      {project.title}
+                      <Icon name="arrow-up-right" size={14} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Spotlight>
+        </ScrollReveal>
+      ))}
+    </ul>
+  </div>
+</section>

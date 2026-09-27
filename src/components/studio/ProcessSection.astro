@@ -24,30 +24,32 @@ const section = copy.sections.process;
       </ScrollReveal>
     </div>
 
-    <ol class="relative" data-process-track>
+    <div class="relative" data-process-track>
       <span class="process-rail" aria-hidden="true"></span>
-      {copy.process.map((step, stepIndex) => (
-        <li class="process-step relative pb-10 pl-14 last:pb-0">
-          <span class="process-node" aria-hidden="true"></span>
-          <ScrollReveal animation="fade-left" delay={80}>
-            <article class="panel p-6 sm:p-7">
-              <div class="flex flex-wrap items-center justify-between gap-3">
-                <span class="mono-label text-[rgb(var(--color-accent-hover))]">{`${copy.labels.step} ${String(stepIndex + 1).padStart(2, '0')}`}</span>
-                <span class="chip">{step.duration}</span>
-              </div>
-              <h3 class="mt-4 text-xl font-semibold tracking-tight sm:text-2xl">{step.title}</h3>
-              <p class="mt-3 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-base">{step.description}</p>
-              <div class="mt-5 border-t border-[rgb(var(--color-border))] pt-4">
-                <p class="mono-label">{copy.labels.outputs}</p>
-                <ul class="mt-2 flex flex-wrap gap-1.5">
-                  {step.outputs.map((output) => <li class="chip">{output}</li>)}
-                </ul>
-              </div>
-            </article>
-          </ScrollReveal>
-        </li>
-      ))}
-    </ol>
+      <ol>
+        {copy.process.map((step, stepIndex) => (
+          <li class="process-step relative pb-10 pl-14 last:pb-0">
+            <span class="process-node" aria-hidden="true"></span>
+            <ScrollReveal animation="fade-left" delay={80}>
+              <article class="panel p-6 sm:p-7">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                  <span class="mono-label text-[rgb(var(--color-accent-hover))]">{`${copy.labels.step} ${String(stepIndex + 1).padStart(2, '0')}`}</span>
+                  <span class="chip">{step.duration}</span>
+                </div>
+                <h3 class="mt-4 text-xl font-semibold tracking-tight sm:text-2xl">{step.title}</h3>
+                <p class="mt-3 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-base">{step.description}</p>
+                <div class="mt-5 border-t border-[rgb(var(--color-border))] pt-4">
+                  <p class="mono-label">{copy.labels.outputs}</p>
+                  <ul class="mt-2 flex flex-wrap gap-1.5">
+                    {step.outputs.map((output) => <li class="chip">{output}</li>)}
+                  </ul>
+                </div>
+              </article>
+            </ScrollReveal>
+          </li>
+        ))}
+      </ol>
+    </div>
   </div>
 </section>
 

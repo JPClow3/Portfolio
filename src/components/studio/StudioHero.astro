@@ -29,7 +29,6 @@ const stats = [
 >
   <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
     <div class="hero-aurora"></div>
-    <div class="hero-beam hidden lg:block"></div>
     <div class="grid-floor"></div>
     <div class="pointer-glow"></div>
     <div class="absolute inset-x-0 bottom-0 h-40 bg-linear-to-t from-[rgb(var(--color-bg-primary))] to-transparent"></div>
@@ -37,9 +36,10 @@ const stats = [
 
   <StudioScene client:idle />
 
-  <!-- Top-anchored (not centred) so a taller headline after font load pushes content down instead of shifting it -->
-  <div class="studio-container relative z-10 flex flex-1 flex-col justify-start pb-10 pt-32 lg:pt-[clamp(9rem,18svh,12rem)]">
-    <Parallax speed={-0.08}>
+  <!-- One parallax layer for copy and stats so scrolling can't slide the CTAs over the stats rule -->
+  <Parallax speed={-0.08} class="relative z-10 flex flex-1 flex-col">
+    <!-- Top-anchored (not centred) so a taller headline after font load pushes content down instead of shifting it -->
+    <div class="studio-container flex-1 pb-10 pt-32 lg:pt-[clamp(9rem,18svh,12rem)]">
       <p class="fade-rise mb-8 inline-flex items-center gap-3 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.6)] px-3 py-1.5 font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-[rgb(var(--color-text-secondary))] backdrop-blur" style="--d: 40ms">
         <span class="status-dot" aria-hidden="true"></span>
         <span data-scramble="1100">{copy.hero.eyebrow}</span>
@@ -67,21 +67,21 @@ const stats = [
         </a>
         <a href="#work" class="btn btn-ghost" data-magnetic="0.2">{copy.hero.secondaryCta}</a>
       </div>
-    </Parallax>
-  </div>
-
-  <div class="studio-container relative z-10 pb-8">
-    <dl class="fade-rise grid grid-cols-2 border-t border-[rgb(var(--color-border))] md:grid-cols-4" style="--d: 420ms">
-      {stats.map((stat, index) => (
-        <div class:list={['flex flex-col py-5 pr-4', index > 0 && 'md:border-l md:border-[rgb(var(--color-border))] md:pl-6', index % 2 === 1 && 'border-l border-[rgb(var(--color-border))] pl-4 md:pl-6']}>
-          <dt class="mono-label order-2 mt-2">{stat.label}</dt>
-          <dd class="font-display text-2xl font-semibold tracking-tight text-[rgb(var(--color-text-primary))] sm:text-3xl" style="font-family: var(--font-display)" data-count={stat.count} data-count-delay={stat.count !== undefined ? 600 + index * 150 : undefined}>{stat.value}</dd>
-        </div>
-      ))}
-    </dl>
-    <div class="mt-4 hidden items-center gap-3 lg:flex" aria-hidden="true">
-      <span class="scroll-cue"></span>
-      <span class="mono-label">{copy.hero.scrollHint}</span>
     </div>
-  </div>
+
+    <div class="studio-container pb-8">
+      <dl class="fade-rise grid grid-cols-2 border-t border-[rgb(var(--color-border))] md:grid-cols-4" style="--d: 420ms">
+        {stats.map((stat, index) => (
+          <div class:list={['flex flex-col py-5 pr-4', index > 0 && 'md:border-l md:border-[rgb(var(--color-border))] md:pl-6', index % 2 === 1 && 'border-l border-[rgb(var(--color-border))] pl-4 md:pl-6']}>
+            <dt class="mono-label order-2 mt-2">{stat.label}</dt>
+            <dd class="font-display text-2xl font-semibold tracking-tight text-[rgb(var(--color-text-primary))] sm:text-3xl" style="font-family: var(--font-display)" data-count={stat.count} data-count-delay={stat.count !== undefined ? 600 + index * 150 : undefined}>{stat.value}</dd>
+          </div>
+        ))}
+      </dl>
+      <div class="mt-4 hidden items-center gap-3 lg:flex" aria-hidden="true">
+        <span class="scroll-cue"></span>
+        <span class="mono-label">{copy.hero.scrollHint}</span>
+      </div>
+    </div>
+  </Parallax>
 </section>

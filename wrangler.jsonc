@@ -1,5 +1,8 @@
 {
   "name": "portfolio",
   "pages_build_output_dir": "./dist",
-  "compatibility_date": "2026-07-01"
+  "compatibility_date": "2026-07-01",
+  "vars": {
+    "PUBLIC_WEB3FORMS_ACCESS_KEY": "b44621f4-56ee-4abe-bb06-559e5160ebdf"
+  }
 }

@@ -25,6 +25,7 @@ const mimeTypes = {
   '.webmanifest': 'application/manifest+json',
   '.xml': 'application/xml',
   '.png': 'image/png',
+  '.webp': 'image/webp',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.svg': 'image/svg+xml',

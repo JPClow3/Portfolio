@@ -20,6 +20,7 @@
     "test:e2e:debug": "playwright test --debug",
     "screenshots": "node scripts/capture-screenshots.mjs",
     "images:optimize": "node scripts/optimize-project-images.mjs",
+    "scene:poster": "node scripts/capture-scene-poster.mjs",
     "test:lighthouse": "node scripts/lighthouse.mjs",
     "test:a11y": "playwright test tests/e2e/accessibility.spec.ts --project=chromium"
   },

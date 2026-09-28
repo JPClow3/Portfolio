@@ -23,7 +23,7 @@ The catalog contains 18 projects in each locale. Read the frontmatter in `src/co
 | Language | TypeScript | Type safety (strict mode) |
 | UI Islands | Svelte 5 | Interactive components (runes syntax: `$state`, `onMount`) |
 | Styling | Tailwind CSS v4 | Utility-first CSS via `@tailwindcss/vite` |
-| 3D/WebGL | Three.js | Homepage hero module cluster (`StudioScene`) + ambient case-study scene (`HeroScene`) |
+| 3D/WebGL | Three.js | Homepage hero module cluster (`StudioScene`, rendered in a worker) + ambient case-study scene (`HeroScene`) |
 | Content | Content Collections + MDX | Type-safe markdown content |
 | Contact | Web3Forms + Cloudflare Turnstile | Serverless form submissions with bot protection |
 | Deployment | Cloudflare Pages | GitHub integration builds static `dist/` |
@@ -90,7 +90,8 @@ npm run test:lighthouse   # Lighthouse budgets on dist/ (run `npm run build` fir
 - **CI (`.github/workflows/build.yml`)**: build → astro check → unit → Chromium e2e (incl. axe) → Lighthouse, uploading Lighthouse reports always and the Playwright report on failure.
 
 ### Performance guardrails (found via Lighthouse — keep them)
-- `StudioScene` skips WebGL on phones (<768px), data-saver, and devices with fewer than 4 cores (CSS glow only; `data-scene-ready="lite"`), and on desktop starts ≥2.5s after `load`.
+- `StudioScene` skips WebGL on phones (<768px), data-saver, and devices with fewer than 4 cores (`data-scene-ready="lite"`: CSS glow on phones, static poster ≥768px). Elsewhere the scene (`src/lib/studio-scene/core.ts`) renders in a Web Worker on an `OffscreenCanvas` (`worker.ts`), started right after `load`: loading Three.js, shader compile and every frame stay off the main thread, so it costs no TBT. Browsers without WebGL in workers fall back to the main thread, which must start ≥2.5s after `load` (sooner fails the desktop TBT budget).
+- The poster (`src/assets/studio-cluster.webp`) is the scene's reduced-motion frame; its `svh`-anchored CSS box also places the live cluster (camera `setViewOffset`, so it renders the same at any aspect ratio). After changing the cluster's look, regenerate it: `npm run build && npm run scene:poster && npm run build`.
 - Hero text must be partly painted on the first frame (`.reveal-line` starts at 60%, `.fade-rise` at opacity 0.01) so it counts for FCP/LCP.
 - Don't position hero decorations with `%` of the hero height (font swap changes it → CLS); use `svh`/`inset: 0`.
 - Project screenshots use `projectImageSources()` (`src/lib/images.ts`) for `srcset`; below-the-fold images are `loading="lazy"`.
@@ -290,7 +291,7 @@ Configured in `tsconfig.json`:
 | Parallax | `components/common/Parallax.astro` | Scroll-linked translateY wrapper (`speed`), reduced-motion safe |
 | Spotlight | `components/common/Spotlight.astro` | Cursor-following glow card surface |
 | ContactForm | `components/common/ContactForm.astro` | Web3Forms + Turnstile inquiry form |
-| StudioScene | `components/islands/StudioScene.svelte` | Hero WebGL cluster; loads ≥2.5s after `load` |
+| StudioScene | `components/islands/StudioScene.svelte` | Hero WebGL cluster host; scene in `lib/studio-scene/` renders in a worker right after `load` |
 | Interactions | `components/common/Interactions.astro` | Site-wide motion: `--scroll-progress`, `[data-magnetic]`, `[data-scramble]`, `[data-count]`, `[data-pointer-glow]`, `[data-copy]`, stacked-card depth |
 | SplitText | `components/common/SplitText.astro` | Word-by-word masked heading reveal (inside `<ScrollReveal>`) |
 | ScrollReveal | `components/common/ScrollReveal.astro` | IntersectionObserver scroll animations |

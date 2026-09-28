@@ -1185,17 +1185,6 @@ html.dark .profile-identity-surface {
     radial-gradient(30% 30% at 90% 5%, rgb(0 94 254 / 0.12), transparent 70%);
 }
 
-.hero-beam {
-  position: absolute;
-  top: -20%;
-  bottom: 0;
-  left: 72%;
-  width: 1px;
-  background: linear-gradient(to bottom, transparent, rgb(var(--accent-soft) / 0.85) 45%, rgb(var(--color-accent) / 0.5) 70%, transparent);
-  box-shadow: 0 0 60px 18px rgb(0 94 254 / 0.22);
-  opacity: 0.5;
-}
-
 .grid-floor {
   position: absolute;
   left: -50%;

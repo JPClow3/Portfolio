@@ -42,7 +42,7 @@
     "satori-html": "^0.3.2",
     "svelte": "^5.56.4",
     "tailwindcss": "^4.3.2",
-    "three": "^0.185.1",
+    "three": "^0.186.1",
     "typescript": "^6.0.3"
   },
   "devDependencies": {

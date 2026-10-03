@@ -37,7 +37,7 @@
     "@sentry/browser": "^10.75.0",
     "@tailwindcss/vite": "^4.3.2",
     "@types/three": "^0.185.1",
-    "astro": "^7.2.0",
+    "astro": "^7.3.5",
     "satori": "^0.33.4",
     "satori-html": "^0.3.2",
     "svelte": "^5.56.4",
@@ -51,8 +51,8 @@
     "@vitest/ui": "^4.1.9",
     "happy-dom": "^20.11.0",
     "lighthouse": "^13.5.0",
-    "sharp": "^0.34.5",
-    "vitest": "^4.1.10"
+    "sharp": "^0.35.4",
+    "vitest": "^5.0.3"
   },
   "overrides": {
     "esbuild": "0.28.1",

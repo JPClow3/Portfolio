@@ -40,7 +40,7 @@
     "astro": "^7.3.8",
     "satori": "^0.33.4",
     "satori-html": "^0.3.2",
-    "svelte": "^5.57.1",
+    "svelte": "^5.57.2",
     "tailwindcss": "^4.3.2",
     "three": "^0.186.1",
     "typescript": "^6.0.3"

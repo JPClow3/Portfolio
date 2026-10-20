@@ -1,0 +1,9 @@
+# Copy to .dev.vars for local Cloudflare Pages Functions development.
+# Create a HubSpot service key with contacts read/write scopes.
+HUBSPOT_ACCESS_TOKEN=your-hubspot-service-key
+
+# Optional Turnstile secret key from the Cloudflare dashboard (not the public site key).
+TURNSTILE_SECRET_KEY=your-turnstile-secret-key
+
+# Existing Web3Forms access key, used only for the email notification.
+WEB3FORMS_ACCESS_KEY=your-web3forms-access-key

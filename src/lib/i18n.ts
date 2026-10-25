@@ -29,7 +29,6 @@ export const ui = {
     'projects.emptyTitle': 'No Projects Yet',
     'projects.emptyDesc': 'New case studies are being documented and will appear here soon.',
     // Home
-    'home.capabilities': 'Capabilities',
     'home.live': 'Live ↗',
     'home.problem': 'Problem',
     'home.constraint': 'Constraint',
@@ -143,7 +142,6 @@ export const ui = {
     'projects.emptyTitle': 'Nenhum Projeto Ainda',
     'projects.emptyDesc': 'Novos cases estão sendo documentados e aparecerão aqui em breve.',
     // Home
-    'home.capabilities': 'Capacidades',
     'home.live': 'Ao vivo ↗',
     'home.problem': 'Problema',
     'home.constraint': 'Restrição',

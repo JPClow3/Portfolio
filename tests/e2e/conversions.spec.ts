@@ -22,6 +22,12 @@ for (const lang of ['en','pt']) {
     }
   });
   test(`${lang}: engagement links preselect a model; changing language preserves selections`, async ({page}) => {
+    const inquiryClicks: unknown[] = [];
+    await page.route('**/api/events', async route => {
+      const event = route.request().postDataJSON();
+      if (event.event === 'inquiry_click') inquiryClicks.push(event);
+      await route.fulfill({ status: 204 });
+    });
     await page.goto(prefix+'/services/#engagement');
     await page.locator(`#engagement a[href="${prefix}/contact/?engagement=consulting"]`).click();
     await expect(page.locator('#engagement')).toHaveValue('consulting');
@@ -31,6 +37,9 @@ for (const lang of ['en','pt']) {
     await other.click();
     await expect(page.locator('#engagement')).toHaveValue('consulting');
     await expect(page.locator('#service option:checked')).toHaveAttribute('data-service-id','apis');
+    await page.waitForLoadState('networkidle');
+    // Language changes retain the inquiry but are not new inquiry clicks.
+    expect(inquiryClicks).toHaveLength(1);
   });
   test(`${lang}: project reference enters the inquiry payload and is removable`, async ({page}) => {
     let payload: Record<string, unknown> = {};

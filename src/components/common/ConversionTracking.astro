@@ -34,7 +34,7 @@ const projects = (await getCollection('projects', ({ data }) => data.caseStudy &
     if (page === 'case-study' && knownCases.includes(slug)) send('case_study_view');
     document.addEventListener('click', (event) => {
       const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a[href]') : null;
-      if (!link) return;
+      if (!link || link.hasAttribute('data-lang-link')) return;
       const url = new URL(link.href, location.origin);
       if (!(url.origin === location.origin && /^\/(pt\/)?contact\/?$/.test(url.pathname)) && url.protocol !== 'mailto:') return;
       const id = link.closest('section[id], header[id], footer[id]')?.id ?? 'other';

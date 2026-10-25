@@ -32,7 +32,8 @@ describe('inquiry context reaches HubSpot and the optional notification', () => 
       return Response.json(url.endsWith('/search') ? { results: [] } : { id: '123', success: true });
     }));
     await submit({ project: 'unknown-project', engagement: '<script>' });
-    expect(JSON.stringify(calls)).not.toMatch(/unknown-project|<script>/);
+    expect(calls[1].properties.message).toBe('Service: API integrations\n\nA sufficiently detailed test inquiry.');
+    expect(calls[2]).toMatchObject({ project: '', engagement: '' });
   });
   it('does not acknowledge success if the CRM write fails', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => new Response('', { status: 500 })));

@@ -7,6 +7,7 @@ import StudioHero from '@/components/studio/StudioHero.astro';
 import ServicesGrid from '@/components/studio/ServicesGrid.astro';
 import WorkShowcase from '@/components/studio/WorkShowcase.astro';
 import FounderProcess from '@/components/studio/FounderProcess.astro';
+import EngineeringSection from '@/components/studio/EngineeringSection.astro';
 import FaqSection from '@/components/studio/FaqSection.astro';
 import CtaBand from '@/components/studio/CtaBand.astro';
 import { defaultLang, type Lang } from '@/lib/i18n';
@@ -56,8 +57,9 @@ const workSchema = {
     <StudioHero />
     <WorkShowcase />
     <ServicesGrid />
-    <FounderProcess />
-    <FaqSection index="04" />
+    <EngineeringSection index="03" />
+    <FounderProcess index="04" />
+    <FaqSection index="05" />
     <CtaBand />
   </main>
   <Footer />

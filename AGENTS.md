@@ -217,7 +217,7 @@ Respects `prefers-reduced-motion`. Re-initializes on Astro page transitions via 
 ## Key Patterns
 
 ### Homepage & studio pages
-- `pages/index.astro` delegates to `components/pages/HomePage.astro`, which composes the `components/studio/*` sections: hero (StudioScene) → selected work (three outcome-led stories + three compact cards) → services → founder and compact process → FAQ → CTA band (`#contact`). Engineering and sectors remain on About; full process and engagement models remain on Services.
+- `pages/index.astro` delegates to `components/pages/HomePage.astro`, which composes the `components/studio/*` sections: hero (StudioScene) → selected work (six scroll-stacked project cards with outcomes, technical highlights and stacks) → services → engineering showcase → founder and compact process → FAQ → CTA band (`#contact`). Preserve the scroll-driven cards and the homepage's technical identity. Engineering also appears on About alongside sectors; full process and engagement models remain on Services.
 - `/services/`, `/about/`, `/contact/` each have EN and `pt/` route files delegating to a page component. The full contact form (`common/ContactForm.astro`) lives on `/contact/`.
 - B2B copy is edited in `src/lib/studio.ts` (typed `StudioCopy`, one object per locale). Project references use content-collection slugs.
 - Keep claims factual: no invented clients, testimonials, prices, or metrics — stats in the hero are computed from content.

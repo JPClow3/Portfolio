@@ -4,6 +4,8 @@ import ScrollReveal from '@/components/common/ScrollReveal.astro';
 import Icon from '@/components/common/Icon.astro';
 import { defaultLang, type Lang } from '@/lib/i18n';
 import { getStudioCopy, localePath } from '@/lib/studio';
+interface Props { index?: string }
+const { index = '03' } = Astro.props;
 const lang = (Astro.currentLocale ?? defaultLang) as Lang;
 const copy = getStudioCopy(lang);
 const entries = await getCollection('profile', ({ data }) => data.lang === lang);
@@ -13,7 +15,7 @@ const avatar = `https://2.gravatar.com/avatar/${profile.gravatarHash}?s=320&d=in
 <section id="process" aria-labelledby="process-heading" class="studio-section border-y border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.4)]">
   <div class="studio-container grid items-start gap-12 lg:grid-cols-2 lg:gap-20">
     <ScrollReveal animation="fade-up">
-      <p class="eyebrow mb-5"><span class="text-[rgb(var(--color-text-muted))]">03</span>{copy.about.founderEyebrow}</p>
+      <p class="eyebrow mb-5"><span class="text-[rgb(var(--color-text-muted))]">{index}</span>{copy.about.founderEyebrow}</p>
       <div class="flex flex-wrap items-center gap-5">
         <img src={avatar} width="160" height="160" loading="lazy" decoding="async" alt={profile.name} class="h-24 w-24 rounded-lg border border-[rgb(var(--color-border))] object-cover sm:h-32 sm:w-32" />
         <div class="min-w-0 flex-1">

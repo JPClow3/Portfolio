@@ -12,12 +12,12 @@ for (const lang of ['en','pt']) {
   test(`${lang}: work leads the homepage and preserves all six selected projects`, async ({page}) => {
     await page.emulateMedia({reducedMotion:'reduce'});
     await page.goto(prefix+'/');
-    expect(await page.locator('main > section').evaluateAll(nodes=>nodes.map(n=>n.id))).toEqual(['top','work','services','process','faq','contact']);
-    await expect(page.locator('[data-featured-story]')).toHaveCount(3);
-    await expect(page.locator('[data-compact-project]')).toHaveCount(3);
+    expect(await page.locator('main > section').evaluateAll(nodes=>nodes.map(n=>n.id))).toEqual(['top','work','services','engineering','process','faq','contact']);
+    await expect(page.locator('.work-stack-item')).toHaveCount(6);
+    await expect(page.locator('#engineering .code-window')).toBeVisible();
     await expect(page.locator('#process img')).toHaveAttribute('alt',/João/);
-    for (const card of await page.locator('[data-featured-story]').all()) {
-      await expect(card.locator('dl > div')).toHaveCount(2);
+    for (const card of await page.locator('.work-card').all()) {
+      await expect(card.locator('[data-testid="project-capabilities"]')).toBeVisible();
       await expect(card.locator('[data-testid="project-outcome"]')).not.toBeEmpty();
     }
   });
@@ -61,6 +61,33 @@ for (const lang of ['en','pt']) {
     expect(new URL(page.url()).searchParams.has('project')).toBe(false);
   });
 }
+
+test('project cards stack on scroll, with static mobile layout and reduced-motion support', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/');
+  await page.evaluate(() => document.fonts.ready);
+  const items = page.locator('.work-stack-item');
+  const first = items.first();
+  const second = items.nth(1);
+  const stickyTop = await first.evaluate(element => parseFloat(getComputedStyle(element).top));
+  const target = await second.evaluate(element => element.getBoundingClientRect().top + scrollY - 450);
+  await page.evaluate(y => window.scrollTo({ top: y, behavior: 'instant' }), target);
+  await expect.poll(async () => Math.abs((await first.boundingBox())!.y - stickyTop)).toBeLessThan(2);
+  const before = (await second.boundingBox())!.y;
+  await page.evaluate(() => window.scrollBy({ top: 120, behavior: 'instant' }));
+  await expect.poll(async () => (await second.boundingBox())!.y).toBeLessThan(before - 100);
+  await expect.poll(async () => Math.abs((await first.boundingBox())!.y - stickyTop)).toBeLessThan(2);
+  await expect.poll(() => first.locator('.work-card').evaluate(element => parseFloat(getComputedStyle(element).scale))).toBeLessThan(1);
+  mkdirSync('test-results/design-review', { recursive: true });
+  await page.screenshot({ path: 'test-results/design-review/restored-stack-desktop.png' });
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(first.locator('.work-card')).toHaveCSS('scale', '1');
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.goto('/pt/');
+  await expect(first).toHaveCSS('position', 'static');
+  await first.screenshot({ path: 'test-results/design-review/restored-card-mobile.png' });
+});
 
 test('conversion events capture the funnel without form text or arbitrary query values', async ({page}) => {
   const events: Record<string,unknown>[]=[];

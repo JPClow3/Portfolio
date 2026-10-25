@@ -118,7 +118,7 @@ test('homepage loads and displays main sections', async ({ page }) => {
   await expect(footer).toBeVisible();
 });
 
-test('homepage prioritizes the client-facing project showcase', async ({ page }) => {
+test('homepage presents project outcomes alongside technical evidence', async ({ page }) => {
   await page.goto('/');
 
   const expectedProjects = [
@@ -135,10 +135,8 @@ test('homepage prioritizes the client-facing project showcase', async ({ page })
   for (const [index, title] of expectedProjects.entries()) {
     await expect(cards.nth(index).getByRole('heading')).toHaveText(title);
     await expect(cards.nth(index).locator('[data-testid="project-outcome"]')).toBeVisible();
-    if (index < 3) {
-      await expect(cards.nth(index).getByText('Problem', { exact: true })).toBeVisible();
-      await expect(cards.nth(index).getByText('Contribution', { exact: true })).toBeVisible();
-    }
+    await expect(cards.nth(index).locator('[data-testid="project-proof"]')).toBeVisible();
+    await expect(cards.nth(index).locator('[data-testid="project-capabilities"]')).toBeVisible();
   }
 
   const primaryNav = page.getByRole('navigation', { name: 'Primary' });

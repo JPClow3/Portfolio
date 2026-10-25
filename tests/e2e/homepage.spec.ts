@@ -217,8 +217,8 @@ test('homepage presents the B2B offer and keeps private client source protected'
   await expect(page.locator('#services article')).toHaveCount(6);
   await expect(page.locator('#services').getByRole('heading', { name: 'Custom web platforms' })).toBeVisible();
   await expect(page.locator('#process ol > li')).toHaveCount(4);
-  await expect(page.locator('[data-featured-story]')).toHaveCount(3);
-  await expect(page.locator('[data-compact-project]')).toHaveCount(3);
+  await expect(page.locator('.work-stack-item')).toHaveCount(6);
+  await expect(page.locator('#engineering .code-window')).toBeVisible();
   await expect(page.locator('#faq details')).toHaveCount(7);
   await expect(page.locator('#process img')).toBeVisible();
   await expect(page.locator('#process a[href="/services/#process"]')).toBeVisible();

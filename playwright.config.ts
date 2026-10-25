@@ -42,9 +42,7 @@ export default defineConfig({
     url: pwBaseUrl,
     env: {
       ...(process.env as Record<string, string>),
-      PUBLIC_WEB3FORMS_ACCESS_KEY: 'test-web3forms-key',
       PUBLIC_TURNSTILE_SITEKEY: '1x00000000000000000000AA',
-      PUBLIC_TURNSTILE_WORKER_URL: 'https://turnstile.example.test',
     },
     reuseExistingServer: true,
     timeout: 120 * 1000,

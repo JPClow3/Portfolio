@@ -2,7 +2,8 @@
 
 The static site sends small events to the same-origin `/api/events` Pages Function.
 Wrangler binds `CONVERSIONS` to `portfolio_conversions` in production and
-`portfolio_conversions_preview` for branch previews. All other paths remain static.
+`portfolio_conversions_preview` for branch previews. Only `/api/events` and
+the existing `/api/contact` handler use Pages Functions; other paths remain static.
 Cloudflare creates the dataset after the first write; no browser API key is used.
 
 ## Events and interpretation
@@ -11,7 +12,7 @@ Cloudflare creates the dataset after the first write; no browser API key is used
 - `case_study_view`: a published case study was opened, with its project ID.
 - `inquiry_click`: contact/email link, placement and selected project/service/model.
 - `form_start`: first input/change in one inquiry attempt.
-- `form_success`: Web3Forms returned HTTP success and `success: true`.
+- `form_success`: `/api/contact` returned HTTP success and `success: true` after saving to HubSpot.
 
 These are event counts, not unique visitors or a person-level attribution funnel.
 Successful submissions are browser-observed acknowledgements, not proof of inbox delivery.
@@ -42,7 +43,7 @@ Optional variables: `CONVERSION_DAYS` (1–90, default 30),
 
 Run unit tests for the request parser, request limits, privacy and binding writes.
 Build with `PUBLIC_CONVERSION_TESTING=true` to exercise the browser events locally;
-browser tests intercept `/api/events` and Web3Forms, so they never send real inquiries.
+browser tests intercept `/api/events` and `/api/contact`, so they never send real inquiries.
 Omit that flag for normal local previews (collection is disabled on localhost).
 Cloudflare Analytics Engine is not emulated locally: a hosted preview write followed
 by a query of `portfolio_conversions_preview` is required to prove storage.

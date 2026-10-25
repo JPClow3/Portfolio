@@ -25,7 +25,7 @@ The catalog contains 18 projects in each locale. Read the frontmatter in `src/co
 | Styling | Tailwind CSS v4 | Utility-first CSS via `@tailwindcss/vite` |
 | 3D/WebGL | Three.js | Homepage hero module cluster (`StudioScene`) + ambient case-study scene (`HeroScene`) |
 | Content | Content Collections + MDX | Type-safe markdown content |
-| Contact | Web3Forms + Cloudflare Turnstile | Serverless form submissions with bot protection |
+| Contact | Pages Function + HubSpot + Cloudflare Turnstile | Server-side inquiries; optional Web3Forms email notification |
 | Deployment | Cloudflare Pages | GitHub integration builds static `dist/` |
 src/
 ├── components/
@@ -84,7 +84,7 @@ npm run test:lighthouse   # Lighthouse budgets on dist/ (run `npm run build` fir
 
 ### Testing
 - **Unit (`tests/unit/`)**: SEO/schema, i18n hygiene (EN/PT key parity, no dead keys, no first-person copy), studio copy integrity (`studio.test.ts`: locale parity, cited case studies exist, no invented clients/prices), responsive image variants, command palette, OG images, RSS, PWA, commit-message policy.
-- **E2E (`tests/e2e/`)**: build first (`npm run build`); forms need `PUBLIC_WEB3FORMS_ACCESS_KEY`, `PUBLIC_TURNSTILE_SITEKEY`, `PUBLIC_TURNSTILE_WORKER_URL` at build time (CI builds without them, so form tests skip). `studio.spec.ts` covers header hide/reveal, nav indicator, scroll progress, hero count-up/decode, copy-email, FAQ, contact payload, deep links, internal link crawl, language switcher, mobile menu, phone overflow + runtime errors, SEO metadata, JSON-LD, theme default. Stub `challenges.cloudflare.com` in new specs so `networkidle` settles.
+- **E2E (`tests/e2e/`)**: build first with `PUBLIC_TURNSTILE_SITEKEY=1x00000000000000000000AA` and `PUBLIC_CONVERSION_TESTING=true`. Tests mock `/api/contact` and `/api/events`; no live CRM writes. `studio.spec.ts` covers navigation, motion, forms, mobile overflow, runtime health and SEO. Stub `challenges.cloudflare.com` in new specs so `networkidle` settles. Rebuild without local analytics opt-in before Lighthouse.
 - **Accessibility**: `accessibility.spec.ts` runs axe on 10 pages in dark and light themes (reduced motion so reveals are visible); zero violations expected.
 - **Lighthouse (`scripts/lighthouse.mjs`)**: serves `dist/` on :4420, audits `/`, `/services/`, `/about/`, `/contact/`, `/projects/`, a case study and `/pt/` on mobile + desktop with `--lang=en-US`, writes `lighthouse-reports/` (gitignored). Budgets: accessibility 100, SEO 100, best practices 95, performance 80 mobile / 90 desktop (override with `LH_PERF_MOBILE`/`LH_PERF_DESKTOP`; CI uses 75/85). Filter with `LH_PAGES` / `LH_FORM_FACTORS` (Git Bash: prefix `MSYS_NO_PATHCONV=1`).
 - **CI (`.github/workflows/build.yml`)**: build → astro check → unit → Chromium e2e (incl. axe) → Lighthouse, uploading Lighthouse reports always and the Playwright report on failure.
@@ -244,14 +244,14 @@ Respects `prefers-reduced-motion`. Re-initializes on Astro page transitions via 
 - Re-initializes on Astro page transitions
 
 ### Contact Form
-- Web3Forms API (`https://api.web3forms.com/submit`)
-- Cloudflare Turnstile widget verifies through `PUBLIC_TURNSTILE_WORKER_URL` before Web3Forms submission
+- Same-origin `/api/contact` Pages Function saves inquiries to HubSpot and optionally sends a Web3Forms email notification.
+- Cloudflare Turnstile is verified server-side when `TURNSTILE_SECRET_KEY` is configured.
 - Honeypot spam protection (`botcheck` hidden checkbox)
 - Client-side validation: required fields, email regex, min message length
 - Real-time validation on blur
 - Loading state: disabled button + spinner
 - Success/error messages via `aria-live="polite"` region
-- **Setup:** Set `PUBLIC_WEB3FORMS_ACCESS_KEY`, `PUBLIC_TURNSTILE_SITEKEY`, and `PUBLIC_TURNSTILE_WORKER_URL` in `.env` (local) or in Cloudflare Pages build environment variables. Register Turnstile domains for `jpclow.dev`, `localhost`, and `127.0.0.1`.
+- **Setup:** Set `PUBLIC_TURNSTILE_SITEKEY` at build time. Set `HUBSPOT_ACCESS_TOKEN`, `TURNSTILE_SECRET_KEY` and optional `WEB3FORMS_ACCESS_KEY` as server secrets (`.dev.vars` locally). Register Turnstile domains for the actual deployment hosts.
 
 ### Content Collections
 Located in `src/content/`, schemas in `config.ts`:
@@ -289,7 +289,7 @@ Configured in `tsconfig.json`:
 | Icon | `components/common/Icon.astro` | Lucide-style SVG icons (names typed in `icon-names.ts`) |
 | Parallax | `components/common/Parallax.astro` | Scroll-linked translateY wrapper (`speed`), reduced-motion safe |
 | Spotlight | `components/common/Spotlight.astro` | Cursor-following glow card surface |
-| ContactForm | `components/common/ContactForm.astro` | Web3Forms + Turnstile inquiry form |
+| ContactForm | `components/common/ContactForm.astro` | Context-aware HubSpot inquiry form with server-side Turnstile |
 | StudioScene | `components/islands/StudioScene.svelte` | Hero WebGL cluster; loads ≥2.5s after `load` |
 | Interactions | `components/common/Interactions.astro` | Site-wide motion: `--scroll-progress`, `[data-magnetic]`, `[data-scramble]`, `[data-count]`, `[data-pointer-glow]`, `[data-copy]`, stacked-card depth |
 | SplitText | `components/common/SplitText.astro` | Word-by-word masked heading reveal (inside `<ScrollReveal>`) |
@@ -331,7 +331,7 @@ Configured in `tsconfig.json`:
   - Root directory: `/`
   - Node version: `22.23.4` via `.node-version` and Pages `NODE_VERSION`
   - `wrangler.jsonc` sets `pages_build_output_dir` to `./dist` for local Wrangler workflows.
-  - Set `PUBLIC_WEB3FORMS_ACCESS_KEY`, `PUBLIC_TURNSTILE_SITEKEY`, and `PUBLIC_TURNSTILE_WORKER_URL` in Cloudflare Pages build environment variables so Astro can embed them at build time.
+  - Set `PUBLIC_TURNSTILE_SITEKEY` at build time and HubSpot/Turnstile secrets at runtime. See `.env.example` and `.dev.vars.example`.
 - **Local preview:** `npm run preview` (Astro's built-in preview server on port 4321)
 
 ### Inquiry context and conversion measurement

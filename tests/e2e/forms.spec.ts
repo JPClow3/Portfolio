@@ -4,12 +4,12 @@ async function hasContactForm(page: Page) {
   return (await page.locator('#contact-form').count()) > 0;
 }
 
-async function mockTurnstile(page: Page, success = true) {
-  await page.route(/https:\/\/turnstile\.example\.test\/?.*/, async (route) => {
+async function mockContact(page: Page, success = true) {
+  await page.route('**/api/contact', async (route) => {
     await route.fulfill({
-      status: 200,
+      status: success ? 200 : 403,
       contentType: 'application/json',
-      body: JSON.stringify({ success }),
+      body: JSON.stringify({ success, code: success ? undefined : 'turnstile_failed' }),
     });
   });
 }
@@ -103,8 +103,8 @@ test('form validation rejects invalid email', async ({ page }) => {
 });
 
 test('form accepts valid input with mocked submission', async ({ page }) => {
-  await mockTurnstile(page);
-  await page.route('https://api.web3forms.com/submit', async (route) => {
+  await mockContact(page);
+  await page.route('**/api/contact', async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -130,10 +130,10 @@ test('form accepts valid input with mocked submission', async ({ page }) => {
   await expect(page.locator('#error-message')).toBeHidden();
 });
 
-test('form requires Turnstile before Web3Forms submission', async ({ page }) => {
-  let web3FormsCalled = false;
-  await page.route('https://api.web3forms.com/submit', async (route) => {
-    web3FormsCalled = true;
+test('form requires Turnstile before contact submission', async ({ page }) => {
+  let contactCalled = false;
+  await page.route('**/api/contact', async (route) => {
+    contactCalled = true;
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true }) });
   });
 
@@ -151,11 +151,11 @@ test('form requires Turnstile before Web3Forms submission', async ({ page }) => 
 
   await expect(page.locator('#turnstile-error')).toBeVisible();
   await expect(page.locator('#error-message')).toBeVisible();
-  expect(web3FormsCalled).toBe(false);
+  expect(contactCalled).toBe(false);
 });
 
 test('form shows localized Turnstile failure message', async ({ page }) => {
-  await mockTurnstile(page, false);
+  await mockContact(page, false);
 
   await page.goto('/pt/contact/');
 
@@ -175,8 +175,7 @@ test('form shows localized Turnstile failure message', async ({ page }) => {
 });
 
 test('form shows network error state when request fails', async ({ page }) => {
-  await mockTurnstile(page);
-  await page.route('https://api.web3forms.com/submit', async (route) => {
+  await page.route('**/api/contact', async (route) => {
     await route.abort('failed');
   });
 

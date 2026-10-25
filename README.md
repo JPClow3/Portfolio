@@ -31,9 +31,14 @@ The `wrangler.jsonc` file mirrors the Pages output directory for local Wrangler 
 
 ## Contact form
 
-The contact form uses [Web3Forms](https://web3forms.com) gated by Cloudflare Turnstile. Locally: copy `.env.example` to `.env` and set `PUBLIC_WEB3FORMS_ACCESS_KEY`, `PUBLIC_TURNSTILE_SITEKEY`, and `PUBLIC_TURNSTILE_WORKER_URL`. In production, set the same variables in Cloudflare Pages build environment variables.
+The contact form posts to the Cloudflare Pages Function at `/api/contact`. The function creates or updates a HubSpot contact by email and stores the selected service and inquiry in the contact's `message` property. If Turnstile is configured, the function verifies it server-side. It also sends the existing Web3Forms email notification when that key is configured.
 
-Register the Turnstile widget for `jpclow.dev`, `localhost`, and `127.0.0.1`. The Worker URL should point to the Turnstile siteverify Worker; the browser verifies Turnstile there first, then submits the existing Web3Forms payload.
+For optional Turnstile protection, configure `PUBLIC_TURNSTILE_SITEKEY` as a Cloudflare Pages build variable and add `TURNSTILE_SECRET_KEY` as a runtime secret. Add the HubSpot credential under **Settings → Variables and Secrets** for both Production and Preview as needed:
+
+- `HUBSPOT_ACCESS_TOKEN` — HubSpot service key with `crm.objects.contacts.read` and `crm.objects.contacts.write` scopes. Inquiries are stored in the contact's `message` property.
+- `WEB3FORMS_ACCESS_KEY` — optional; keeps the email notification enabled.
+
+Register the Turnstile widget for `jpclow.dev` and local development hosts if you enable Turnstile. For local Pages Functions, copy `.dev.vars.example` to `.dev.vars`, fill in the secrets, run `npm run build`, then serve the output with `npx wrangler pages dev dist`. `npm run dev` alone does not run Cloudflare Pages Functions.
 
 ## Project structure
 

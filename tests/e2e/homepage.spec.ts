@@ -187,7 +187,7 @@ test('project card interaction keeps case study links clickable', async ({ page 
   await expect(page.locator('[data-testid="project-card"]').first()).toContainText('Moto Track');
   await throughlineCard.scrollIntoViewIfNeeded();
   await expect(throughlineCard).toBeVisible();
-  await throughlineCard.locator('a[href="/projects/throughline/"]').click();
+  await throughlineCard.locator('a[href="/projects/throughline/"]').last().click();
   await expect(page).toHaveURL(/\/projects\/throughline\/?$/);
 });
 

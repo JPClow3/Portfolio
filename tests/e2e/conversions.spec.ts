@@ -33,9 +33,8 @@ for (const lang of ['en','pt']) {
     await expect(page.locator('#service option:checked')).toHaveAttribute('data-service-id','apis');
   });
   test(`${lang}: project reference enters the inquiry payload and is removable`, async ({page}) => {
-    let payload='';
-    await page.route('https://turnstile.example.test/**',route=>route.fulfill({json:{success:true}}));
-    await page.route('https://api.web3forms.com/submit',async route=>{payload=route.request().postDataBuffer()?.toString('utf8')??'';await route.fulfill({json:{success:true}});});
+    let payload: Record<string, unknown> = {};
+    await page.route('**/api/contact',async route=>{payload=route.request().postDataJSON();await route.fulfill({json:{success:true}});});
     await page.goto(prefix+'/projects/agrohub/');
     await page.locator(`#contact a[href="${prefix}/contact/?project=agrohub"]`).click();
     await expect(page.locator('[data-project-title]')).toHaveText('AgroHub UniRV');
@@ -45,7 +44,7 @@ for (const lang of ['en','pt']) {
     await page.locator('#contact-form').evaluate(form=>{const i=document.createElement('input');i.type='hidden';i.name='cf-turnstile-response';i.value='token';form.append(i);});
     await page.locator('#submit-btn').click();
     await expect(page.locator('#success-message')).toBeVisible();
-    expect(payload).toContain('name="project_reference"\r\n\r\nAgroHub UniRV');
+    expect(payload.project).toBe('agrohub');
     await expect(page.locator('[name="project_reference"]')).toHaveValue('AgroHub UniRV');
     await page.locator('[data-remove-context]').click();
     await expect(page.locator('[name="project_reference"]')).toHaveValue('');
@@ -57,9 +56,8 @@ for (const lang of ['en','pt']) {
 test('conversion events capture the funnel without form text or arbitrary query values', async ({page}) => {
   const events: Record<string,unknown>[]=[];
   await page.route('**/api/events',async route=>{events.push(route.request().postDataJSON());await route.fulfill({status:204});});
-  await page.route('https://turnstile.example.test/**',route=>route.fulfill({json:{success:true}}));
   let succeed=false;
-  await page.route('https://api.web3forms.com/submit',route=>route.fulfill({json:{success:succeed}}));
+  await page.route('**/api/contact',route=>route.fulfill({json:{success:succeed}}));
   await page.goto('/projects/moto-track/?private=secret');
   await expect.poll(()=>events.some(e=>e.event==='case_study_view'&&e.project==='moto-track')).toBe(true);
   await page.locator('#contact a[href="/contact/?project=moto-track"]').click();

@@ -205,6 +205,7 @@ const contactHref = `${localePrefix}/contact/`;
 </header>
 
 <script>
+  import { readInquiryContext, inquirySearch } from '@/lib/inquiry';
   // Global listener references for cleanup
   let globalEscapeHandler: ((e: KeyboardEvent) => void) | null = null;
   let globalClickHandler: ((e: MouseEvent) => void) | null = null;
@@ -406,7 +407,8 @@ const contactHref = `${localePrefix}/contact/`;
     document.querySelectorAll<HTMLAnchorElement>('[data-lang-link]').forEach((link) => {
       const base = link.dataset.langBase;
       if (base) {
-        link.href = base + cleanCanonical + hash;
+        const search = /^contact\/?$/.test(cleanCanonical) ? inquirySearch(readInquiryContext(window.location.search)) : '';
+        link.href = base + cleanCanonical + search + hash;
         link.addEventListener('click', () => {
           localStorage.setItem('languagePreference', base === '/pt/' ? 'pt' : 'en');
         });
@@ -498,7 +500,7 @@ const contactHref = `${localePrefix}/contact/`;
 
   function getHomepageSections() {
     // Sections without a nav link clear the highlight while they are in view
-    return ['top', 'services', 'work', 'process', 'engineering', 'sectors', 'engagement', 'faq', 'contact']
+    return ['top', 'work', 'services', 'process', 'faq', 'contact']
       .map((id) => document.getElementById(id))
       .filter((section): section is HTMLElement => Boolean(section));
   }

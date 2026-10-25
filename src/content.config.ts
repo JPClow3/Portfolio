@@ -29,6 +29,11 @@ const projectsCollection = defineCollection({
       outcome: z.string(),
     }).optional(),
     problem: z.string().optional(),
+    showcase: z.object({
+      problem: z.string(),
+      contribution: z.string(),
+      outcome: z.string(),
+    }).optional(),
     solution: z.string().optional(),
     impact: z.string().optional(),
     role: z.string().optional(),

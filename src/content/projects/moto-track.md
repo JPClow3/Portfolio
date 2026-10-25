@@ -11,6 +11,10 @@ order: 1
 lang: "en"
 caseStudy: true
 status: "live"
+showcase:
+  problem: "Fuel, maintenance and work costs were scattered across notes and spreadsheets."
+  contribution: "Product engineering, interface design and full-stack delivery, including offline fuel capture and paid plans."
+  outcome: "One place to track motorcycle costs, plan upkeep and understand whether professional riding is paying off."
 decisionLog:
   problem: "Riders and professional motorcycle operators need one reliable place for fuel, upkeep, documents, costs, and the work that makes a motorcycle profitable."
   constraint: "The product needs fast app-like workflows, offline capture, edge deployment, and paid plans without splitting operational data across separate systems."

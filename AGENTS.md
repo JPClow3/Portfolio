@@ -217,7 +217,7 @@ Respects `prefers-reduced-motion`. Re-initializes on Astro page transitions via 
 ## Key Patterns
 
 ### Homepage & studio pages
-- `pages/index.astro` delegates to `components/pages/HomePage.astro`, which composes the `components/studio/*` sections: hero (StudioScene) → capability marquee → services bento → sticky-stacked case studies (featured projects) → process → engineering showcase → sectors → engagement models → FAQ → CTA band (`#contact`).
+- `pages/index.astro` delegates to `components/pages/HomePage.astro`, which composes the `components/studio/*` sections: hero (StudioScene) → selected work (three outcome-led stories + three compact cards) → services → founder and compact process → FAQ → CTA band (`#contact`). Engineering and sectors remain on About; full process and engagement models remain on Services.
 - `/services/`, `/about/`, `/contact/` each have EN and `pt/` route files delegating to a page component. The full contact form (`common/ContactForm.astro`) lives on `/contact/`.
 - B2B copy is edited in `src/lib/studio.ts` (typed `StudioCopy`, one object per locale). Project references use content-collection slugs.
 - Keep claims factual: no invented clients, testimonials, prices, or metrics — stats in the hero are computed from content.
@@ -329,7 +329,14 @@ Configured in `tsconfig.json`:
   - Build command: `npm run build`
   - Build output directory: `dist`
   - Root directory: `/`
-  - Node version: `22.16.0` via `.node-version` and Pages `NODE_VERSION`
+  - Node version: `22.23.4` via `.node-version` and Pages `NODE_VERSION`
   - `wrangler.jsonc` sets `pages_build_output_dir` to `./dist` for local Wrangler workflows.
   - Set `PUBLIC_WEB3FORMS_ACCESS_KEY`, `PUBLIC_TURNSTILE_SITEKEY`, and `PUBLIC_TURNSTILE_WORKER_URL` in Cloudflare Pages build environment variables so Astro can embed them at build time.
 - **Local preview:** `npm run preview` (Astro's built-in preview server on port 4321)
+
+### Inquiry context and conversion measurement
+- Service, engagement and case-study inquiry links carry stable IDs to the contact form and preserve them across EN/PT switching. Context is editable/removable; reply commitment is 2 business days.
+- `src/lib/inquiry.ts` allowlists project/service/model IDs; keep these synchronized with content. `showcase` frontmatter supplies concise problem/contribution/outcome for the first three featured projects.
+- `ConversionTracking.astro` sends aggregate events to the Pages Function `/api/events`; no form contents or visitor identifiers are collected. Respect DNT/GPC.
+- `wrangler.jsonc` binds separate production/preview Analytics Engine datasets. See `docs/conversions.md` for reporting and hosted verification. `public/_routes.json` runs Functions only on `/api/events`.
+- CI builds with test contact credentials and `PUBLIC_CONVERSION_TESTING=true` so form/analytics regressions are exercised; Pages production builds use their own settings.

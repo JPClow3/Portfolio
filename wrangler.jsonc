@@ -2,6 +2,17 @@
   "name": "portfolio",
   "pages_build_output_dir": "./dist",
   "compatibility_date": "2026-07-01",
+  "analytics_engine_datasets": [
+    { "binding": "CONVERSIONS", "dataset": "portfolio_conversions" }
+  ],
+  "env": {
+    "preview": {
+      "analytics_engine_datasets": [
+        { "binding": "CONVERSIONS", "dataset": "portfolio_conversions_preview" }
+      ],
+      "vars": { "PUBLIC_WEB3FORMS_ACCESS_KEY": "b44621f4-56ee-4abe-bb06-559e5160ebdf" }
+    }
+  },
   "vars": {
     "PUBLIC_WEB3FORMS_ACCESS_KEY": "b44621f4-56ee-4abe-bb06-559e5160ebdf"
   }

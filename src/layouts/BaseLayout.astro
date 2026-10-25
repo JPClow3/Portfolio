@@ -1,4 +1,5 @@
 ---
+import ConversionTracking from '@/components/common/ConversionTracking.astro';
 import '@/styles/global.css';
 import BackToTop from '@/components/islands/BackToTop.svelte';
 import HeroScene from '@/components/islands/HeroScene.svelte';
@@ -353,6 +354,7 @@ const allSchema = [...defaultSchema, ...customSchema.filter(Boolean)];
     <!-- Back to top button -->
     <BackToTop client:idle />
     <Interactions />
+    <ConversionTracking />
 
     <script>
       import * as Sentry from '@sentry/browser';

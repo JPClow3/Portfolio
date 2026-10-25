@@ -12,6 +12,10 @@ caseStudy: true
 status: "live"
 role: "Desenvolvimento da aplicação web em projeto institucional da UniRV"
 year: "2026"
+showcase:
+  problem: "Startups, mentores e parceiros precisavam de um ponto de acesso comum ao ecossistema de inovação da UniRV."
+  contribution: "Desenvolvimento web e implantação junto à equipe do AgroHub; a UniRV lidera a iniciativa institucional."
+  outcome: "Diretório de startups, eventos e serviços institucionais reunidos em um único portal público."
 decisionLog:
   problem: "O ecossistema de inovação da UniRV não tinha um ponto único de entrada para startups, mentores, parceiros e o público encontrarem programas de incubação, eventos e informações institucionais."
   constraint: "O portal precisava atender públicos muito diferentes — candidatos, parceiros e exigências de transparência — sem virar um CMS institucional lento e difícil de manter."

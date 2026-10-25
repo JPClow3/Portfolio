@@ -13,6 +13,10 @@ caseStudy: true
 status: "live"
 role: "Engenharia de produto, entrega full-stack, interface e estratégia de deploy"
 year: "2026"
+showcase:
+  problem: "Abastecimentos, manutenção e custos de trabalho ficavam espalhados entre anotações e planilhas."
+  contribution: "Engenharia de produto, interface e desenvolvimento full stack, com registro offline de abastecimentos e planos pagos."
+  outcome: "Um só lugar para acompanhar custos da moto, planejar a manutenção e entender se o trabalho está dando retorno."
 decisionLog:
   problem: "Motociclistas e profissionais que trabalham com moto precisam de um lugar confiável para abastecimento, manutenção, documentos, custos e para o trabalho que torna a moto rentável."
   constraint: "O produto precisa de fluxos rápidos como os de um app, captura offline, execução na borda e planos pagos sem dividir os dados operacionais entre sistemas separados."

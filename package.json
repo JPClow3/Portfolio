@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
-    "@playwright/test": "^1.61.1",
+    "@playwright/test": "^1.64.0",
     "@vitest/ui": "^5.0.3",
     "happy-dom": "^20.11.0",
     "lighthouse": "^13.5.0",

@@ -1,6 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
+  // Pages Functions are unit-tested separately; this server only hosts dist/.
+  await page.route('**/api/events', route => route.fulfill({ status: 204 }));
   await page.addInitScript(() => localStorage.setItem('languagePreference', 'en'));
   // Keep the third-party Turnstile widget from holding the network open
   await page.route('https://challenges.cloudflare.com/**', (route) =>
@@ -125,9 +127,8 @@ test.describe('feedback', () => {
     await page.route('https://challenges.cloudflare.com/turnstile/v0/api.js', (route) =>
       route.fulfill({ contentType: 'application/javascript', body: 'window.turnstile = { reset() {} };' }),
     );
-    await page.route('https://api.web3forms.com/submit', async (route) => {
-      const body = route.request().postDataBuffer()?.toString('latin1') ?? '';
-      for (const match of body.matchAll(/name="([^"]+)"\r\n\r\n([^\r]*)/g)) payload[match[1]] = match[2];
+    await page.route('**/api/contact', async (route) => {
+      payload = route.request().postDataJSON();
       await route.fulfill({ json: { success: true } });
     });
 
@@ -151,7 +152,7 @@ test.describe('feedback', () => {
     await expect(page.locator('#success-message')).toBeVisible();
     expect(payload.company).toBe('Acme Agro');
     expect(payload.service).toBe('Workflow automation');
-    expect(payload.subject).toContain('project inquiry');
+    expect(payload.turnstileToken).toBe('token');
     await expect(page.locator('#submit-btn')).toHaveAttribute('data-loading', 'false');
   });
 
@@ -312,7 +313,7 @@ test.describe('case studies & catalog', () => {
   test('case study breadcrumb points at the catalog and ends with a CTA', async ({ page }) => {
     await page.goto('/pt/projects/moto-track/');
     await expect(page.getByRole('navigation', { name: 'Breadcrumb' }).getByRole('link', { name: 'Projetos e cases' })).toHaveAttribute('href', '/pt/projects/');
-    await expect(page.locator('main #contact a[href="/pt/contact/"]')).toBeVisible();
+    await expect(page.locator('main #contact a[href="/pt/contact/?project=moto-track"]')).toBeVisible();
   });
 });
 

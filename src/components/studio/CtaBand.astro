@@ -10,9 +10,10 @@ import { getStudioCopy, localePath } from '@/lib/studio';
 interface Props {
   /** Show the contact-page button; hidden on the contact page itself. */
   showContactButton?: boolean;
+  project?: string;
 }
 
-const { showContactButton = true } = Astro.props;
+const { showContactButton = true, project } = Astro.props;
 const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
 const t = ui[currentLang] ?? ui[defaultLang];
 const copy = getStudioCopy(currentLang);
@@ -39,7 +40,7 @@ const profile = (profileEntries[0] ?? fallbackEntries[0]).data.profile;
       <p class="mx-auto mt-6 max-w-xl text-base leading-relaxed text-[rgb(var(--color-text-secondary))] sm:text-lg">{section.lead}</p>
       <div class="mt-10 flex flex-wrap items-center justify-center gap-3">
         {showContactButton && (
-          <a href={localePath('/contact/', currentLang)} class="btn btn-primary" data-magnetic="0.25">
+          <a href={`${localePath('/contact/', currentLang)}${project ? `?project=${encodeURIComponent(project)}` : ''}`} class="btn btn-primary" data-magnetic="0.25">
             {section.primary}
             <Icon name="arrow-right" size={18} class="btn-arrow" />
           </a>
@@ -67,6 +68,7 @@ const profile = (profileEntries[0] ?? fallbackEntries[0]).data.profile;
           LinkedIn
         </a>
       </div>
+      <p class="mt-5 text-sm text-[rgb(var(--color-text-secondary))]">{copy.contactPage.responseTime}</p>
     </ScrollReveal>
   </div>
 </section>

@@ -57,6 +57,7 @@ export interface Sector {
 }
 
 export interface EngagementModel {
+  id: 'project' | 'partnership' | 'consulting';
   title: string;
   bestFor: string;
   description: string;
@@ -98,6 +99,10 @@ export interface StudioCopy {
     cta: { eyebrow: string; title: string; lead: string; primary: string; secondary: string };
   };
   labels: {
+    contribution: string;
+    moreWork: string;
+    meetFounder: string;
+    fullProcess: string;
     deliverables: string;
     stack: string;
     provenIn: string;
@@ -139,6 +144,11 @@ export interface StudioCopy {
     next: { title: string; description: string }[];
     directTitle: string;
     formTitle: string;
+    responseTime: string;
+    engagementLabel: string;
+    engagementUnsure: string;
+    projectContext: string;
+    removeContext: string;
   };
 }
 
@@ -214,6 +224,10 @@ const en: StudioCopy = {
     },
   },
   labels: {
+    contribution: 'Contribution',
+    moreWork: 'More selected work',
+    meetFounder: 'Meet the founder',
+    fullProcess: 'Delivery process & ways to work together',
     deliverables: 'Deliverables',
     stack: 'Stack',
     provenIn: 'Related work',
@@ -352,12 +366,14 @@ const en: StudioCopy = {
   ],
   engagement: [
     {
+      id: 'project',
       title: 'Scoped project',
       bestFor: 'New products, portals, and MVPs',
       description: 'A defined scope delivered in milestones, with discovery included and a complete hand-off at the end.',
       points: ['Discovery included', 'Milestone-based delivery', 'Source code & documentation hand-off'],
     },
     {
+      id: 'partnership',
       title: 'Product partnership',
       bestFor: 'Products that keep evolving',
       description: 'Dedicated monthly capacity to build and evolve your product continuously, with a shared roadmap.',
@@ -365,6 +381,7 @@ const en: StudioCopy = {
       featured: true,
     },
     {
+      id: 'consulting',
       title: 'Technical consulting',
       bestFor: 'Existing systems that need a plan',
       description: 'Architecture reviews, audits, and recovery of stalled projects, ending in an actionable plan.',
@@ -430,15 +447,20 @@ const en: StudioCopy = {
   contactPage: {
     heroEyebrow: 'Contact',
     heroTitle: "Let's talk about what you need to build.",
-    heroLead: 'Share the problem, the timeline, and the systems involved. We reply with a first technical read and next steps.',
+    heroLead: 'Share the problem, the timeline, and the systems involved. Within 2 business days, you get a first technical read and next steps.',
     nextTitle: 'What happens next',
     next: [
-      { title: 'We read and reply', description: 'You get an answer with questions, a first technical read, and availability.' },
+      { title: 'Reply within 2 business days', description: 'You get an answer with questions, a first technical read, and availability.' },
       { title: 'Discovery call', description: 'A focused conversation about goals, users, constraints, and existing systems.' },
       { title: 'Written proposal', description: 'Scope, milestones, timeline, and the engagement model that fits.' },
     ],
     directTitle: 'Prefer direct contact?',
     formTitle: 'Project inquiry',
+    responseTime: 'Reply within 2 business days.',
+    engagementLabel: 'How would you like to work together?',
+    engagementUnsure: 'Let’s work it out together',
+    projectContext: 'Inspired by',
+    removeContext: 'Remove project reference',
   },
 };
 
@@ -514,6 +536,10 @@ const pt: StudioCopy = {
     },
   },
   labels: {
+    contribution: 'Contribuição',
+    moreWork: 'Outros projetos selecionados',
+    meetFounder: 'Conheça o fundador',
+    fullProcess: 'Processo de entrega e formas de trabalhar juntos',
     deliverables: 'Entregáveis',
     stack: 'Stack',
     provenIn: 'Trabalhos relacionados',
@@ -652,12 +678,14 @@ const pt: StudioCopy = {
   ],
   engagement: [
     {
+      id: 'project',
       title: 'Projeto fechado',
       bestFor: 'Novos produtos, portais e MVPs',
       description: 'Escopo definido entregue em marcos, com descoberta incluída e passagem completa ao final.',
       points: ['Descoberta incluída', 'Entrega por marcos', 'Código-fonte e documentação entregues'],
     },
     {
+      id: 'partnership',
       title: 'Parceria de produto',
       bestFor: 'Produtos em evolução contínua',
       description: 'Capacidade mensal dedicada para construir e evoluir seu produto continuamente, com roadmap compartilhado.',
@@ -665,6 +693,7 @@ const pt: StudioCopy = {
       featured: true,
     },
     {
+      id: 'consulting',
       title: 'Consultoria técnica',
       bestFor: 'Sistemas existentes que precisam de um plano',
       description: 'Revisões de arquitetura, auditorias e recuperação de projetos travados, terminando em um plano de ação.',
@@ -730,15 +759,20 @@ const pt: StudioCopy = {
   contactPage: {
     heroEyebrow: 'Contato',
     heroTitle: 'Vamos conversar sobre o que você precisa construir.',
-    heroLead: 'Conte o problema, o prazo e os sistemas envolvidos. Respondemos com uma primeira leitura técnica e os próximos passos.',
+    heroLead: 'Conte o problema, o prazo e os sistemas envolvidos. Em até 2 dias úteis, você recebe uma primeira leitura técnica e os próximos passos.',
     nextTitle: 'O que acontece depois',
     next: [
-      { title: 'Lemos e respondemos', description: 'Você recebe uma resposta com perguntas, uma primeira leitura técnica e disponibilidade.' },
+      { title: 'Resposta em até 2 dias úteis', description: 'Você recebe uma resposta com perguntas, uma primeira leitura técnica e disponibilidade.' },
       { title: 'Conversa de descoberta', description: 'Uma conversa objetiva sobre metas, usuários, restrições e sistemas existentes.' },
       { title: 'Proposta por escrito', description: 'Escopo, marcos, prazo e o modelo de contratação mais adequado.' },
     ],
     directTitle: 'Prefere contato direto?',
     formTitle: 'Solicitação de projeto',
+    responseTime: 'Resposta em até 2 dias úteis.',
+    engagementLabel: 'Como você gostaria de trabalhar conosco?',
+    engagementUnsure: 'Vamos definir juntos',
+    projectContext: 'Referência de projeto',
+    removeContext: 'Remover referência de projeto',
   },
 };
 

@@ -44,7 +44,7 @@ const section = copy.sections.engagement;
               ))}
             </ul>
             <a
-              href={localePath('/contact/', currentLang)}
+              href={`${localePath('/contact/', currentLang)}?engagement=${model.id}`}
               class:list={['btn mt-8 w-full', model.featured ? 'btn-primary' : 'btn-ghost']}
               aria-label={`${section.cta}: ${model.title}`}
             >

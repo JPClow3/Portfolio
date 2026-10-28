@@ -12,6 +12,10 @@ caseStudy: true
 status: "live"
 role: "Web application development for a UniRV institutional project"
 year: "2026"
+showcase:
+  problem: "Startups, mentors and partners needed a shared entry point into UniRV’s innovation ecosystem."
+  contribution: "Web development and deployment with the AgroHub team; UniRV leads the institutional initiative."
+  outcome: "Startup directories, events and institutional services brought together in one public portal."
 decisionLog:
   problem: "UniRV's innovation ecosystem had no single entry point for startups, mentors, partners, and the public to find incubation programs, events, and institutional information."
   constraint: "The portal had to serve very different audiences — applicants, partners, and compliance/transparency requirements — without becoming a slow, hard-to-maintain institutional CMS."

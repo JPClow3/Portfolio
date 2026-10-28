@@ -1,3 +1,5 @@
+import { projectIds, engagementIds } from '../../src/lib/inquiry';
+
 interface Env {
   HUBSPOT_ACCESS_TOKEN?: string;
   TURNSTILE_SECRET_KEY?: string;
@@ -10,6 +12,8 @@ interface ContactSubmission {
   email?: unknown;
   company?: unknown;
   service?: unknown;
+  project?: unknown;
+  engagement?: unknown;
   message?: unknown;
   turnstileToken?: unknown;
   botcheck?: unknown;
@@ -59,6 +63,8 @@ async function saveInquiry(env: Env, submission: {
   email: string;
   company: string;
   service: string;
+  project: string;
+  engagement: string;
   message: string;
 }): Promise<void> {
   if (!env.HUBSPOT_ACCESS_TOKEN) throw new Error('HubSpot is not configured');
@@ -71,6 +77,8 @@ async function saveInquiry(env: Env, submission: {
   if (submission.company) properties.company = submission.company;
   properties.message = [
     submission.service ? `Service: ${submission.service}` : '',
+    submission.project ? `Related project: ${submission.project}` : '',
+    submission.engagement ? `Engagement: ${submission.engagement}` : '',
     submission.message,
   ].filter(Boolean).join('\n\n');
 
@@ -122,6 +130,8 @@ async function sendEmailNotification(env: Env, submission: {
   email: string;
   company: string;
   service: string;
+  project: string;
+  engagement: string;
   message: string;
 }): Promise<void> {
   const accessKey = env.WEB3FORMS_ACCESS_KEY ?? env.PUBLIC_WEB3FORMS_ACCESS_KEY;
@@ -138,6 +148,8 @@ async function sendEmailNotification(env: Env, submission: {
         email: submission.email,
         company: submission.company,
         service: submission.service,
+        project: submission.project,
+        engagement: submission.engagement,
         message: submission.message,
       }),
     });
@@ -181,6 +193,8 @@ export async function onRequestPost({ request, env }: { request: Request; env: E
     email: text(payload.email, 254).toLowerCase(),
     company: text(payload.company, 160),
     service: text(payload.service, 160),
+    project: projectIds.includes(payload.project as typeof projectIds[number]) ? String(payload.project) : '',
+    engagement: engagementIds.includes(payload.engagement as typeof engagementIds[number]) ? String(payload.engagement) : '',
     message: text(payload.message, 10_000),
   };
   const turnstileToken = text(payload.turnstileToken, 2_048);

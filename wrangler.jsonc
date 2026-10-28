@@ -1,5 +1,15 @@
 {
   "name": "portfolio",
   "pages_build_output_dir": "./dist",
-  "compatibility_date": "2026-07-01"
+  "compatibility_date": "2026-07-01",
+  "analytics_engine_datasets": [
+    { "binding": "CONVERSIONS", "dataset": "portfolio_conversions" }
+  ],
+  "env": {
+    "preview": {
+      "analytics_engine_datasets": [
+        { "binding": "CONVERSIONS", "dataset": "portfolio_conversions_preview" }
+      ]
+    }
+  }
 }

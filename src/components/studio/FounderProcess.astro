@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content';
+import ScrollReveal from '@/components/common/ScrollReveal.astro';
+import Icon from '@/components/common/Icon.astro';
+import { defaultLang, type Lang } from '@/lib/i18n';
+import { getStudioCopy, localePath } from '@/lib/studio';
+interface Props { index?: string }
+const { index = '03' } = Astro.props;
+const lang = (Astro.currentLocale ?? defaultLang) as Lang;
+const copy = getStudioCopy(lang);
+const entries = await getCollection('profile', ({ data }) => data.lang === lang);
+const profile = entries[0].data.profile;
+const avatar = `https://2.gravatar.com/avatar/${profile.gravatarHash}?s=320&d=initials`;
+---
+<section id="process" aria-labelledby="process-heading" class="studio-section border-y border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.4)]">
+  <div class="studio-container grid items-start gap-12 lg:grid-cols-2 lg:gap-20">
+    <ScrollReveal animation="fade-up">
+      <p class="eyebrow mb-5"><span class="text-[rgb(var(--color-text-muted))]">{index}</span>{copy.about.founderEyebrow}</p>
+      <div class="flex flex-wrap items-center gap-5">
+        <img src={avatar} width="160" height="160" loading="lazy" decoding="async" alt={profile.name} class="h-24 w-24 rounded-lg border border-[rgb(var(--color-border))] object-cover sm:h-32 sm:w-32" />
+        <div class="min-w-0 flex-1">
+          <h2 class="text-2xl font-semibold tracking-tight sm:text-3xl">{profile.shortName}</h2>
+          <p class="mt-2 text-sm text-[rgb(var(--color-accent-hover))]">{copy.about.founderRole}</p>
+        </div>
+      </div>
+      <p class="mt-6 text-lg leading-relaxed">{copy.about.founderBio}</p>
+      <p class="mt-4 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{copy.about.story[0]}</p>
+      <a href={`${localePath('/about/', lang)}#founder`} class="link-arrow mt-5 text-sm">{copy.labels.meetFounder}<Icon name="arrow-up-right" size={16} /></a>
+    </ScrollReveal>
+    <div>
+      <ScrollReveal animation="fade-up"><h2 id="process-heading" class="text-2xl font-semibold tracking-tight sm:text-3xl">{copy.sections.process.title}</h2></ScrollReveal>
+      <ol class="mt-6">
+        {copy.process.map((step, index) => (
+          <li class="border-t border-[rgb(var(--color-border))] py-5">
+            <ScrollReveal animation="fade-up">
+              <div class="flex items-baseline gap-4">
+                <span class="mono-label text-[rgb(var(--color-accent-hover))]" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                <div><h3 class="text-lg font-semibold">{step.title}</h3><p class="mt-2 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">{step.description}</p></div>
+              </div>
+            </ScrollReveal>
+          </li>
+        ))}
+      </ol>
+      <a href={`${localePath('/services/', lang)}#process`} class="link-arrow mt-3 text-sm">{copy.labels.fullProcess}<Icon name="arrow-up-right" size={16} /></a>
+    </div>
+  </div>
+</section>
+

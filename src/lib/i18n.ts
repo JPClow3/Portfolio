@@ -29,7 +29,6 @@ export const ui = {
     'projects.emptyTitle': 'No Projects Yet',
     'projects.emptyDesc': 'New case studies are being documented and will appear here soon.',
     // Home
-    'home.capabilities': 'Capabilities',
     'home.live': 'Live ↗',
     'home.problem': 'Problem',
     'home.constraint': 'Constraint',
@@ -72,7 +71,7 @@ export const ui = {
     'contact.form.unavailable': 'The form is temporarily unavailable. Email joao@jpclow.dev and we will reply with next steps.',
     'contact.form.placeholderEmail': 'you@company.com',
     'contact.form.placeholderMessage': 'What are you building or fixing? Include goals, timeline, and existing systems.',
-    'contact.success': 'Thanks — your message is in. We will reply with next steps soon.',
+    'contact.success': 'Thanks — your message is in. We will reply with next steps within 2 business days.',
     'contact.error': 'Something went wrong. Please try again or email joao@jpclow.dev directly.',
     'contact.error.network': 'Network error while sending. Please check your connection and try again.',
     'contact.turnstile.required': 'Please complete the security check before sending.',
@@ -144,7 +143,6 @@ export const ui = {
     'projects.emptyTitle': 'Nenhum Projeto Ainda',
     'projects.emptyDesc': 'Novos cases estão sendo documentados e aparecerão aqui em breve.',
     // Home
-    'home.capabilities': 'Capacidades',
     'home.live': 'Ao vivo ↗',
     'home.problem': 'Problema',
     'home.constraint': 'Restrição',
@@ -187,7 +185,7 @@ export const ui = {
     'contact.form.unavailable': 'O formulário está temporariamente indisponível. Envie um email para joao@jpclow.dev e responderemos com os próximos passos.',
     'contact.form.placeholderEmail': 'voce@empresa.com',
     'contact.form.placeholderMessage': 'O que você quer construir ou resolver? Inclua objetivos, prazo e sistemas existentes.',
-    'contact.success': 'Obrigado — recebemos sua mensagem. Responderemos em breve com os próximos passos.',
+    'contact.success': 'Obrigado — recebemos sua mensagem. Responderemos em até 2 dias úteis com os próximos passos.',
     'contact.error': 'Algo deu errado. Tente novamente ou envie um email para joao@jpclow.dev.',
     'contact.error.network': 'Erro de rede ao enviar. Verifique sua conexão e tente novamente.',
     'contact.turnstile.required': 'Conclua a verificação de segurança antes de enviar.',

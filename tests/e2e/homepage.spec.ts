@@ -118,7 +118,7 @@ test('homepage loads and displays main sections', async ({ page }) => {
   await expect(footer).toBeVisible();
 });
 
-test('homepage prioritizes the client-facing project showcase', async ({ page }) => {
+test('homepage presents project outcomes alongside technical evidence', async ({ page }) => {
   await page.goto('/');
 
   const expectedProjects = [
@@ -133,15 +133,10 @@ test('homepage prioritizes the client-facing project showcase', async ({ page })
 
   await expect(cards).toHaveCount(expectedProjects.length);
   for (const [index, title] of expectedProjects.entries()) {
-    await expect(cards.nth(index).locator('h3')).toHaveText(title);
+    await expect(cards.nth(index).getByRole('heading')).toHaveText(title);
     await expect(cards.nth(index).locator('[data-testid="project-outcome"]')).toBeVisible();
-    // A proof metric is optional: only shown when the project content defines one
-    expect(await cards.nth(index).locator('[data-testid="project-proof"]').count()).toBeLessThanOrEqual(1);
-    await expect(cards.nth(index).locator('[data-testid="project-capabilities"] li')).toHaveCount(2);
-    await expect(cards.nth(index).getByText('Problem', { exact: true })).toHaveCount(0);
-    await expect(cards.nth(index).getByText('Constraint', { exact: true })).toHaveCount(0);
-    await expect(cards.nth(index).getByText('Decision', { exact: true })).toHaveCount(0);
-    await expect(cards.nth(index).getByText('Outcome', { exact: true })).toHaveCount(0);
+    await expect(cards.nth(index).locator('[data-testid="project-proof"]')).toBeVisible();
+    await expect(cards.nth(index).locator('[data-testid="project-capabilities"]')).toBeVisible();
   }
 
   const primaryNav = page.getByRole('navigation', { name: 'Primary' });
@@ -190,7 +185,7 @@ test('project card interaction keeps case study links clickable', async ({ page 
   await expect(page.locator('[data-testid="project-card"]').first()).toContainText('Moto Track');
   await throughlineCard.scrollIntoViewIfNeeded();
   await expect(throughlineCard).toBeVisible();
-  await throughlineCard.locator('a[href="/projects/throughline/"]').click();
+  await throughlineCard.locator('a[href="/projects/throughline/"]').last().click();
   await expect(page).toHaveURL(/\/projects\/throughline\/?$/);
 });
 
@@ -221,10 +216,12 @@ test('homepage presents the B2B offer and keeps private client source protected'
 
   await expect(page.locator('#services article')).toHaveCount(6);
   await expect(page.locator('#services').getByRole('heading', { name: 'Custom web platforms' })).toBeVisible();
-  await expect(page.locator('#process li article')).toHaveCount(4);
-  await expect(page.locator('#engagement li article')).toHaveCount(3);
+  await expect(page.locator('#process ol > li')).toHaveCount(4);
+  await expect(page.locator('.work-stack-item')).toHaveCount(6);
+  await expect(page.locator('#engineering .code-window')).toBeVisible();
   await expect(page.locator('#faq details')).toHaveCount(7);
-  await expect(page.locator('#engineering figure pre')).toBeVisible();
+  await expect(page.locator('#process img')).toBeVisible();
+  await expect(page.locator('#process a[href="/services/#process"]')).toBeVisible();
 
   const loreboundCard = page.locator('[data-testid="project-card"]').filter({ hasText: 'Lorebound' }).first();
   await expect(loreboundCard.getByText('In development', { exact: true })).toBeVisible();

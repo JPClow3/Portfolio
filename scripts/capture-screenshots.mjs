@@ -30,10 +30,13 @@ async function dismissConsent(page) {
 }
 
 async function capture(browser, { slug, url }) {
-  const page = await browser.newPage({ viewport: VIEWPORT, deviceScaleFactor: 2 });
+  const page = await browser.newPage({ viewport: VIEWPORT, deviceScaleFactor: 1 });
   await page.goto(url, { waitUntil: 'networkidle', timeout: 45000 });
   await dismissConsent(page);
   await page.waitForTimeout(600);
+  // Clicking a consent button near the footer can scroll the page down.
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await page.waitForFunction(() => window.scrollY === 0);
   const outPath = path.join(outDir, `${slug}.png`);
   await page.screenshot({ path: outPath });
   await page.close();
@@ -43,7 +46,12 @@ async function capture(browser, { slug, url }) {
 async function main() {
   await mkdir(outDir, { recursive: true });
   const browser = await chromium.launch();
-  for (const target of targets) {
+  const requested = process.argv.slice(2);
+  const selected = requested.length ? targets.filter(target => requested.includes(target.slug)) : targets;
+  if (selected.length === 0 || requested.some(slug => !targets.some(target => target.slug === slug))) {
+    throw new Error(`Unknown screenshot target. Choose: ${targets.map(target => target.slug).join(', ')}`);
+  }
+  for (const target of selected) {
     try {
       await capture(browser, target);
     } catch (err) {

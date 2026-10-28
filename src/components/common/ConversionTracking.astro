@@ -1,0 +1,61 @@
+---
+import { getCollection } from 'astro:content';
+const projects = (await getCollection('projects', ({ data }) => data.caseStudy && data.lang === 'en')).map(({ data }) => data.slug);
+---
+<div id="conversion-config" hidden data-projects={JSON.stringify(projects)}></div>
+<script>
+  import { readInquiryContext, projectIds } from '@/lib/inquiry';
+  import { pageName, placements, type ConversionEvent } from '@/lib/conversion-schema';
+
+  function initConversions() {
+    const config = document.getElementById('conversion-config');
+    if (!config || config.dataset.ready) return;
+    config.dataset.ready = 'true';
+    const privacy = navigator as Navigator & { globalPrivacyControl?: boolean };
+    if (navigator.doNotTrack === '1' || privacy.globalPrivacyControl === true) return;
+    // Local browser tests opt in at build time and intercept the requests.
+    if (import.meta.env.DEV || (['localhost', '127.0.0.1'].includes(location.hostname) && import.meta.env.PUBLIC_CONVERSION_TESTING !== 'true')) return;
+    const context = readInquiryContext(location.search);
+    const page = pageName(location.pathname);
+    const locale = location.pathname.startsWith('/pt/') ? 'pt' : 'en';
+    const slug = location.pathname.split('/').filter(Boolean).at(-1) ?? '';
+    const knownCases: string[] = JSON.parse(config.dataset.projects ?? '[]');
+    const project = page === 'case-study' && knownCases.includes(slug) ? slug : context.project;
+
+    const send = (event: ConversionEvent['event'], extra: Partial<ConversionEvent> = {}) => {
+      const payload: ConversionEvent = { event, page, locale, ...context, project, placement: 'other', ...extra };
+      const body = JSON.stringify(payload);
+      try {
+        if (navigator.sendBeacon?.('/api/events', new Blob([body], { type: 'application/json' }))) return;
+        void fetch('/api/events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }).catch(() => {});
+      } catch { /* Analytics must never interrupt navigation or the form. */ }
+    };
+    send('page_view');
+    if (page === 'case-study' && knownCases.includes(slug)) send('case_study_view');
+    document.addEventListener('click', (event) => {
+      const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a[href]') : null;
+      if (!link || link.hasAttribute('data-lang-link')) return;
+      const url = new URL(link.href, location.origin);
+      if (!(url.origin === location.origin && /^\/(pt\/)?contact\/?$/.test(url.pathname)) && url.protocol !== 'mailto:') return;
+      const id = link.closest('section[id], header[id], footer[id]')?.id ?? 'other';
+      const placement = placements.includes(id as ConversionEvent['placement']) ? id as ConversionEvent['placement'] : 'other';
+      send('inquiry_click', { ...readInquiryContext(url.search), placement });
+    });
+    const form = document.querySelector<HTMLFormElement>('#contact-form');
+    if (!form) return;
+    let started = false;
+    const formContext = () => ({
+      engagement: form.querySelector<HTMLSelectElement>('#engagement')?.value ?? '',
+      service: form.querySelector<HTMLSelectElement>('#service')?.selectedOptions[0]?.dataset.serviceId ?? '',
+      project: projectIds.includes(form.dataset.project as typeof projectIds[number]) ? form.dataset.project! : '',
+      placement: 'form' as const,
+    });
+    const start = () => { if (!started) { started = true; send('form_start', formContext()); } };
+    form.addEventListener('input', start);
+    form.addEventListener('change', start);
+    form.addEventListener('inquiry:success', () => { start(); send('form_success', formContext()); started = false; });
+  }
+  initConversions();
+  document.addEventListener('astro:page-load', initConversions);
+</script>
+

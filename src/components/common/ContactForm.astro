@@ -1,11 +1,13 @@
 ---
 import Icon from '@/components/common/Icon.astro';
+import { getCollection } from 'astro:content';
 import { defaultLang, type Lang, ui } from '@/lib/i18n';
 import { getStudioCopy } from '@/lib/studio';
 
 const currentLang = (Astro.currentLocale ?? defaultLang) as Lang;
 const t = ui[currentLang] ?? ui[defaultLang];
 const copy = getStudioCopy(currentLang);
+const projects = (await getCollection('projects', ({ data }) => data.lang === currentLang && data.caseStudy)).map(({ data }) => ({ slug: data.slug, title: data.title }));
 
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITEKEY ?? '';
 const isContactFormEnabled = true;
@@ -17,7 +19,12 @@ const labelClass = 'block text-sm font-semibold text-[rgb(var(--color-text-prima
 ---
 
 {isContactFormEnabled ? (
-  <form id="contact-form" class="panel space-y-5 p-5 text-left sm:p-7" novalidate>
+  <form id="contact-form" data-projects={JSON.stringify(projects)} class="panel space-y-5 p-5 text-left sm:p-7" novalidate>
+    <input type="hidden" name="project_reference" value="" />
+    <div id="inquiry-context" class="hidden rounded-md border border-[rgb(var(--color-border))] p-3 text-sm">
+      <span>{copy.contactPage.projectContext}: </span><strong data-project-title></strong>
+      <button type="button" data-remove-context class="u-link ml-3 min-h-11">{copy.contactPage.removeContext}</button>
+    </div>
     <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" />
 
     <div class="flex items-center justify-between gap-4">
@@ -51,10 +58,19 @@ const labelClass = 'block text-sm font-semibold text-[rgb(var(--color-text-prima
         </label>
         <select id="service" name="service" class={inputClass}>
           <option value="">{t['contact.form.serviceUnsure']}</option>
-          {copy.services.map((service) => <option value={service.title}>{service.title}</option>)}
+          {copy.services.map((service) => <option value={service.title} data-service-id={service.id}>{service.title}</option>)}
         </select>
       </div>
     </div>
+
+    <details class="rounded-md border border-[rgb(var(--color-border))] p-3" data-engagement-options>
+      <summary class="cursor-pointer text-sm font-semibold">{copy.contactPage.engagementLabel}</summary>
+      <label for="engagement" class="sr-only">{copy.contactPage.engagementLabel}</label>
+      <select id="engagement" name="engagement" class:list={[inputClass, 'mt-3']}>
+        <option value="">{copy.contactPage.engagementUnsure}</option>
+        {copy.engagement.map((model) => <option value={model.id}>{model.title}</option>)}
+      </select>
+    </details>
 
     <div class="space-y-2">
       <label for="message" class={labelClass}>{t['contact.form.message']}</label>
@@ -72,6 +88,7 @@ const labelClass = 'block text-sm font-semibold text-[rgb(var(--color-text-prima
     <button id="submit-btn" type="submit" class="btn btn-primary w-full disabled:cursor-not-allowed disabled:opacity-65 sm:w-auto">
       {t['contact.form.send']}
     </button>
+    <p class="text-sm text-[rgb(var(--color-text-secondary))]">{copy.contactPage.responseTime}</p>
 
     <p class="text-xs leading-relaxed text-[rgb(var(--color-text-muted))]">{t['contact.form.privacy']}</p>
 
@@ -93,6 +110,55 @@ const labelClass = 'block text-sm font-semibold text-[rgb(var(--color-text-prima
 {isTurnstileEnabled && isContactFormEnabled && (
   <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 )}
+
+<script>
+  import { readInquiryContext, inquirySearch } from '@/lib/inquiry';
+  function initInquiryContext() {
+    const form = document.querySelector<HTMLFormElement>('#contact-form');
+    if (!form || form.dataset.contextReady) return;
+    form.dataset.contextReady = 'true';
+    const context = readInquiryContext(location.search);
+    const service = form.querySelector<HTMLSelectElement>('#service')!;
+    const engagement = form.querySelector<HTMLSelectElement>('#engagement')!;
+    const reference = form.querySelector<HTMLInputElement>('[name="project_reference"]')!;
+    const banner = form.querySelector<HTMLElement>('#inquiry-context')!;
+    const title = banner.querySelector<HTMLElement>('[data-project-title]')!;
+    const projects: { slug: string; title: string }[] = JSON.parse(form.dataset.projects ?? '[]');
+    const project = projects.find(({ slug }) => slug === context.project);
+    const option = Array.from(service.options).find((item) => item.dataset.serviceId === context.service);
+    if (option) { option.selected = true; option.defaultSelected = true; }
+    const model = Array.from(engagement.options).find((item) => item.value === context.engagement);
+    if (model) { model.selected = true; model.defaultSelected = true; }
+    if (context.engagement) form.querySelector<HTMLDetailsElement>('[data-engagement-options]')!.open = true;
+    if (project) {
+      form.dataset.project = project.slug;
+      reference.value = reference.defaultValue = project.title;
+      title.textContent = project.title;
+      banner.classList.remove('hidden');
+    }
+    const syncLinks = () => {
+      const search = inquirySearch({ project: form.dataset.project ?? '', service: service.selectedOptions[0]?.dataset.serviceId ?? '', engagement: engagement.value });
+      history.replaceState(history.state, '', location.pathname + search + location.hash);
+      document.querySelectorAll<HTMLAnchorElement>('[data-lang-link]').forEach((link) => {
+        const url = new URL(link.href); url.search = search; link.href = url.href;
+      });
+    };
+    for (const select of [service, engagement]) select.addEventListener('change', () => {
+      for (const item of Array.from(select.options)) item.defaultSelected = item.selected;
+      syncLinks();
+    });
+    banner.querySelector('button')!.addEventListener('click', () => {
+      delete form.dataset.project;
+      reference.value = reference.defaultValue = '';
+      banner.classList.add('hidden');
+      syncLinks();
+      form.querySelector<HTMLInputElement>('#name')!.focus();
+    });
+    form.addEventListener('reset', () => queueMicrotask(syncLinks));
+  }
+  initInquiryContext();
+  document.addEventListener('astro:page-load', initInquiryContext);
+</script>
 
 {isContactFormEnabled && (
   <script
@@ -250,6 +316,8 @@ const labelClass = 'block text-sm font-semibold text-[rgb(var(--color-text-prima
               email: formData.get('email'),
               company: formData.get('company'),
               service: formData.get('service'),
+              project: form.dataset.project ?? '',
+              engagement: formData.get('engagement'),
               message: formData.get('message'),
               turnstileToken,
               botcheck: formData.get('botcheck'),
@@ -258,6 +326,7 @@ const labelClass = 'block text-sm font-semibold text-[rgb(var(--color-text-prima
 
           const data = await response.json().catch(() => null);
           if (response.ok && data?.success) {
+            form.dispatchEvent(new CustomEvent('inquiry:success', { bubbles: true }));
             form.reset();
             setStatus('success', messages.success);
             resetTurnstile();
@@ -266,7 +335,9 @@ const labelClass = 'block text-sm font-semibold text-[rgb(var(--color-text-prima
 
           if (response.status === 403 && data?.code === 'turnstile_failed') {
             setTurnstileError(messages.turnstileFailed);
+            setStatus('error', messages.turnstileFailed);
             resetTurnstile();
+            return;
           }
 
           setStatus('error', messages.error);

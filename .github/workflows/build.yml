@@ -23,11 +23,16 @@ jobs:
         run: node scripts/validate-commit-message.mjs --range "$BASE_SHA" "$HEAD_SHA"
       - run: npm ci
       - run: npm run build
+        env:
+          PUBLIC_TURNSTILE_SITEKEY: "1x00000000000000000000AA"
+          PUBLIC_CONVERSION_TESTING: "true"
       - run: npx astro check
       - run: npm run test:unit
       - run: npx playwright install --with-deps chromium
       # Includes tests/e2e/accessibility.spec.ts (axe WCAG 2.1 A/AA, dark + light themes)
       - run: npm run test:e2e:chromium
+      # Lighthouse audits the production bundle, without local analytics opt-in.
+      - run: npm run build
       - name: Lighthouse budgets
         env:
           LH_PERF_MOBILE: "75"

@@ -35,7 +35,7 @@ const primaryHref = (project: Project) =>
 
 <section id="work" aria-labelledby="work-heading" class="studio-section">
   <div class="studio-container">
-    <SectionHeading id="work-heading" index="02" eyebrow={section.eyebrow} title={section.title} lead={section.lead}>
+    <SectionHeading id="work-heading" index="01" eyebrow={section.eyebrow} title={section.title} lead={section.lead}>
       <a href={localePath('/projects/', currentLang)} class="link-arrow text-sm lg:col-start-2">
         {section.cta}
         <Icon name="arrow-up-right" size={16} />
@@ -66,7 +66,7 @@ const primaryHref = (project: Project) =>
                 </div>
 
                 <h3 class="mt-8 text-3xl font-semibold tracking-tight sm:text-4xl">{project.data.title}</h3>
-                <p data-testid="project-outcome" class="mt-4 text-pretty text-base leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.description}</p>
+                <p data-testid="project-outcome" class="mt-4 text-pretty text-base leading-relaxed text-[rgb(var(--color-text-secondary))]">{project.data.showcase?.outcome ?? project.data.description}</p>
 
                 <div class="mt-6 grid gap-4 sm:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
                   {proof && (
@@ -77,7 +77,7 @@ const primaryHref = (project: Project) =>
                   )}
                   {project.data.highlights.length > 0 && (
                     <div data-testid="project-capabilities">
-                      <p class="mono-label">{t['home.capabilities']}</p>
+                      <p class="mono-label">{t['project.highlights']}</p>
                       <ul class="mt-2 grid gap-1.5 text-sm leading-relaxed text-[rgb(var(--color-text-secondary))]">
                         {project.data.highlights.slice(0, 2).map((highlight) => (
                           <li class="flex gap-2">

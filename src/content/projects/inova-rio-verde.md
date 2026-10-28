@@ -12,6 +12,10 @@ caseStudy: true
 status: "live"
 role: "Freelance full-stack — design and development, solo"
 year: "2026"
+showcase:
+  problem: "A list of institutions could not show where Rio Verde’s innovation hubs are or how they connect."
+  contribution: "Solo freelance delivery: visual design, interactive mapping, frontend, backend and deployment."
+  outcome: "An interactive map makes the city’s hubs, incubators and innovation programs explorable."
 decisionLog:
   problem: "Rio Verde's innovation ecosystem — hubs, incubators, universities, and programs — had no shared visual way to show where the city's innovation actors are and how they connect."
   constraint: "The site needed an interactive geospatial layer without the latency and operational cost of a heavy traditional backend, while staying easy to update."

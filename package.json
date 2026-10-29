@@ -38,7 +38,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "@types/three": "^0.186.0",
     "astro": "^7.3.8",
-    "satori": "^0.33.4",
+    "satori": "^0.33.5",
     "satori-html": "^0.3.2",
     "svelte": "^5.57.2",
     "tailwindcss": "^4.3.2",
@@ -48,8 +48,8 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.64.0",
-    "@vitest/ui": "^5.0.3",
-    "happy-dom": "^20.14.6",
+    "@vitest/ui": "^5.0.5",
+    "happy-dom": "^21.0.4",
     "lighthouse": "^13.5.0",
     "sharp": "^0.35.5",
     "vitest": "^5.0.3"

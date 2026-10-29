@@ -9,6 +9,32 @@ test.beforeEach(async ({ page }) => {
 
 for (const lang of ['en','pt']) {
   const prefix = lang === 'pt' ? '/pt' : '';
+  test(`${lang}: engineering clears the active navigation between services and process`, async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(prefix + '/');
+    await page.evaluate(() => document.fonts.ready);
+    await page.mouse.move(0, 0);
+
+    const activeLinks = page.locator('[data-nav-link][data-active="true"]');
+    const indicator = page.locator('[data-nav-indicator]');
+    for (const id of ['services', 'engineering', 'process', 'engineering', 'services']) {
+      // Put the header's section-selection anchor well inside each section.
+      await page.locator(`#${id}`).evaluate(section => {
+        const rect = section.getBoundingClientRect();
+        window.scrollTo({ top: scrollY + rect.top + rect.height / 2 - innerHeight * 0.38, behavior: 'instant' });
+      });
+      if (id === 'engineering') {
+        await expect(activeLinks).toHaveCount(0);
+        await expect(page.locator('[data-nav-link][aria-current]')).toHaveCount(0);
+        await expect(indicator).toHaveAttribute('data-visible', 'false');
+      } else {
+        await expect(activeLinks).toHaveCount(2);
+        await expect(page.locator(`[data-nav-track] [data-nav-section="${id}"]`)).toHaveAttribute('aria-current', 'location');
+        await expect(indicator).toHaveAttribute('data-visible', 'true');
+      }
+    }
+  });
   test(`${lang}: work leads the homepage and preserves all six selected projects`, async ({page}) => {
     await page.emulateMedia({reducedMotion:'reduce'});
     await page.goto(prefix+'/');

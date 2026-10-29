@@ -38,6 +38,8 @@ For optional Turnstile protection, configure `PUBLIC_TURNSTILE_SITEKEY` as a Clo
 - `HUBSPOT_ACCESS_TOKEN` — HubSpot service key with `crm.objects.contacts.read` and `crm.objects.contacts.write` scopes. Inquiries are stored in the contact's `message` property.
 - `WEB3FORMS_ACCESS_KEY` — optional; keeps the email notification enabled.
 
+The current form uses `WEB3FORMS_ACCESS_KEY` only in the Pages Function at runtime; Astro does not read it during the build. The legacy `PUBLIC_WEB3FORMS_ACCESS_KEY` name is still accepted by the Function for compatibility. The former static Web3Forms form (PR #90) required that public variable in the Pages **build environment**, because Astro evaluated `import.meta.env` while generating HTML. A `vars` entry in `wrangler.jsonc` did not provide it to the build. Keep build variables in the Pages project settings and the current notification key as a runtime secret; no Web3Forms key belongs in `wrangler.jsonc` or the browser bundle. See [Pages build configuration](https://developers.cloudflare.com/pages/configuration/build-configuration/#environment-variables).
+
 Register the Turnstile widget for `jpclow.dev` and local development hosts if you enable Turnstile. For local Pages Functions, copy `.dev.vars.example` to `.dev.vars`, fill in the secrets, run `npm run build`, then serve the output with `npx wrangler pages dev dist`. `npm run dev` alone does not run Cloudflare Pages Functions.
 
 ## Project structure

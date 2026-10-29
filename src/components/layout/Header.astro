@@ -500,7 +500,7 @@ const contactHref = `${localePrefix}/contact/`;
 
   function getHomepageSections() {
     // Sections without a nav link clear the highlight while they are in view
-    return ['top', 'work', 'services', 'process', 'faq', 'contact']
+    return ['top', 'work', 'services', 'engineering', 'process', 'faq', 'contact']
       .map((id) => document.getElementById(id))
       .filter((section): section is HTMLElement => Boolean(section));
   }

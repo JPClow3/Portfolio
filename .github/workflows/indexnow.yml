@@ -9,6 +9,8 @@ on:
     paths:
       - 'src/**'
       - 'public/projects/**'
+      - 'scripts/submit-indexnow.mjs'
+      - '.github/workflows/indexnow.yml'
   schedule:
     - cron: '17 5 * * *'
   workflow_dispatch:
@@ -27,4 +29,7 @@ jobs:
         env:
           BEFORE_SHA: ${{ github.event.before }}
           HEAD_SHA: ${{ github.sha }}
+          # The same production deployment, without the custom-domain bot challenge.
+          # Submitted URLs and keyLocation still use https://jpclow.dev.
+          INDEXNOW_FETCH_ORIGIN: 'https://portfolio-44w.pages.dev'
         run: node scripts/submit-indexnow.mjs

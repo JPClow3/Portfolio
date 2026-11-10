@@ -1,14 +1,12 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 
 const origin = 'https://jpclow.dev';
 const host = new URL(origin).host;
-const key = readFileSync(new URL('../public/indexnow-key.txt', import.meta.url), 'utf8').trim();
 const keyLocation = `${origin}/indexnow-key.txt`;
-const head = process.env.HEAD_SHA || execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
-const before = process.env.BEFORE_SHA;
 
-function changedFiles() {
+function changedFiles(head, before) {
   let base = before;
   if (!base || /^0+$/.test(base)) {
     base = execFileSync('git', ['rev-list', '-1', '--before=48 hours ago', head], { encoding: 'utf8' }).trim();
@@ -44,49 +42,81 @@ function urlsForFiles(files, allUrls) {
   return [...urls].filter((url) => allUrls.includes(url));
 }
 
-async function fetchText(url) {
-  const response = await fetch(url, { headers: { 'user-agent': 'JPCLOW IndexNow/1.0' }, cache: 'no-store' });
-  if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
-  return response.text();
-}
-
-const files = changedFiles();
-if (!files.length) {
-  console.log('No changed files to submit.');
-  process.exit(0);
-}
-
-const sitemap = await fetchText(`${origin}/sitemap-0.xml`);
-const allUrls = [...sitemap.matchAll(/<url>\s*<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-const urls = urlsForFiles(files, allUrls);
-if (!urls.length) {
-  console.log('No indexable URLs changed.');
-  process.exit(0);
-}
-
-let deployed = false;
-for (let attempt = 0; attempt < 20; attempt++) {
-  try {
-    const publishedSha = (await fetchText(`${origin}/build-sha.txt?check=${Date.now()}`)).trim();
-    const publishedKey = (await fetchText(`${keyLocation}?check=${Date.now()}`)).trim();
-    if (publishedSha === head && publishedKey === key) {
-      deployed = true;
-      break;
-    }
-  } catch (error) {
-    console.log(`Waiting for deployment: ${error.message}`);
+export async function submitIndexNow({
+  head,
+  files,
+  key,
+  fetchOrigin = origin,
+  fetchImpl = fetch,
+  wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+  attempts = 20,
+}) {
+  // Only artifact reads use the Pages hostname. All submitted URLs and keyLocation
+  // stay on the canonical site, even when its bot protection challenges CI runners.
+  const artifactOrigin = new URL(fetchOrigin).origin;
+  async function fetchText(path) {
+    const url = `${artifactOrigin}${path}?check=${Date.now()}`;
+    const response = await fetchImpl(url, {
+      headers: { 'user-agent': 'JPCLOW IndexNow/1.0' },
+      cache: 'no-store',
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
+    return response.text();
   }
-  await new Promise((resolve) => setTimeout(resolve, 15_000));
-}
-if (!deployed) throw new Error(`Deployment ${head} or IndexNow key is not public yet.`);
 
-const response = await fetch('https://api.indexnow.org/indexnow', {
-  method: 'POST',
-  headers: { 'content-type': 'application/json; charset=utf-8' },
-  body: JSON.stringify({ host, key, keyLocation, urlList: urls }),
-});
-if (![200, 202].includes(response.status)) {
-  throw new Error(`IndexNow rejected ${urls.length} URLs: HTTP ${response.status} ${await response.text()}`);
+  let allUrls;
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    try {
+      const publishedSha = (await fetchText('/build-sha.txt')).trim();
+      if (publishedSha !== head) throw new Error(`Production still serves ${publishedSha}, waiting for ${head}.`);
+      const publishedKey = (await fetchText('/indexnow-key.txt')).trim();
+      if (publishedKey !== key) throw new Error('The published IndexNow key does not match the repository key.');
+
+      // Read the sitemap only after this commit is deployed, and retry transient
+      // artifact failures through the same bounded deployment wait.
+      const sitemap = await fetchText('/sitemap-0.xml');
+      const publishedUrls = [...sitemap.matchAll(/<url>\s*<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+      if (!publishedUrls.length || publishedUrls.some((url) => new URL(url).origin !== origin)) {
+        throw new Error('The published sitemap must contain canonical jpclow.dev URLs.');
+      }
+      allUrls = publishedUrls;
+      break;
+    } catch (error) {
+      console.log(`Waiting for deployment: ${error.message}`);
+    }
+    if (attempt + 1 < attempts) await wait(15_000);
+  }
+  if (!allUrls) throw new Error(`Deployment ${head} or its IndexNow artifacts at ${artifactOrigin} are not public yet.`);
+
+  const urls = urlsForFiles(files, allUrls);
+  if (!urls.length) {
+    console.log('No indexable URLs changed.');
+    return;
+  }
+
+  const response = await fetchImpl('https://api.indexnow.org/indexnow', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json; charset=utf-8' },
+    body: JSON.stringify({ host, key, keyLocation, urlList: urls }),
+    signal: AbortSignal.timeout(15_000),
+  });
+  if (![200, 202].includes(response.status)) {
+    throw new Error(`IndexNow rejected ${urls.length} URLs: HTTP ${response.status} ${await response.text()}`);
+  }
+  console.log(`IndexNow accepted ${urls.length} changed URLs (HTTP ${response.status}).`);
+  for (const url of urls) console.log(url);
 }
-console.log(`IndexNow accepted ${urls.length} changed URLs (HTTP ${response.status}).`);
-for (const url of urls) console.log(url);
+
+async function main() {
+  const head = process.env.HEAD_SHA || execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+  const files = changedFiles(head, process.env.BEFORE_SHA);
+  if (!files.length) {
+    console.log('No changed files to submit.');
+    return;
+  }
+  const key = readFileSync(new URL('../public/indexnow-key.txt', import.meta.url), 'utf8').trim();
+  await submitIndexNow({ head, files, key, fetchOrigin: process.env.INDEXNOW_FETCH_ORIGIN || origin });
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main();

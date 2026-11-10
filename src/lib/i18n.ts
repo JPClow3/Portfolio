@@ -17,6 +17,13 @@ export const ui = {
     'nav.process': 'Process',
     'nav.company': 'Company',
     'nav.startProject': 'Start a project',
+    'nav.primaryLabel': 'Primary',
+    'nav.mobileLabel': 'Mobile navigation',
+    'nav.toggleMenu': 'Toggle navigation menu',
+    'nav.homeLabel': 'JPCLOW home',
+    'nav.languageLabel': 'Select language',
+    'theme.lightLabel': 'Switch to light mode',
+    'theme.darkLabel': 'Switch to dark mode',
 
     // Experience
     'experience.present': 'Present',
@@ -131,6 +138,13 @@ export const ui = {
     'nav.process': 'Processo',
     'nav.company': 'Empresa',
     'nav.startProject': 'Iniciar projeto',
+    'nav.primaryLabel': 'Principal',
+    'nav.mobileLabel': 'Navegação móvel',
+    'nav.toggleMenu': 'Abrir ou fechar menu de navegação',
+    'nav.homeLabel': 'Página inicial da JPCLOW',
+    'nav.languageLabel': 'Selecionar idioma',
+    'theme.lightLabel': 'Mudar para o tema claro',
+    'theme.darkLabel': 'Mudar para o tema escuro',
 
     // Experience
     'experience.present': 'Presente',

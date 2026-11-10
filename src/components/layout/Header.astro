@@ -58,14 +58,14 @@ const contactHref = `${localePrefix}/contact/`;
   id="header"
   class="force-dark fixed inset-x-0 top-0 z-50 border-b border-transparent transition-[background-color,border-color,box-shadow] duration-300"
 >
-  <nav aria-label="Primary" class="studio-container">
+  <nav aria-label={t['nav.primaryLabel']} class="studio-container">
     <div class="flex h-16 items-center justify-between gap-4 lg:h-[4.5rem]">
       <a
         href={`${localePrefix}/`}
         id="site-logo"
         data-logo-signal
         class="inline-flex shrink-0 items-center transition-opacity hover:opacity-85"
-        aria-label="JPCLOW home"
+        aria-label={t['nav.homeLabel']}
       >
         <img
           src="/brand/jpclow-logo-negative.svg"
@@ -95,7 +95,7 @@ const contactHref = `${localePrefix}/contact/`;
       </div>
 
       <div class="flex items-center gap-2">
-        <div class="hidden items-center gap-0.5 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.55)] p-0.5 lg:flex" role="group" aria-label="Select language">
+        <div class="hidden items-center gap-0.5 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary)/0.55)] p-0.5 lg:flex" role="group" aria-label={t['nav.languageLabel']}>
           <a
             href={englishPath}
             data-lang-link
@@ -123,7 +123,7 @@ const contactHref = `${localePrefix}/contact/`;
         <div class="hidden xl:block">
           <CommandPalette items={paletteItems} strings={paletteStrings} client:load />
         </div>
-        <ThemeToggle client:load />
+        <ThemeToggle lightLabel={t['theme.lightLabel']} darkLabel={t['theme.darkLabel']} client:load />
 
         <a href={contactHref} data-nav-link data-nav-section="contact" data-magnetic="0.2" class="btn btn-primary hidden min-h-10 px-4 text-sm sm:inline-flex">
           {t['nav.startProject']}
@@ -133,7 +133,7 @@ const contactHref = `${localePrefix}/contact/`;
         <button
           type="button"
           class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md p-2 text-[rgb(var(--color-text-primary))] transition-colors hover:bg-[rgb(var(--color-bg-secondary))] lg:hidden"
-          aria-label="Toggle navigation menu"
+          aria-label={t['nav.toggleMenu']}
           aria-expanded="false"
           aria-controls="mobile-menu"
           id="mobile-menu-button"
@@ -152,8 +152,10 @@ const contactHref = `${localePrefix}/contact/`;
     <div
       id="mobile-menu"
       role="navigation"
-      aria-label="Mobile navigation"
-      class="overflow-hidden rounded-[var(--radius-lg)] border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary))] shadow-[0_24px_60px_rgb(0_0_0/0.45)] transition-all duration-300 ease-in-out lg:hidden"
+      aria-label={t['nav.mobileLabel']}
+      aria-hidden="true"
+      inert
+      class="overflow-hidden rounded-[var(--radius-lg)] border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-secondary))] shadow-[0_24px_60px_rgb(0_0_0/0.45)] transition-[max-height,opacity] duration-200 ease-out lg:hidden"
       style="max-height: 0; opacity: 0;"
     >
       <div class="flex flex-col gap-1 p-2">
@@ -173,7 +175,7 @@ const contactHref = `${localePrefix}/contact/`;
           <Icon name="arrow-right" size={16} class="btn-arrow" />
         </a>
 
-        <div class="mt-2 flex items-center gap-2 border-t border-[rgb(var(--color-border))] px-2 pt-3" role="group" aria-label="Select language">
+        <div class="mt-2 flex items-center gap-2 border-t border-[rgb(var(--color-border))] px-2 pt-3" role="group" aria-label={t['nav.languageLabel']}>
           <Icon name="globe" size={16} class="text-[rgb(var(--color-text-muted))]" />
           <a
             href={englishPath}
@@ -206,6 +208,8 @@ const contactHref = `${localePrefix}/contact/`;
 
 <script>
   import { readInquiryContext, inquirySearch } from '@/lib/inquiry';
+  // Match Tailwind's lg navigation breakpoint, including the browser's font size.
+  const desktopNavigation = window.matchMedia('(min-width: 64rem)');
   // Global listener references for cleanup
   let globalEscapeHandler: ((e: KeyboardEvent) => void) | null = null;
   let globalClickHandler: ((e: MouseEvent) => void) | null = null;
@@ -246,6 +250,8 @@ const contactHref = `${localePrefix}/contact/`;
 
       // Animate menu
       if (isOpen) {
+        mobileMenuEl.inert = false;
+        mobileMenuEl.setAttribute('aria-hidden', 'false');
         mobileMenuEl.style.maxHeight = `${mobileMenuEl.scrollHeight}px`;
         mobileMenuEl.style.opacity = '1';
         focusTrapActive = true;
@@ -253,14 +259,22 @@ const contactHref = `${localePrefix}/contact/`;
 
         const firstMenuItem = mobileMenuEl.querySelector('a, button, [tabindex]:not([tabindex="-1"])');
         if (firstMenuItem instanceof HTMLElement) {
-          window.requestAnimationFrame(() => firstMenuItem.focus());
+          window.requestAnimationFrame(() => {
+            if (isOpen) firstMenuItem.focus();
+          });
         }
       } else {
+        // Move focus before hiding its former container from assistive tools.
+        const focusTarget = desktopNavigation.matches
+          ? document.querySelector<HTMLElement>('[data-nav-track] a')
+          : menuButtonEl;
+        focusTarget?.focus();
+        mobileMenuEl.inert = true;
+        mobileMenuEl.setAttribute('aria-hidden', 'true');
         mobileMenuEl.style.maxHeight = '0';
         mobileMenuEl.style.opacity = '0';
         focusTrapActive = false;
         detachFocusTrap();
-        menuButtonEl.focus();
       }
     }
 
@@ -353,8 +367,12 @@ const contactHref = `${localePrefix}/contact/`;
 
     globalResizeHandler = () => {
       const currentIsOpen = menuButton.getAttribute('aria-expanded') === 'true';
-      if (window.innerWidth >= 768 && currentIsOpen) {
-        closeMenu();
+      if (currentIsOpen) {
+        if (desktopNavigation.matches) {
+          closeMenu();
+        } else {
+          mobileMenu.style.maxHeight = `${mobileMenu.scrollHeight}px`;
+        }
       }
     };
 

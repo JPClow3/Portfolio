@@ -215,6 +215,85 @@ test.describe('navigation integrity', () => {
     await expect(button).toHaveAttribute('aria-expanded', 'false');
     await expect(button).toBeFocused();
   });
+
+  for (const locale of [
+    { path: '/', toggle: 'Toggle navigation menu', navigation: 'Mobile navigation', light: 'Switch to light mode', dark: 'Switch to dark mode' },
+    { path: '/pt/', toggle: 'Abrir ou fechar menu de navegação', navigation: 'Navegação móvel', light: 'Mudar para o tema claro', dark: 'Mudar para o tema escuro' },
+  ]) {
+    test(`${locale.path} keeps closed navigation out of the keyboard path`, async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(locale.path);
+
+      const button = page.getByRole('button', { name: locale.toggle });
+      const links = page.locator('#mobile-menu a');
+      const focusIsInMenu = () => page.evaluate(() =>
+        document.getElementById('mobile-menu')!.contains(document.activeElement),
+      );
+
+      await button.focus();
+      await page.keyboard.press('Tab');
+      expect(await focusIsInMenu()).toBe(false);
+      await expect(page.getByRole('navigation', { name: locale.navigation })).toHaveCount(0);
+
+      await button.click();
+      await expect(page.getByRole('navigation', { name: locale.navigation })).toBeVisible();
+      await expect(links.first()).toBeFocused();
+      await links.last().focus();
+      await page.keyboard.press('Tab');
+      await expect(links.first()).toBeFocused();
+      await page.keyboard.press('Shift+Tab');
+      await expect(links.last()).toBeFocused();
+
+      await page.keyboard.press('Escape');
+      await expect(button).toBeFocused();
+      await page.keyboard.press('Tab');
+      expect(await focusIsInMenu()).toBe(false);
+    });
+
+    test(`${locale.path} names the theme control in the page language after each toggle`, async ({ page }) => {
+      await page.goto(locale.path);
+      const toggle = page.getByRole('checkbox', { name: locale.light });
+      await expect(toggle).toBeEnabled();
+      // The input is visually hidden; its label is the visible click target.
+      await page.locator('.theme-swap').click();
+      await expect(page.getByRole('checkbox', { name: locale.dark })).toBeEnabled();
+      await expect(page.locator('html')).not.toHaveClass(/dark/);
+      await page.locator('.theme-swap').click();
+      await expect(page.getByRole('checkbox', { name: locale.light })).toBeEnabled();
+      await expect(page.locator('html')).toHaveClass(/dark/);
+    });
+  }
+
+  test('tablet navigation stays open until desktop navigation becomes available', async ({ page }) => {
+    await page.setViewportSize({ width: 820, height: 1000 });
+    await page.goto('/');
+    const button = page.locator('#mobile-menu-button');
+    await button.click();
+    await expect(page.locator('#mobile-menu a').first()).toBeFocused();
+
+    for (const viewport of [
+      { width: 767, height: 1000 },
+      { width: 768, height: 1000 },
+      { width: 820, height: 1000 },
+      { width: 900, height: 1000 },
+      { width: 900, height: 700 },
+      { width: 1023, height: 1000 },
+    ]) {
+      await page.setViewportSize(viewport);
+      await expect(button).toBeVisible();
+      await expect(button).toHaveAttribute('aria-expanded', 'true');
+      await expect(page.locator('#mobile-menu a').first()).toBeFocused();
+    }
+
+    await page.setViewportSize({ width: 1024, height: 1000 });
+    await expect(button).not.toBeVisible();
+    await expect(button).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.locator('[data-nav-track] a').first()).toBeFocused();
+
+    await page.setViewportSize({ width: 820, height: 1000 });
+    await button.click();
+    await expect(page.locator('#mobile-menu a').first()).toBeFocused();
+  });
 });
 
 test.describe('layout & runtime health', () => {

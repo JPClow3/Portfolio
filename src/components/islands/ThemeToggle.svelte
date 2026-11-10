@@ -1,8 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
+  interface Props {
+    lightLabel: string;
+    darkLabel: string;
+  }
+
+  let { lightLabel, darkLabel }: Props = $props();
   let isDark = $state(false);
   let mounted = $state(false);
+  const label = $derived(isDark ? lightLabel : darkLabel);
 
   onMount(() => {
     isDark = document.documentElement.classList.contains('dark');
@@ -46,8 +53,8 @@
 <label
   class="theme-swap"
   class:theme-swap-mounted={mounted}
-  title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-  aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+  title={label}
+  aria-label={label}
 >
   <input
     type="checkbox"
@@ -55,7 +62,7 @@
     checked={isDark}
     onchange={handleThemeChange}
     disabled={!mounted}
-    aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+    aria-label={label}
     aria-busy={!mounted}
   />
 

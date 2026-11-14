@@ -46,7 +46,7 @@
     "typescript": "^6.0.3"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.13.0",
+    "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.64.0",
     "@vitest/ui": "^5.0.5",
     "happy-dom": "^21.0.4",
